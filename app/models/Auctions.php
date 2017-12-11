@@ -154,6 +154,8 @@ class Auctions extends \Phalcon\Mvc\Model
         return $this->dateEnd;
     }
 
+
+
     /**
      * Initialize method for model.
      */
@@ -163,16 +165,6 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->setSource("auctions");
         $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
         $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'auctions';
     }
 
     /**
@@ -195,6 +187,16 @@ class Auctions extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'auctions';
     }
 
 }

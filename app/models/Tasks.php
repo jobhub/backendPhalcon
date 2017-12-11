@@ -184,6 +184,8 @@ class Tasks extends \Phalcon\Mvc\Model
         return $this->price;
     }
 
+
+
     /**
      * Initialize method for model.
      */
@@ -194,16 +196,6 @@ class Tasks extends \Phalcon\Mvc\Model
         $this->hasMany('taskId', 'Auctions', 'taskId', ['alias' => 'Auctions']);
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'tasks';
     }
 
     /**
@@ -226,6 +218,16 @@ class Tasks extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'tasks';
     }
 
 }

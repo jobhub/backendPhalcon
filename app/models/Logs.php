@@ -155,6 +155,13 @@ class Logs extends \Phalcon\Mvc\Model
         return $this->date;
     }
 
+    /**
+     * Method to set the value of field logId
+     *
+     * @param integer $logId
+     * @return $this
+     */
+
 
     /**
      * Initialize method for model.
