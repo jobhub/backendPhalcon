@@ -11,6 +11,46 @@ class RegisterForm extends Form
     public function initialize($entity = null, $options = null)
     {
 
+        $firstname = new Text('firstname', ['class' => 'form-control']);
+        $firstname->setLabel('Имя:');
+        //$phone->setFilters(['alpha']);
+        $firstname->addValidators([
+            new PresenceOf([
+                'message' => 'Необходимо ввести имя'
+            ])
+        ]);
+        $this->add($firstname);
+
+        $lastname = new Text('lastname', ['class' => 'form-control']);
+        $lastname->setLabel('Фамилия:');
+        //$phone->setFilters(['alpha']);
+        $lastname->addValidators([
+            new PresenceOf([
+                'message' => 'Необходимо ввести имя'
+            ])
+        ]);
+        $this->add($lastname);
+
+        $male = new Text('male', ['class' => 'form-control']);
+        $male->setLabel('Пол:');
+        //$phone->setFilters(['alpha']);
+        $male->addValidators([
+            new PresenceOf([
+                'message' => 'Необходимо указать пол'
+            ])
+        ]);
+        $this->add($male);
+
+        $phone = new Text('phone', ['class' => 'form-control']);
+        $phone->setLabel('Номер телефона:');
+        //$phone->setFilters(['alpha']);
+        $phone->addValidators([
+            new PresenceOf([
+                'message' => 'Необходимо ввести номер телефона'
+            ])
+        ]);
+        $this->add($phone);
+
         $email = new Text('email', ['class' => 'form-control']);
         $email->setLabel('E-Mail');
         $email->setFilters('email');
