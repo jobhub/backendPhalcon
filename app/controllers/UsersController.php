@@ -1,5 +1,5 @@
 <?php
- 
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 
@@ -9,10 +9,11 @@ class UsersController extends ControllerBase
     /**
      * Index action
      */
-    public function indexAction()
-    {
-        $this->persistent->parameters = null;
-    }
+     public function initialize()
+     {
+         $this->tag->setTitle('Welcome');
+         parent::initialize();
+     }
 
     /**
      * Searches for users
@@ -89,7 +90,7 @@ class UsersController extends ControllerBase
             $this->tag->setDefault("e_mail", $user->getEMail());
             $this->tag->setDefault("phone", $user->getPhone());
             $this->tag->setDefault("password", $user->getPassword());
-            
+
         }
     }
 
@@ -111,7 +112,7 @@ class UsersController extends ControllerBase
         $user->setEMail($this->request->getPost("e_mail"));
         $user->setPhone($this->request->getPost("phone"));
         $user->setPassword($this->request->getPost("password"));
-        
+
 
         if (!$user->save()) {
             foreach ($user->getMessages() as $message) {
@@ -167,7 +168,7 @@ class UsersController extends ControllerBase
         $user->setEMail($this->request->getPost("e_mail"));
         $user->setPhone($this->request->getPost("phone"));
         $user->setPassword($this->request->getPost("password"));
-        
+
 
         if (!$user->save()) {
 

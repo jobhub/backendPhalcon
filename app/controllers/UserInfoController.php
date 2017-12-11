@@ -1,23 +1,33 @@
 <?php
- 
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 
 
-class UserInfoController extends ControllerBase
+class UserinfoController extends ControllerBase
 {
-
-    public function initialize()
-    {
-        $this->tag->setTitle('Welcome');
-        parent::initialize();
-    }
     /**
      * Index action
      */
+
+     public function initialize()
+     {
+         $this->tag->setTitle('');
+         parent::initialize();
+     }
+
     public function indexAction()
     {
         $this->persistent->parameters = null;
+        $user_id=$_SESSION['auth']['id'];
+        if($user_id)
+        {
+          $this->dispatcher->forward([
+              'controller' => "userinfo",
+              'action' => 'edit',
+              'params' => [$user_id]
+          ]);
+        }
     }
 
     /**
@@ -27,7 +37,7 @@ class UserInfoController extends ControllerBase
     {
         $numberPage = 1;
         if ($this->request->isPost()) {
-            $query = Criteria::fromInput($this->di, 'UserInfo', $_POST);
+            $query = Criteria::fromInput($this->di, 'Userinfo', $_POST);
             $this->persistent->parameters = $query->getParams();
         } else {
             $numberPage = $this->request->getQuery("page", "int");
@@ -37,10 +47,10 @@ class UserInfoController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
-        $parameters["order"] = "firstname";
+        $parameters["order"] = "userId";
 
-        $user_info = UserInfo::find($parameters);
-        if (count($user_info) == 0) {
+        $userinfo = Userinfo::find($parameters);
+        if (count($userinfo) == 0) {
             $this->flash->notice("The search did not find any userinfo");
 
             $this->dispatcher->forward([
@@ -52,7 +62,7 @@ class UserInfoController extends ControllerBase
         }
 
         $paginator = new Paginator([
-            'data' => $user_info,
+            'data' => $userinfo,
             'limit'=> 10,
             'page' => $numberPage
         ]);
@@ -71,14 +81,14 @@ class UserInfoController extends ControllerBase
     /**
      * Edits a userinfo
      *
-     * @param string $firstname
+     * @param string $userId
      */
-    public function editAction($firstname)
+    public function editAction($userId)
     {
         if (!$this->request->isPost()) {
 
-            $user_info = UserInfo::findFirstByfirstname($firstname);
-            if (!$user_info) {
+            $userinfo = Userinfo::findFirstByuserId($userId);
+            if (!$userinfo) {
                 $this->flash->error("userinfo was not found");
 
                 $this->dispatcher->forward([
@@ -89,17 +99,18 @@ class UserInfoController extends ControllerBase
                 return;
             }
 
-            $this->view->firstname = $user_info->firstname;
+            $this->view->userId = $userinfo->userId;
 
-            $this->tag->setDefault("firstname", $user_info->firstname);
-            $this->tag->setDefault("lastname", $user_info->lastname);
-            $this->tag->setDefault("birthday", $user_info->birthday);
-            $this->tag->setDefault("male", $user_info->male);
-            $this->tag->setDefault("address", $user_info->address);
-            $this->tag->setDefault("about", $user_info->about);
-            $this->tag->setDefault("executor", $user_info->executor);
-            $this->tag->setDefault("user_id", $user_info->user_id);
-            
+            $this->tag->setDefault("userId", $userinfo->userId);
+            $this->tag->setDefault("firstname", $userinfo->firstname);
+            $this->tag->setDefault("patronymic", $userinfo->patronymic);
+            $this->tag->setDefault("lastname", $userinfo->lastname);
+            $this->tag->setDefault("birthday", $userinfo->birthday);
+            $this->tag->setDefault("male", $userinfo->male);
+            $this->tag->setDefault("address", $userinfo->address);
+            $this->tag->setDefault("about", $userinfo->about);
+            $this->tag->setDefault("executor", $userinfo->executor);
+
         }
     }
 
@@ -117,19 +128,20 @@ class UserInfoController extends ControllerBase
             return;
         }
 
-        $user_info = new UserInfo();
-        $user_info->Firstname = $this->request->getPost("firstname");
-        $user_info->Lastname = $this->request->getPost("lastname");
-        $user_info->Birthday = $this->request->getPost("birthday");
-        $user_info->Male = $this->request->getPost("male");
-        $user_info->Address = $this->request->getPost("address");
-        $user_info->About = $this->request->getPost("about");
-        $user_info->Executor = $this->request->getPost("executor");
-        $user_info->User_id = $this->request->getPost("user_id");
-        
+        $userinfo = new Userinfo();
+        $userinfo->Userid = $this->request->getPost("userId");
+        $userinfo->Firstname = $this->request->getPost("firstname");
+        $userinfo->Patronymic = $this->request->getPost("patronymic");
+        $userinfo->Lastname = $this->request->getPost("lastname");
+        $userinfo->Birthday = $this->request->getPost("birthday");
+        $userinfo->Male = $this->request->getPost("male");
+        $userinfo->Address = $this->request->getPost("address");
+        $userinfo->About = $this->request->getPost("about");
+        $userinfo->Executor = $this->request->getPost("executor");
 
-        if (!$user_info->save()) {
-            foreach ($user_info->getMessages() as $message) {
+
+        if (!$userinfo->save()) {
+            foreach ($userinfo->getMessages() as $message) {
                 $this->flash->error($message);
             }
 
@@ -165,11 +177,11 @@ class UserInfoController extends ControllerBase
             return;
         }
 
-        $firstname = $this->request->getPost("firstname");
-        $user_info = UserInfo::findFirstByfirstname($firstname);
+        $userId = $this->request->getPost("userId");
+        $userinfo = Userinfo::findFirstByuserId($userId);
 
-        if (!$user_info) {
-            $this->flash->error("userinfo does not exist " . $firstname);
+        if (!$userinfo) {
+            $this->flash->error("userinfo does not exist " . $userId);
 
             $this->dispatcher->forward([
                 'controller' => "userinfo",
@@ -179,26 +191,27 @@ class UserInfoController extends ControllerBase
             return;
         }
 
-        $user_info->Firstname = $this->request->getPost("firstname");
-        $user_info->Lastname = $this->request->getPost("lastname");
-        $user_info->Birthday = $this->request->getPost("birthday");
-        $user_info->Male = $this->request->getPost("male");
-        $user_info->Address = $this->request->getPost("address");
-        $user_info->About = $this->request->getPost("about");
-        $user_info->Executor = $this->request->getPost("executor");
-        $user_info->User_id = $this->request->getPost("user_id");
-        
+        $userinfo->Userid = $this->request->getPost("userId");
+        $userinfo->Firstname = $this->request->getPost("firstname");
+        $userinfo->Patronymic = $this->request->getPost("patronymic");
+        $userinfo->Lastname = $this->request->getPost("lastname");
+        $userinfo->Birthday = $this->request->getPost("birthday");
+        $userinfo->Male = $this->request->getPost("male");
+        $userinfo->Address = $this->request->getPost("address");
+        $userinfo->About = $this->request->getPost("about");
+        $userinfo->Executor = $this->request->getPost("executor");
 
-        if (!$user_info->save()) {
 
-            foreach ($user_info->getMessages() as $message) {
+        if (!$userinfo->save()) {
+
+            foreach ($userinfo->getMessages() as $message) {
                 $this->flash->error($message);
             }
 
             $this->dispatcher->forward([
                 'controller' => "userinfo",
                 'action' => 'edit',
-                'params' => [$user_info->firstname]
+                'params' => [$userinfo->userId]
             ]);
 
             return;
@@ -215,12 +228,12 @@ class UserInfoController extends ControllerBase
     /**
      * Deletes a userinfo
      *
-     * @param string $firstname
+     * @param string $userId
      */
-    public function deleteAction($firstname)
+    public function deleteAction($userId)
     {
-        $user_info = UserInfo::findFirstByfirstname($firstname);
-        if (!$user_info) {
+        $userinfo = Userinfo::findFirstByuserId($userId);
+        if (!$userinfo) {
             $this->flash->error("userinfo was not found");
 
             $this->dispatcher->forward([
@@ -231,9 +244,9 @@ class UserInfoController extends ControllerBase
             return;
         }
 
-        if (!$user_info->delete()) {
+        if (!$userinfo->delete()) {
 
-            foreach ($user_info->getMessages() as $message) {
+            foreach ($userinfo->getMessages() as $message) {
                 $this->flash->error($message);
             }
 
