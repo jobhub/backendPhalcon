@@ -1,7 +1,15 @@
 <?php
 
-class UserInfo extends \Phalcon\Mvc\Model
+class Userinfo extends \Phalcon\Mvc\Model
 {
+
+    /**
+     *
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    public $userId;
 
     /**
      *
@@ -9,6 +17,13 @@ class UserInfo extends \Phalcon\Mvc\Model
      * @Column(type="string", length=30, nullable=false)
      */
     public $firstname;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=30, nullable=false)
+     */
+    public $patronymic;
 
     /**
      *
@@ -53,22 +68,14 @@ class UserInfo extends \Phalcon\Mvc\Model
     public $executor;
 
     /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    public $user_id;
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->hasMany('user_id', 'Settings', 'user_id', ['alias' => 'Settings']);
-        $this->belongsTo('user_id', '\Users', 'user_id', ['alias' => 'Users']);
+        $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
+        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**
@@ -85,7 +92,7 @@ class UserInfo extends \Phalcon\Mvc\Model
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return UserInfo[]|UserInfo|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return Userinfo[]|Userinfo|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -96,7 +103,7 @@ class UserInfo extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return UserInfo|\Phalcon\Mvc\Model\ResultInterface
+     * @return Userinfo|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

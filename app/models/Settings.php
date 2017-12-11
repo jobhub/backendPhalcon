@@ -1,16 +1,7 @@
 <?php
 
-namespace Users;
-
 class Settings extends \Phalcon\Mvc\Model
 {
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    public $search_radius;
 
     /**
      *
@@ -18,7 +9,14 @@ class Settings extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $user_id;
+    public $userId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    public $searchRadius;
 
     /**
      * Initialize method for model.
@@ -27,7 +25,7 @@ class Settings extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("settings");
-        $this->belongsTo('user_id', 'Users\UserInfo', 'user_id', ['alias' => 'UserInfo']);
+        $this->belongsTo('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
     }
 
     /**

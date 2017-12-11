@@ -1,7 +1,5 @@
 <?php
 
-namespace Users;
-
 class Offers extends \Phalcon\Mvc\Model
 {
 
@@ -11,7 +9,14 @@ class Offers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $offer_id;
+    public $offerId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    public $userId;
 
     /**
      *
@@ -35,21 +40,14 @@ class Offers extends \Phalcon\Mvc\Model
     public $price;
 
     /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    public $user_id;
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("offers");
-        $this->hasMany('offer_id', 'Users\Auctions', 'selected_offer', ['alias' => 'Auctions']);
-        $this->belongsTo('user_id', 'Users\Users', 'user_id', ['alias' => 'Users']);
+        $this->hasMany('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
+        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**

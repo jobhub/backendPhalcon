@@ -1,7 +1,5 @@
 <?php
 
-namespace Users;
-
 class Categories extends \Phalcon\Mvc\Model
 {
 
@@ -11,14 +9,14 @@ class Categories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $category_id;
+    public $categoryId;
 
     /**
      *
      * @var string
      * @Column(type="string", length=45, nullable=false)
      */
-    public $category_name;
+    public $categoryName;
 
     /**
      * Initialize method for model.
@@ -27,8 +25,8 @@ class Categories extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("categories");
-        $this->hasMany('category_id', 'Users\FavoriteCategories', 'category_id', ['alias' => 'FavoriteCategories']);
-        $this->hasMany('category_id', 'Users\Tasks', 'category_id', ['alias' => 'Tasks']);
+        $this->hasMany('categoryId', 'Favoritecategories', 'categoryId', ['alias' => 'Favoritecategories']);
+        $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);
     }
 
     /**

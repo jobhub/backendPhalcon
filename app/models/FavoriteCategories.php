@@ -1,8 +1,6 @@
 <?php
 
-namespace Users;
-
-class FavoriteCategories extends \Phalcon\Mvc\Model
+class Favoritecategories extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -11,7 +9,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $user_id;
+    public $userId;
 
     /**
      *
@@ -19,7 +17,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $category_id;
+    public $categoryId;
 
     /**
      * Initialize method for model.
@@ -27,9 +25,9 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("service_services");
-        $this->setSource("favorite_categories");
-        $this->belongsTo('category_id', 'Users\Categories', 'category_id', ['alias' => 'Categories']);
-        $this->belongsTo('user_id', 'Users\Users', 'user_id', ['alias' => 'Users']);
+        $this->setSource("favoritecategories");
+        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
+        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**
@@ -39,14 +37,14 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favorite_categories';
+        return 'favoritecategories';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return FavoriteCategories[]|FavoriteCategories|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return Favoritecategories[]|Favoritecategories|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -57,7 +55,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return FavoriteCategories|\Phalcon\Mvc\Model\ResultInterface
+     * @return Favoritecategories|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

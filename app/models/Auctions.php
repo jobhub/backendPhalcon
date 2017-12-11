@@ -1,7 +1,5 @@
 <?php
 
-namespace Users;
-
 class Auctions extends \Phalcon\Mvc\Model
 {
 
@@ -11,35 +9,35 @@ class Auctions extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $auction_id;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    public $date_start;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    public $date_end;
+    public $auctionId;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $task_id;
+    public $taskId;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $selected_offer;
+    public $selectedOffer;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    public $dateStart;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    public $dateEnd;
 
     /**
      * Initialize method for model.
@@ -48,8 +46,8 @@ class Auctions extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("auctions");
-        $this->belongsTo('selected_offer', 'Users\Offers', 'offer_id', ['alias' => 'Offers']);
-        $this->belongsTo('task_id', 'Users\Tasks', 'task_id', ['alias' => 'Tasks']);
+        $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
+        $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
     }
 
     /**

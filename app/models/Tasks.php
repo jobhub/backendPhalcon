@@ -1,7 +1,5 @@
 <?php
 
-namespace Users;
-
 class Tasks extends \Phalcon\Mvc\Model
 {
 
@@ -11,7 +9,21 @@ class Tasks extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $task_id;
+    public $taskId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    public $userId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    public $categoryId;
 
     /**
      *
@@ -35,29 +47,15 @@ class Tasks extends \Phalcon\Mvc\Model
     public $price;
 
     /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    public $user_id;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    public $category_id;
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("tasks");
-        $this->hasMany('task_id', 'Users\Auctions', 'task_id', ['alias' => 'Auctions']);
-        $this->belongsTo('category_id', 'Users\Categories', 'category_id', ['alias' => 'Categories']);
-        $this->belongsTo('user_id', 'Users\Users', 'user_id', ['alias' => 'Users']);
+        $this->hasMany('taskId', 'Auctions', 'taskId', ['alias' => 'Auctions']);
+        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
+        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**
