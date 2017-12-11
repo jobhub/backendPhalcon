@@ -1,6 +1,6 @@
 <?php
 
-class Offers extends \Phalcon\Mvc\Model
+class Logs extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -9,7 +9,21 @@ class Offers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $offerId;
+    public $logId;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=30, nullable=true)
+     */
+    public $controller;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=30, nullable=true)
+     */
+    public $action;
 
     /**
      *
@@ -19,35 +33,12 @@ class Offers extends \Phalcon\Mvc\Model
     public $userId;
 
     /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    public $deadline;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    public $description;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=true)
-     */
-    public $price;
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("service_services");
-        $this->setSource("offers");
-        $this->hasMany('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->setSource("logs");
     }
 
     /**
@@ -57,14 +48,14 @@ class Offers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'offers';
+        return 'logs';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Offers[]|Offers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return Logs[]|Logs|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -75,7 +66,7 @@ class Offers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Offers|\Phalcon\Mvc\Model\ResultInterface
+     * @return Logs|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
