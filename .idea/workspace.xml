@@ -2,31 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/layouts/userinfo.volt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_errors_show404.volt.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_errors_show500.volt.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_userinfo.volt.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_userinfo_index.volt.php" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/userinfo — копия/edit.volt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/userinfo — копия/index.volt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/userinfo — копия/new.volt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/userinfo — копия/search.volt" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/UserInfoController.php" afterPath="$PROJECT_DIR$/app/controllers/UserInfoController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/UsersController.php" afterPath="$PROJECT_DIR$/app/controllers/UsersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/library/Elements.php" afterPath="$PROJECT_DIR$/app/library/Elements.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Auctions.php" afterPath="$PROJECT_DIR$/app/models/Auctions.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Categories.php" afterPath="$PROJECT_DIR$/app/models/Categories.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/FavoriteCategories.php" afterPath="$PROJECT_DIR$/app/models/FavoriteCategories.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Logs.php" afterPath="$PROJECT_DIR$/app/models/Logs.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Offers.php" afterPath="$PROJECT_DIR$/app/models/Offers.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Tasks.php" afterPath="$PROJECT_DIR$/app/models/Tasks.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/UserInfo.php" afterPath="$PROJECT_DIR$/app/models/UserInfo.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Users.php" afterPath="$PROJECT_DIR$/app/models/Users.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/edit.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/edit.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/index.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/index.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/new.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/new.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/search.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/search.volt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -37,16 +13,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="NotFoundPlugin.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/plugins/NotFoundPlugin.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="41" column="29" lean-forward="false" selection-start-line="41" selection-start-column="29" selection-end-line="41" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="RegisterController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/RegisterController.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -97,17 +63,27 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Elements.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Elements.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/library/Elements.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1173">
-              <caret line="21" column="27" lean-forward="true" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+            <state relative-caret-position="204">
+              <caret line="102" column="29" lean-forward="false" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
               <folding>
                 <marker date="1512992116398" expanded="true" signature="2061:2423" ph="..." />
                 <marker date="1512992116398" expanded="true" signature="2125:2423" ph="..." />
                 <marker date="1512992116398" expanded="true" signature="2283:2337" ph="..." />
                 <marker date="1512992116398" expanded="true" signature="2341:2423" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Logs.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/Logs.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-799">
+              <caret line="52" column="7" lean-forward="false" selection-start-line="52" selection-start-column="7" selection-end-line="52" selection-end-column="7" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -126,7 +102,7 @@
         <entry file="file://$PROJECT_DIR$/app/models/FavoriteCategories.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="221">
-              <caret line="43" column="0" lean-forward="true" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+              <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -336,12 +312,12 @@
       <workItem from="1512935249804" duration="14000" />
       <workItem from="1512982500916" duration="4000" />
       <workItem from="1512982603032" duration="2604000" />
-      <workItem from="1512985341838" duration="4590000" />
+      <workItem from="1512985341838" duration="4754000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35443000" />
+    <option name="totallyTimeSpent" value="35607000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -743,18 +719,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Logs.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/FavoriteCategories.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
-          <caret line="43" column="0" lean-forward="true" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+          <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -769,14 +737,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/library/Elements.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1173">
-          <caret line="21" column="27" lean-forward="true" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+        <state relative-caret-position="204">
+          <caret line="102" column="29" lean-forward="false" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
           <folding>
             <marker date="1512992116398" expanded="true" signature="2061:2423" ph="..." />
             <marker date="1512992116398" expanded="true" signature="2125:2423" ph="..." />
             <marker date="1512992116398" expanded="true" signature="2283:2337" ph="..." />
             <marker date="1512992116398" expanded="true" signature="2341:2423" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Logs.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-799">
+          <caret line="52" column="7" lean-forward="false" selection-start-line="52" selection-start-column="7" selection-end-line="52" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
