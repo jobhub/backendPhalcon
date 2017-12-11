@@ -7,9 +7,17 @@ class Logs extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $logId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=true)
+     */
+    protected $userId;
 
     /**
      *
@@ -27,10 +35,10 @@ class Logs extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @var string
+     * @Column(type="string", nullable=false)
      */
-    protected $userId;
+    protected $date;
 
     /**
      * Method to set the value of field logId
@@ -41,6 +49,19 @@ class Logs extends \Phalcon\Mvc\Model
     public function setLogId($logId)
     {
         $this->logId = $logId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field userId
+     *
+     * @param integer $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
 
         return $this;
     }
@@ -72,14 +93,14 @@ class Logs extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field date
      *
-     * @param integer $userId
+     * @param string $date
      * @return $this
      */
-    public function setUserId($userId)
+    public function setDate($date)
     {
-        $this->userId = $userId;
+        $this->date = $date;
 
         return $this;
     }
@@ -92,6 +113,16 @@ class Logs extends \Phalcon\Mvc\Model
     public function getLogId()
     {
         return $this->logId;
+    }
+
+    /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 
     /**
@@ -115,14 +146,15 @@ class Logs extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field date
      *
-     * @return integer
+     * @return string
      */
-    public function getUserId()
+    public function getDate()
     {
-        return $this->userId;
+        return $this->date;
     }
+
 
     /**
      * Initialize method for model.
@@ -131,16 +163,6 @@ class Logs extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("logs");
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'logs';
     }
 
     /**
@@ -163,6 +185,16 @@ class Logs extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'logs';
     }
 
 }

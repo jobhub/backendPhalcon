@@ -122,6 +122,24 @@ class SecurityPlugin extends Plugin
 	public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
 	{
 		$auth = $this->session->get('auth');
+
+		//Здесь будет логирование
+        $log = new Logs();
+        if ($this->session->get("auth") != null) {
+            $auth = $this->session->get("auth");
+            $log->setUserId($auth['id']);
+        }
+        $log->setController($dispatcher->getControllerName());
+        $log->setAction($dispatcher->getActionName());
+        $log->setDate(date('Y-m-d H:i'));
+
+        if ($log->save() == false) {
+
+            foreach ($log->getMessages() as $message) {
+                $this->flash->error((string)$message);
+            }
+        }
+
 		if (!$auth){
 			$role = 'Guests';
 		} else {
