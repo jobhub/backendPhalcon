@@ -13,35 +13,150 @@ class Users extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $userId;
+    protected $userId;
 
     /**
      *
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
-    public $email;
+    protected $email;
 
     /**
      *
      * @var string
      * @Column(type="string", length=20, nullable=false)
      */
-    public $phone;
+    protected $phone;
 
     /**
      *
      * @var string
      * @Column(type="string", length=64, nullable=false)
      */
-    public $password;
+    protected $password;
 
     /**
      *
      * @var string
      * @Column(type="string", length=20, nullable=false)
      */
-    public $role;
+    protected $role;
+
+    /**
+     * Method to set the value of field userId
+     *
+     * @param integer $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field email
+     *
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field phone
+     *
+     * @param string $phone
+     * @return $this
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field password
+     *
+     * @param string $password
+     * @return $this
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field role
+     *
+     * @param string $role
+     * @return $this
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Returns the value of field email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Returns the value of field phone
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
+    /**
+     * Returns the value of field password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Returns the value of field role
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
 
     /**
      * Validations and business logic

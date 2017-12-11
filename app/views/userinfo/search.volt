@@ -1,8 +1,8 @@
 <div class="row">
     <nav>
         <ul class="pager">
-            <li class="previous">{{ link_to("user_info/index", "Go Back") }}</li>
-            <li class="next">{{ link_to("user_info/new", "Create ") }}</li>
+            <li class="previous">{{ link_to("userinfo/index", "Go Back") }}</li>
+            <li class="next">{{ link_to("userinfo/new", "Create ") }}</li>
         </ul>
     </nav>
 </div>
@@ -17,14 +17,15 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Firstname</th>
+                <th>UserId</th>
+            <th>Firstname</th>
+            <th>Patronymic</th>
             <th>Lastname</th>
             <th>Birthday</th>
             <th>Male</th>
             <th>Address</th>
             <th>About</th>
             <th>Executor</th>
-            <th>User</th>
 
                 <th></th>
                 <th></th>
@@ -32,19 +33,20 @@
         </thead>
         <tbody>
         {% if page.items is defined %}
-        {% for user_info in page.items %}
+        {% for userinfo in page.items %}
             <tr>
-                <td>{{ user_info.firstname }}</td>
-            <td>{{ user_info.lastname }}</td>
-            <td>{{ user_info.birthday }}</td>
-            <td>{{ user_info.male }}</td>
-            <td>{{ user_info.address }}</td>
-            <td>{{ user_info.about }}</td>
-            <td>{{ user_info.executor }}</td>
-            <td>{{ user_info.user_id }}</td>
+                <td>{{ userinfo.userId }}</td>
+            <td>{{ userinfo.firstname }}</td>
+            <td>{{ userinfo.patronymic }}</td>
+            <td>{{ userinfo.lastname }}</td>
+            <td>{{ userinfo.birthday }}</td>
+            <td>{{ userinfo.male }}</td>
+            <td>{{ userinfo.address }}</td>
+            <td>{{ userinfo.about }}</td>
+            <td>{{ userinfo.executor }}</td>
 
-                <td>{{ link_to("user_info/edit/"~user_info.firstname, "Edit") }}</td>
-                <td>{{ link_to("user_info/delete/"~user_info.firstname, "Delete") }}</td>
+                <td>{{ link_to("userinfo/edit/"~userinfo.userId, "Edit") }}</td>
+                <td>{{ link_to("userinfo/delete/"~userinfo.userId, "Delete") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -61,10 +63,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("user_info/search", "First") }}</li>
-                <li>{{ link_to("user_info/search?page="~page.before, "Previous") }}</li>
-                <li>{{ link_to("user_info/search?page="~page.next, "Next") }}</li>
-                <li>{{ link_to("user_info/search?page="~page.last, "Last") }}</li>
+                <li>{{ link_to("userinfo/search", "First") }}</li>
+                <li>{{ link_to("userinfo/search?page="~page.before, "Previous") }}</li>
+                <li>{{ link_to("userinfo/search?page="~page.next, "Next") }}</li>
+                <li>{{ link_to("userinfo/search?page="~page.last, "Last") }}</li>
             </ul>
         </nav>
     </div>

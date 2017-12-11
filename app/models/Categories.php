@@ -9,14 +9,60 @@ class Categories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $categoryId;
+    protected $categoryId;
 
     /**
      *
      * @var string
      * @Column(type="string", length=45, nullable=false)
      */
-    public $categoryName;
+    protected $categoryName;
+
+    /**
+     * Method to set the value of field categoryId
+     *
+     * @param integer $categoryId
+     * @return $this
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field categoryName
+     *
+     * @param string $categoryName
+     * @return $this
+     */
+    public function setCategoryName($categoryName)
+    {
+        $this->categoryName = $categoryName;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field categoryId
+     *
+     * @return integer
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
+
+    /**
+     * Returns the value of field categoryName
+     *
+     * @return string
+     */
+    public function getCategoryName()
+    {
+        return $this->categoryName;
+    }
 
     /**
      * Initialize method for model.

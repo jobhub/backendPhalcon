@@ -1,25 +1,39 @@
 <div class="row">
     <nav>
         <ul class="pager">
-            <li class="previous">{{ link_to("user_info", "Go Back") }}</li>
+            <li class="previous">{{ link_to("userinfo", "Go Back") }}</li>
         </ul>
     </nav>
 </div>
 
 <div class="page-header">
     <h1>
-        Edit user_info
+        Edit userinfo
     </h1>
 </div>
 
 {{ content() }}
 
-{{ form("user_info/save", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+{{ form("userinfo/save", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+
+<div class="form-group">
+    <label for="fieldUserid" class="col-sm-2 control-label">UserId</label>
+    <div class="col-sm-10">
+        {{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}
+    </div>
+</div>
 
 <div class="form-group">
     <label for="fieldFirstname" class="col-sm-2 control-label">Firstname</label>
     <div class="col-sm-10">
         {{ text_field("firstname", "size" : 30, "class" : "form-control", "id" : "fieldFirstname") }}
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldPatronymic" class="col-sm-2 control-label">Patronymic</label>
+    <div class="col-sm-10">
+        {{ text_field("patronymic", "size" : 30, "class" : "form-control", "id" : "fieldPatronymic") }}
     </div>
 </div>
 
@@ -62,13 +76,6 @@
     <label for="fieldExecutor" class="col-sm-2 control-label">Executor</label>
     <div class="col-sm-10">
         {{ text_field("executor", "type" : "numeric", "class" : "form-control", "id" : "fieldExecutor") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldUserId" class="col-sm-2 control-label">User</label>
-    <div class="col-sm-10">
-        {{ text_field("user_id", "type" : "numeric", "class" : "form-control", "id" : "fieldUserId") }}
     </div>
 </div>
 

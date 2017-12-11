@@ -9,14 +9,60 @@ class Settings extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $userId;
+    protected $userId;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $searchRadius;
+    protected $searchRadius;
+
+    /**
+     * Method to set the value of field userId
+     *
+     * @param integer $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field searchRadius
+     *
+     * @param integer $searchRadius
+     * @return $this
+     */
+    public function setSearchRadius($searchRadius)
+    {
+        $this->searchRadius = $searchRadius;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Returns the value of field searchRadius
+     *
+     * @return integer
+     */
+    public function getSearchRadius()
+    {
+        return $this->searchRadius;
+    }
 
     /**
      * Initialize method for model.

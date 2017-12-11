@@ -9,7 +9,7 @@ class Favoritecategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $userId;
+    protected $userId;
 
     /**
      *
@@ -17,7 +17,53 @@ class Favoritecategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $categoryId;
+    protected $categoryId;
+
+    /**
+     * Method to set the value of field userId
+     *
+     * @param integer $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field categoryId
+     *
+     * @param integer $categoryId
+     * @return $this
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Returns the value of field categoryId
+     *
+     * @return integer
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
 
     /**
      * Initialize method for model.

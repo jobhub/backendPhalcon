@@ -15,6 +15,10 @@ class Elements extends Component
                 'caption' => 'Домой',
                 'action' => 'index'
             ],
+            'userinfo' => [
+                'caption' => 'Профиль',
+                'action' => 'index'
+            ],
         ],
         'navbar-right' => [
             'session' => [
