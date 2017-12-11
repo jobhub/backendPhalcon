@@ -17,14 +17,12 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @Column(type="string", length=30, nullable=false)
      */
     public $firstname;
-
     /**
      *
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
     public $patronymic;
-
     /**
      *
      * @var string
