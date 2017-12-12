@@ -1,19 +1,24 @@
 <?php
-
+ 
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 
 
 class UsersController extends ControllerBase
 {
+    public function initialize()
+    {
+        $this->tag->setTitle('Регистрация');
+        parent::initialize();
+    }
+
     /**
      * Index action
      */
-     public function initialize()
-     {
-         $this->tag->setTitle('Welcome');
-         parent::initialize();
-     }
+    public function indexAction()
+    {
+        $this->persistent->parameters = null;
+    }
 
     /**
      * Searches for users
@@ -32,7 +37,7 @@ class UsersController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
-        $parameters["order"] = "user_id";
+        $parameters["order"] = "userId";
 
         $users = Users::find($parameters);
         if (count($users) == 0) {
@@ -66,13 +71,13 @@ class UsersController extends ControllerBase
     /**
      * Edits a user
      *
-     * @param string $user_id
+     * @param string $userId
      */
-    public function editAction($user_id)
+    public function editAction($userId)
     {
         if (!$this->request->isPost()) {
 
-            $user = Users::findFirstByuser_id($user_id);
+            $user = Users::findFirstByuserId($userId);
             if (!$user) {
                 $this->flash->error("user was not found");
 
@@ -84,13 +89,14 @@ class UsersController extends ControllerBase
                 return;
             }
 
-            $this->view->user_id = $user->getUserId();
+            $this->view->userId = $user->getUserid();
 
-            $this->tag->setDefault("user_id", $user->getUserId());
-            $this->tag->setDefault("e_mail", $user->getEMail());
+            $this->tag->setDefault("userId", $user->getUserid());
+            $this->tag->setDefault("email", $user->getEmail());
             $this->tag->setDefault("phone", $user->getPhone());
             $this->tag->setDefault("password", $user->getPassword());
-
+            $this->tag->setDefault("role", $user->getRole());
+            
         }
     }
 
@@ -109,10 +115,11 @@ class UsersController extends ControllerBase
         }
 
         $user = new Users();
-        $user->setEMail($this->request->getPost("e_mail"));
+        $user->setEmail($this->request->getPost("email", "email"));
         $user->setPhone($this->request->getPost("phone"));
         $user->setPassword($this->request->getPost("password"));
-
+        $user->setRole($this->request->getPost("role"));
+        
 
         if (!$user->save()) {
             foreach ($user->getMessages() as $message) {
@@ -151,11 +158,11 @@ class UsersController extends ControllerBase
             return;
         }
 
-        $user_id = $this->request->getPost("user_id");
-        $user = Users::findFirstByuser_id($user_id);
+        $userId = $this->request->getPost("userId");
+        $user = Users::findFirstByuserId($userId);
 
         if (!$user) {
-            $this->flash->error("user does not exist " . $user_id);
+            $this->flash->error("user does not exist " . $userId);
 
             $this->dispatcher->forward([
                 'controller' => "users",
@@ -165,10 +172,11 @@ class UsersController extends ControllerBase
             return;
         }
 
-        $user->setEMail($this->request->getPost("e_mail"));
+        $user->setEmail($this->request->getPost("email", "email"));
         $user->setPhone($this->request->getPost("phone"));
         $user->setPassword($this->request->getPost("password"));
-
+        $user->setRole($this->request->getPost("role"));
+        
 
         if (!$user->save()) {
 
@@ -179,7 +187,7 @@ class UsersController extends ControllerBase
             $this->dispatcher->forward([
                 'controller' => "users",
                 'action' => 'edit',
-                'params' => [$user->getUserId()]
+                'params' => [$user->getUserid()]
             ]);
 
             return;
@@ -196,11 +204,11 @@ class UsersController extends ControllerBase
     /**
      * Deletes a user
      *
-     * @param string $user_id
+     * @param string $userId
      */
-    public function deleteAction($user_id)
+    public function deleteAction($userId)
     {
-        $user = Users::findFirstByuser_id($user_id);
+        $user = Users::findFirstByuserId($userId);
         if (!$user) {
             $this->flash->error("user was not found");
 

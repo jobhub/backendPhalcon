@@ -1,6 +1,5 @@
 <?php
 
-use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 
 class Users extends \Phalcon\Mvc\Model
@@ -39,7 +38,7 @@ class Users extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=20, nullable=false)
+     * @Column(type="string", nullable=false)
      */
     protected $role;
 
@@ -194,16 +193,6 @@ class Users extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'users';
-    }
-
-    /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
@@ -223,6 +212,16 @@ class Users extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'users';
     }
 
 }

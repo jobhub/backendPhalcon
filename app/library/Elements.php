@@ -15,6 +15,10 @@ class Elements extends Component
                 'caption' => 'Домой',
                 'action' => 'index'
             ],
+            'register' => [
+                'caption' => 'Регистрация',
+                'action' => 'index'
+            ],
             'userinfo' => [
                 'caption' => 'Профиль',
                 'action' => 'index'

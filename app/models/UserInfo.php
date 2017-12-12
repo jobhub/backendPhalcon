@@ -16,14 +16,22 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
+<<<<<<< HEAD
 
     protected $firstname;
+=======
+    protected $firstname;
+
+>>>>>>> c06ec97d9fe029cbd930c67d335553e2ebc094f9
     /**
      *
      * @var string
-     * @Column(type="string", length=30, nullable=false)
+     * @Column(type="string", length=30, nullable=true)
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> c06ec97d9fe029cbd930c67d335553e2ebc094f9
     protected $patronymic;
 
     /**
@@ -36,7 +44,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", nullable=false)
+     * @Column(type="string", nullable=true)
      */
     protected $birthday;
 
@@ -50,14 +58,14 @@ class Userinfo extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=150, nullable=false)
+     * @Column(type="string", length=150, nullable=true)
      */
     protected $address;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=false)
+     * @Column(type="string", nullable=true)
      */
     protected $about;
 
@@ -275,6 +283,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this->executor;
     }
 
+
     /**
      * Initialize method for model.
      */
@@ -284,16 +293,6 @@ class Userinfo extends \Phalcon\Mvc\Model
         $this->setSource("userinfo");
         $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'userinfo';
     }
 
     /**
@@ -316,6 +315,16 @@ class Userinfo extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'userinfo';
     }
 
 }
