@@ -28,6 +28,11 @@ class UserinfoController extends ControllerBase
               'params' => [$user_id]
           ]);
         }
+        else {
+          $this->dispatcher->forward([
+              'controller' => "index",
+              'action' => 'index']);
+        }
     }
 
     /**
@@ -177,7 +182,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $userId = $this->request->getPost("userId");
+        $userId = $_SESSION['auth']['id'];
         $userinfo = Userinfo::findFirstByuserId($userId);
 
         if (!$userinfo) {
@@ -191,7 +196,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $userinfo->Userid = $this->request->getPost("userId");
+        $userinfo->Userid = $_SESSION['auth']['id'];
         $userinfo->Firstname = $this->request->getPost("firstname");
         $userinfo->Patronymic = $this->request->getPost("patronymic");
         $userinfo->Lastname = $this->request->getPost("lastname");
