@@ -42,7 +42,7 @@
 <div class="form-group">
     <label for="fieldRole" class="col-sm-2 control-label">Role</label>
     <div class="col-sm-10">
-        {{ select_static("role", "using": ['Guests','User','Moderator'], "class" : "form-control", "id" : "fieldRole") }}
+        {{ select_static("role", "using": ['role','role'], "class" : "form-control", "id" : "fieldRole") }}
     </div>
 </div>
 

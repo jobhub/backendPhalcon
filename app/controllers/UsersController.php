@@ -6,12 +6,11 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 
 class UsersController extends ControllerBase
 {
-    public function initialize()
+    protected function initialize()
     {
-        $this->tag->setTitle('Регистрация');
-        parent::initialize();
+        $this->tag->prependTitle('SIMPLE | ');
+        $this->view->setTemplateAfter('main');
     }
-
     /**
      * Index action
      */

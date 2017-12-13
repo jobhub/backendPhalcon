@@ -75,7 +75,6 @@ class SecurityPlugin extends Plugin
 			//Public area resources
             //БД, все БД.
 			$publicResources = [
-                //'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'userinfo'   =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
 				'index'      => ['index'],
@@ -149,6 +148,7 @@ class SecurityPlugin extends Plugin
 		} else {
 			$role = $auth['role'];
 		}
+
 		//$role = $auth['role'];
         //$role = 'Guests';
 		$controller = $dispatcher->getControllerName();

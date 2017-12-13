@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation;
 
 class Users extends \Phalcon\Mvc\Model
 {
@@ -93,7 +94,6 @@ class Users extends \Phalcon\Mvc\Model
 
         return $this;
     }
-
     /**
      * Method to set the value of field role
      *
@@ -156,6 +156,7 @@ class Users extends \Phalcon\Mvc\Model
     {
         return $this->role;
     }
+
 
     /**
      * Validations and business logic

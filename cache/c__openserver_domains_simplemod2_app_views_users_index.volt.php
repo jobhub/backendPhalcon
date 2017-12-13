@@ -42,7 +42,7 @@
 <div class="form-group">
     <label for="fieldRole" class="col-sm-2 control-label">Role</label>
     <div class="col-sm-10">
-        <?= $this->tag->selectStatic(['role', 'using' => ['Guests', 'User', 'Moderator'], 'class' => 'form-control', 'id' => 'fieldRole']) ?>
+        <?= $this->tag->selectStatic(['user', 'using' => ['role', 'role'], 'class' => 'form-control', 'id' => 'fieldRole']) ?>
     </div>
 </div>
 
