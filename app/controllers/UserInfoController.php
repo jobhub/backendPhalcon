@@ -6,9 +6,7 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 
 class UserinfoController extends ControllerBase
 {
-    /**
-     * Index action
-     */
+
 
      public function initialize()
      {
@@ -16,6 +14,9 @@ class UserinfoController extends ControllerBase
          parent::initialize();
      }
 
+    /**
+     * Index action
+     */
     public function indexAction()
     {
         $this->persistent->parameters = null;

@@ -17,6 +17,33 @@ class OffersController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Offers', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "offerId";
+
+        $offers = Offers::find($parameters);
+        if (count($offers) == 0) {
+            $this->flash->notice("The search did not find any offers");
+        }
+
+        $paginator = new Paginator([
+            'data' => $offers,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
     /**

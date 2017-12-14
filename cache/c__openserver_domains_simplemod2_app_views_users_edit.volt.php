@@ -1,20 +1,27 @@
 <div class="row">
     <nav>
         <ul class="pager">
-            <li class="previous"><?= $this->tag->linkTo(['users', 'Назад']) ?></li>
+            <li class="previous"><?= $this->tag->linkTo(['users', 'Go Back']) ?></li>
         </ul>
     </nav>
 </div>
 
 <div class="page-header">
     <h1>
-        Добавление пользователя
+        Изменение данных пользователя
     </h1>
 </div>
 
 <?= $this->getContent() ?>
 
-<?= $this->tag->form(['users/create', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
+<?= $this->tag->form(['users/save', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
+
+<div class="form-group">
+    <label for="fieldUserid" class="col-sm-2 control-label">ID</label>
+    <div class="col-sm-10">
+        <?= $this->tag->textField(['userId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldUserid']) ?>
+    </div>
+</div>
 
 <div class="form-group">
     <label for="fieldEmail" class="col-sm-2 control-label">Email</label>
@@ -40,14 +47,16 @@
 <div class="form-group">
     <label for="fieldRole" class="col-sm-2 control-label">Роль</label>
     <div class="col-sm-10">
-       <?= $this->tag->selectStatic(['role', ['' => '', 'User' => 'Пользователь', 'Guests' => 'Гость', 'Moderator' => 'Модератор'], 'class' => 'form-control', 'id' => 'fieldRole']) ?>
-      </div>
+        <?= $this->tag->selectStatic(['role', ['User' => 'Пользователь', 'Guests' => 'Гость', 'Moderator' => 'Модератор'], 'class' => 'form-control', 'id' => 'fieldRole']) ?>
+    </div>
 </div>
 
 
+<?= $this->tag->hiddenField(['id']) ?>
+
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        <?= $this->tag->submitButton(['Сохранить', 'class' => 'btn btn-default']) ?>
+        <?= $this->tag->submitButton(['Изменить', 'class' => 'btn btn-default']) ?>
     </div>
 </div>
 

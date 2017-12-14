@@ -6,10 +6,10 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 
 class UsersController extends ControllerBase
 {
-    protected function initialize()
+    public function initialize()
     {
-        $this->tag->prependTitle('SIMPLE | ');
-        $this->view->setTemplateAfter('main');
+        $this->tag->setTitle('Users');
+        parent::initialize();
     }
     /**
      * Index action
@@ -17,6 +17,44 @@ class UsersController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+        $numberPage = 1;
+
+        if($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Users', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        }
+        else{
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "userId";
+
+        $users = Users::find($parameters);
+        if (count($users) == 0) {
+            $this->flash->notice("The search did not find any users");
+        }
+
+        /*$userAllInfo = $users;
+        foreach($userAllInfo as $key => $user){
+            $userinfo = Userinfo::find([
+                "userId = :userId",
+                "bind" => [
+                    "userId"    => $user->getUserId(),
+                ]]);
+
+        }*/
+
+        $paginator = new Paginator([
+            'data' => $users,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
     /**
@@ -93,7 +131,6 @@ class UsersController extends ControllerBase
             $this->tag->setDefault("userId", $user->getUserid());
             $this->tag->setDefault("email", $user->getEmail());
             $this->tag->setDefault("phone", $user->getPhone());
-            $this->tag->setDefault("password", $user->getPassword());
             $this->tag->setDefault("role", $user->getRole());
             
         }
@@ -171,9 +208,9 @@ class UsersController extends ControllerBase
             return;
         }
 
-        $user->setEmail($this->request->getPost("email", "email"));
+        $user->setEmail($this->request->getPost("email"));
         $user->setPhone($this->request->getPost("phone"));
-        $user->setPassword($this->request->getPost("password"));
+        $user->setPassword(sha1($this->request->getPost("password")));
         $user->setRole($this->request->getPost("role"));
         
 
@@ -193,6 +230,10 @@ class UsersController extends ControllerBase
         }
 
         $this->flash->success("user was updated successfully");
+
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
+        }
 
         $this->dispatcher->forward([
             'controller' => "users",

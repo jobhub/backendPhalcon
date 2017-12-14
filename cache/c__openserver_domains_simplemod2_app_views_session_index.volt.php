@@ -2,7 +2,7 @@
 <?= $this->getContent() ?>
 
 <div class="page-header">
-    <h2>Register</h2>
+    <h2>Авторизация</h2>
 </div>
 
 <?= $this->tag->form(['session/start', 'id' => 'AuthorizedForm', 'onbeforesubmit' => 'return false']) ?>

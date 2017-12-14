@@ -15,48 +15,48 @@ class Elements extends Component
                 'caption' => 'Домой',
                 'action' => 'index'
             ],
-            'register' => [
-                'caption' => 'Регистрация',
-                'action' => 'index'
-            ],
+
             'userinfo' => [
                 'caption' => 'Профиль',
                 'action' => 'index'
             ],
         ],
         'navbar-right' => [
+            'users' => [
+                'caption' => 'Модерация',
+                'action' => 'index'
+            ],
+            'register' => [
+                'caption' => 'Зарегистрироваться',
+                'action' => 'index'
+            ],
             'session' => [
                 'caption' => 'Войти',
                 'action' => 'index'
-            ],
+            ]
         ]
     ];
 
     private $_tabs = [
-        'Invoices' => [
-            'controller' => 'invoices',
+        'Пользователи' => [
+            'controller' => 'users',
             'action' => 'index',
-            'any' => false
         ],
-        'Companies' => [
-            'controller' => 'companies',
+        'Задания' => [
+            'controller' => 'tasks',
             'action' => 'index',
-            'any' => true
         ],
-        'Products' => [
-            'controller' => 'products',
+        'Аукционы' => [
+            'controller' => 'auctions',
             'action' => 'index',
-            'any' => true
         ],
-        'Product Types' => [
-            'controller' => 'producttypes',
+        'Предложения' => [
+            'controller' => 'offers',
             'action' => 'index',
-            'any' => true
         ],
-        'Your Profile' => [
-            'controller' => 'invoices',
-            'action' => 'profile',
-            'any' => false
+        'Логи' => [
+            'controller' => 'logs',
+            'action' => 'index',
         ]
     ];
 
@@ -67,15 +67,18 @@ class Elements extends Component
      */
     public function getMenu()
     {
-
         $auth = $this->session->get('auth');
         if ($auth) {
             $this->_headerMenu['navbar-right']['session'] = [
                 'caption' => 'Выйти',
                 'action' => 'end'
             ];
+            unset($this->_headerMenu['navbar-right']['register']);
+            if($auth['role']!= "Moderator") {
+                unset($this->_headerMenu['navbar-right']['users']);
+            }
         } else {
-            //unset($this->_headerMenu['navbar-left']['invoices']);
+            unset($this->_headerMenu['navbar-right']['users']);
         }
 
         $controllerName = $this->view->getControllerName();
@@ -106,7 +109,7 @@ class Elements extends Component
         $actionName = $this->view->getActionName();
         echo '<ul class="nav nav-tabs">';
         foreach ($this->_tabs as $caption => $option) {
-            if ($option['controller'] == $controllerName && ($option['action'] == $actionName || $option['any'])) {
+            if ($option['controller'] == $controllerName && ($option['action'] == $actionName)) {
                 echo '<li class="active">';
             } else {
                 echo '<li>';

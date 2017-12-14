@@ -38,9 +38,10 @@ class RegisterController extends ControllerBase
 
             $user = Users::findFirst(
                 [
-                    "(email = :email: OR phone = :email:) AND password = :password:",
+                    "(email = :email: OR phone = :phone:) AND password = :password:",
                     "bind" => [
                         "email"    => $email,
+                        "phone"    => $phone,
                         "password" => sha1($password),
                     ]
                 ]
@@ -48,6 +49,7 @@ class RegisterController extends ControllerBase
 
             if($user!=false){
                 $this->flash->error("Такой пользователь уже существует");
+                $this->view->form = $form;
                 return true;
             }
 

@@ -12,7 +12,7 @@ class AuthorizedForm extends Form
     {
 
         $email = new Text('email', ['class' => 'form-control']);
-        $email->setLabel('E-Mail or phone');
+        $email->setLabel('E-Mail или телефон');
         $email->setFilters('email');
         $email->addValidators([
             new PresenceOf([

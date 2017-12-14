@@ -53,11 +53,6 @@ class SecurityPlugin extends Plugin
 			//Private area resources
             //Тоже надо бы из БД взять
 			$privateResources = [
-                'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
 			];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -65,7 +60,11 @@ class SecurityPlugin extends Plugin
 			}
 
 			$moderatorsResources = [
-			    'moderarea' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete']
+                'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -100,6 +99,7 @@ class SecurityPlugin extends Plugin
 			foreach ($privateResources as $resource => $actions) {
 				foreach ($actions as $action){
 					$acl->allow('User', $resource, $action);
+                    $acl->allow('Moderator', $resource, $action);
 				}
 			}
 
@@ -172,7 +172,6 @@ class SecurityPlugin extends Plugin
 				'controller' => 'errors',
 				'action'     => 'show401'
 			]);
-            $this->session->destroy();
             return false;
 		}
 

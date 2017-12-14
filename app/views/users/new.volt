@@ -1,14 +1,14 @@
 <div class="row">
     <nav>
         <ul class="pager">
-            <li class="previous">{{ link_to("users", "Go Back") }}</li>
+            <li class="previous">{{ link_to("users", "Назад") }}</li>
         </ul>
     </nav>
 </div>
 
 <div class="page-header">
     <h1>
-        Create users
+        Добавление пользователя
     </h1>
 </div>
 
@@ -24,30 +24,30 @@
 </div>
 
 <div class="form-group">
-    <label for="fieldPhone" class="col-sm-2 control-label">Phone</label>
+    <label for="fieldPhone" class="col-sm-2 control-label">Телефон</label>
     <div class="col-sm-10">
         {{ text_field("phone", "size" : 30, "class" : "form-control", "id" : "fieldPhone") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldPassword" class="col-sm-2 control-label">Password</label>
+    <label for="fieldPassword" class="col-sm-2 control-label">Пароль</label>
     <div class="col-sm-10">
         {{ text_field("password", "size" : 30, "class" : "form-control", "id" : "fieldPassword") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldRole" class="col-sm-2 control-label">Role</label>
+    <label for="fieldRole" class="col-sm-2 control-label">Роль</label>
     <div class="col-sm-10">
-        {{ select_static("role", "using": [], "class" : "form-control", "id" : "fieldRole") }}
-    </div>
+       {{ select_static("role",['':'','User':'Пользователь', 'Guests': 'Гость', 'Moderator':'Модератор'], "class" : "form-control", "id" : "fieldRole") }}
+      </div>
 </div>
 
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        {{ submit_button('Save', 'class': 'btn btn-default') }}
+        {{ submit_button('Сохранить', 'class': 'btn btn-default') }}
     </div>
 </div>
 

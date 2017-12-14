@@ -17,6 +17,33 @@ class TasksController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "taskId";
+
+        $tasks = Tasks::find($parameters);
+        if (count($tasks) == 0) {
+            $this->flash->notice("The search did not find any tasks");
+        }
+
+        $paginator = new Paginator([
+            'data' => $tasks,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
     /**

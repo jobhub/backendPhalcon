@@ -18,6 +18,33 @@ class AuctionsController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Auctions', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "auctionId";
+
+        $auctions = Auctions::find($parameters);
+        if (count($auctions) == 0) {
+            $this->flash->notice("The search did not find any auctions");
+        }
+
+        $paginator = new Paginator([
+            'data' => $auctions,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
     /**

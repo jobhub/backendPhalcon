@@ -16,12 +16,7 @@
 
 <?= $this->tag->form(['userinfo/save', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
 
-<div class="form-group">
-    <label for="fieldUserid" class="col-sm-2 control-label">UserId</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['userId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldUserid']) ?>
-    </div>
-</div>
+
 
 <div class="form-group">
     <label for="fieldFirstname" class="col-sm-2 control-label">Firstname</label>
@@ -48,6 +43,13 @@
     <label for="fieldBirthday" class="col-sm-2 control-label">Birthday</label>
     <div class="col-sm-10">
         <?= $this->tag->textField(['birthday', 'type' => 'date', 'class' => 'form-control', 'id' => 'fieldBirthday']) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldMale" class="col-sm-2 control-label">Male</label>
+    <div class="col-sm-10">
+        <?= $this->tag->textField(['male', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldMale']) ?>
     </div>
 </div>
 

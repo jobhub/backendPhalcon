@@ -17,7 +17,42 @@ class LogsController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Logs', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "logId";
+
+        $logs = Logs::find($parameters);
+        if (count($logs) == 0) {
+            $this->flash->notice("The search did not find any logs");
+
+            $this->dispatcher->forward([
+                "controller" => "logs",
+                "action" => "index"
+            ]);
+
+            return;
+        }
+
+        $paginator = new Paginator([
+            'data' => $logs,
+            'limit'=> 30,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
+
 
     /**
      * Searches for logs
@@ -52,7 +87,7 @@ class LogsController extends ControllerBase
 
         $paginator = new Paginator([
             'data' => $logs,
-            'limit'=> 10,
+            'limit'=> 30,
             'page' => $numberPage
         ]);
 

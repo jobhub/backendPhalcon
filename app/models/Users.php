@@ -1,7 +1,7 @@
 <?php
 
-use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
 
 class Users extends \Phalcon\Mvc\Model
 {
@@ -94,6 +94,7 @@ class Users extends \Phalcon\Mvc\Model
 
         return $this;
     }
+
     /**
      * Method to set the value of field role
      *
@@ -157,7 +158,6 @@ class Users extends \Phalcon\Mvc\Model
         return $this->role;
     }
 
-
     /**
      * Validations and business logic
      *
@@ -188,9 +188,20 @@ class Users extends \Phalcon\Mvc\Model
         $this->setSchema("service_services");
         $this->setSource("users");
         $this->hasMany('userId', 'Favoritecategories', 'userId', ['alias' => 'Favoritecategories']);
+        $this->hasMany('userId', 'Logs', 'userId', ['alias' => 'Logs']);
         $this->hasMany('userId', 'Offers', 'userId', ['alias' => 'Offers']);
         $this->hasMany('userId', 'Tasks', 'userId', ['alias' => 'Tasks']);
         $this->hasMany('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'users';
     }
 
     /**
@@ -213,16 +224,6 @@ class Users extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'users';
     }
 
 }
