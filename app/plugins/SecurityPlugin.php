@@ -65,6 +65,7 @@ class SecurityPlugin extends Plugin
                 'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -132,6 +133,7 @@ class SecurityPlugin extends Plugin
             $auth = $this->session->get("auth");
             $log->setUserId($auth['id']);
         }
+        
         $log->setController($dispatcher->getControllerName());
         $log->setAction($dispatcher->getActionName());
         $log->setDate(date('Y-m-d H:i'));

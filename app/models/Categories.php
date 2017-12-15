@@ -7,6 +7,7 @@ class Categories extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $categoryId;
@@ -64,6 +65,9 @@ class Categories extends \Phalcon\Mvc\Model
         return $this->categoryName;
     }
 
+
+
+
     /**
      * Initialize method for model.
      */
@@ -73,16 +77,6 @@ class Categories extends \Phalcon\Mvc\Model
         $this->setSource("categories");
         $this->hasMany('categoryId', 'Favoritecategories', 'categoryId', ['alias' => 'Favoritecategories']);
         $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'categories';
     }
 
     /**
@@ -105,6 +99,16 @@ class Categories extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'categories';
     }
 
 }

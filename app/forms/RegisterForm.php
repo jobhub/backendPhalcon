@@ -49,6 +49,7 @@ class RegisterForm extends Form
                 'message' => 'Необходимо ввести номер телефона'
             ])
         ]);
+
         $this->add($phone);
 
         $email = new Text('email', ['class' => 'form-control']);
