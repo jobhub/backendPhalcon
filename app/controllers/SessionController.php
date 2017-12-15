@@ -1,7 +1,12 @@
 <?php
 
-class SessionController extends \Phalcon\Mvc\Controller
+class SessionController extends ControllerBase
 {
+    public function initialize()
+    {
+        $this->tag->setTitle('Welcome');
+        parent::initialize();
+    }
 
     private function _registerSession($user)
     {
