@@ -16,22 +16,14 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
-<<<<<<< HEAD
 
     protected $firstname;
-=======
-    protected $firstname;
-
->>>>>>> c06ec97d9fe029cbd930c67d335553e2ebc094f9
+    
     /**
      *
      * @var string
      * @Column(type="string", length=30, nullable=true)
      */
-<<<<<<< HEAD
-
-=======
->>>>>>> c06ec97d9fe029cbd930c67d335553e2ebc094f9
     protected $patronymic;
 
     /**

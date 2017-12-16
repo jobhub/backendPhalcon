@@ -49,14 +49,8 @@
 <div class="form-group">
     <label for="fieldMale" class="col-sm-2 control-label">Male</label>
     <div class="col-sm-10">
-        <?= $this->tag->textField(['male', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldMale']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldMale" class="col-sm-2 control-label">Male</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['male', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldMale']) ?>
+        
+<?= $this->tag->textField(['male', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldMale']) ?>
     </div>
 </div>
 
