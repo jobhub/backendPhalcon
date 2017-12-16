@@ -7,6 +7,7 @@ class Offers extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $offerId;
@@ -17,6 +18,13 @@ class Offers extends \Phalcon\Mvc\Model
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $userId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    protected $auctionId;
 
     /**
      *
@@ -61,6 +69,19 @@ class Offers extends \Phalcon\Mvc\Model
     public function setUserId($userId)
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field auctionId
+     *
+     * @param integer $auctionId
+     * @return $this
+     */
+    public function setAuctionId($auctionId)
+    {
+        $this->auctionId = $auctionId;
 
         return $this;
     }
@@ -125,6 +146,16 @@ class Offers extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field auctionId
+     *
+     * @return integer
+     */
+    public function getAuctionId()
+    {
+        return $this->auctionId;
+    }
+
+    /**
      * Returns the value of field deadline
      *
      * @return string
@@ -154,7 +185,51 @@ class Offers extends \Phalcon\Mvc\Model
         return $this->price;
     }
 
+    /**
+     * Method to set the value of field offerId
+     *
+     * @param integer $offerId
+     * @return $this
+     */
+    public function setOfferId($offerId)
+    {
+        $this->offerId = $offerId;
 
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field userId
+     *
+     * @param integer $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field offerId
+     *
+     * @return integer
+     */
+    public function getOfferId()
+    {
+        return $this->offerId;
+    }
+
+    /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
 
     /**
      * Initialize method for model.

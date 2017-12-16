@@ -1,5 +1,5 @@
 <?php
- 
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 
@@ -34,9 +34,14 @@ class OffersController extends ControllerBase
 
         $offers = Offers::find($parameters);
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Не найдено ни одного предложения");
         }
 
+        $userinfo = Userinfo::find();
+
+
+        //$this->view->$users = $users;
+        $this->view->setVar("users", $userinfo);
         $paginator = new Paginator([
             'data' => $offers,
             'limit'=> 10,
@@ -46,45 +51,6 @@ class OffersController extends ControllerBase
         $this->view->page = $paginator->getPaginate();
     }
 
-    /**
-     * Searches for offers
-     */
-    public function searchAction()
-    {
-        $numberPage = 1;
-        if ($this->request->isPost()) {
-            $query = Criteria::fromInput($this->di, 'Offers', $_POST);
-            $this->persistent->parameters = $query->getParams();
-        } else {
-            $numberPage = $this->request->getQuery("page", "int");
-        }
-
-        $parameters = $this->persistent->parameters;
-        if (!is_array($parameters)) {
-            $parameters = [];
-        }
-        $parameters["order"] = "offerId";
-
-        $offers = Offers::find($parameters);
-        if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
-
-            $this->dispatcher->forward([
-                "controller" => "offers",
-                "action" => "index"
-            ]);
-
-            return;
-        }
-
-        $paginator = new Paginator([
-            'data' => $offers,
-            'limit'=> 10,
-            'page' => $numberPage
-        ]);
-
-        $this->view->page = $paginator->getPaginate();
-    }
 
     /**
      * Displays the creation form
@@ -122,7 +88,7 @@ class OffersController extends ControllerBase
             $this->tag->setDefault("deadline", $offer->getDeadline());
             $this->tag->setDefault("description", $offer->getDescription());
             $this->tag->setDefault("price", $offer->getPrice());
-            
+
         }
     }
 
@@ -146,7 +112,7 @@ class OffersController extends ControllerBase
         $offer->setDeadline($this->request->getPost("deadline"));
         $offer->setDescription($this->request->getPost("description"));
         $offer->setPrice($this->request->getPost("price"));
-        
+
 
         if (!$offer->save()) {
             foreach ($offer->getMessages() as $message) {
@@ -204,7 +170,7 @@ class OffersController extends ControllerBase
         $offer->setDeadline($this->request->getPost("deadline"));
         $offer->setDescription($this->request->getPost("description"));
         $offer->setPrice($this->request->getPost("price"));
-        
+
 
         if (!$offer->save()) {
 
