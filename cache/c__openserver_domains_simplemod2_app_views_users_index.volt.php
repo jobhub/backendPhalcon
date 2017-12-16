@@ -81,8 +81,8 @@
             <td><?= $user->getRole() ?></td>
 
 
-                <td><?= $this->tag->linkTo(['users/edit/' . $user->getUserid(), 'Edit']) ?></td>
-                <td><?= $this->tag->linkTo(['users/delete/' . $user->getUserid(), 'Delete']) ?></td>
+                <td><?= $this->tag->linkTo(['users/edit/' . $user->getUserid(), 'Изменить']) ?></td>
+                <td><?= $this->tag->linkTo(['users/delete/' . $user->getUserid(), 'Удалить']) ?></td>
             </tr>
         <?php } ?>
         <?php } ?>
@@ -99,10 +99,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li><?= $this->tag->linkTo(['users/search', 'First']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->before, 'Previous']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->next, 'Next']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->last, 'Last']) ?></li>
+                <li><?= $this->tag->linkTo(['users/search', 'Первая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/search?page=' . $page->before, 'Предыдущая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/search?page=' . $page->next, 'Следующая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/search?page=' . $page->last, 'Последняя']) ?></li>
             </ul>
         </nav>
     </div>

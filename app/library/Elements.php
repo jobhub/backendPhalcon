@@ -57,6 +57,10 @@ class Elements extends Component
         'Логи' => [
             'controller' => 'logs',
             'action' => 'index',
+        ],
+        'Категории' => [
+            'controller' => 'categories',
+            'action' => 'index',
         ]
     ];
 

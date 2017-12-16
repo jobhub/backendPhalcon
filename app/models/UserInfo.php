@@ -127,7 +127,12 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setBirthday($birthday)
     {
-        $this->birthday = $birthday;
+        if($birthday == ""){
+            $birthday = null;
+        }
+        else {
+            $this->birthday = $birthday;
+        }
 
         return $this;
     }

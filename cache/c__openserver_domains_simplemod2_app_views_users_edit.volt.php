@@ -1,7 +1,7 @@
 <div class="row">
     <nav>
         <ul class="pager">
-            <li class="previous"><?= $this->tag->linkTo(['users', 'Go Back']) ?></li>
+            <li class="previous"><?= $this->tag->linkTo(['users', 'Назад']) ?></li>
         </ul>
     </nav>
 </div>

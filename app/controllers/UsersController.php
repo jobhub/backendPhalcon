@@ -40,7 +40,7 @@ class UsersController extends ControllerBase
 
         $users = Users::find($parameters);
         if (count($users) == 0) {
-            $this->flash->notice("The search did not find any users");
+            $this->flash->notice("Не найдено ни одного пользователя");
         }
 
         $paginator = new Paginator([
@@ -55,6 +55,7 @@ class UsersController extends ControllerBase
     /**
      * Searches for users
      */
+    /*
     public function searchAction()
     {
         $numberPage = 1;
@@ -91,7 +92,7 @@ class UsersController extends ControllerBase
 
         $this->view->page = $paginator->getPaginate();
     }
-
+     */
     /**
      * Displays the creation form
      */
@@ -111,7 +112,7 @@ class UsersController extends ControllerBase
 
             $user = Users::findFirstByuserId($userId);
             if (!$user) {
-                $this->flash->error("user was not found");
+                $this->flash->error("Пользователь не найден");
 
                 $this->dispatcher->forward([
                     'controller' => "users",
@@ -204,7 +205,7 @@ class UsersController extends ControllerBase
             }
         }
 
-        $this->flash->success("user was created successfully");
+        $this->flash->success("Пользователь успешно добавлен");
 
         foreach($_POST as $key=>$value){
             unset($_POST[$key]);
@@ -236,7 +237,7 @@ class UsersController extends ControllerBase
         $user = Users::findFirstByuserId($userId);
 
         if (!$user) {
-            $this->flash->error("user does not exist " . $userId);
+            $this->flash->error("Пользователя с ID " . $userId. " не существует");
 
             $this->dispatcher->forward([
                 'controller' => "users",
@@ -248,7 +249,8 @@ class UsersController extends ControllerBase
 
         $user->setEmail($this->request->getPost("email"));
         $user->setPhone($this->request->getPost("phone"));
-        $user->setPassword($this->request->getPost("password"));
+        if($this->request->getPost("password") != "")
+            $user->setPassword($this->request->getPost("password"));
         $user->setRole($this->request->getPost("role"));
 
         $this->db->begin();
@@ -273,7 +275,7 @@ class UsersController extends ControllerBase
         $userinfo->setFirstname($this->request->getPost("firstname"));
         $userinfo->setLastname($this->request->getPost("lastname"));
         $userinfo->setPatronymic($this->request->getPost("patronymic"));
-        //$userinfo->setBirthday($this->request->getPost("birthday"));
+        $userinfo->setBirthday($this->request->getPost("birthday"));
         $userinfo->setMale($this->request->getPost("male"));
         $userinfo->setAddress($this->request->getPost("address"));
         $userinfo->setAbout($this->request->getPost("about"));
@@ -316,7 +318,7 @@ class UsersController extends ControllerBase
 
         $this->db->commit();
 
-        $this->flash->success("user was updated successfully");
+        $this->flash->success("Данные пользователя успешно изменены");
 
         foreach($_POST as $key=>$value){
             unset($_POST[$key]);
@@ -337,7 +339,7 @@ class UsersController extends ControllerBase
     {
         $user = Users::findFirstByuserId($userId);
         if (!$user) {
-            $this->flash->error("user was not found");
+            $this->flash->error("Пользователь не найден");
 
             $this->dispatcher->forward([
                 'controller' => "users",
@@ -361,28 +363,7 @@ class UsersController extends ControllerBase
             return;
         }
 
-        //Мда, они ж каскаждным удалением удаляются
-        /*$userinfo = Userinfo::findFirstByuserId($userId);
-        if (!$userinfo->delete()) {
-
-            foreach ($userinfo->getMessages() as $message) {
-                $this->flash->error($message);
-            }
-
-            return;
-        }
-
-        $settings = Settings::findFirstByuserId($userId);
-        if (!$settings->delete()) {
-
-            foreach ($settings->getMessages() as $message) {
-                $this->flash->error($message);
-            }
-
-            return;
-        }*/
-
-        $this->flash->success("user was deleted successfully");
+        $this->flash->success("Пользователь успешно удален");
 
         $this->dispatcher->forward([
             'controller' => "users",

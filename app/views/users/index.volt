@@ -81,8 +81,8 @@
             <td>{{ user.getRole() }}</td>
 
 
-                <td>{{ link_to("users/edit/"~user.getUserid(), "Edit") }}</td>
-                <td>{{ link_to("users/delete/"~user.getUserid(), "Delete") }}</td>
+                <td>{{ link_to("users/edit/"~user.getUserid(), "Изменить") }}</td>
+                <td>{{ link_to("users/delete/"~user.getUserid(), "Удалить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -99,10 +99,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("users/search", "First") }}</li>
-                <li>{{ link_to("users/search?page="~page.before, "Previous") }}</li>
-                <li>{{ link_to("users/search?page="~page.next, "Next") }}</li>
-                <li>{{ link_to("users/search?page="~page.last, "Last") }}</li>
+                <li>{{ link_to("users/search", "Первая") }}</li>
+                <li>{{ link_to("users/search?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("users/search?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("users/search?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

@@ -39,7 +39,12 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function setSearchRadius($searchRadius)
     {
-        $this->searchRadius = $searchRadius;
+        if($searchRadius == ""){
+            $searchRadius = null;
+        }
+        else {
+            $this->searchRadius = $searchRadius;
+        }
 
         return $this;
     }
@@ -61,6 +66,7 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function getSearchRadius()
     {
+
         return $this->searchRadius;
     }
 

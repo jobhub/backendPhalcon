@@ -18,12 +18,39 @@ class CategoriesController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Categories', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "categoryId";
+
+        $categories = Categories::find($parameters);
+        if (count($categories) == 0) {
+            $this->flash->notice("Не найдено ни одной категории");
+        }
+
+        $paginator = new Paginator([
+            'data' => $categories,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
     /**
      * Searches for categories
      */
-    public function searchAction()
+    /*public function searchAction()
     {
         $numberPage = 1;
         if ($this->request->isPost()) {
@@ -58,7 +85,7 @@ class CategoriesController extends ControllerBase
         ]);
 
         $this->view->page = $paginator->getPaginate();
-    }
+    }*/
 
     /**
      * Displays the creation form
@@ -79,7 +106,7 @@ class CategoriesController extends ControllerBase
 
             $categorie = Categories::findFirstBycategoryId($categoryId);
             if (!$categorie) {
-                $this->flash->error("categorie was not found");
+                $this->flash->error("Категория не найдена");
 
                 $this->dispatcher->forward([
                     'controller' => "categories",
@@ -128,7 +155,7 @@ class CategoriesController extends ControllerBase
             return;
         }
 
-        $this->flash->success("categorie was created successfully");
+        $this->flash->success("Категория успешно создана");
 
         $this->dispatcher->forward([
             'controller' => "categories",
@@ -156,7 +183,7 @@ class CategoriesController extends ControllerBase
         $categorie = Categories::findFirstBycategoryId($categoryId);
 
         if (!$categorie) {
-            $this->flash->error("categorie does not exist " . $categoryId);
+            $this->flash->error("Категория с ID " . $categoryId . " не существует");
 
             $this->dispatcher->forward([
                 'controller' => "categories",
@@ -184,7 +211,7 @@ class CategoriesController extends ControllerBase
             return;
         }
 
-        $this->flash->success("categorie was updated successfully");
+        $this->flash->success("Категория успешно изменена");
 
         $this->dispatcher->forward([
             'controller' => "categories",
@@ -201,7 +228,7 @@ class CategoriesController extends ControllerBase
     {
         $categorie = Categories::findFirstBycategoryId($categoryId);
         if (!$categorie) {
-            $this->flash->error("categorie was not found");
+            $this->flash->error("Категория не найдена");
 
             $this->dispatcher->forward([
                 'controller' => "categories",
@@ -225,7 +252,7 @@ class CategoriesController extends ControllerBase
             return;
         }
 
-        $this->flash->success("categorie was deleted successfully");
+        $this->flash->success("Категория успешно удалена");
 
         $this->dispatcher->forward([
             'controller' => "categories",
