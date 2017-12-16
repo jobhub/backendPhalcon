@@ -287,8 +287,8 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->hasOne('userId', 'Settings', 'userId', ['alias' => 'Settings']);
+        $this->hasOne('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**

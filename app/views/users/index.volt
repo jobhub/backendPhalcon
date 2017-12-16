@@ -36,6 +36,8 @@
 </div>
 
 
+
+
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         {{ submit_button('Фильтр', 'class': 'btn btn-default') }}
@@ -50,7 +52,12 @@
                 <th>ID пользователя</th>
             <th>Email</th>
             <th>Телефон</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Дата рождения</th>
+            <th>Исполнитель</th>
             <th>Роль</th>
+
 
                 <th></th>
                 <th></th>
@@ -63,7 +70,16 @@
                 <td>{{ user.getUserid() }}</td>
             <td>{{ user.getEmail() }}</td>
             <td>{{ user.getPhone() }}</td>
+            <td>{{ user.userinfo.getFirstname() }}</td>
+            <td>{{ user.userinfo.getLastname() }}</td>
+            <td>{{ user.userinfo.getBirthday() }}</td>
+            {% if user.userinfo.getExecutor() == 1 %}
+            <td> Исполнитель </td>
+            {% else %}
+            <td> Заказчик </td>
+            {% endif  %}
             <td>{{ user.getRole() }}</td>
+
 
                 <td>{{ link_to("users/edit/"~user.getUserid(), "Edit") }}</td>
                 <td>{{ link_to("users/delete/"~user.getUserid(), "Delete") }}</td>

@@ -90,7 +90,7 @@ class Users extends \Phalcon\Mvc\Model
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = sha1($password);
 
         return $this;
     }
@@ -191,7 +191,7 @@ class Users extends \Phalcon\Mvc\Model
         $this->hasMany('userId', 'Logs', 'userId', ['alias' => 'Logs']);
         $this->hasMany('userId', 'Offers', 'userId', ['alias' => 'Offers']);
         $this->hasMany('userId', 'Tasks', 'userId', ['alias' => 'Tasks']);
-        $this->hasMany('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->hasOne('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
     }
 
     /**

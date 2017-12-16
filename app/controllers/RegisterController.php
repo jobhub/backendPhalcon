@@ -56,7 +56,7 @@ class RegisterController extends ControllerBase
             $user = new Users();
             $user->setEMail($email);
             $user->setPhone($phone);
-            $user->setPassword(sha1($password));
+            $user->setPassword($password);
             $user->setRole("User");
 
             if ($user->save() == false) {

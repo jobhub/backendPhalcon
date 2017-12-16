@@ -3,6 +3,7 @@
 use Phalcon\Forms\Form;
 use Phalcon\Forms\Element\Text;
 use Phalcon\Forms\Element\Password;
+use Phalcon\Forms\Element\Select;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
 
@@ -30,16 +31,6 @@ class RegisterForm extends Form
             ])
         ]);
         $this->add($lastname);
-
-        $male = new Text('male', ['class' => 'form-control']);
-        $male->setLabel('Пол:');
-        //$phone->setFilters(['alpha']);
-        $male->addValidators([
-            new PresenceOf([
-                'message' => 'Необходимо указать пол'
-            ])
-        ]);
-        $this->add($male);
 
         $phone = new Text('phone', ['class' => 'form-control']);
         $phone->setLabel('Номер телефона:');
@@ -76,7 +67,24 @@ class RegisterForm extends Form
         ]);
         $this->add($phone);
 
-        // Email
+
+        $male = new Select(
+            "male",
+            ['1'=>'Мужской','0'=>'Женский'],
+            [
+                "useEmpty"   => false,
+                'class' => 'form-control'
+            ]
+        );
+        $male->setLabel('Пол:');
+        //$phone->setFilters(['alpha']);
+        $male->addValidators([
+            new PresenceOf([
+                'message' => 'Необходимо указать пол'
+            ])
+        ]);
+
+        $this->add($male);
 
 
         // Password

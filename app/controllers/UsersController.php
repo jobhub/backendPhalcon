@@ -20,7 +20,10 @@ class UsersController extends ControllerBase
         $numberPage = 1;
 
         if($this->request->isPost()) {
+
             $query = Criteria::fromInput($this->di, 'Users', $_POST);
+            $query2 = Criteria::fromInput($this->di, 'Userinfo', $_POST);
+
             $this->persistent->parameters = $query->getParams();
         }
         else{
@@ -33,20 +36,12 @@ class UsersController extends ControllerBase
         }
         $parameters["order"] = "userId";
 
+        //$userinfo = Userinfo::findFirst($parameters);
+
         $users = Users::find($parameters);
         if (count($users) == 0) {
             $this->flash->notice("The search did not find any users");
         }
-
-        /*$userAllInfo = $users;
-        foreach($userAllInfo as $key => $user){
-            $userinfo = Userinfo::find([
-                "userId = :userId",
-                "bind" => [
-                    "userId"    => $user->getUserId(),
-                ]]);
-
-        }*/
 
         $paginator = new Paginator([
             'data' => $users,
@@ -132,7 +127,22 @@ class UsersController extends ControllerBase
             $this->tag->setDefault("email", $user->getEmail());
             $this->tag->setDefault("phone", $user->getPhone());
             $this->tag->setDefault("role", $user->getRole());
-            
+
+            $userinfo = Userinfo::findFirstByuserId($userId);
+
+            $this->tag->setDefault("userId", $userinfo->getUserId());
+            $this->tag->setDefault("firstname", $userinfo->getFirstname());
+            $this->tag->setDefault("patronymic", $userinfo->getPatronymic());
+            $this->tag->setDefault("lastname", $userinfo->getLastname());
+            $this->tag->setDefault("birthday", $userinfo->getBirthday());
+            $this->tag->setDefault("male", $userinfo->getMale());
+            $this->tag->setDefault("address", $userinfo->getAddress());
+            $this->tag->setDefault("about", $userinfo->getAbout());
+            $this->tag->setDefault("executor", $userinfo->getExecutor());
+
+            $settings = Settings::findFirstByuserId($userId);
+
+            $this->tag->setDefault("radius", $settings->getSearchRadius());
         }
     }
 
@@ -170,7 +180,35 @@ class UsersController extends ControllerBase
             return;
         }
 
+        $userInfo = new Userinfo();
+        $userInfo->setUserId($user->getUserId());
+        $userInfo->setFirstname($this->request->getPost('firstname'));
+        $userInfo->setLastname($this->request->getPost('lastname'));
+        $userInfo->setMale($this->request->getPost('male'));
+        $userInfo->setExecutor(0);
+
+        if ($userInfo->save() == false) {
+
+            foreach ($userInfo->getMessages() as $message) {
+                $this->flash->error((string) $message);
+            }
+        }
+
+        $setting = new Settings();
+        $setting->setUserId($user->getUserId());
+
+        if ($setting->save() == false) {
+
+            foreach ($setting->getMessages() as $message) {
+                $this->flash->error((string) $message);
+            }
+        }
+
         $this->flash->success("user was created successfully");
+
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
+        }
 
         $this->dispatcher->forward([
             'controller' => "users",
@@ -210,12 +248,13 @@ class UsersController extends ControllerBase
 
         $user->setEmail($this->request->getPost("email"));
         $user->setPhone($this->request->getPost("phone"));
-        $user->setPassword(sha1($this->request->getPost("password")));
+        $user->setPassword($this->request->getPost("password"));
         $user->setRole($this->request->getPost("role"));
-        
+
+        $this->db->begin();
 
         if (!$user->save()) {
-
+            $this->db->rollback();
             foreach ($user->getMessages() as $message) {
                 $this->flash->error($message);
             }
@@ -228,6 +267,54 @@ class UsersController extends ControllerBase
 
             return;
         }
+
+        $userinfo = UserInfo::findFirstByuserId($userId);
+
+        $userinfo->setFirstname($this->request->getPost("firstname"));
+        $userinfo->setLastname($this->request->getPost("lastname"));
+        $userinfo->setPatronymic($this->request->getPost("patronymic"));
+        //$userinfo->setBirthday($this->request->getPost("birthday"));
+        $userinfo->setMale($this->request->getPost("male"));
+        $userinfo->setAddress($this->request->getPost("address"));
+        $userinfo->setAbout($this->request->getPost("about"));
+        $userinfo->setExecutor($this->request->getPost("executor"));
+
+        if (!$userinfo->save()) {
+            $this->db->rollback();
+            foreach ($userinfo->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            $this->dispatcher->forward([
+                'controller' => "users",
+                'action' => 'edit',
+                'params' => [$user->getUserid()]
+            ]);
+
+            return;
+        }
+
+        $settings = Settings::findFirstByuserId($userId);
+
+        $settings->setSearchRadius($this->request->getPost("radius"));
+
+
+        if (!$settings->save()) {
+            $this->db->rollback();
+            foreach ($settings->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            $this->dispatcher->forward([
+                'controller' => "users",
+                'action' => 'edit',
+                'params' => [$user->getUserid()]
+            ]);
+
+            return;
+        }
+
+        $this->db->commit();
 
         $this->flash->success("user was updated successfully");
 
@@ -273,6 +360,27 @@ class UsersController extends ControllerBase
 
             return;
         }
+
+        //Мда, они ж каскаждным удалением удаляются
+        /*$userinfo = Userinfo::findFirstByuserId($userId);
+        if (!$userinfo->delete()) {
+
+            foreach ($userinfo->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            return;
+        }
+
+        $settings = Settings::findFirstByuserId($userId);
+        if (!$settings->delete()) {
+
+            foreach ($settings->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            return;
+        }*/
 
         $this->flash->success("user was deleted successfully");
 

@@ -71,7 +71,7 @@ class Settings extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("settings");
-        $this->belongsTo('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->hasOne('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
     }
 
     /**
