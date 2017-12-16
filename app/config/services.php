@@ -120,6 +120,8 @@ $di->set(
         // Создаем менеджер событий
         $eventsManager = new EventsManager();
 
+
+
         // Отлавливаем исключения и not-found исключения, используя NotFoundPlugin
         $eventsManager->attach(
             "dispatch:beforeException",

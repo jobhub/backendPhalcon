@@ -58,7 +58,24 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="235">
               <caret line="106" column="0" lean-forward="true" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
-              <folding />
+              <folding>
+                <marker date="1513437132161" expanded="true" signature="2079:3115" ph="{...}" />
+                <marker date="1513437132161" expanded="true" signature="2126:3115" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6025:6597" ph="{...}" />
+                <marker date="1513437132161" expanded="true" signature="6060:6399" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6122:6182" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6224:6367" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6225:6366" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6506:6589" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6606:6674" ph=" Deletes a userinfo ..." />
+                <marker date="1513437132161" expanded="true" signature="6808:7035" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6908:7003" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="6909:7002" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="7073:7365" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="7135:7195" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="7237:7333" ph="..." />
+                <marker date="1513437132161" expanded="true" signature="7238:7332" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -110,9 +127,11 @@
       <file leaf-file-name="UserInfo.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/UserInfo.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4013">
-              <caret line="292" column="0" lean-forward="false" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="3911">
+              <caret line="286" column="0" lean-forward="false" selection-start-line="286" selection-start-column="0" selection-end-line="286" selection-end-column="0" />
+              <folding>
+                <marker date="1513437132621" expanded="true" signature="48:5891" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -362,12 +381,12 @@
       <workItem from="1513331400959" duration="3706000" />
       <workItem from="1513416194341" duration="2161000" />
       <workItem from="1513423873997" duration="7951000" />
-      <workItem from="1513432758297" duration="4317000" />
+      <workItem from="1513432758297" duration="3828000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61987000" />
+    <option name="totallyTimeSpent" value="61498000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -407,18 +426,8 @@
           <line>298</line>
           <option name="timeStamp" value="76" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/controllers/UsersController.php</url>
-          <line>270</line>
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/controllers/UsersController.php</url>
-          <line>296</line>
-          <option name="timeStamp" value="78" />
-        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="79" />
+      <option name="time" value="77" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="index.php">
@@ -672,7 +681,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -734,19 +742,46 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Settings.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="392">
+          <caret line="60" column="7" lean-forward="true" selection-start-line="60" selection-start-column="7" selection-end-line="60" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/UserInfoController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="235">
           <caret line="106" column="0" lean-forward="true" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1513437132161" expanded="true" signature="2079:3115" ph="{...}" />
+            <marker date="1513437132161" expanded="true" signature="2126:3115" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6025:6597" ph="{...}" />
+            <marker date="1513437132161" expanded="true" signature="6060:6399" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6122:6182" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6224:6367" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6225:6366" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6506:6589" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6606:6674" ph=" Deletes a userinfo ..." />
+            <marker date="1513437132161" expanded="true" signature="6808:7035" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6908:7003" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="6909:7002" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="7073:7365" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="7135:7195" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="7237:7333" ph="..." />
+            <marker date="1513437132161" expanded="true" signature="7238:7332" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/UserInfo.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4013">
-          <caret line="292" column="0" lean-forward="false" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="3911">
+          <caret line="286" column="0" lean-forward="false" selection-start-line="286" selection-start-column="0" selection-end-line="286" selection-end-column="0" />
+          <folding>
+            <marker date="1513437132621" expanded="true" signature="48:5891" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -770,8 +805,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/ErrorsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+        <state relative-caret-position="66">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -783,14 +818,6 @@
           <folding>
             <element signature="e#8#39#0#PHP" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Settings.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="60" column="7" lean-forward="true" selection-start-line="60" selection-start-column="7" selection-end-line="60" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>

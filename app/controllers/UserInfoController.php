@@ -115,8 +115,7 @@ class UserinfoController extends ControllerBase
             $this->tag->setDefault("male", $userinfo->male);
             $this->tag->setDefault("address", $userinfo->address);
             $this->tag->setDefault("about", $userinfo->about);
-            $this->tag->setDefault("executor", $userinfo->executor);
-
+            $this->tag->setDefault("executor",$userinfo->executor);
         }
     }
 
@@ -182,8 +181,8 @@ class UserinfoController extends ControllerBase
 
             return;
         }
-
-        $userId = $_SESSION['auth']['id'];
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
         $userinfo = Userinfo::findFirstByuserId($userId);
 
         if (!$userinfo) {
@@ -197,16 +196,19 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $userinfo->Userid = $_SESSION['auth']['id'];
-        $userinfo->Firstname = $this->request->getPost("firstname");
-        $userinfo->Patronymic = $this->request->getPost("patronymic");
-        $userinfo->Lastname = $this->request->getPost("lastname");
-        $userinfo->Birthday = $this->request->getPost("birthday");
-        $userinfo->Male = $this->request->getPost("male");
-        $userinfo->Address = $this->request->getPost("address");
-        $userinfo->About = $this->request->getPost("about");
-        $userinfo->Executor = $this->request->getPost("executor");
-
+        $userinfo->setUserid($auth['id']);
+        $userinfo->setFirstname($this->request->getPost("firstname"));
+        $userinfo->setPatronymic($this->request->getPost("patronymic"));
+        $userinfo->setLastname($this->request->getPost("lastname"));
+        $userinfo->setBirthday($this->request->getPost("birthday"));
+        if($this->request->getPost("male")==="1")
+            $userinfo->setMale("1");
+        else
+            $userinfo->setMale("0");
+        //$userinfo->Male = $this->request->getPost("male");
+        $userinfo->setAddress($this->request->getPost("address"));
+        $userinfo->setAbout($this->request->getPost("about"));
+        $userinfo->setExecutor($this->request->getPost("executor"));
 
         if (!$userinfo->save()) {
 
