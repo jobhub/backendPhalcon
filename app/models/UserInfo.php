@@ -18,7 +18,9 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
 
 
+
     protected $firstname;
+
 
     /**
      *
