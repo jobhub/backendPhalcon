@@ -16,18 +16,13 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
-
-
-
     protected $firstname;
-
 
     /**
      *
      * @var string
      * @Column(type="string", length=30, nullable=true)
      */
-
     protected $patronymic;
 
     /**
@@ -279,7 +274,6 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this->executor;
     }
 
-
     /**
      * Initialize method for model.
      */
@@ -289,6 +283,16 @@ class Userinfo extends \Phalcon\Mvc\Model
         $this->setSource("userinfo");
         $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'userinfo';
     }
 
     /**
@@ -311,16 +315,6 @@ class Userinfo extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'userinfo';
     }
 
 }
