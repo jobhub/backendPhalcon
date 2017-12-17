@@ -53,6 +53,8 @@ class RegisterController extends ControllerBase
                 return true;
             }
 
+            $this->db->begin();
+
             $user = new Users();
             $user->setEMail($email);
             $user->setPhone($phone);
@@ -60,6 +62,7 @@ class RegisterController extends ControllerBase
             $user->setRole("User");
 
             if ($user->save() == false) {
+                $this->db->rollback();
 
                 foreach ($user->getMessages() as $message) {
                     $this->flash->error((string) $message);
@@ -75,6 +78,7 @@ class RegisterController extends ControllerBase
 
                 if ($userInfo->save() == false) {
 
+                    $this->db->rollback();
                     foreach ($userInfo->getMessages() as $message) {
                         $this->flash->error((string) $message);
                     }
@@ -85,6 +89,7 @@ class RegisterController extends ControllerBase
 
                 if ($setting->save() == false) {
 
+                    $this->db->rollback();
                     foreach ($setting->getMessages() as $message) {
                         $this->flash->error((string) $message);
                     }
@@ -95,10 +100,11 @@ class RegisterController extends ControllerBase
                 $this->flash->success('Спасибо за регистрацию.');
 
 
+                $this->db->commit();
                 return $this->dispatcher->forward(
                     [
-                        "controller" => "index",
-                        "action"     => "index",
+                        "controller" => "session",
+                        "action"     => "start",
                     ]
                 );
 

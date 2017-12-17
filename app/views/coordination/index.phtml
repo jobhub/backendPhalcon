@@ -1,0 +1,84 @@
+<?php
+/**
+ * @var \Phalcon\Mvc\View\Engine\Php $this
+ */
+?>
+
+<div class="page-header">
+    <h1>
+        Чат
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-sm-1">
+        <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
+            <?php echo $page->current, "/", $page->total_pages ?>
+        </p>
+    </div>
+    <div class="col-sm-11">
+        <nav>
+            <ul class="pagination">
+                <li><?php echo $this->tag->linkTo("coordination/index", "Первая") ?></li>
+                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->before, "Предыдущая") ?></li>
+                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->next, "Следующая") ?></li>
+                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->last, "Последняя") ?></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<?php echo $this->getContent() ?>
+
+<div class="row">
+    <table class="table">
+        <!--<thead>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>-->
+        <tbody>
+        <?php foreach ($page->items as $message): ?>
+            <tr>
+                <td><?php
+                    if($message->getInput() != $owner)
+                        echo 'Вы: ' . $message->getMessage() . ' (' .$message->getDate().')';
+                    ?></td>
+                <td><?php
+                    if($message->getInput() == $owner)
+                        echo  $otherUser->Userinfo->getFirstname() .' ' . $otherUser->Userinfo->getLastname() . ': '
+                            .  $message->getMessage() . ' (' .$message->getDate().')';
+                    ?></td>
+
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php
+    echo $this->tag->form(
+        [
+            "coordination/create",
+            "autocomplete" => "off",
+            "class" => "form-horizontal"
+        ]
+    );
+?>
+
+
+
+<div class="form-group">
+    <div class="col-sm-10">
+        <?php echo $this->tag->textArea(["message", "cols" => 30, "rows" => 4, "class" => "form-control", "id" => "fieldMessage"]) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+        <?php echo $this->tag->submitButton(["Отправить", "class" => "btn btn-default"]) ?>
+    </div>
+</div>
+
+<?php echo $this->tag->endForm(); ?>

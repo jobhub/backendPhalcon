@@ -3,13 +3,13 @@
         Задания
     </h1>
     <p>
-        {{ link_to("tasks/new", "Создать задание") }}
+        {{ link_to("tasksModer/new", "Создать задание") }}
     </p>
 </div>
 
 {{ content() }}
 
-{{ form("tasks/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+{{ form("tasksModer/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
     <label for="fieldTaskid" class="col-sm-2 control-label">ID задания</label>
@@ -28,26 +28,27 @@
 <div class="form-group">
     <label for="fieldCategoryid" class="col-sm-2 control-label">Категория</label>
     <div class="col-sm-10">
-        {{ select("categoryId", categories,"using":['categoryId','categoryName'] "class" : "form-control", "id" : "fieldCategoryid") }}
+        {{ select('categoryId', categories, 'using':['categoryId', 'categoryName'],"useEmpty":true,"emptyValue":null,
+        'emptyText':'',"class" : "form-control", "id" : "fieldCategoryid") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldDescription" class="col-sm-2 control-label">Description</label>
+    <label for="fieldDescription" class="col-sm-2 control-label">Описание</label>
     <div class="col-sm-10">
-        {{ text_field("description", "size" : 30, "class" : "form-control", "id" : "fieldDescription") }}
+        {{ text_area("description", "size" : 30, "class" : "form-control", "id" : "fieldDescription") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldDeadline" class="col-sm-2 control-label">Deadline</label>
+    <label for="fieldDeadline" class="col-sm-2 control-label">Время завершения выполнения</label>
     <div class="col-sm-10">
-        {{ text_field("deadline", "size" : 30, "class" : "form-control", "id" : "fieldDeadline") }}
+        {{ date_field("deadline", "size" : 30, "class" : "form-control", "id" : "fieldDeadline") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldPrice" class="col-sm-2 control-label">Price</label>
+    <label for="fieldPrice" class="col-sm-2 control-label">Цена</label>
     <div class="col-sm-10">
         {{ text_field("price", "type" : "numeric", "class" : "form-control", "id" : "fieldPrice") }}
     </div>
@@ -66,12 +67,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>TaskId</th>
-            <th>UserId</th>
-            <th>CategoryId</th>
-            <th>Description</th>
-            <th>Deadline</th>
-            <th>Price</th>
+                <th>ID задания</th>
+            <th>ID пользователя</th>
+            <th>Категория</th>
+            <th>Описание</th>
+            <th>Дата завершения</th>
+            <th>Цена</th>
 
                 <th></th>
                 <th></th>
@@ -83,13 +84,13 @@
             <tr>
                 <td>{{ task.getTaskid() }}</td>
             <td>{{ task.getUserid() }}</td>
-            <td>{{ task.getCategoryid() }}</td>
+            <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getDeadline() }}</td>
             <td>{{ task.getPrice() }}</td>
 
-                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Edit") }}</td>
-                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Delete") }}</td>
+                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Изменить") }}</td>
+                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -106,10 +107,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("tasks/search", "First") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.before, "Previous") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.next, "Next") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.last, "Last") }}</li>
+                <li>{{ link_to("tasks/index", "Первая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

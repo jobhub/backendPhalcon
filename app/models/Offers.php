@@ -185,51 +185,6 @@ class Offers extends \Phalcon\Mvc\Model
         return $this->price;
     }
 
-    /**
-     * Method to set the value of field offerId
-     *
-     * @param integer $offerId
-     * @return $this
-     */
-    public function setOfferId($offerId)
-    {
-        $this->offerId = $offerId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field userId
-     *
-     * @param integer $userId
-     * @return $this
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field offerId
-     *
-     * @return integer
-     */
-    public function getOfferId()
-    {
-        return $this->offerId;
-    }
-
-    /**
-     * Returns the value of field userId
-     *
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->userId;
-    }
 
     /**
      * Initialize method for model.
@@ -238,7 +193,7 @@ class Offers extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("offers");
-        $this->hasMany('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
+        $this->hasOne('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 

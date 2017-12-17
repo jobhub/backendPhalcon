@@ -43,7 +43,7 @@ class Elements extends Component
             'action' => 'index',
         ],
         'Задания' => [
-            'controller' => 'tasks',
+            'controller' => 'tasksModer',
             'action' => 'index',
         ],
         'Аукционы' => [
@@ -60,6 +60,10 @@ class Elements extends Component
         ],
         'Категории' => [
             'controller' => 'categories',
+            'action' => 'index',
+        ],
+        'Сообщения' => [
+            'controller' => 'messages',
             'action' => 'index',
         ]
     ];

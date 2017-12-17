@@ -5,9 +5,6 @@
         {{ get_title() }}
         {{ stylesheet_link('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css') }}
         {{ stylesheet_link('css/bootstrap-theme.min.css')}}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Your invoices">
-        <meta name="author" content="Phalcon Team">
     </head>
     <body>
         {{ content() }}

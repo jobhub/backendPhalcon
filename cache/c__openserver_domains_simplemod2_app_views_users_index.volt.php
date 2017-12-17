@@ -99,10 +99,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li><?= $this->tag->linkTo(['users/search', 'Первая']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->before, 'Предыдущая']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->next, 'Следующая']) ?></li>
-                <li><?= $this->tag->linkTo(['users/search?page=' . $page->last, 'Последняя']) ?></li>
+                <li><?= $this->tag->linkTo(['users/index', 'Первая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/index?page=' . $page->before, 'Предыдущая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/index?page=' . $page->next, 'Следующая']) ?></li>
+                <li><?= $this->tag->linkTo(['users/index?page=' . $page->last, 'Последняя']) ?></li>
             </ul>
         </nav>
     </div>

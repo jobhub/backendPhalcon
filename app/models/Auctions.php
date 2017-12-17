@@ -159,11 +159,12 @@ class Auctions extends \Phalcon\Mvc\Model
     /**
      * Initialize method for model.
      */
+
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("auctions");
-        $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
+        $this->hasOne('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
         $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
     }
 

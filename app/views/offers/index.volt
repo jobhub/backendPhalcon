@@ -100,10 +100,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("users/search", "Первая") }}</li>
-                <li>{{ link_to("users/search?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("users/search?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("users/search?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("offers/index", "Первая") }}</li>
+                <li>{{ link_to("offers/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("offers/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("offers/index?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

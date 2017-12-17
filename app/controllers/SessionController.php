@@ -78,7 +78,9 @@ class SessionController extends ControllerBase
 
     public function endAction()
     {
+        //$this->session->destroy();
         $this->session->remove('auth');
+        $this->session->destroy();
         $this->flash->success('Goodbye!');
 
         return $this->dispatcher->forward(
