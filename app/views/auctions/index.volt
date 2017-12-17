@@ -64,7 +64,6 @@
             <td>{{ auction.getDateend() }}</td>
 
                 <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
-                <td>{{ link_to("auctions/enter/"~auction.getAuctionid(), "Вступить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
