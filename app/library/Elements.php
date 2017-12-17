@@ -20,6 +20,14 @@ class Elements extends Component
                 'caption' => 'Профиль',
                 'action' => 'index'
             ],
+            'tasks' => [
+                'caption' => 'Задания',
+                'action' => 'index'
+            ],
+            'auctions' => [
+                'caption' => 'Тендеры',
+                'action' => 'index'
+            ],
         ],
         'navbar-right' => [
             'users' => [

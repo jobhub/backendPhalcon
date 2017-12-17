@@ -53,7 +53,10 @@ class SecurityPlugin extends Plugin
 			//Private area resources
             //Тоже надо бы из БД взять
 			$privateResources = [
-                'coordination' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+
+                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing'],
+                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
 			];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -63,12 +66,10 @@ class SecurityPlugin extends Plugin
 			$moderatorsResources = [
                 'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasksModer' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -78,7 +79,6 @@ class SecurityPlugin extends Plugin
 			//Public area resources
             //БД, все БД.
 			$publicResources = [
-
                 'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'userinfo'   =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
 				'index'      => ['index'],

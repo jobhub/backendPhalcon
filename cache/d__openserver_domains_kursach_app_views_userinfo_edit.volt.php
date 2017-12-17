@@ -81,7 +81,7 @@
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        <?= $this->tag->submitButton(['Send', 'class' => 'btn btn-default']) ?>
+        <?= $this->tag->submitButton(['Сохранить', 'class' => 'btn btn-default']) ?>
     </div>
 </div>
 

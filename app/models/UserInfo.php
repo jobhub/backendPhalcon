@@ -127,12 +127,9 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setBirthday($birthday)
     {
-        if($birthday == ""){
-            $birthday = null;
-        }
-        else {
-            $this->birthday = $birthday;
-        }
+        if($birthday==="")
+            $birthday=null;
+        $this->birthday = $birthday;
 
         return $this;
     }
@@ -286,8 +283,8 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->hasOne('userId', 'Settings', 'userId', ['alias' => 'Settings']);
-        $this->hasOne('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
+        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**

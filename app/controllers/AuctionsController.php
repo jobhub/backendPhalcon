@@ -90,8 +90,24 @@ class AuctionsController extends ControllerBase
     /**
      * Displays the creation form
      */
-    public function newAction()
+    public function newAction($taskId)
     {
+
+        $task=Tasks::find($taskId);
+        $task=$task->getFirst();
+        $this->view->setVar("task",$task);
+
+        $this->session->set("taskId",$task->getTaskId());
+
+        $categories=Categories::find();
+        $this->view->setVar("categories", $categories);
+       // $this->tag->setDefault()
+        $this->tag->setDefault("name", $task->getName());
+        $this->tag->setDefault("categoryId", $task->getCategoryid());
+        $this->tag->setDefault("description", $task->getDescription());
+        $this->tag->setDefault("address", $task->getaddress());
+        $this->tag->setDefault("deadline", $task->getDeadline());
+        $this->tag->setDefault("price", $task->getPrice());
 
     }
 
@@ -142,11 +158,16 @@ class AuctionsController extends ControllerBase
         }
 
         $auction = new Auctions();
-        $auction->setAuctionid($this->request->getPost("auctionId"));
-        $auction->setTaskid($this->request->getPost("taskId"));
-        $auction->setSelectedoffer($this->request->getPost("selectedOffer"));
+        if($this->session->get("taskId")!='') {
+            $taskId = $this->session->get("taskId");
+            $this->session->remove("taskId");
+        }
+
+        $today = date("Y-m-d");
+        $auction->setTaskid($taskId);
         $auction->setDatestart($this->request->getPost("dateStart"));
         $auction->setDateend($this->request->getPost("dateEnd"));
+        $auction->setDateStart($today);
         
 
         if (!$auction->save()) {
@@ -200,9 +221,14 @@ class AuctionsController extends ControllerBase
             return;
         }
 
-        $auction->setAuctionid($this->request->getPost("auctionId"));
-        $auction->setTaskid($this->request->getPost("taskId"));
-        $auction->setSelectedoffer($this->request->getPost("selectedOffer"));
+        if($this->session->get("taskId")!='') {
+            $taskId = $this->session->get("taskId");
+            $this->session->remove("taskId");
+        }
+
+
+        $auction->setTaskid($taskId);
+
         $auction->setDatestart($this->request->getPost("dateStart"));
         $auction->setDateend($this->request->getPost("dateEnd"));
         
@@ -269,6 +295,41 @@ class AuctionsController extends ControllerBase
             'controller' => "auctions",
             'action' => "index"
         ]);
+    }
+
+    public function enterAction(){
+
+
+
+    }
+
+    public function viewingAction($auctionId)
+    {
+            $auction=Auctions::find($auctionId);
+            $auction=$auction->getFirst();
+        if (!$auction) {
+            $this->flash->error("auction does not exist " . $auctionId);
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+            $task=Tasks::find($auction->getTaskId());
+            $task=$task->getFirst();
+            $categories=Categories::find();
+            $this->view->setVar("categories", $categories);
+            $this->tag->setDefault("auctionId",$auction->getAuctionId());
+            $this->tag->setDefault("name", $task->getName());
+            $this->tag->setDefault("categoryId", $task->getCategoryid());
+            $this->tag->setDefault("description", $task->getDescription());
+            $this->tag->setDefault("address", $task->getaddress());
+            $this->tag->setDefault("deadline", $task->getDeadline());
+            $this->tag->setDefault("price", $task->getPrice());
+            $this->tag->setDefault("dateStart",$auction->getDateStart());
+            $this->tag->setDefault("dateEnd",$auction->getDateEnd());
     }
 
 }

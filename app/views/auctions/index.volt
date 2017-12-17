@@ -1,10 +1,7 @@
 <div class="page-header">
     <h1>
-        Search auctions
+        Доступные тендеры
     </h1>
-    <p>
-        {{ link_to("auctions/new", "Create auctions") }}
-    </p>
 </div>
 
 {{ content() }}
@@ -12,37 +9,24 @@
 {{ form("auctions/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
-    <label for="fieldAuctionid" class="col-sm-2 control-label">AuctionId</label>
+    <label for="fieldAuctionid" class="col-sm-2 control-label">Номер тендера</label>
     <div class="col-sm-10">
         {{ text_field("auctionId", "type" : "numeric", "class" : "form-control", "id" : "fieldAuctionid") }}
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldTaskid" class="col-sm-2 control-label">TaskId</label>
-    <div class="col-sm-10">
-        {{ text_field("taskId", "type" : "numeric", "class" : "form-control", "id" : "fieldTaskid") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldSelectedoffer" class="col-sm-2 control-label">SelectedOffer</label>
-    <div class="col-sm-10">
-        {{ text_field("selectedOffer", "type" : "numeric", "class" : "form-control", "id" : "fieldSelectedoffer") }}
-    </div>
-</div>
-
-<div class="form-group">
     <label for="fieldDatestart" class="col-sm-2 control-label">DateStart</label>
     <div class="col-sm-10">
-        {{ text_field("dateStart", "size" : 30, "class" : "form-control", "id" : "fieldDatestart") }}
+        {{ date_field("dateStart","class":"form-control","id" : "fieldDatestart") }}
     </div>
 </div>
 
 <div class="form-group">
     <label for="fieldDateend" class="col-sm-2 control-label">DateEnd</label>
     <div class="col-sm-10">
-        {{ text_field("dateEnd", "size" : 30, "class" : "form-control", "id" : "fieldDateend") }}
+        {{ date_field("dateEnd","class":"form-control","id" : "fieldDateend") }}
+    </div>
     </div>
 </div>
 
@@ -79,8 +63,8 @@
             <td>{{ auction.getDatestart() }}</td>
             <td>{{ auction.getDateend() }}</td>
 
-                <td>{{ link_to("auctions/edit/"~auction.getAuctionid(), "Edit") }}</td>
-                <td>{{ link_to("auctions/delete/"~auction.getAuctionid(), "Delete") }}</td>
+                <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
+                <td>{{ link_to("auctions/enter/"~auction.getAuctionid(), "Вступить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}

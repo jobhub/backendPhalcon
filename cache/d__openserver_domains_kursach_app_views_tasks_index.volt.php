@@ -1,9 +1,9 @@
 <div class="page-header">
     <h1>
-        Search tasks
+        Созданные задания
     </h1>
     <p>
-        <?= $this->tag->linkTo(['tasks/new', 'Create tasks']) ?>
+        <?= $this->tag->linkTo(['tasks/new', 'Создать задание']) ?>
     </p>
 </div>
 
@@ -12,42 +12,29 @@
 <?= $this->tag->form(['tasks/index', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
 
 <div class="form-group">
-    <label for="fieldTaskid" class="col-sm-2 control-label">TaskId</label>
+    <label for="fieldTaskid" class="col-sm-2 control-label">Номер задания</label>
     <div class="col-sm-10">
         <?= $this->tag->textField(['taskId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldTaskid']) ?>
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldUserid" class="col-sm-2 control-label">UserId</label>
+    <label for="fieldCategoryid" class="col-sm-2 control-label">Категория</label>
     <div class="col-sm-10">
-        <?= $this->tag->textField(['userId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldUserid']) ?>
+        <?= $this->tag->select(['categoryId', $categories, 'using' => ['categoryId', 'categoryName'], 'useEmpty' => true, 'emptyText' => '', 'emptyValue' => '', 'class' => 'form-control', 'id' => 'fieldCategoryid']) ?>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label for="fieldDeadline" class="col-sm-2 control-label">Дата работ</label>
+    <div class="col-sm-10">
+        <?= $this->tag->dateField(['deadline', 'class' => 'form-control', 'id' => 'fieldDeadline']) ?>
     </div>
 </div>
 
 <div class="form-group">
-    <label for="fieldCategoryid" class="col-sm-2 control-label">CategoryId</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['categoryId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldCategoryid']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDescription" class="col-sm-2 control-label">Description</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['description', 'size' => 30, 'class' => 'form-control', 'id' => 'fieldDescription']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDeadline" class="col-sm-2 control-label">Deadline</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['deadline', 'size' => 30, 'class' => 'form-control', 'id' => 'fieldDeadline']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldPrice" class="col-sm-2 control-label">Price</label>
+    <label for="fieldPrice" class="col-sm-2 control-label">Стоимость</label>
     <div class="col-sm-10">
         <?= $this->tag->textField(['price', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldPrice']) ?>
     </div>
@@ -66,12 +53,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>TaskId</th>
-            <th>UserId</th>
-            <th>CategoryId</th>
-            <th>Description</th>
-            <th>Deadline</th>
-            <th>Price</th>
+                <th>Номер Задания</th>
+            <th>Категория</th>
+            <th>Описание</th>
+            <th>Адрес</th>
+            <th>Дата работ</th>
+            <th>Стоимость</th>
 
                 <th></th>
                 <th></th>
@@ -80,16 +67,17 @@
         <tbody>
         <?php if (isset($page->items)) { ?>
         <?php foreach ($page->items as $task) { ?>
+
             <tr>
                 <td><?= $task->getTaskid() ?></td>
-            <td><?= $task->getUserid() ?></td>
             <td><?= $task->getCategoryid() ?></td>
             <td><?= $task->getDescription() ?></td>
+            <td><?= $task->getaddress() ?></td>
             <td><?= $task->getDeadline() ?></td>
             <td><?= $task->getPrice() ?></td>
 
-                <td><?= $this->tag->linkTo(['tasks/edit/' . $task->getTaskid(), 'Edit']) ?></td>
-                <td><?= $this->tag->linkTo(['tasks/delete/' . $task->getTaskid(), 'Delete']) ?></td>
+                <td><?= $this->tag->linkTo(['tasks/edit/' . $task->getTaskid(), 'Редактировать']) ?></td>
+                <td><?= $this->tag->linkTo(['tasks/delete/' . $task->getTaskid(), 'Удалить']) ?></td>
             </tr>
         <?php } ?>
         <?php } ?>

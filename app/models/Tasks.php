@@ -7,6 +7,7 @@ class Tasks extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $taskId;
@@ -28,9 +29,23 @@ class Tasks extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
+     * @Column(type="string", length=50, nullable=false)
+     */
+    protected $name;
+
+    /**
+     *
+     * @var string
      * @Column(type="string", length=1000, nullable=true)
      */
     protected $description;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=100, nullable=false)
+     */
+    protected $address;
 
     /**
      *
@@ -86,6 +101,19 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field name
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
      * Method to set the value of field description
      *
      * @param string $description
@@ -94,6 +122,19 @@ class Tasks extends \Phalcon\Mvc\Model
     public function setDescription($description)
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field address
+     *
+     * @param string $address
+     * @return $this
+     */
+    public function setaddress($address)
+    {
+        $this->address = $address;
 
         return $this;
     }
@@ -155,6 +196,16 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Returns the value of field description
      *
      * @return string
@@ -162,6 +213,16 @@ class Tasks extends \Phalcon\Mvc\Model
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Returns the value of field address
+     *
+     * @return string
+     */
+    public function getaddress()
+    {
+        return $this->address;
     }
 
     /**
@@ -184,8 +245,6 @@ class Tasks extends \Phalcon\Mvc\Model
         return $this->price;
     }
 
-
-
     /**
      * Initialize method for model.
      */
@@ -196,6 +255,16 @@ class Tasks extends \Phalcon\Mvc\Model
         $this->hasMany('taskId', 'Auctions', 'taskId', ['alias' => 'Auctions']);
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'tasks';
     }
 
     /**
@@ -218,16 +287,6 @@ class Tasks extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'tasks';
     }
 
 }
