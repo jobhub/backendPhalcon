@@ -8,13 +8,20 @@
 
 <div class="page-header">
     <h1>
-        Создать тендер
+        Просмотр тендера
     </h1>
 </div>
 
 {{ content() }}
 
-{{ form("auctions/create", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+{{ form("offers/new", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+
+<div class="form-group">
+    <label for="fieldAuctionid" class="col-sm-2 control-label">Номер тендера</label>
+    <div class="col-sm-10">
+        {{ text_field("auctionId", "type" : "numeric", "class" : "form-control", "id" : "fieldAuctionid", 'readonly':'true') }}
+    </div>
+</div>
 
 <div class="form-group">
     <label for="fieldName" class="col-sm-2 control-label">Название</label>
@@ -58,19 +65,26 @@
     </div>
 </div>
 
-
+<div class="form-group">
+    <label for="fieldDatestart" class="col-sm-2 control-label">Дата начала тендера</label>
+    <div class="col-sm-10">
+        {{ date_field("dateStart","class":"form-control","id" : "fieldDatestart",'readonly':'true' )}}
+    </div>
+</div>
 
 <div class="form-group">
     <label for="fieldDateend" class="col-sm-2 control-label">Дата окончания тендера</label>
     <div class="col-sm-10">
-        {{ date_field("dateEnd","class":"form-control","id" : "fieldDateend") }}
+        {{ date_field("dateEnd","class":"form-control","id" : "fieldDateend",'readonly':'true') }}
     </div>
 </div>
 
 
+{{ hidden_field("id") }}
+
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        {{ submit_button('Создать', 'class': 'btn btn-default') }}
+        {{ submit_button('Вступить', 'class': 'btn btn-default') }}
     </div>
 </div>
 

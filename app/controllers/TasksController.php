@@ -18,9 +18,17 @@ class TasksController extends ControllerBase
     {
         $this->persistent->parameters = null;
 
+        $categories=Categories::find();
+        $this->view->setVar("categories", $categories);
+
+
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
+            $query->andWhere();
             $this->persistent->parameters = $query->getParams();
         } else {
             $numberPage = $this->request->getQuery("page", "int");
@@ -30,9 +38,9 @@ class TasksController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
-        $parameters["order"] = "taskId";
-
-        $tasks = Tasks::find($parameters);
+       // $parameters["userId"] = $userId;
+       // $parameters["order"] = "taskId";
+        $tasks = Tasks::find("userId=$userId");
         if (count($tasks) == 0) {
             $this->flash->notice("The search did not find any tasks");
         }
@@ -91,6 +99,8 @@ class TasksController extends ControllerBase
      */
     public function newAction()
     {
+        $categories=Categories::find();
+        $this->view->setVar("categories", $categories);
 
     }
 
@@ -114,6 +124,8 @@ class TasksController extends ControllerBase
 
                 return;
             }
+            $categories=Categories::find();
+            $this->view->setVar("categories", $categories);
 
             $this->view->taskId = $task->getTaskid();
 
@@ -121,8 +133,11 @@ class TasksController extends ControllerBase
             $this->tag->setDefault("userId", $task->getUserid());
             $this->tag->setDefault("categoryId", $task->getCategoryid());
             $this->tag->setDefault("description", $task->getDescription());
+            $this->tag->setDefault("address", $task->getaddress());
             $this->tag->setDefault("deadline", $task->getDeadline());
             $this->tag->setDefault("price", $task->getPrice());
+
+            $this->session->set("taskId", $task->getTaskid());
             
         }
     }
@@ -141,11 +156,16 @@ class TasksController extends ControllerBase
             return;
         }
 
+
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
         $task = new Tasks();
-        $task->setTaskid($this->request->getPost("taskId"));
-        $task->setUserid($this->request->getPost("userId"));
+       // $task->setTaskid($this->request->getPost("taskId"));
+        $task->setUserid($userId);
         $task->setCategoryid($this->request->getPost("categoryId"));
+        $task->setName($this->request->getPost("name"));
         $task->setDescription($this->request->getPost("description"));
+        $task->setaddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         
@@ -166,8 +186,9 @@ class TasksController extends ControllerBase
         $this->flash->success("task was created successfully");
 
         $this->dispatcher->forward([
-            'controller' => "tasks",
-            'action' => 'index'
+            'controller' => "auctions",
+            'action' => 'new',
+            'params' => [$task->getTaskId()],
         ]);
     }
 
@@ -186,8 +207,10 @@ class TasksController extends ControllerBase
 
             return;
         }
-
-        $taskId = $this->request->getPost("taskId");
+        if($this->session->get("taskId")!='') {
+            $taskId = $this->session->get("taskId");
+            $this->session->remove("taskId");
+        }
         $task = Tasks::findFirstBytaskId($taskId);
 
         if (!$task) {
@@ -201,10 +224,14 @@ class TasksController extends ControllerBase
             return;
         }
 
-        $task->setTaskid($this->request->getPost("taskId"));
-        $task->setUserid($this->request->getPost("userId"));
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+
+        $task->setTaskid($taskId);
+        $task->setUserid($userId);
         $task->setCategoryid($this->request->getPost("categoryId"));
         $task->setDescription($this->request->getPost("description"));
+        $task->setaddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         

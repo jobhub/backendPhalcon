@@ -185,7 +185,6 @@ class Offers extends \Phalcon\Mvc\Model
         return $this->price;
     }
 
-
     /**
      * Initialize method for model.
      */
@@ -193,8 +192,19 @@ class Offers extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("offers");
-        $this->hasOne('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
+        $this->hasMany('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
+        $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'offers';
     }
 
     /**
@@ -217,16 +227,6 @@ class Offers extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'offers';
     }
 
 }

@@ -21,21 +21,21 @@ class Auctions extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=11, nullable=true)
      */
     protected $selectedOffer;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $dateStart;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $dateEnd;
 

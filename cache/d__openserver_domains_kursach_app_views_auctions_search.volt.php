@@ -1,43 +1,17 @@
+<div class="row">
+    <nav>
+        <ul class="pager">
+            <li class="previous"><?= $this->tag->linkTo(['auctions/index', 'Go Back']) ?></li>
+            <li class="next"><?= $this->tag->linkTo(['auctions/new', 'Create ']) ?></li>
+        </ul>
+    </nav>
+</div>
+
 <div class="page-header">
-    <h1>
-        Доступные тендеры
-    </h1>
+    <h1>Search result</h1>
 </div>
 
 <?= $this->getContent() ?>
-
-<?= $this->tag->form(['auctions/index', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
-
-<div class="form-group">
-    <label for="fieldAuctionid" class="col-sm-2 control-label">Номер тендера</label>
-    <div class="col-sm-10">
-        <?= $this->tag->textField(['auctionId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldAuctionid']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDatestart" class="col-sm-2 control-label">DateStart</label>
-    <div class="col-sm-10">
-        <?= $this->tag->dateField(['dateStart', 'class' => 'form-control', 'id' => 'fieldDatestart']) ?>
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDateend" class="col-sm-2 control-label">DateEnd</label>
-    <div class="col-sm-10">
-        <?= $this->tag->dateField(['dateEnd', 'class' => 'form-control', 'id' => 'fieldDateend']) ?>
-    </div>
-    </div>
-</div>
-
-
-<div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-        <?= $this->tag->submitButton(['Фильтр', 'class' => 'btn btn-default']) ?>
-    </div>
-</div>
-
-</form>
 
 <div class="row">
     <table class="table table-bordered">
@@ -63,8 +37,8 @@
             <td><?= $auction->getDatestart() ?></td>
             <td><?= $auction->getDateend() ?></td>
 
-                <td><?= $this->tag->linkTo(['auctions/viewing/' . $auction->getAuctionid(), 'Просмотреть']) ?></td>
-                <td><?= $this->tag->linkTo(['auctions/enter/' . $auction->getAuctionid(), 'Вступить']) ?></td>
+                <td><?= $this->tag->linkTo(['auctions/edit/' . $auction->getAuctionid(), 'Edit']) ?></td>
+                <td><?= $this->tag->linkTo(['auctions/delete/' . $auction->getAuctionid(), 'Delete']) ?></td>
             </tr>
         <?php } ?>
         <?php } ?>
@@ -89,4 +63,3 @@
         </nav>
     </div>
 </div>
-
