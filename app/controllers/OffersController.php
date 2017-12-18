@@ -145,7 +145,59 @@ class OffersController extends ControllerBase
             $this->tag->setDefault("deadline", $offer->getDeadline());
             $this->tag->setDefault("description", $offer->getDescription());
             $this->tag->setDefault("price", $offer->getPrice());
-            
+
+        }
+    }
+
+    public function editingAction($offerId)
+    {
+        $auth=$this->session->get("auth");
+        $offerUserId=Offers::findFirst("offerId=$offerId");
+        if($offerUserId == false)
+        {
+            $this->flash->notice("The search did not find any offers");
+
+            $this->dispatcher->forward([
+                "controller" => "offers",
+                "action" => "myoffers",
+                'params' => [$auth['id']],
+
+            ]);
+
+            return;
+        }
+        $offerUserId=$offerUserId->getUserId();
+        if($auth['id']===$offerUserId)
+        {
+        if (!$this->request->isPost()) {
+
+            $offer = Offers::findFirstByofferId($offerId);
+            if (!$offer) {
+                $this->flash->error("offer was not found");
+
+                $this->dispatcher->forward([
+                    'controller' => "offers",
+                    'action' => 'index'
+                ]);
+
+                return;
+            }
+
+            $this->view->offerId = $offer->getOfferid();
+            $this->tag->setDefault("offerId", $offer->getOfferid());
+            $this->tag->setDefault("deadline", $offer->getDeadline());
+            $this->tag->setDefault("description", $offer->getDescription());
+            $this->tag->setDefault("price", $offer->getPrice());
+        }
+        else
+        {
+            $this->dispatcher->forward([
+                'controller' => "offers",
+                'action' => 'myoffers',
+                'params' => [$auth['id']],
+            ]);
+        }
+
         }
     }
 
@@ -258,6 +310,63 @@ class OffersController extends ControllerBase
         ]);
     }
 
+
+    public function savingAction()
+    {
+        $auth=$this->session->get("auth");
+        if (!$this->request->isPost()) {
+            $this->dispatcher->forward([
+                'controller' => "offers",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+
+        $offerId = $this->request->getPost("offerId");
+        $offer = Offers::findFirstByofferId($offerId);
+
+        if (!$offer) {
+            $this->flash->error("offer does not exist " . $offerId);
+
+            $this->dispatcher->forward([
+                'controller' => "offers",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+
+        $offer->setOfferid($this->request->getPost("offerId"));
+        $offer->setUserid($auth['id']);
+        $offer->setDeadline($this->request->getPost("deadline"));
+        $offer->setDescription($this->request->getPost("description"));
+        $offer->setPrice($this->request->getPost("price"));
+
+
+        if (!$offer->save()) {
+
+            foreach ($offer->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            $this->dispatcher->forward([
+                'controller' => "offers",
+                'action' => 'edit',
+                'params' => [$offer->getOfferid()]
+            ]);
+
+            return;
+        }
+
+        $this->flash->success("offer was updated successfully");
+
+        $this->dispatcher->forward([
+            'controller' => "offers",
+            'action' => 'index'
+        ]);
+    }
+
     /**
      * Deletes a offer
      *
@@ -297,6 +406,100 @@ class OffersController extends ControllerBase
             'controller' => "offers",
             'action' => "index"
         ]);
+    }
+
+    public function deletingAction($offerId)
+    {
+        $auth=$this->session->get("auth");
+        $offerUserId=Offers::findFirst("offerId=$offerId");
+        if($offerUserId == false)
+        {
+            $this->flash->notice("The search did not find any offers");
+
+            $this->dispatcher->forward([
+                "controller" => "offers",
+                "action" => "myoffers",
+                'params' => [$auth['id']],
+
+            ]);
+
+            return;
+        }
+        $offerUserId=$offerUserId->getUserId();
+        if($auth['id']===$offerUserId) {
+            $offer = Offers::findFirstByofferId($offerId);
+            if (!$offer) {
+                $this->flash->error("offer was not found");
+
+                $this->dispatcher->forward([
+                    'controller' => "offers",
+                    'action' => 'index'
+                ]);
+
+                return;
+            }
+
+            if (!$offer->delete()) {
+
+                foreach ($offer->getMessages() as $message) {
+                    $this->flash->error($message);
+                }
+
+                $this->dispatcher->forward([
+                    'controller' => "offers",
+                    'action' => 'myoffers',
+                    'params' => [$auth['id']],
+                ]);
+
+                return;
+
+            }
+        }
+            $this->dispatcher->forward([
+                'controller' => "offers",
+                'action' => 'myoffers',
+                'params' => [$auth['id']],
+            ]);
+
+    }
+
+    public function myoffersAction($userId)
+    {
+        $this->persistent->parameters = null;
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Offers', $_POST);
+            $query->andWhere();
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        // $parameters["userId"] = $userId;
+        // $parameters["order"] = "taskId";
+        $offers = Offers::find("userId=$userId");
+        if (count($offers) == 0) {
+            $this->flash->notice("The search did not find any offers");
+        }
+        // $categoryId=$tasks->getCategoryId();
+        //   $categories=Categories::findFirst("categoryId=$categoryId");
+        //   $this->view->setVar("categories", $categories->getCategoryName());
+
+        $paginator = new Paginator([
+            'data' => $offers,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
 }
