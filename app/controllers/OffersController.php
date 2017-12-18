@@ -193,7 +193,7 @@ class OffersController extends ControllerBase
         $this->flash->success("offer was created successfully");
 
         $this->dispatcher->forward([
-            'controller' => "offers",
+            'controller' => "auctions",
             'action' => 'index'
         ]);
     }

@@ -8,7 +8,7 @@
 </div>
 
 {{ content() }}
-
+<!--
 {{ form("tasks/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
@@ -48,7 +48,7 @@
 </div>
 
 </form>
-
+-->
 <div class="row">
     <table class="table table-bordered">
         <thead>
@@ -78,6 +78,7 @@
 
                 <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
                 <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
+                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Аукцион") }}</td>
             </tr>
         {% endfor %}
         {% endif %}

@@ -297,8 +297,62 @@ class AuctionsController extends ControllerBase
         ]);
     }
 
-    public function enterAction(){
+    public function showAction($taskId){
 
+    $auction=Auctions::find("taskId=$taskId");
+    $auction=$auction->getFirst();
+        if (!$auction) {
+            $this->flash->error("auction does not exist ");
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+        $task=Tasks::find($auction->getTaskId());
+        $task=$task->getFirst();
+        $categories=Categories::find();
+        $this->view->setVar("categories", $categories);
+        $this->tag->setDefault("auctionId",$auction->getAuctionId());
+        $this->tag->setDefault("name", $task->getName());
+        $this->tag->setDefault("categoryId", $task->getCategoryid());
+        $this->tag->setDefault("description", $task->getDescription());
+        $this->tag->setDefault("address", $task->getaddress());
+        $this->tag->setDefault("deadline", $task->getDeadline());
+        $this->tag->setDefault("price", $task->getPrice());
+        $this->tag->setDefault("dateStart",$auction->getDateStart());
+        $this->tag->setDefault("dateEnd",$auction->getDateEnd());
+
+        $this->persistent->parameters = null;
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Offers', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        $parameters["order"] = "offerId";
+        $auctionid=$auction->getAuctionId();
+        $offers = Offers::find("auctionId=$auctionid");
+        if (count($offers) == 0) {
+            $this->flash->notice("The search did not find any auctions");
+        }
+
+        $paginator = new Paginator([
+            'data' => $offers,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
 
 
     }
@@ -308,7 +362,7 @@ class AuctionsController extends ControllerBase
             $auction=Auctions::find($auctionId);
             $auction=$auction->getFirst();
         if (!$auction) {
-            $this->flash->error("auction does not exist " . $auctionId);
+            $this->flash->error("auction does not exist ");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
@@ -332,4 +386,57 @@ class AuctionsController extends ControllerBase
             $this->tag->setDefault("dateEnd",$auction->getDateEnd());
     }
 
+    public function choiceAction($offerId)
+    {
+        $offer=Offers::find("offerId=$offerId");
+        $offer=$offer->getFirst();
+
+        if (!$offer) {
+            $this->flash->error("offer does not exist ");
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+        $auctionId=$offer->getAuctionId();
+        $auction=Auctions::find("auctionId=$auctionId");
+        $auction=$auction->getFirst();
+        if (!$auction) {
+            $this->flash->error("auction does not exist ");
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+        $auction->setSelectedOffer($offerId);
+
+        if (!$auction->save()) {
+
+            foreach ($auction->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'show',
+                'params' => [$auction->getAuctionid()]
+            ]);
+
+            return;
+        }
+
+        $this->flash->success("auction was updated successfully");
+
+        $this->dispatcher->forward([
+            'controller' => "tasks",
+            'action' => 'index'
+        ]);
+
+    }
 }

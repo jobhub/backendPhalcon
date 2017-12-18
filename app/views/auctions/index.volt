@@ -5,7 +5,7 @@
 </div>
 
 {{ content() }}
-
+<!--
 {{ form("auctions/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
@@ -38,7 +38,7 @@
 </div>
 
 </form>
-
+-->
 <div class="row">
     <table class="table table-bordered">
         <thead>
@@ -64,7 +64,6 @@
             <td>{{ auction.getDateend() }}</td>
 
                 <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
-                <td>{{ link_to("auctions/enter/"~auction.getAuctionid(), "Вступить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
