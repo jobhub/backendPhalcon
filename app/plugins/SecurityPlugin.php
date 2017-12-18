@@ -57,6 +57,7 @@ class SecurityPlugin extends Plugin
                 'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'userinfo'   =>['index', 'edit', 'save', 'delete','viewprofile'],
 			];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -70,6 +71,7 @@ class SecurityPlugin extends Plugin
                 'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'userinfo'   =>['index', 'edit', 'save', 'delete','viewprofile'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -79,13 +81,14 @@ class SecurityPlugin extends Plugin
 			//Public area resources
             //БД, все БД.
 			$publicResources = [
-                'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'userinfo'   =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+             //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'userinfo'   =>['viewprofile'],
 				'index'      => ['index'],
 				'register'   => ['index'],
 				'errors'     => ['show401', 'show404', 'show500'],
 				'session'    => ['index', 'register', 'start', 'end', 'action'],
                 'authorized'    => ['index', 'register', 'start', 'end', 'action'],
+                'auctions'      => ['index'],
 			];
 			foreach ($publicResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

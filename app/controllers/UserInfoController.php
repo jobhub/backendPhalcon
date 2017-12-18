@@ -20,19 +20,15 @@ class UserinfoController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
-        $user_id=$_SESSION['auth']['id'];
-        if($user_id)
+        $userid=$this->session->get("auth");
+
+        if($userid["id"])
         {
           $this->dispatcher->forward([
               'controller' => "userinfo",
               'action' => 'edit',
-              'params' => [$user_id]
+              'params' => [$userid["id"]]
           ]);
-        }
-        else {
-          $this->dispatcher->forward([
-              'controller' => "index",
-              'action' => 'index']);
         }
     }
 
@@ -91,31 +87,41 @@ class UserinfoController extends ControllerBase
      */
     public function editAction($userId)
     {
-        if (!$this->request->isPost()) {
+        $auth=$this->session->get("auth");
+        if($userId===$auth["id"]) {
+            if (!$this->request->isPost()) {
 
-            $userinfo = Userinfo::findFirstByuserId($userId);
-            if (!$userinfo) {
-                $this->flash->error("userinfo was not found");
+                $userinfo = Userinfo::findFirstByuserId($userId);
+                if (!$userinfo) {
+                    $this->flash->error("userinfo was not found");
 
-                $this->dispatcher->forward([
-                    'controller' => "userinfo",
-                    'action' => 'index'
-                ]);
+                    $this->dispatcher->forward([
+                        'controller' => "userinfo",
+                        'action' => 'index'
+                    ]);
 
-                return;
+                    return;
+                }
+
+                $this->view->userId = $userinfo->userId;
+
+
+                $this->tag->setDefault("firstname", $userinfo->firstname);
+                $this->tag->setDefault("patronymic", $userinfo->patronymic);
+                $this->tag->setDefault("lastname", $userinfo->lastname);
+                $this->tag->setDefault("birthday", $userinfo->birthday);
+                $this->tag->setDefault("male", $userinfo->male);
+                $this->tag->setDefault("address", $userinfo->address);
+                $this->tag->setDefault("about", $userinfo->about);
+                $this->tag->setDefault("executor", $userinfo->executor);
             }
-
-            $this->view->userId = $userinfo->userId;
-
-            $this->tag->setDefault("userId", $userinfo->userId);
-            $this->tag->setDefault("firstname", $userinfo->firstname);
-            $this->tag->setDefault("patronymic", $userinfo->patronymic);
-            $this->tag->setDefault("lastname", $userinfo->lastname);
-            $this->tag->setDefault("birthday", $userinfo->birthday);
-            $this->tag->setDefault("male", $userinfo->male);
-            $this->tag->setDefault("address", $userinfo->address);
-            $this->tag->setDefault("about", $userinfo->about);
-            $this->tag->setDefault("executor",$userinfo->executor);
+        }
+        else
+        {
+            $this->dispatcher->forward([
+                'controller' => "userinfo",
+                'action' => 'index'
+                ]);
         }
     }
 
@@ -272,6 +278,32 @@ class UserinfoController extends ControllerBase
             'controller' => "userinfo",
             'action' => "index"
         ]);
+    }
+
+    public function viewprofileAction($userId)
+    {
+        $userinfo = Userinfo::findFirstByuserId($userId);
+        if (!$userinfo) {
+            $this->flash->error("userinfo was not found");
+
+            $this->dispatcher->forward([
+                'controller' => "userinfo",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+
+        $this->tag->setDefault("firstname", $userinfo->firstname);
+        $this->tag->setDefault("patronymic", $userinfo->patronymic);
+        $this->tag->setDefault("lastname", $userinfo->lastname);
+        $this->tag->setDefault("birthday", $userinfo->birthday);
+        $this->tag->setDefault("male", $userinfo->male);
+        $this->tag->setDefault("address", $userinfo->address);
+        $this->tag->setDefault("about", $userinfo->about);
+        $this->tag->setDefault("executor",$userinfo->executor);
+
+
     }
 
 }

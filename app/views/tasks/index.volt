@@ -8,7 +8,7 @@
 </div>
 
 {{ content() }}
-
+<!--
 {{ form("tasks/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
@@ -48,7 +48,7 @@
 </div>
 
 </form>
-
+-->
 <div class="row">
     <table class="table table-bordered">
         <thead>

@@ -85,12 +85,11 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>OfferId</th>
-            <th>UserId</th>
-            <th>AuctionId</th>
-            <th>Deadline</th>
-            <th>Description</th>
-            <th>Price</th>
+            <th>Номер предложения</th>
+            <th>Пользователь</th>
+            <th>Срок</th>
+            <th>Описание</th>
+            <th>Стоимость</th>
 
             <th></th>
             <th></th>
@@ -101,12 +100,10 @@
             {% for offer in page.items %}
                 <tr>
                     <td>{{ offer.getOfferId() }}</td>
-                    <td>{{ offer.getUserId() }}</td>
-                    <td>{{ offer.getAuctionId() }}</td>
+                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), "Профиль") }}</td>
                     <td>{{ offer.getDeadline() }}</td>
                     <td>{{ offer.getDescription() }}</td>
                     <td>{{ offer.getPrice() }}</td>
-
                     <td>{{ link_to("auctions/choice/"~offer.getOfferId(), "Выбрать") }}</td>
                 </tr>
             {% endfor %}
