@@ -76,7 +76,7 @@ class TasksModerController extends ControllerBase
                 $this->flash->error("Задание не найдено");
 
                 $this->dispatcher->forward([
-                    'controller' => "tasks",
+                    'controller' => "tasksModer",
                     'action' => 'index'
                 ]);
 
@@ -90,9 +90,11 @@ class TasksModerController extends ControllerBase
             $this->view->taskId = $task->getTaskid();
 
             $this->tag->setDefault("taskId", $task->getTaskid());
+            $this->tag->setDefault("name", $task->getName());
             $this->tag->setDefault("userId", $task->getUserid());
             $this->tag->setDefault("categoryId", $task->getCategoryid());
             $this->tag->setDefault("description", $task->getDescription());
+            $this->tag->setDefault("address", $task->getAddress());
             $this->tag->setDefault("deadline", $task->getDeadline());
             $this->tag->setDefault("price", $task->getPrice());
             
@@ -106,7 +108,7 @@ class TasksModerController extends ControllerBase
     {
         if (!$this->request->isPost()) {
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'index'
             ]);
 
@@ -115,9 +117,11 @@ class TasksModerController extends ControllerBase
 
         $task = new Tasks();
         $task->setTaskid($this->request->getPost("taskId"));
+        $task->setName($this->request->getPost("name"));
         $task->setUserid($this->request->getPost("userId"));
         $task->setCategoryid($this->request->getPost("categoryId"));
         $task->setDescription($this->request->getPost("description"));
+        $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         
@@ -128,7 +132,7 @@ class TasksModerController extends ControllerBase
             }
 
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'new'
             ]);
 
@@ -137,8 +141,12 @@ class TasksModerController extends ControllerBase
 
         $this->flash->success("Задание успешно создано");
 
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
+        }
+
         $this->dispatcher->forward([
-            'controller' => "tasks",
+            'controller' => "tasksModer",
             'action' => 'index'
         ]);
     }
@@ -152,7 +160,7 @@ class TasksModerController extends ControllerBase
 
         if (!$this->request->isPost()) {
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'index'
             ]);
 
@@ -166,17 +174,18 @@ class TasksModerController extends ControllerBase
             $this->flash->error("Задание с ID " . $taskId . " не найдено ");
 
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'index'
             ]);
 
             return;
         }
 
-        $task->setTaskid($this->request->getPost("taskId"));
+        //$task->setTaskid($this->request->getPost("taskId"));
         $task->setUserid($this->request->getPost("userId"));
         $task->setCategoryid($this->request->getPost("categoryId"));
         $task->setDescription($this->request->getPost("description"));
+        $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         
@@ -188,7 +197,7 @@ class TasksModerController extends ControllerBase
             }
 
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'edit',
                 'params' => [$task->getTaskid()]
             ]);
@@ -198,8 +207,12 @@ class TasksModerController extends ControllerBase
 
         $this->flash->success("Задание успешно изменено");
 
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
+        }
+
         $this->dispatcher->forward([
-            'controller' => "tasks",
+            'controller' => "tasksModer",
             'action' => 'index'
         ]);
     }
@@ -216,7 +229,7 @@ class TasksModerController extends ControllerBase
             $this->flash->error("Задание не найдено");
 
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'index'
             ]);
 
@@ -230,7 +243,7 @@ class TasksModerController extends ControllerBase
             }
 
             $this->dispatcher->forward([
-                'controller' => "tasks",
+                'controller' => "tasksModer",
                 'action' => 'search'
             ]);
 
@@ -240,7 +253,7 @@ class TasksModerController extends ControllerBase
         $this->flash->success("Задание успешно удалено");
 
         $this->dispatcher->forward([
-            'controller' => "tasks",
+            'controller' => "tasksModer",
             'action' => "index"
         ]);
     }

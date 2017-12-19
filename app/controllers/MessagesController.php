@@ -40,7 +40,7 @@ class MessagesController extends ControllerBase
 
         $paginator = new Paginator([
             'data' => $messages,
-            'limit'=> 10,
+            'limit'=> 20,
             'page' => $numberPage
         ]);
 
@@ -104,6 +104,10 @@ class MessagesController extends ControllerBase
         if (!$message) {
             $this->flash->error("Сообщение с ID " . $messageId . " не существует");
 
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
+
             $this->dispatcher->forward([
                 'controller' => "messages",
                 'action' => 'index'
@@ -120,20 +124,24 @@ class MessagesController extends ControllerBase
 
         if (!$message->save()) {
 
-            foreach ($message->getMessages() as $message) {
-                $this->flash->error($message);
+            foreach ($message->getMessages() as $message1) {
+                $this->flash->error($message1);
             }
 
             $this->dispatcher->forward([
                 'controller' => "messages",
                 'action' => 'edit',
-                'params' => [$message->getMessageid()]
+                'params' => [$message->getMessageId()]
             ]);
 
             return;
         }
 
         $this->flash->success("Сообщение успешно изменено");
+
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
+        }
 
         $this->dispatcher->forward([
             'controller' => "messages",

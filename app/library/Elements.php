@@ -55,7 +55,7 @@ class Elements extends Component
             'action' => 'index',
         ],
         'Аукционы' => [
-            'controller' => 'auctions',
+            'controller' => 'auctionsModer',
             'action' => 'index',
         ],
         'Предложения' => [
@@ -95,6 +95,8 @@ class Elements extends Component
             }
         } else {
             unset($this->_headerMenu['navbar-right']['users']);
+            unset($this->_headerMenu['navbar-left']['userinfo']);
+            unset($this->_headerMenu['navbar-left']['tasks']);
         }
 
         $controllerName = $this->view->getControllerName();

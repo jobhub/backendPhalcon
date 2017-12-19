@@ -132,7 +132,7 @@ class Tasks extends \Phalcon\Mvc\Model
      * @param string $address
      * @return $this
      */
-    public function setaddress($address)
+    public function setAddress($address)
     {
         $this->address = $address;
 

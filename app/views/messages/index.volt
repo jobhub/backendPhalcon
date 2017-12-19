@@ -6,7 +6,7 @@
 
 {{ content() }}
 
-{{ form("messages/search", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+{{ form("messages/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
     <label for="fieldMessageid" class="col-sm-2 control-label">ID сообщения</label>
@@ -25,7 +25,7 @@
 <div class="form-group">
     <label for="fieldInput" class="col-sm-2 control-label">Тип сообщения</label>
     <div class="col-sm-10">
-        {{ select_static ("input", ['1':'От исполнителя', '0':'От заказчика'], "class" : "form-control", "id" : "fieldInput") }}
+        {{ select_static ("input", ['':'','1':'От исполнителя', '0':'От заказчика'], "class" : "form-control", "id" : "fieldInput") }}
     </div>
 </div>
 
@@ -36,12 +36,12 @@
     </div>
 </div>
 
-<div class="form-group">
+<!--<div class="form-group">
     <label for="fieldDate" class="col-sm-2 control-label">Дата и время отправки</label>
     <div class="col-sm-10">
         {{ date_field("date", "type" : "datetime", "class" : "form-control", "id" : "fieldDate") }}
     </div>
-</div>
+</div>-->
 
 
 <div class="form-group">
@@ -75,9 +75,9 @@
             <td>{{ message.getAuctionid() }}</td>
             <td>
             {% if message.getInput() == 1 %}
-                        <td> От исполнитель </td>
+                         От исполнителя
                         {% else %}
-                        <td> От заказчик </td>
+                         От заказчика
                         {% endif  %}
             </td>
             <td>{{ message.getMessage() }}</td>
