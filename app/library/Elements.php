@@ -22,7 +22,7 @@ class Elements extends Component
             ],
             'tasks' => [
                 'caption' => 'Задания',
-                'action' => 'index'
+                'action' => 'mytasks'
             ],
             'auctions' => [
                 'caption' => 'Тендеры',

@@ -17,7 +17,6 @@ class CoordinationController extends ControllerBase
      */
     public function indexAction($auctionId = null)
     {
-        $limit = 20;
         $this->persistent->parameters = null;
 
         if ($auctionId == null) {
@@ -90,23 +89,6 @@ class CoordinationController extends ControllerBase
             return;
         }
 
-        $numberPage = count($messages)/$limit+(count($messages)%$limit==0?0:1);
-        if ($this->request->get('page')!=null) {
-            $numberPage = $this->request->getQuery("page", "int");
-        }
-
-
-        if (count($messages) == 0) {
-            $this->flash->notice("The search did not find any messages");
-
-            $this->dispatcher->forward([
-                "controller" => "messages",
-                "action" => "index"
-            ]);
-
-            return;
-        }
-
 
         $this->view->setVar('owner', $owner);
         $this->view->setVar('otherUser', $otherUser);
@@ -118,14 +100,8 @@ class CoordinationController extends ControllerBase
                 'owner'=>$owner
             ]
         );
+        $this->view->setVar('messages', $messages);
 
-        $paginator = new Paginator([
-            'data' => $messages,
-            'limit' => $limit,
-            'page' => $numberPage
-        ]);
-
-        $this->view->page = $paginator->getPaginate();
     }
 
 

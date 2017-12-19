@@ -38,11 +38,10 @@ class RegisterController extends ControllerBase
 
             $user = Users::findFirst(
                 [
-                    "(email = :email: OR phone = :phone:) AND password = :password:",
+                    "(email = :email: OR phone = :phone:)",
                     "bind" => [
                         "email"    => $email,
                         "phone"    => $phone,
-                        "password" => sha1($password),
                     ]
                 ]
             );
