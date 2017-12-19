@@ -1,0 +1,10 @@
+.layer {
+    overflow: scroll; /* Добавляем полосы прокрутки */
+    width: 90%; /* Ширина блока */
+    height: 300px; /* Высота блока */
+    padding: 5px; /* Поля вокруг текста */
+}
+
+.with-background{
+    padding: 20px;
+}

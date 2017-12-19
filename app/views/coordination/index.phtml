@@ -10,42 +10,18 @@
     </h1>
 </div>
 
-<div class="row">
-    <div class="col-sm-1">
-        <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
-            <?php echo $page->current, "/", $page->total_pages ?>
-        </p>
-    </div>
-    <div class="col-sm-11">
-        <nav>
-            <ul class="pagination">
-                <li><?php echo $this->tag->linkTo("coordination/index", "Первая") ?></li>
-                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->before, "Предыдущая") ?></li>
-                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->next, "Следующая") ?></li>
-                <li><?php echo $this->tag->linkTo("coordination/index?page=" . $page->last, "Последняя") ?></li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
 <?php echo $this->getContent() ?>
 
-<div class="row">
-    <table class="table">
-        <!--<thead>
-        <tr>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>-->
+<div id = "chat" class="layer">
+    <table class="table-hover">
         <tbody>
-        <?php foreach ($page->items as $message): ?>
+        <?php foreach ($messages as $message): ?>
             <tr>
-                <td><?php
+                <td class="with-background"><?php
                     if($message->getInput() != $owner)
                         echo 'Вы: ' . $message->getMessage() . ' (' .$message->getDate().')';
                     ?></td>
-                <td><?php
+                <td class="with-background"><?php
                     if($message->getInput() == $owner)
                         echo  $otherUser->Userinfo->getFirstname() .' ' . $otherUser->Userinfo->getLastname() . ': '
                             .  $message->getMessage() . ' (' .$message->getDate().')';
@@ -56,6 +32,12 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    var block = document.getElementById("chat");
+    block.scrollTop = block.scrollHeight;
+    //$("div.chat").scrollTop = $("div.chat").scrollHeight;
+</script>
 
 <?php
     echo $this->tag->form(

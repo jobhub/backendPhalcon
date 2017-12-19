@@ -58,4 +58,10 @@ var SignUp = {
 $(document).ready(function () {
     $("#registerForm .alert").hide();
     $("div.profile .alert").hide();
+
+    var block = document.getElementById("chat");
+    block.scrollTop = block.scrollHeight;
+
 });
+
+
