@@ -66,12 +66,13 @@ class SecurityPlugin extends Plugin
 
 			$moderatorsResources = [
                 'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'tasksModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'auctionsModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'admin/auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'userinfo'   =>['index', 'edit', 'save', 'delete','viewprofile'],
+                'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {

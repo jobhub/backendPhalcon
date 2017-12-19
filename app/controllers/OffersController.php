@@ -37,6 +37,12 @@ class OffersController extends ControllerBase
             $this->flash->notice("The search did not find any offers");
         }
 
+        $userinfo = Userinfo::find();
+
+
+        //$this->view->$users = $users;
+        $this->view->setVar("users", $userinfo);
+
         $paginator = new Paginator([
             'data' => $offers,
             'limit'=> 10,

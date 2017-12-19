@@ -165,7 +165,7 @@ class TasksController extends ControllerBase
         $task->setCategoryid($this->request->getPost("categoryId"));
         $task->setName($this->request->getPost("name"));
         $task->setDescription($this->request->getPost("description"));
-        $task->setaddress($this->request->getPost("address"));
+        $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         
@@ -231,7 +231,7 @@ class TasksController extends ControllerBase
         $task->setUserid($userId);
         $task->setCategoryid($this->request->getPost("categoryId"));
         $task->setDescription($this->request->getPost("description"));
-        $task->setaddress($this->request->getPost("address"));
+        $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
         

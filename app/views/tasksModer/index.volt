@@ -19,6 +19,13 @@
 </div>
 
 <div class="form-group">
+    <label for="fieldName" class="col-sm-2 control-label">Название</label>
+    <div class="col-sm-10">
+        {{ text_field("name", "size" : 50, "class" : "form-control", "id" : "fieldName") }}
+    </div>
+</div>
+
+<div class="form-group">
     <label for="fieldUserid" class="col-sm-2 control-label">ID пользователя</label>
     <div class="col-sm-10">
         {{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}
@@ -37,6 +44,13 @@
     <label for="fieldDescription" class="col-sm-2 control-label">Описание</label>
     <div class="col-sm-10">
         {{ text_area("description", "size" : 30, "class" : "form-control", "id" : "fieldDescription") }}
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldaddress" class="col-sm-2 control-label">Адрес</label>
+    <div class="col-sm-10">
+        {{ text_field("address", "size" : 100, "class" : "form-control", "id" : "fieldaddress") }}
     </div>
 </div>
 
@@ -68,9 +82,11 @@
         <thead>
             <tr>
                 <th>ID задания</th>
+                <th>Название</th>
             <th>ID пользователя</th>
             <th>Категория</th>
             <th>Описание</th>
+            <th>Адрес</th>
             <th>Дата завершения</th>
             <th>Цена</th>
 
@@ -83,14 +99,16 @@
         {% for task in page.items %}
             <tr>
                 <td>{{ task.getTaskid() }}</td>
+                <td>{{ task.getName() }}</td>
             <td>{{ task.getUserid() }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
+            <td>{{ task.getAddress() }}</td>
             <td>{{ task.getDeadline() }}</td>
             <td>{{ task.getPrice() }}</td>
 
-                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Изменить") }}</td>
-                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
+                <td>{{ link_to("tasksModer/edit/"~task.getTaskid(), "Изменить") }}</td>
+                <td>{{ link_to("tasksModer/delete/"~task.getTaskid(), "Удалить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -107,9 +125,9 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("tasks/index", "Первая") }}</li>
-                <li>{{ link_to("tasks/index?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("tasks/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("tasksModer/index", "Первая") }}</li>
+                <li>{{ link_to("tasksModer/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("tasksModer/index?page="~page.next, "Следующая") }}</li>
                 <li>{{ link_to("tasks/index?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
