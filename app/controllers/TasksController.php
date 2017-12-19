@@ -243,7 +243,7 @@ class TasksController extends ControllerBase
             return;
         }
 
-        $this->flash->success("task was updated successfully");
+        $this->flash->success("Задание изменено успешно");
 
         $this->dispatcher->forward([
             'controller' => "tasks",
@@ -359,7 +359,7 @@ class TasksController extends ControllerBase
         // $parameters["order"] = "taskId";
         $offers = Offers::find("userId=$userId");
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Задание не найдено");
         }
         $tasks=$offers->auctions;
         $tasks=$offers->auctions->tasks;

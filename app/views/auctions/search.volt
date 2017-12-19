@@ -2,13 +2,13 @@
     <nav>
         <ul class="pager">
             <li class="previous">{{ link_to("auctions/index", "Go Back") }}</li>
-            <li class="next">{{ link_to("auctions/new", "Create ") }}</li>
+            <li class="next">{{ link_to("auctions/new", "Создать ") }}</li>
         </ul>
     </nav>
 </div>
 
 <div class="page-header">
-    <h1>Search result</h1>
+    <h1>Поиск тендеров</h1>
 </div>
 
 {{ content() }}
@@ -17,11 +17,11 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>AuctionId</th>
-            <th>TaskId</th>
-            <th>SelectedOffer</th>
-            <th>DateStart</th>
-            <th>DateEnd</th>
+                <th>№ Тендера</th>
+            <th>№ задания</th>
+            <th>Выбранное предложение</th>
+            <th>Дата начала</th>
+            <th>Дата конца</th>
 
                 <th></th>
                 <th></th>
@@ -37,8 +37,8 @@
             <td>{{ auction.getDatestart() }}</td>
             <td>{{ auction.getDateend() }}</td>
 
-                <td>{{ link_to("auctions/edit/"~auction.getAuctionid(), "Edit") }}</td>
-                <td>{{ link_to("auctions/delete/"~auction.getAuctionid(), "Delete") }}</td>
+                <td>{{ link_to("auctions/edit/"~auction.getAuctionid(), "Редактировать") }}</td>
+                <td>{{ link_to("auctions/delete/"~auction.getAuctionid(), "Удалить") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -55,10 +55,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("auctions/search", "First") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.before, "Previous") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.next, "Next") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.last, "Last") }}</li>
+                <li>{{ link_to("auctions/search", "Первая") }}</li>
+                <li>{{ link_to("auctions/search?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("auctions/search?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("auctions/search?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

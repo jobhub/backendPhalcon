@@ -56,10 +56,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("tasks/search", "First") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.before, "Previous") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.next, "Next") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.last, "Last") }}</li>
+                <li>{{ link_to("tasks/index", "Первая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("tasks/index?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

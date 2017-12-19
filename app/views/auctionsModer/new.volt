@@ -8,7 +8,7 @@
 
 <div class="page-header">
     <h1>
-        Create auctions
+        Создание тендера
     </h1>
 </div>
 
@@ -47,7 +47,7 @@
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-        {{ submit_button('Save', 'class': 'btn btn-default') }}
+        {{ submit_button('Сохранить', 'class': 'btn btn-default') }}
     </div>
 </div>
 

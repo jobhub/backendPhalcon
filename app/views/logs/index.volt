@@ -49,7 +49,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>LogId</th>
+                <th>№ Лога</th>
             <th>ID пользователя</th>
             <th>Controller</th>
             <th>Action</th>

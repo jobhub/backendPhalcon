@@ -53,7 +53,7 @@ class UserinfoController extends ControllerBase
 
         $userinfo = Userinfo::find($parameters);
         if (count($userinfo) == 0) {
-            $this->flash->notice("The search did not find any userinfo");
+            $this->flash->notice("Пользователь не найден");
 
             $this->dispatcher->forward([
                 "controller" => "userinfo",
@@ -93,7 +93,7 @@ class UserinfoController extends ControllerBase
 
                 $userinfo = Userinfo::findFirstByuserId($userId);
                 if (!$userinfo) {
-                    $this->flash->error("userinfo was not found");
+                    $this->flash->error("Информация о пользователе не найдена");
 
                     $this->dispatcher->forward([
                         'controller' => "userinfo",
@@ -164,7 +164,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $this->flash->success("userinfo was created successfully");
+        $this->flash->success("Информация сохранена успешно");
 
         $this->dispatcher->forward([
             'controller' => "userinfo",
@@ -192,7 +192,7 @@ class UserinfoController extends ControllerBase
         $userinfo = Userinfo::findFirstByuserId($userId);
 
         if (!$userinfo) {
-            $this->flash->error("userinfo does not exist " . $userId);
+            $this->flash->error("Пользователь не найден");
 
             $this->dispatcher->forward([
                 'controller' => "userinfo",
@@ -231,7 +231,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $this->flash->success("userinfo was updated successfully");
+        $this->flash->success("Информация сохранена");
 
         $this->dispatcher->forward([
             'controller' => "userinfo",
@@ -248,7 +248,7 @@ class UserinfoController extends ControllerBase
     {
         $userinfo = Userinfo::findFirstByuserId($userId);
         if (!$userinfo) {
-            $this->flash->error("userinfo was not found");
+            $this->flash->error("Пользователь не найден");
 
             $this->dispatcher->forward([
                 'controller' => "userinfo",
@@ -272,7 +272,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $this->flash->success("userinfo was deleted successfully");
+        $this->flash->success("Информация о пользователе удалена");
 
         $this->dispatcher->forward([
             'controller' => "userinfo",
@@ -284,7 +284,7 @@ class UserinfoController extends ControllerBase
     {
         $userinfo = Userinfo::findFirstByuserId($userId);
         if (!$userinfo) {
-            $this->flash->error("userinfo was not found");
+            $this->flash->error("Пользователь не найден");
 
             $this->dispatcher->forward([
                 'controller' => "userinfo",
