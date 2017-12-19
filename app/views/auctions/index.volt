@@ -43,11 +43,13 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>AuctionId</th>
-            <th>TaskId</th>
-            <th>SelectedOffer</th>
-            <th>DateStart</th>
-            <th>DateEnd</th>
+                <th>№ Тендера</th>
+            <th>Категория</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Адрес</th>
+            <th>Стоимость</th>
+            <th>Конец Тендера</th>
 
                 <th></th>
                 <th></th>
@@ -58,10 +60,12 @@
         {% for auction in page.items %}
             <tr>
                 <td>{{ auction.getAuctionid() }}</td>
-            <td>{{ auction.getTaskid() }}</td>
-            <td>{{ auction.getSelectedoffer() }}</td>
-            <td>{{ auction.getDatestart() }}</td>
-            <td>{{ auction.getDateend() }}</td>
+            <td>{{ auction.tasks.categories.getCategoryName() }}</td>
+            <td>{{ auction.tasks.getName() }}</td>
+            <td>{{ auction.tasks.getDescription() }}</td>
+            <td>{{ auction.tasks.getaddress() }}</td>
+            <td>{{ auction.tasks.getPrice() }}</td>
+            <td>{{ auction.getDateEnd() }}</td>
 
                 <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
             </tr>

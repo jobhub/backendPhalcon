@@ -44,7 +44,7 @@ class TasksController extends ControllerBase
 
         $tasks = Tasks::find($parameters);
         if (count($tasks) == 0) {
-            $this->flash->notice("The search did not find any tasks");
+            $this->flash->notice("Такого тендера не существует");
 
             $this->dispatcher->forward([
                 "controller" => "tasks",
@@ -84,7 +84,7 @@ class TasksController extends ControllerBase
         $taskUserId=Tasks::findFirst("taskId=$taskId");
         if($taskUserId == false)
         {
-            $this->flash->notice("The search did not find any tasks");
+            $this->flash->notice("Такого задания не существует");
 
             $this->dispatcher->forward([
                 "controller" => "tasks",
@@ -100,7 +100,7 @@ class TasksController extends ControllerBase
 
             $task = Tasks::findFirstBytaskId($taskId);
             if (!$task) {
-                $this->flash->error("task was not found");
+                $this->flash->error("Такого задания не существует");
 
                 $this->dispatcher->forward([
                     'controller' => "tasks",
@@ -175,7 +175,7 @@ class TasksController extends ControllerBase
             return;
         }
 
-        $this->flash->success("task was created successfully");
+        $this->flash->success("задание созданно успешно");
 
         $this->dispatcher->forward([
             'controller' => "auctions",
@@ -206,7 +206,7 @@ class TasksController extends ControllerBase
         $task = Tasks::findFirstBytaskId($taskId);
 
         if (!$task) {
-            $this->flash->error("task does not exist " . $taskId);
+            $this->flash->error("Такого задания несуществует " . $taskId);
 
             $this->dispatcher->forward([
                 'controller' => "tasks",
@@ -260,7 +260,7 @@ class TasksController extends ControllerBase
     {
         $task = Tasks::findFirstBytaskId($taskId);
         if (!$task) {
-            $this->flash->error("task was not found");
+            $this->flash->error("Такого задания не существует");
 
             $this->dispatcher->forward([
                 'controller' => "tasks",
@@ -284,7 +284,7 @@ class TasksController extends ControllerBase
             return;
         }
 
-        $this->flash->success("task was deleted successfully");
+        $this->flash->success("Задание удалено");
 
         $this->dispatcher->forward([
             'controller' => "tasks",
@@ -305,7 +305,6 @@ class TasksController extends ControllerBase
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
-            $query->andWhere();
             $this->persistent->parameters = $query->getParams();
         } else {
             $numberPage = $this->request->getQuery("page", "int");
@@ -319,7 +318,7 @@ class TasksController extends ControllerBase
          $parameters["order"] = "taskId";
         $tasks = Tasks::find("userId=$userId");
         if (count($tasks) == 0) {
-            $this->flash->notice("The search did not find any tasks");
+            $this->flash->notice("Такого задания не существует");
         }
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");

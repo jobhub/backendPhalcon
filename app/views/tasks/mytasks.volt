@@ -31,7 +31,7 @@
 
             <tr>
                 <td>{{ task.getTaskid() }}</td>
-            <td>{{ task.getCategoryid() }}</td>
+            <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getaddress() }}</td>
             <td>{{ task.getDeadline() }}</td>
@@ -39,7 +39,7 @@
 
                 <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
                 <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
-                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Аукцион") }}</td>
+                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Тендер") }}</td>
             </tr>
         {% endfor %}
         {% endif %}

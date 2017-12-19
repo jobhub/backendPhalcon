@@ -1,6 +1,6 @@
 <div class="page-header">
     <h1>
-        Созданные задания
+        Ваши предложения
     </h1>
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
@@ -15,8 +15,10 @@
         <thead>
             <tr>
                 <th>Номер предложения</th>
-            <th>Аукцион</th>
-            <th>Описание</th>
+                <th>Наименование работ</th>
+                <th>Описание работ</th>
+            <th>Тендер</th>
+            <th>Описание предложения</th>
             <th>Сроки</th>
             <th>Стоимость</th>
 
@@ -30,7 +32,9 @@
 
             <tr>
                 <td>{{ offers.getOfferId() }}</td>
-            <td>{{link_to("auctions/viewing/"~offers.getAuctionId(), "Аукцион") }}</td>
+                <td>{{ offers.auctions.tasks.getName() }}</td>
+                <td>{{ offers.auctions.tasks.getDescription() }}</td>
+            <td>{{link_to("auctions/viewing/"~offers.getAuctionId(), "Тендер") }}</td>
             <td>{{ offers.getDescription() }}</td>
             <td>{{ offers.getDeadline() }}</td>
             <td>{{ offers.getPrice() }}</td>

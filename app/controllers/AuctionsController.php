@@ -35,7 +35,7 @@ class AuctionsController extends ControllerBase
 
         $auctions = Auctions::find($parameters);
         if (count($auctions) == 0) {
-            $this->flash->notice("The search did not find any auctions");
+            $this->flash->notice("Такого тендера не существует");
         }
 
         $paginator = new Paginator([
@@ -68,7 +68,7 @@ class AuctionsController extends ControllerBase
 
         $auctions = Auctions::find($parameters);
         if (count($auctions) == 0) {
-            $this->flash->notice("The search did not find any auctions");
+            $this->flash->notice("Такого тендера не существует");
 
             $this->dispatcher->forward([
                 "controller" => "auctions",
@@ -95,19 +95,51 @@ class AuctionsController extends ControllerBase
 
         $task=Tasks::find($taskId);
         $task=$task->getFirst();
-        $this->view->setVar("task",$task);
 
-        $this->session->set("taskId",$task->getTaskId());
+        if($task==false)
+        {
+            $this->flash->notice("Задание не существует");
 
-        $categories=Categories::find();
-        $this->view->setVar("categories", $categories);
-       // $this->tag->setDefault()
-        $this->tag->setDefault("name", $task->getName());
-        $this->tag->setDefault("categoryId", $task->getCategoryid());
-        $this->tag->setDefault("description", $task->getDescription());
-        $this->tag->setDefault("address", $task->getaddress());
-        $this->tag->setDefault("deadline", $task->getDeadline());
-        $this->tag->setDefault("price", $task->getPrice());
+            $this->dispatcher->forward([
+                "controller" => "tasks",
+                "action" => "mytasks"
+            ]);
+
+            return;
+        }
+
+        $taskId=$task->getTaskId();
+        $auctions=Auctions::find("taskId=$taskId");
+        if (count($auctions) == 0) {
+            $this->view->setVar("task", $task);
+
+            $this->session->set("taskId", $task->getTaskId());
+
+            $categories = Categories::find();
+            $this->view->setVar("categories", $categories);
+            // $this->tag->setDefault()
+            $this->tag->setDefault("name", $task->getName());
+            $this->tag->setDefault("categoryId", $task->getCategoryid());
+            $this->tag->setDefault("description", $task->getDescription());
+            $this->tag->setDefault("address", $task->getaddress());
+            $this->tag->setDefault("deadline", $task->getDeadline());
+            $this->tag->setDefault("price", $task->getPrice());
+
+        }
+        else {
+
+            $auctions=$auctions->getFirst();
+            $this->flash->notice("Вы уже создали тендер по этому заданию");
+
+            $this->dispatcher->forward([
+                "controller" => "auctions",
+                "action" => "viewing",
+                'params' => [$auctions->getAuctionid()]
+            ]);
+
+            return;
+
+        }
 
     }
 
@@ -122,7 +154,7 @@ class AuctionsController extends ControllerBase
 
             $auction = Auctions::findFirstByauctionId($auctionId);
             if (!$auction) {
-                $this->flash->error("auction was not found");
+                $this->flash->error("Такого тендера не существует");
 
                 $this->dispatcher->forward([
                     'controller' => "auctions",
@@ -158,6 +190,7 @@ class AuctionsController extends ControllerBase
         }
 
         $auction = new Auctions();
+        $taskId=null;
         if($this->session->get("taskId")!='') {
             $taskId = $this->session->get("taskId");
             $this->session->remove("taskId");
@@ -183,12 +216,17 @@ class AuctionsController extends ControllerBase
             return;
         }
 
-        $this->flash->success("auction was created successfully");
+        $this->flash->success("Тендер был создан успешно");
+
+        $userid=$this->session->get("auth");
+        $userid=$userid['id'];
 
         $this->dispatcher->forward([
-            'controller' => "auctions",
-            'action' => 'index'
+            'controller' => "tasks",
+            'action' => 'mytasks',
+            'params' => [$userid],
         ]);
+
     }
 
     /**
@@ -211,7 +249,7 @@ class AuctionsController extends ControllerBase
         $auction = Auctions::findFirstByauctionId($auctionId);
 
         if (!$auction) {
-            $this->flash->error("auction does not exist " . $auctionId);
+            $this->flash->error("Такого тендера не существует");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
@@ -248,7 +286,7 @@ class AuctionsController extends ControllerBase
             return;
         }
 
-        $this->flash->success("auction was updated successfully");
+        $this->flash->success("Тендер был отредактирован успешно");
 
         $this->dispatcher->forward([
             'controller' => "auctions",
@@ -302,11 +340,11 @@ class AuctionsController extends ControllerBase
     $auction=Auctions::find("taskId=$taskId");
     $auction=$auction->getFirst();
         if (!$auction) {
-            $this->flash->error("auction does not exist ");
+            $this->flash->error("Такого тендера ещё нет. Создайте! ");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
-                'action' => 'index'
+                'action' => 'new'
             ]);
 
             return;
@@ -343,7 +381,7 @@ class AuctionsController extends ControllerBase
         $auctionid=$auction->getAuctionId();
         $offers = Offers::find("auctionId=$auctionid");
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any auctions");
+            $this->flash->notice("На ваш тендер ещё никто не ответил");
         }
 
         $paginator = new Paginator([
@@ -362,7 +400,7 @@ class AuctionsController extends ControllerBase
             $auction=Auctions::find($auctionId);
             $auction=$auction->getFirst();
         if (!$auction) {
-            $this->flash->error("auction does not exist ");
+            $this->flash->error("Такого тендера не существует");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",

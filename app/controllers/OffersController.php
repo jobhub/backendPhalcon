@@ -67,7 +67,7 @@ class OffersController extends ControllerBase
 
         $offers = Offers::find($parameters);
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Предложение не было найдено");
 
             $this->dispatcher->forward([
                 "controller" => "offers",
@@ -102,17 +102,30 @@ class OffersController extends ControllerBase
 
         $auctionId = $this->request->getPost("auctionId");
         $auction = Auctions::findFirstByauctionId($auctionId);
-
         if (!$auction) {
-            $this->flash->error("auction does not exist " . $auctionId);
+            $this->flash->error("Такого тендера не существует ");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
                 'action' => 'index'
             ]);
-
             return;
         }
+
+        $auth=$this->session->get('auth');
+        $userid=$auth['id'];
+        $offers=Offers::find("userId=$userid and auctionId=$auctionId");
+        if(count($offers) != 0)
+        {
+            $this->dispatcher->forward([
+                "controller" => "offers",
+                "action" => "myoffers",
+                'params' => [$userid]
+            ]);
+            $this->flash->error("Вы уже оставляли предложение для этого тендера ");
+            return;
+        }
+
         $this->session->set("auctionId",$auction->getAuctionId());
 
     }
@@ -219,6 +232,15 @@ class OffersController extends ControllerBase
         if($this->session->get("auctionId")!='') {
             $auctionId = $this->session->get("auctionId");
             $this->session->remove("auctionId");
+            $userid=$auth['id'];
+            $offers=Offers::find("userId=$userid and auctionId=$auctionId");
+            if(count($offers) != 0) {
+                $this->flash->error("Вы уже оставляли предложение для этого тендера ");
+                $this->dispatcher->forward([
+                    "controller" => "auctions",
+                    "action" => "index"
+                ]);
+            }
         }
 
         $offer = new Offers();
@@ -235,14 +257,14 @@ class OffersController extends ControllerBase
             }
 
             $this->dispatcher->forward([
-                'controller' => "offers",
+                'controller' => "auctions",
                 'action' => 'index'
             ]);
 
             return;
         }
 
-        $this->flash->success("offer was created successfully");
+        $this->flash->success("Предложение добавлено");
 
         $this->dispatcher->forward([
             'controller' => "auctions",
@@ -473,7 +495,6 @@ class OffersController extends ControllerBase
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Offers', $_POST);
-            $query->andWhere();
             $this->persistent->parameters = $query->getParams();
         } else {
             $numberPage = $this->request->getQuery("page", "int");
