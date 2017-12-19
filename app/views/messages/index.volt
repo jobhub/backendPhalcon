@@ -29,13 +29,6 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label for="fieldMessage" class="col-sm-2 control-label">Текст сообщения</label>
-    <div class="col-sm-10">
-        {{ text_area("message", "cols": "30", "rows": "4", "class" : "form-control", "id" : "fieldMessage") }}
-    </div>
-</div>
-
 <!--<div class="form-group">
     <label for="fieldDate" class="col-sm-2 control-label">Дата и время отправки</label>
     <div class="col-sm-10">

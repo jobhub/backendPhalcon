@@ -29,13 +29,6 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label for="fieldDate" class="col-sm-2 control-label">Дата</label>
-    <div class="col-sm-10">
-        {{ date_field("date", "size" : 30, "class" : "form-control", "id" : "fieldDate") }}
-    </div>
-</div>
-
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">

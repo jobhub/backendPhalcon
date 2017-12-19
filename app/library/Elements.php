@@ -54,7 +54,7 @@ class Elements extends Component
             'controller' => 'tasksModer',
             'action' => 'index',
         ],
-        'Аукционы' => [
+        'Тендеры' => [
             'controller' => 'auctionsModer',
             'action' => 'index',
         ],

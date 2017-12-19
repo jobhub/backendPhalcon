@@ -93,10 +93,16 @@ class AuctionsModerController extends ControllerBase
     public function createAction()
     {
         if (!$this->request->isPost()) {
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
+
             $this->dispatcher->forward([
                 'controller' => "auctionsModer",
                 'action' => 'index'
             ]);
+
+
 
             return;
         }
@@ -114,12 +120,18 @@ class AuctionsModerController extends ControllerBase
                 $this->flash->error($message);
             }
 
+
+
             $this->dispatcher->forward([
                 'controller' => "auctionsModer",
                 'action' => 'new'
             ]);
 
             return;
+        }
+
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
         }
 
         $this->flash->success("Тендер был создан");
@@ -152,6 +164,10 @@ class AuctionsModerController extends ControllerBase
         if (!$auction) {
             $this->flash->error("Тендер с ID " . $auctionId .' не существует');
 
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
+
             $this->dispatcher->forward([
                 'controller' => "auctionsModer",
                 'action' => 'index'
@@ -180,6 +196,10 @@ class AuctionsModerController extends ControllerBase
             ]);
 
             return;
+        }
+
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
         }
 
         $this->flash->success("Тендер был изменен");

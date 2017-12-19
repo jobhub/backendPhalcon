@@ -361,6 +361,7 @@ class TasksController extends ControllerBase
         if (count($offers) == 0) {
             $this->flash->notice("The search did not find any offers");
         }
+
         $tasks=$offers->auctions;
         $tasks=$offers->auctions->tasks;
 

@@ -40,34 +40,6 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label for="fieldDescription" class="col-sm-2 control-label">Описание</label>
-    <div class="col-sm-10">
-        {{ text_area("description", "size" : 30, "class" : "form-control", "id" : "fieldDescription") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldaddress" class="col-sm-2 control-label">Адрес</label>
-    <div class="col-sm-10">
-        {{ text_field("address", "size" : 100, "class" : "form-control", "id" : "fieldaddress") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDeadline" class="col-sm-2 control-label">Время завершения выполнения</label>
-    <div class="col-sm-10">
-        {{ date_field("deadline", "size" : 30, "class" : "form-control", "id" : "fieldDeadline") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldPrice" class="col-sm-2 control-label">Цена</label>
-    <div class="col-sm-10">
-        {{ text_field("price", "type" : "numeric", "class" : "form-control", "id" : "fieldPrice") }}
-    </div>
-</div>
-
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">

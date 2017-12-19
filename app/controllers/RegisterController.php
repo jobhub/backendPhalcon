@@ -19,7 +19,7 @@ class RegisterController extends ControllerBase
                 $messages = $form->getMessages();
 
                 foreach ($messages as $message) {
-                    echo $message, '<br>';
+                    $this->flash->error($message);
                 }
                 $this->view->form = $form;
                 return true;

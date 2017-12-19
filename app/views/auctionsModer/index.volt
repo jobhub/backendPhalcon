@@ -9,7 +9,7 @@
 
 {{ content() }}
 
-{{ form("auctions/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
+{{ form("auctionsModer/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
     <label for="fieldAuctionid" class="col-sm-2 control-label">ID тендера</label>
@@ -31,21 +31,6 @@
         {{ text_field("selectedOffer", "type" : "numeric", "class" : "form-control", "id" : "fieldSelectedoffer") }}
     </div>
 </div>
-
-<div class="form-group">
-    <label for="fieldDatestart" class="col-sm-2 control-label">Дата начала</label>
-    <div class="col-sm-10">
-        {{ date_field("dateStart", "size" : 30, "class" : "form-control", "id" : "fieldDatestart") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldDateend" class="col-sm-2 control-label">Дата завершения</label>
-    <div class="col-sm-10">
-        {{ date_field("dateEnd", "size" : 30, "class" : "form-control", "id" : "fieldDateend") }}
-    </div>
-</div>
-
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
@@ -97,10 +82,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("auctionsModer/search", "Первая") }}</li>
-                <li>{{ link_to("auctionsModer/search?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("auctionsModer/search?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("auctionsModer/search?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("auctionsModer/index", "Первая") }}</li>
+                <li>{{ link_to("auctionsModer/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("auctionsModer/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("auctionsModer/index?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>
