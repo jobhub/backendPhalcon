@@ -50,7 +50,7 @@ class SessionController extends ControllerBase
                 $this->_registerSession($user);
 
                 $this->flash->success(
-                    "Welcome"
+                    "Добро пожаловать!"
                 );
 
                 // Перенаправляем на контроллер 'invoices', если пользователь существует
@@ -81,7 +81,7 @@ class SessionController extends ControllerBase
         //$this->session->destroy();
         $this->session->remove('auth');
         $this->session->destroy();
-        $this->flash->success('Goodbye!');
+        $this->flash->success('До свидания!');
 
         return $this->dispatcher->forward(
             [

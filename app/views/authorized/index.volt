@@ -20,7 +20,7 @@
          {% endfor %}
          <div class="form-actions">
                      {{ submit_button('Войти', 'class': 'btn btn-primary', 'onclick': 'return SignUp.validate();') }}
-                     <p class="help-block">By signing up, you accept terms of use and privacy policy.</p>
+                     <p class="help-block">Регистрируясь вы подтверждаете, что принимаете пользовательское соглашение.</p>
                  </div>
 
     </fieldset>

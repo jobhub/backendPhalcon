@@ -397,6 +397,7 @@ class AuctionsController extends ControllerBase
     {
             $auction=Auctions::find($auctionId);
             $auction=$auction->getFirst();
+            $this->view->setVar('auction',$auction);
         if (!$auction) {
             $this->flash->error("Такого тендера не существует");
 

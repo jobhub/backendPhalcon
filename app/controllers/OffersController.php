@@ -34,7 +34,7 @@ class OffersController extends ControllerBase
 
         $offers = Offers::find($parameters);
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Предложение не найдено");
         }
 
         $userinfo = Userinfo::find();
@@ -57,6 +57,10 @@ class OffersController extends ControllerBase
      */
     public function searchAction()
     {
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Offers', $_POST);
@@ -69,6 +73,7 @@ class OffersController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
+        $parameters[0]="userId=$userId";
         $parameters["order"] = "offerId";
 
         $offers = Offers::find($parameters);
@@ -120,6 +125,16 @@ class OffersController extends ControllerBase
 
         $auth=$this->session->get('auth');
         $userid=$auth['id'];
+        $executor=Userinfo::findFirst("userId=$userid")->getExecutor();
+        if($executor==0)
+        {
+            $this->dispatcher->forward([
+                "controller" => "auctions",
+                "action" => "index"
+            ]);
+            $this->flash->error("Вы не являетесь исполнителем ");
+            return;
+        }
         $offers=Offers::find("userId=$userid and auctionId=$auctionId");
         if(count($offers) != 0)
         {
@@ -147,7 +162,7 @@ class OffersController extends ControllerBase
 
             $offer = Offers::findFirstByofferId($offerId);
             if (!$offer) {
-                $this->flash->error("offer was not found");
+                $this->flash->error("Предложение не найдено");
 
                 $this->dispatcher->forward([
                     'controller' => "offers",
@@ -174,7 +189,7 @@ class OffersController extends ControllerBase
         $offerUserId=Offers::findFirst("offerId=$offerId");
         if($offerUserId == false)
         {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Предложение не найдено");
 
             $this->dispatcher->forward([
                 "controller" => "offers",
@@ -192,7 +207,7 @@ class OffersController extends ControllerBase
 
             $offer = Offers::findFirstByofferId($offerId);
             if (!$offer) {
-                $this->flash->error("offer was not found");
+                $this->flash->error("Предложение не найдено");
 
                 $this->dispatcher->forward([
                     'controller' => "offers",
@@ -298,7 +313,7 @@ class OffersController extends ControllerBase
         $offer = Offers::findFirstByofferId($offerId);
 
         if (!$offer) {
-            $this->flash->error("offer does not exist " . $offerId);
+            $this->flash->error("Предложение не существует ");
 
             $this->dispatcher->forward([
                 'controller' => "offers",
@@ -330,7 +345,7 @@ class OffersController extends ControllerBase
             return;
         }
 
-        $this->flash->success("offer was updated successfully");
+        $this->flash->success("Предложение изменено успешно");
 
         $this->dispatcher->forward([
             'controller' => "offers",
@@ -355,7 +370,7 @@ class OffersController extends ControllerBase
         $offer = Offers::findFirstByofferId($offerId);
 
         if (!$offer) {
-            $this->flash->error("offer does not exist " . $offerId);
+            $this->flash->error("Предложение не существует ");
 
             $this->dispatcher->forward([
                 'controller' => "offers",
@@ -387,7 +402,7 @@ class OffersController extends ControllerBase
             return;
         }
 
-        $this->flash->success("offer was updated successfully");
+        $this->flash->success("Предложение обновлено успешно");
 
         $this->dispatcher->forward([
             'controller' => "offers",
@@ -404,7 +419,7 @@ class OffersController extends ControllerBase
     {
         $offer = Offers::findFirstByofferId($offerId);
         if (!$offer) {
-            $this->flash->error("offer was not found");
+            $this->flash->error("Предложение не найдено");
 
             $this->dispatcher->forward([
                 'controller' => "offers",
@@ -428,7 +443,7 @@ class OffersController extends ControllerBase
             return;
         }
 
-        $this->flash->success("offer was deleted successfully");
+        $this->flash->success("Предложение удалено успешно");
 
         $this->dispatcher->forward([
             'controller' => "offers",
@@ -442,7 +457,7 @@ class OffersController extends ControllerBase
         $offerUserId=Offers::findFirst("offerId=$offerId");
         if($offerUserId == false)
         {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("Предложение не найдено");
 
             $this->dispatcher->forward([
                 "controller" => "offers",
@@ -457,7 +472,7 @@ class OffersController extends ControllerBase
         if($auth['id']===$offerUserId) {
             $offer = Offers::findFirstByofferId($offerId);
             if (!$offer) {
-                $this->flash->error("offer was not found");
+                $this->flash->error("Предложение не найдено");
 
                 $this->dispatcher->forward([
                     'controller' => "offers",
@@ -514,7 +529,7 @@ class OffersController extends ControllerBase
         // $parameters["order"] = "taskId";
         $offers = Offers::find("userId=$userId");
         if (count($offers) == 0) {
-            $this->flash->notice("The search did not find any offers");
+            $this->flash->notice("TПредложение не найдено");
         }
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");

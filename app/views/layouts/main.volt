@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Service</a>
+            <a class="navbar-brand" href="http://kursach/index/index">Подработка</a>
         </div>
         {{ elements.getMenu() }}
     </div>
@@ -18,6 +18,6 @@
     {{ content() }}
     <hr>
     <footer>
-        <p>&copy; Company 2017</p>
+        <p>Темчишен Андрей и Титов Герман &copy; Company 2017</p>
     </footer>
 </div>
