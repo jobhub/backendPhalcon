@@ -192,7 +192,7 @@ class Offers extends \Phalcon\Mvc\Model
     {
         $this->setSchema("service_services");
         $this->setSource("offers");
-        $this->hasMany('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
+        $this->hasOne('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
         $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }

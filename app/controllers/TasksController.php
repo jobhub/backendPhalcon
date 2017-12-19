@@ -16,42 +16,11 @@ class TasksController extends ControllerBase
      */
     public function indexAction()
     {
-        $this->persistent->parameters = null;
-
-        $categories=Categories::find();
-        $this->view->setVar("categories", $categories);
-
 
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
 
-        $numberPage = 1;
-        if ($this->request->isPost()) {
-            $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
-            $query->andWhere();
-            $this->persistent->parameters = $query->getParams();
-        } else {
-            $numberPage = $this->request->getQuery("page", "int");
-        }
-
-        $parameters = $this->persistent->parameters;
-        if (!is_array($parameters)) {
-            $parameters = [];
-        }
-       // $parameters["userId"] = $userId;
-       // $parameters["order"] = "taskId";
-        $tasks = Tasks::find("userId=$userId");
-        if (count($tasks) == 0) {
-            $this->flash->notice("The search did not find any tasks");
-        }
-
-        $paginator = new Paginator([
-            'data' => $tasks,
-            'limit'=> 10,
-            'page' => $numberPage
-        ]);
-
-        $this->view->page = $paginator->getPaginate();
     }
 
     /**
@@ -111,6 +80,22 @@ class TasksController extends ControllerBase
      */
     public function editAction($taskId)
     {
+        $auth=$this->session->get("auth");
+        $taskUserId=Tasks::findFirst("taskId=$taskId");
+        if($taskUserId == false)
+        {
+            $this->flash->notice("The search did not find any tasks");
+
+            $this->dispatcher->forward([
+                "controller" => "tasks",
+                "action" => "index"
+            ]);
+
+            return;
+        }
+        $taskUserId=$taskUserId->getUserId();
+        if($auth['id']===$taskUserId)
+        {
         if (!$this->request->isPost()) {
 
             $task = Tasks::findFirstBytaskId($taskId);
@@ -138,7 +123,14 @@ class TasksController extends ControllerBase
             $this->tag->setDefault("price", $task->getPrice());
 
             $this->session->set("taskId", $task->getTaskid());
-            
+            }
+        else
+        {
+            $this->dispatcher->forward([
+                'controller' => "tasks",
+                'action' => 'index'
+            ]);
+        }
         }
     }
 
@@ -298,6 +290,92 @@ class TasksController extends ControllerBase
             'controller' => "tasks",
             'action' => "index"
         ]);
+    }
+
+    public function mytasksAction($userId)
+    {
+        $this->persistent->parameters = null;
+
+
+
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
+            $query->andWhere();
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        // $parameters["userId"] = $userId;
+         $parameters["order"] = "taskId";
+        $tasks = Tasks::find("userId=$userId");
+        if (count($tasks) == 0) {
+            $this->flash->notice("The search did not find any tasks");
+        }
+        // $categoryId=$tasks->getCategoryId();
+        //   $categories=Categories::findFirst("categoryId=$categoryId");
+        //   $this->view->setVar("categories", $categories->getCategoryName());
+
+        $paginator = new Paginator([
+            'data' => $tasks,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
+    }
+
+
+    public function doingtasksAction($userId)
+    {
+        $this->persistent->parameters = null;
+
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
+            $query->andWhere();
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+        // $parameters["userId"] = $userId;
+        // $parameters["order"] = "taskId";
+        $offers = Offers::find("userId=$userId");
+        if (count($offers) == 0) {
+            $this->flash->notice("The search did not find any offers");
+        }
+        $tasks=$offers->auctions;
+        $tasks=$offers->auctions->tasks;
+
+        // $categoryId=$tasks->getCategoryId();
+        //   $categories=Categories::findFirst("categoryId=$categoryId");
+        //   $this->view->setVar("categories", $categories->getCategoryName());
+
+        $paginator = new Paginator([
+            'data' => $tasks,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
     }
 
 }
