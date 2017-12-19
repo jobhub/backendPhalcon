@@ -21,7 +21,7 @@
 <div class="form-group">
     <label for="fieldFirstname" class="col-sm-2 control-label">Имя</label>
     <div class="col-sm-10">
-        {{ text_field("firstname", "size" : 30, "class" : "form-control", "id" : "fieldFirstname") }}
+        {{ text_field("firstname", "size" : 30, "class" : "form-control", "id" : "fieldFirstname",'onclick': 'return SignUp.validate();') }}
     </div>
 </div>
 

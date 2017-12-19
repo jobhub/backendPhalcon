@@ -80,12 +80,12 @@
 </div>
 
 
-{{ hidden_field("id") }}
-
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         {{ submit_button('Вступить', 'class': 'btn btn-default') }}
+        <td>{{ link_to("auctions/viewing/"~auction.tasks.getUserId(), "Профиль") }}</td>
     </div>
+
 </div>
 
 </form>

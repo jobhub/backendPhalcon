@@ -68,6 +68,7 @@
             <td>{{ auction.getDateEnd() }}</td>
 
                 <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
+                <td>{{ link_to("auctions/viewing/"~auction.tasks.getUserId(), "Профиль") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
