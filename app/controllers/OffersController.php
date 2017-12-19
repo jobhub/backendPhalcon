@@ -57,6 +57,10 @@ class OffersController extends ControllerBase
      */
     public function searchAction()
     {
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Offers', $_POST);
@@ -69,6 +73,7 @@ class OffersController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
+        $parameters[0]="userId=$userId";
         $parameters["order"] = "offerId";
 
         $offers = Offers::find($parameters);

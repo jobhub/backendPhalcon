@@ -28,6 +28,10 @@ class TasksController extends ControllerBase
      */
     public function searchAction()
     {
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
@@ -40,6 +44,7 @@ class TasksController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
+        $parameters[0] = "userId=$userId";
         $parameters["order"] = "taskId";
 
         $tasks = Tasks::find($parameters);
