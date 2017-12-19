@@ -23,6 +23,8 @@
 
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +41,11 @@
 
                 <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
                 <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
+                {% if task.status is 'Поиск'%}
                 <td>{{ link_to("auctions/show/"~task.getTaskid(), "Тендер") }}</td>
+                {% elseif task.status is 'Выполняется'%}
+                <td>{{ link_to("coordination/index/"~task.getTaskid(), "Чат") }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         {% endif %}

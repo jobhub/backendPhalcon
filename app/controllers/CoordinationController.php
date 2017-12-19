@@ -15,14 +15,27 @@ class CoordinationController extends ControllerBase
     /**
      * Index action
      */
-    public function indexAction($auctionId = null)
+    public function indexAction($taskId = null)
     {
-        $this->persistent->parameters = null;
-
-        if ($auctionId == null) {
+        if ($taskId == null) {
             $auctionId = $this->session->get('coord')['auctionId'];
         }
+        else {
+            $auction=Auctions::find("taskId=$taskId");
+            $auction=$auction->getFirst();
+            if (!$auction) {
+                $this->flash->error("Такого тендера ещё нет. Создайте! ");
 
+                $this->dispatcher->forward([
+                    'controller' => "auctions",
+                    'action' => 'new'
+                ]);
+
+                return;
+            }
+            $auctionId = $auction->getAuctionId();
+        }
+        $this->persistent->parameters = null;
         //Проверка. Не знаю, зачем, но мало ли
         $auth = $this->session->get('auth');
 
@@ -92,6 +105,21 @@ class CoordinationController extends ControllerBase
 
         $this->view->setVar('owner', $owner);
         $this->view->setVar('otherUser', $otherUser);
+
+        //Для формы
+        $task=$auction->tasks;
+        //$task=$task->getFirst();
+        $categories=Categories::find();
+        $this->view->setVar("categories", $categories);
+        $this->tag->setDefault("auctionId",$auction->getAuctionId());
+        $this->tag->setDefault("name", $task->getName());
+        $this->tag->setDefault("categoryId", $task->getCategoryid());
+        $this->tag->setDefault("description", $task->getDescription());
+        $this->tag->setDefault("address", $task->getaddress());
+        $this->tag->setDefault("deadline", $task->getDeadline());
+        $this->tag->setDefault("price", $task->getPrice());
+        $this->tag->setDefault("dateStart",$auction->getDateStart());
+        $this->tag->setDefault("dateEnd",$auction->getDateEnd());
 
         $this->session->set(
             'coord',

@@ -391,8 +391,6 @@ class AuctionsController extends ControllerBase
         ]);
 
         $this->view->page = $paginator->getPaginate();
-
-
     }
 
     public function viewingAction($auctionId)

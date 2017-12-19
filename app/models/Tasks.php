@@ -62,6 +62,13 @@ class Tasks extends \Phalcon\Mvc\Model
     protected $price;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $status;
+
+    /**
      * Method to set the value of field taskId
      *
      * @param integer $taskId
@@ -166,6 +173,19 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field status
+     *
+     * @param string $status
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field taskId
      *
      * @return integer
@@ -220,7 +240,7 @@ class Tasks extends \Phalcon\Mvc\Model
      *
      * @return string
      */
-    public function getaddress()
+    public function getAddress()
     {
         return $this->address;
     }
@@ -246,25 +266,25 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("tasks");
-        $this->hasMany('taskId', 'Auctions', 'taskId', ['alias' => 'Auctions']);
+        $this->hasOne('taskId', '\Auctions', 'taskId', ['alias' => 'Auctions']);
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'tasks';
     }
 
     /**
@@ -287,6 +307,16 @@ class Tasks extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'tasks';
     }
 
 }

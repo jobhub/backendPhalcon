@@ -169,7 +169,7 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->setSchema("service_services");
         $this->setSource("auctions");
         $this->hasOne('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
-        $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+        $this->hasOne('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
     }
 
     /**
