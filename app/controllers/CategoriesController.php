@@ -48,46 +48,6 @@ class CategoriesController extends ControllerBase
     }
 
     /**
-     * Searches for categories
-     */
-    /*public function searchAction()
-    {
-        $numberPage = 1;
-        if ($this->request->isPost()) {
-            $query = Criteria::fromInput($this->di, 'Categories', $_POST);
-            $this->persistent->parameters = $query->getParams();
-        } else {
-            $numberPage = $this->request->getQuery("page", "int");
-        }
-
-        $parameters = $this->persistent->parameters;
-        if (!is_array($parameters)) {
-            $parameters = [];
-        }
-        $parameters["order"] = "categoryId";
-
-        $categories = Categories::find($parameters);
-        if (count($categories) == 0) {
-            $this->flash->notice("The search did not find any categories");
-
-            $this->dispatcher->forward([
-                "controller" => "categories",
-                "action" => "index"
-            ]);
-
-            return;
-        }
-
-        $paginator = new Paginator([
-            'data' => $categories,
-            'limit'=> 10,
-            'page' => $numberPage
-        ]);
-
-        $this->view->page = $paginator->getPaginate();
-    }*/
-
-    /**
      * Displays the creation form
      */
     public function newAction()
@@ -135,6 +95,9 @@ class CategoriesController extends ControllerBase
                 'action' => 'index'
             ]);
 
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
             return;
         }
 
@@ -153,6 +116,9 @@ class CategoriesController extends ControllerBase
             ]);
 
             return;
+        }
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
         }
 
         $this->flash->success("Категория успешно создана");
@@ -189,6 +155,9 @@ class CategoriesController extends ControllerBase
                 'controller' => "categories",
                 'action' => 'index'
             ]);
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
 
             return;
         }
@@ -209,6 +178,9 @@ class CategoriesController extends ControllerBase
             ]);
 
             return;
+        }
+        foreach($_POST as $key=>$value){
+            unset($_POST[$key]);
         }
 
         $this->flash->success("Категория успешно изменена");
