@@ -293,8 +293,18 @@ class UserinfoController extends ControllerBase
 
             return;
         }
+        if($userinfo->getMale()===1)
+            $userinfo->setMale("Мужской");
+        else
+            $userinfo->setMale("Женский");
+        if($userinfo->getExecutor()===1)
+            $userinfo->setExecutor("Да");
+        else
+            $userinfo->setExecutor("Нет");
+        $this->view->setVar('userinfo',$userinfo);
 
-        $this->tag->setDefault("firstname", $userinfo->firstname);
+
+        /*$this->tag->setDefault("firstname", $userinfo->firstname);
         $this->tag->setDefault("patronymic", $userinfo->patronymic);
         $this->tag->setDefault("lastname", $userinfo->lastname);
         $this->tag->setDefault("birthday", $userinfo->birthday);
@@ -302,6 +312,7 @@ class UserinfoController extends ControllerBase
         $this->tag->setDefault("address", $userinfo->address);
         $this->tag->setDefault("about", $userinfo->about);
         $this->tag->setDefault("executor",$userinfo->executor);
+        */
 
 
     }
