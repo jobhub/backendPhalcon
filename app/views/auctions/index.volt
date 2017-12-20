@@ -59,16 +59,16 @@
         {% if page.items is defined %}
         {% for auction in page.items %}
             <tr>
-                <td>{{ auction.getAuctionid() }}</td>
-            <td>{{ auction.tasks.categories.getCategoryName() }}</td>
-            <td>{{ auction.tasks.getName() }}</td>
-            <td>{{ auction.tasks.getDescription() }}</td>
-            <td>{{ auction.tasks.getaddress() }}</td>
-            <td>{{ auction.tasks.getPrice() }}</td>
-            <td>{{ auction.getDateEnd() }}</td>
+                <td>{{ auction.auctions.getAuctionid() }}</td>
+            <td>{{ auction.auctions.tasks.categories.getCategoryName() }}</td>
+            <td>{{ auction.auctions.tasks.getName() }}</td>
+            <td>{{ auction.auctions.tasks.getDescription() }}</td>
+            <td>{{ auction.auctions.tasks.getaddress() }}</td>
+            <td>{{ auction.auctions.tasks.getPrice() }}</td>
+            <td>{{ auction.auctions.getDateEnd() }}</td>
 
-                <td>{{ link_to("auctions/viewing/"~auction.getAuctionid(), "Просмотреть") }}</td>
-                <td>{{ link_to("auctions/viewing/"~auction.tasks.getUserId(), "Профиль") }}</td>
+                <td>{{ link_to("auctions/viewing/"~auction.auctions.getAuctionid(), "Просмотреть") }}</td>
+                <td>{{ link_to("auctions/viewing/"~auction.auctions.tasks.getUserId(), "Профиль") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
@@ -85,10 +85,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("auctions/search", "Первая") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("auctions/search?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("auctions/index", "Первая") }}</li>
+                <li>{{ link_to("auctions/index?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("auctions/index?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("auctions/indexs?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>
