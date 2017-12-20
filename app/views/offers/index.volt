@@ -1,10 +1,11 @@
+{{ elements.getTabs() }}
 <div class="page-header">
     <h1>
         Предложения
     </h1>
-    <p>
+    <!--<p>
         {{ link_to("offers/new", "Создать предложение") }}
-    </p>
+    </p>-->
 </div>
 
 {{ content() }}
@@ -47,7 +48,7 @@
         {% for offer in page.items %}
             <tr>
                 <td>{{ offer.getOfferid() }}</td>
-            <td>{{ offer.getUserid() }}</td>
+            <td>{{ link_to("userinfo/viewprofile/"~offer.users.getUserId(),offer.users.getEmail()) }}</td>
             <td>{{ offer.getDeadline() }}</td>
             <td>{{ offer.getDescription() }}</td>
             <td>{{ offer.getPrice() }}</td>
@@ -61,6 +62,7 @@
     </table>
 </div>
 
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -78,3 +80,4 @@
         </nav>
     </div>
 </div>
+{% endif %}

@@ -1,3 +1,4 @@
+{{ elements.getTabs() }}
 <div class="row">
     <nav>
         <ul class="pager">

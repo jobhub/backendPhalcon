@@ -91,6 +91,7 @@
     </table>
 </div>
 
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -108,3 +109,4 @@
         </nav>
     </div>
 </div>
+{% endif %}

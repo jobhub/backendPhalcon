@@ -11,12 +11,6 @@
 
 {{ form("categories/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
-<div class="form-group">
-    <label for="fieldCategoryid" class="col-sm-2 control-label">ID категории</label>
-    <div class="col-sm-10">
-        {{ text_field("categoryId", "type" : "numeric", "class" : "form-control", "id" : "fieldCategoryid") }}
-    </div>
-</div>
 
 <div class="form-group">
     <label for="fieldCategoryname" class="col-sm-2 control-label">Название категории</label>
@@ -39,7 +33,6 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID категории</th>
             <th>Название категории</th>
 
                 <th></th>
@@ -50,7 +43,6 @@
         {% if page.items is defined %}
         {% for categorie in page.items %}
             <tr>
-                <td>{{ categorie.getCategoryid() }}</td>
             <td>{{ categorie.getCategoryname() }}</td>
 
                 <td>{{ link_to("categories/edit/"~categorie.getCategoryid(), "Изменить") }}</td>
@@ -62,6 +54,7 @@
     </table>
 </div>
 
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -79,3 +72,4 @@
         </nav>
     </div>
 </div>
+{% endif %}
