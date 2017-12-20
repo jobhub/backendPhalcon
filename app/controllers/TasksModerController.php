@@ -38,8 +38,10 @@ class TasksModerController extends ControllerBase
         }
 
         $categories = Categories::find();
+        $users = Users::find();
 
         $this->view->setVar('categories',$categories);
+        $this->view->setVar('users',$users);
 
         $paginator = new Paginator([
             'data' => $tasks,
@@ -60,6 +62,8 @@ class TasksModerController extends ControllerBase
         $categories = Categories::find();
 
         $this->view->setVar('categories',$categories);
+        $users = Users::find();
+        $this->view->setVar('users',$users);
     }
 
     /**
@@ -84,8 +88,10 @@ class TasksModerController extends ControllerBase
             }
 
             $categories = Categories::find();
-
+            $users = Users::find();
+            $this->view->setVar('users',$users);
             $this->view->setVar('categories',$categories);
+
 
             $this->view->taskId = $task->getTaskid();
 
@@ -247,7 +253,7 @@ class TasksModerController extends ControllerBase
 
             $this->dispatcher->forward([
                 'controller' => "tasksModer",
-                'action' => 'search'
+                'action' => 'index'
             ]);
 
             return;

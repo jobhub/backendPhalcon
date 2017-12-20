@@ -239,6 +239,10 @@ class UsersController extends ControllerBase
         if (!$user) {
             $this->flash->error("Пользователя с ID " . $userId. " не существует");
 
+            foreach($_POST as $key=>$value){
+                unset($_POST[$key]);
+            }
+
             $this->dispatcher->forward([
                 'controller' => "users",
                 'action' => 'index'
