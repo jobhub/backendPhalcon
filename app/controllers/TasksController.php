@@ -411,4 +411,46 @@ class TasksController extends ControllerBase
         $this->view->page = $paginator->getPaginate();
     }
 
+    public function workingtasksAction($userId)
+    {
+
+        $this->persistent->parameters = null;
+
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $this->view->setVar("userId", $userId);
+
+        //  $query = $this->modelsManager->createQuery('SELECT Tasks.taskId, Tasks.categoryId, Tasks.description, Tasks.address, Task.deadline, Tasks.price, Tasks.status FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
+        $query = $this->modelsManager->createQuery('SELECT * FROM Tasks, Auctions, Offers WHERE Offers.userId=:userid: AND Auctions.selectedOffer=Offers.offerId AND Tasks.taskId=Auctions.taskId');
+
+        $tasks  = $query->execute(
+            [
+                'userid' => "$userId",
+            ]
+        );
+
+        $numberPage = 1;
+        if ($this->request->isPost()) {
+            $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
+            $this->persistent->parameters = $query->getParams();
+        } else {
+            $numberPage = $this->request->getQuery("page", "int");
+        }
+
+        $parameters = $this->persistent->parameters;
+        if (!is_array($parameters)) {
+            $parameters = [];
+        }
+
+
+
+        $paginator = new Paginator([
+            'data' => $tasks,
+            'limit'=> 10,
+            'page' => $numberPage
+        ]);
+
+        $this->view->page = $paginator->getPaginate();
+    }
+
 }
