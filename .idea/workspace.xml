@@ -2,125 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="Просто небольшие изменения для пула">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/offers/search.volt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/tasks/search.volt" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/.gitignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__controllers_generate.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__controllers_index.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__index_index.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__layouts_base.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__layouts_webtools.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__migrations_index.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__models_generate.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__models_index.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_content.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_content_header.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_custom_css.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_footer.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_header.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_inputs.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__partials_sidebar.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/Phalcon_Web_Tools_Views__scaffold_generate.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_auctions_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_categories_edit.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_categories_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_categories_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_coordination_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_errors_show401.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_errors_show404.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_errors_show500.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_auctions.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_categories.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_logs.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_messages.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_offers.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_tasks.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_tasksmoder.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_userinfo.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_users.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_logs_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_logs_search.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_messages_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_offers_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_offers_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_register_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_session_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasks_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasks_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasksmoder_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasksmoder_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_userinfo_edit.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_users_edit.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_users_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_users_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_authorized_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_errors_show401.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_errors_show404.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_errors_show500.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_layouts_main.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_layouts_user_info.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_register_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_session_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod_app_views_userinfo_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_auctions_edit.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_auctions_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_auctions_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_auctions_search.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_auctions_viewing.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_errors_show401.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_errors_show404.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_errors_show500.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_auctions.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_logs.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_main.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_offers.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_tasks.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_userinfo.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_layouts_users.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_logs_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_offers_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_offers_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_register_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_session_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_tasks_edit.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_tasks_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_tasks_new.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_userinfo_index.volt.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_users_index.volt.php" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/cache/d__openserver_domains_kursach_app_views_userinfo_edit.volt.php" afterPath="$PROJECT_DIR$/app/views/userinfo/new.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/simpleMod.iml" afterPath="$PROJECT_DIR$/.idea/simpleMod.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/tasks/workingtasks.volt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/AuctionsController.php" afterPath="$PROJECT_DIR$/app/controllers/AuctionsController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/ErrorsController.php" afterPath="$PROJECT_DIR$/app/controllers/ErrorsController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/IndexController.php" afterPath="$PROJECT_DIR$/app/controllers/IndexController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/OffersController.php" afterPath="$PROJECT_DIR$/app/controllers/OffersController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/SessionController.php" afterPath="$PROJECT_DIR$/app/controllers/SessionController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/TasksController.php" afterPath="$PROJECT_DIR$/app/controllers/TasksController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/UserInfoController.php" afterPath="$PROJECT_DIR$/app/controllers/UserInfoController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Tasks.php" afterPath="$PROJECT_DIR$/app/models/Tasks.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/edit.volt" afterPath="$PROJECT_DIR$/app/views/auctions/edit.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/enter.volt" afterPath="$PROJECT_DIR$/app/views/auctions/enter.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/index.volt" afterPath="$PROJECT_DIR$/app/views/auctions/index.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/search.volt" afterPath="$PROJECT_DIR$/app/views/auctions/search.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/show.volt" afterPath="$PROJECT_DIR$/app/views/auctions/show.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/auctions/viewing.volt" afterPath="$PROJECT_DIR$/app/views/auctions/viewing.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/authorized/index.volt" afterPath="$PROJECT_DIR$/app/views/authorized/index.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/errors/index.phtml" afterPath="$PROJECT_DIR$/app/views/errors/index.phtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/errors/show401.volt" afterPath="$PROJECT_DIR$/app/views/errors/show401.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/errors/show404.volt" afterPath="$PROJECT_DIR$/app/views/errors/show404.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/errors/show500.volt" afterPath="$PROJECT_DIR$/app/views/errors/show500.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/index.phtml" afterPath="$PROJECT_DIR$/app/views/index.phtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/index/index.phtml" afterPath="$PROJECT_DIR$/app/views/index/index.phtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/main.volt" afterPath="$PROJECT_DIR$/app/views/layouts/main.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/logs/index.volt" afterPath="$PROJECT_DIR$/app/views/logs/index.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/offers/myoffers.volt" afterPath="$PROJECT_DIR$/app/views/offers/myoffers.volt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tasks/doingtasks.volt" afterPath="$PROJECT_DIR$/app/views/tasks/doingtasks.volt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tasks/index.volt" afterPath="$PROJECT_DIR$/app/views/tasks/index.volt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tasks/mytasks.volt" afterPath="$PROJECT_DIR$/app/views/tasks/mytasks.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/edit.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/edit.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/index.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/index.volt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/userinfo/search.volt" afterPath="$PROJECT_DIR$/app/views/userinfo/search.volt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tasks/search.volt" afterPath="$PROJECT_DIR$/app/views/tasks/search.volt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_main.volt.php" afterPath="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_layouts_main.volt.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -134,8 +24,8 @@
       <file leaf-file-name="TasksModerController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/TasksModerController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2011">
-              <caret line="212" column="0" lean-forward="false" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+            <state relative-caret-position="204">
+              <caret line="199" column="0" lean-forward="true" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
               <folding>
                 <element signature="n#createAction#0;n#TasksModerController#0;n#!!top" expanded="false" />
               </folding>
@@ -143,37 +33,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AuctionsController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/AuctionsController.php">
+      <file leaf-file-name="TasksController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/TasksController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="407" column="0" lean-forward="false" selection-start-line="407" selection-start-column="0" selection-end-line="407" selection-end-column="0" />
+            <state relative-caret-position="142">
+              <caret line="404" column="0" lean-forward="false" selection-start-line="404" selection-start-column="0" selection-end-line="404" selection-end-column="0" />
               <folding>
-                <marker date="1513722897465" expanded="true" signature="11034:12277" ph="{...}" />
-                <marker date="1513722897465" expanded="true" signature="11210:11443" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="11316:11411" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="11317:11410" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12435:12661" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12534:12629" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12535:12628" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12826:13054" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12927:13022" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="12928:13021" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="13135:13480" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="13196:13256" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="13298:13448" ph="..." />
-                <marker date="1513722897465" expanded="true" signature="13299:13447" ph="..." />
+                <marker date="1513768157792" expanded="true" signature="9905:10122" ph="SELECT * FRO... Users" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="viewing.volt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/auctions/viewing.volt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -181,38 +48,38 @@
       <file leaf-file-name="mytasks.volt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/tasks/mytasks.volt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="43" column="46" lean-forward="false" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+            <state relative-caret-position="45">
+              <caret line="35" column="36" lean-forward="false" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CoordinationController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/CoordinationController.php">
+      <file leaf-file-name="doingtasks.volt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/tasks/doingtasks.volt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="766">
-              <caret line="115" column="69" lean-forward="false" selection-start-line="115" selection-start-column="69" selection-end-line="115" selection-end-column="69" />
+            <state relative-caret-position="7">
+              <caret line="41" column="59" lean-forward="true" selection-start-line="41" selection-start-column="59" selection-end-line="41" selection-end-column="59" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new.volt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/views/auctionsModer/new.volt">
+      <file leaf-file-name="show.volt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/auctions/show.volt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="48" column="43" lean-forward="false" selection-start-line="48" selection-start-column="43" selection-end-line="48" selection-end-column="43" />
+            <state relative-caret-position="197">
+              <caret line="107" column="21" lean-forward="true" selection-start-line="107" selection-start-column="21" selection-end-line="107" selection-end-column="21" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.phtml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/coordination/index.phtml">
+      <file leaf-file-name="AuctionsController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/AuctionsController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="78" column="38" lean-forward="false" selection-start-line="78" selection-start-column="38" selection-end-line="78" selection-end-column="38" />
+            <state relative-caret-position="103">
+              <caret line="444" column="56" lean-forward="false" selection-start-line="444" selection-start-column="56" selection-end-line="444" selection-end-column="56" />
               <folding />
             </state>
           </provider>
@@ -221,49 +88,40 @@
       <file leaf-file-name="Tasks.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/Tasks.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="285" column="34" lean-forward="false" selection-start-line="285" selection-start-column="34" selection-end-line="285" selection-end-column="34" />
+            <state relative-caret-position="92">
+              <caret line="185" column="0" lean-forward="false" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CoordinationController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/CoordinationController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="154">
+              <caret line="202" column="0" lean-forward="true" selection-start-line="202" selection-start-column="0" selection-end-line="202" selection-end-column="0" />
               <folding>
-                <marker date="1513722897382" expanded="true" signature="2768:2895" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="2904:3013" ph=" Method to set the value of field price ..." />
-                <marker date="1513722897382" expanded="true" signature="3052:3118" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="3127:3237" ph=" Method to set the value of field status ..." />
-                <marker date="1513722897382" expanded="true" signature="3278:3346" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="3355:3432" ph=" Returns the value of field taskId ..." />
-                <marker date="1513722897382" expanded="true" signature="3466:3508" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="3517:3594" ph=" Returns the value of field userId ..." />
-                <marker date="1513722897382" expanded="true" signature="3628:3670" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="3679:3760" ph=" Returns the value of field categoryId ..." />
-                <marker date="1513722897382" expanded="true" signature="3798:3844" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="3853:3927" ph=" Returns the value of field name ..." />
-                <marker date="1513722897382" expanded="true" signature="3959:3999" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4008:4089" ph=" Returns the value of field description ..." />
-                <marker date="1513722897382" expanded="true" signature="4128:4175" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4184:4261" ph=" Returns the value of field address ..." />
-                <marker date="1513722897382" expanded="true" signature="4296:4339" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4348:4426" ph=" Returns the value of field deadline ..." />
-                <marker date="1513722897382" expanded="true" signature="4462:4506" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4515:4591" ph=" Returns the value of field price ..." />
-                <marker date="1513722897382" expanded="true" signature="4624:4665" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4674:4750" ph=" Returns the value of field status ..." />
-                <marker date="1513722897382" expanded="true" signature="4784:4826" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="4835:4877" ph=" Initialize method for model. ..." />
-                <marker date="1513722897382" expanded="true" signature="4912:5260" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="5269:5457" ph=" Allows to query a set of records that match the specified conditions ..." />
-                <marker date="1513722897382" expanded="true" signature="5511:5565" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="5574:5751" ph=" Allows to query the first record that match the specified conditions ..." />
-                <marker date="1513722897382" expanded="true" signature="5810:5869" ph="{...}" />
-                <marker date="1513722897382" expanded="true" signature="5878:5960" ph=" Returns table name mapped in the model. ..." />
+                <element signature="n#createAction#0;n#CoordinationController#0;n#!!top" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="styles.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/css/styles.css">
+      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="1" lean-forward="false" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+            <state relative-caret-position="272">
+              <caret line="60" column="46" lean-forward="false" selection-start-line="60" selection-start-column="46" selection-end-line="60" selection-end-column="46" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ErrorsController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/ErrorsController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -296,7 +154,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/views/offers/new.volt" />
         <option value="$PROJECT_DIR$/app/views/register/index.volt" />
         <option value="$PROJECT_DIR$/app/index.volt" />
         <option value="$PROJECT_DIR$/app/views/layouts/messages.volt" />
@@ -313,25 +170,19 @@
         <option value="$PROJECT_DIR$/app/views/auctionsModer/edit.volt" />
         <option value="$PROJECT_DIR$/app/views/auctionsModer/search.volt" />
         <option value="$PROJECT_DIR$/app/views/layouts/auctionsModer.volt" />
-        <option value="$PROJECT_DIR$/app/controllers/TasksModerController.php" />
         <option value="$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasksmoder_edit.volt.php" />
         <option value="$PROJECT_DIR$/app/views/tasksModer/edit.volt" />
-        <option value="$PROJECT_DIR$/app/views/tasksModer/edit.phtml" />
         <option value="$PROJECT_DIR$/app/views/tasksModer/new.volt" />
-        <option value="$PROJECT_DIR$/app/views/tasksModer/new.phtml" />
         <option value="$PROJECT_DIR$/app/views/messages/edit.volt" />
         <option value="$PROJECT_DIR$/app/views/messages/edit.phtml" />
         <option value="$PROJECT_DIR$/app/models/Messages.php" />
         <option value="$PROJECT_DIR$/app/controllers/MessagesController.php" />
-        <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
         <option value="$PROJECT_DIR$/app/views/index.phtml" />
         <option value="$PROJECT_DIR$/public/js/utils.js" />
         <option value="$PROJECT_DIR$/app/views/categories/index.volt" />
         <option value="$PROJECT_DIR$/app/views/categories/edit.volt" />
         <option value="$PROJECT_DIR$/app/controllers/CategoriesController.php" />
         <option value="$PROJECT_DIR$/app/controllers/AuctionsModerController.php" />
-        <option value="$PROJECT_DIR$/app/views/tasksModer/index.volt" />
-        <option value="$PROJECT_DIR$/app/library/Elements.php" />
         <option value="$PROJECT_DIR$/app/views/auctionsModer/index.volt" />
         <option value="$PROJECT_DIR$/app/views/offers/index.volt" />
         <option value="$PROJECT_DIR$/app/views/logs/index.volt" />
@@ -339,14 +190,21 @@
         <option value="$PROJECT_DIR$/app/controllers/RegisterController.php" />
         <option value="$PROJECT_DIR$/app/models/Auctions.php" />
         <option value="$PROJECT_DIR$/app/models/Users.php" />
-        <option value="$PROJECT_DIR$/app/controllers/TasksController.php" />
-        <option value="$PROJECT_DIR$/app/models/Tasks.php" />
-        <option value="$PROJECT_DIR$/app/views/tasks/mytasks.volt" />
-        <option value="$PROJECT_DIR$/app/controllers/AuctionsController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/CoordinationController.php" />
-        <option value="$PROJECT_DIR$/app/views/coordination/index.phtml" />
         <option value="$PROJECT_DIR$/public/css/styles.css" />
         <option value="$PROJECT_DIR$/app/views/auctionsModer/new.volt" />
+        <option value="$PROJECT_DIR$/app/views/coordination/index.phtml" />
+        <option value="$PROJECT_DIR$/app/models/Tasks.php" />
+        <option value="$PROJECT_DIR$/app/library/Elements.php" />
+        <option value="$PROJECT_DIR$/app/views/tasksModer/edit.phtml" />
+        <option value="$PROJECT_DIR$/app/views/tasksModer/index.volt" />
+        <option value="$PROJECT_DIR$/app/views/tasksModer/new.phtml" />
+        <option value="$PROJECT_DIR$/app/controllers/TasksModerController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/TasksController.php" />
+        <option value="$PROJECT_DIR$/app/views/tasks/doingtasks.volt" />
+        <option value="$PROJECT_DIR$/app/controllers/AuctionsController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/CoordinationController.php" />
+        <option value="$PROJECT_DIR$/app/views/tasks/mytasks.volt" />
+        <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
       </list>
     </option>
   </component>
@@ -403,6 +261,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -425,13 +285,7 @@
               <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
               <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="controllers" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="forms" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="plugins" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
@@ -444,31 +298,12 @@
               <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="views" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="auctionsModer" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="css" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="simpleMod2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="simpleMod2" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="tasks" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -476,21 +311,22 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="settings.php.debug.servers" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/OpenServer/domains/simpleMod2/app/views/auctions/show.volt" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\coordination" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\forms" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\controllers" />
-      <recent name="C:\OpenServer\domains\simpleMod\app" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\OpenServer\domains\simpleMod2\app\controllers\admin" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\views" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\controllers" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\views\errors" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
+      <recent name="C:\OpenServer\domains\simpleMod2\app\views\coordination" />
+      <recent name="C:\OpenServer\domains\simpleMod\app\forms" />
+      <recent name="C:\OpenServer\domains\simpleMod\app\controllers" />
+      <recent name="C:\OpenServer\domains\simpleMod\app" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -558,7 +394,9 @@
       <workItem from="1513587897950" duration="980000" />
       <workItem from="1513615689828" duration="58000" />
       <workItem from="1513616408621" duration="9531000" />
-      <workItem from="1513701025449" duration="20640000" />
+      <workItem from="1513701025449" duration="20795000" />
+      <workItem from="1513756712485" duration="4095000" />
+      <workItem from="1513764498322" duration="3765000" />
     </task>
     <task id="LOCAL-00001" summary="Просто небольшие изменения для пула">
       <created>1513616550426</created>
@@ -616,26 +454,54 @@
       <option name="project" value="LOCAL" />
       <updated>1513722861166</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Непонятки">
+      <created>1513723102553</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1513723102553</updated>
+    </task>
+    <task id="LOCAL-00010" summary="В задания добавил статус в модерации">
+      <created>1513764839835</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1513764839835</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Просто небольшие изменения для пула">
+      <created>1513766168909</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1513766168909</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Доделал смену статуса">
+      <created>1513767985786</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1513767985786</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="118891000" />
+    <option name="totallyTimeSpent" value="126906000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2489019" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3579795" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5746032" sideWeight="0.5087848" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14603175" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14603175" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40952381" sideWeight="0.49121523" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40952381" sideWeight="0.49121523" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -678,9 +544,12 @@
     <MESSAGE value="Чат сделал" />
     <MESSAGE value="Вроде поправил категории" />
     <MESSAGE value="проверил админку" />
-    <MESSAGE value="Просто небольшие изменения для пула" />
     <MESSAGE value="Многовато тут." />
-    <option name="LAST_COMMIT_MESSAGE" value="Многовато тут." />
+    <MESSAGE value="Непонятки" />
+    <MESSAGE value="В задания добавил статус в модерации" />
+    <MESSAGE value="Доделал смену статуса" />
+    <MESSAGE value="Просто небольшие изменения для пула" />
+    <option name="LAST_COMMIT_MESSAGE" value="Просто небольшие изменения для пула" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -691,104 +560,20 @@
           <option name="timeStamp" value="106" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="138" />
+      <option name="time" value="157" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="index.php">
-        <watch expression="$user-&gt;getUserId()" language="PHP" />
-        <watch expression="$auction-&gt;tasks-&gt;getUserId()" language="PHP" />
-        <watch expression="$auction" language="PHP" />
-        <watch expression="$message-&gt;getMessageId()" language="PHP" />
-        <watch expression="$_POST" language="PHP" />
-        <watch expression="$numberPage" language="PHP" />
-        <watch expression="count($messages)/$limit" language="PHP" />
-        <watch expression="(count($messages)%$limit==0?0:1)" language="PHP" />
+        <watch expression="$tasks[0]-&gt;tasks-&gt;getTaskId()" language="PHP" />
+        <watch expression="$task" language="PHP" />
       </configuration>
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/messages/edit.volt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="47" column="25" lean-forward="false" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_messages_edit.volt.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="46" column="0" lean-forward="true" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../backup/simpleMod2/app/views/tasksModer/edit.phtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-102">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/OffersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1173">
-          <caret line="157" column="43" lean-forward="true" selection-start-line="157" selection-start-column="43" selection-end-line="157" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/edit.phtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="61" column="38" lean-forward="true" selection-start-line="61" selection-start-column="38" selection-end-line="61" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/new.phtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/messages/edit.phtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="47" column="27" lean-forward="false" selection-start-line="47" selection-start-column="27" selection-end-line="47" selection-end-column="27" />
-          <folding>
-            <marker date="1513704214233" expanded="true" signature="1671:1754" ph="..." />
-            <marker date="1513704214233" expanded="true" signature="1715:1754" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Messages.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="112" column="27" lean-forward="false" selection-start-line="112" selection-start-column="27" selection-end-line="112" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/MessagesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="128" column="13" lean-forward="true" selection-start-line="128" selection-start-column="13" selection-end-line="128" selection-end-column="13" />
-          <folding>
-            <element signature="e#8#39#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/index.volt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -804,7 +589,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -820,17 +604,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="66" column="36" lean-forward="true" selection-start-line="66" selection-start-column="36" selection-end-line="66" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -838,7 +611,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1190">
           <caret line="79" column="10" lean-forward="true" selection-start-line="79" selection-start-column="10" selection-end-line="79" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -846,7 +618,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="351">
           <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -858,43 +629,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/AuctionsModerController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="163" column="24" lean-forward="false" selection-start-line="163" selection-start-column="24" selection-end-line="163" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasks/index.volt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/index.volt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187">
-          <caret line="40" column="6" lean-forward="false" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/library/Elements.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="61" column="37" lean-forward="true" selection-start-line="61" selection-start-column="37" selection-end-line="61" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/auctionsModer/index.volt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="32" column="6" lean-forward="false" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -902,7 +640,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="26" column="6" lean-forward="false" selection-start-line="26" selection-start-column="6" selection-end-line="26" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -910,7 +647,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="29" column="6" lean-forward="false" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,7 +654,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +661,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
           <caret line="29" column="6" lean-forward="false" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -938,30 +672,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/RegisterController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="33" column="56" lean-forward="false" selection-start-line="33" selection-start-column="56" selection-end-line="33" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/js/utils.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="49" lean-forward="false" selection-start-line="3" selection-start-column="49" selection-end-line="3" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasks_mytasks.volt.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="65">
-          <caret line="34" column="48" lean-forward="true" selection-start-line="34" selection-start-column="48" selection-end-line="34" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasks_mytasks.volt.php" />
     <entry file="file://$PROJECT_DIR$/app/models/Categories.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -978,16 +696,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/UsersController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="288" column="0" lean-forward="false" selection-start-line="288" selection-start-column="0" selection-end-line="288" selection-end-column="0" />
-          <folding>
-            <marker date="1513439729362" expanded="false" signature="1427:2417" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/Users.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="277">
@@ -1000,17 +708,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="254">
           <caret line="173" column="0" lean-forward="true" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-          <folding>
-            <marker date="1513719036545" expanded="true" signature="328:407" ph=" ..." />
-            <marker date="1513719036545" expanded="true" signature="644:652" ph=" ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/TasksController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-556">
-          <caret line="325" column="0" lean-forward="true" selection-start-line="325" selection-start-column="0" selection-end-line="325" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1023,75 +720,89 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/TasksModerController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2011">
-          <caret line="212" column="0" lean-forward="false" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
-          <folding>
-            <element signature="n#createAction#0;n#TasksModerController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Tasks.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="285" column="34" lean-forward="false" selection-start-line="285" selection-start-column="34" selection-end-line="285" selection-end-column="34" />
-          <folding>
-            <marker date="1513722897382" expanded="true" signature="2768:2895" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="2904:3013" ph=" Method to set the value of field price ..." />
-            <marker date="1513722897382" expanded="true" signature="3052:3118" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="3127:3237" ph=" Method to set the value of field status ..." />
-            <marker date="1513722897382" expanded="true" signature="3278:3346" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="3355:3432" ph=" Returns the value of field taskId ..." />
-            <marker date="1513722897382" expanded="true" signature="3466:3508" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="3517:3594" ph=" Returns the value of field userId ..." />
-            <marker date="1513722897382" expanded="true" signature="3628:3670" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="3679:3760" ph=" Returns the value of field categoryId ..." />
-            <marker date="1513722897382" expanded="true" signature="3798:3844" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="3853:3927" ph=" Returns the value of field name ..." />
-            <marker date="1513722897382" expanded="true" signature="3959:3999" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4008:4089" ph=" Returns the value of field description ..." />
-            <marker date="1513722897382" expanded="true" signature="4128:4175" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4184:4261" ph=" Returns the value of field address ..." />
-            <marker date="1513722897382" expanded="true" signature="4296:4339" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4348:4426" ph=" Returns the value of field deadline ..." />
-            <marker date="1513722897382" expanded="true" signature="4462:4506" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4515:4591" ph=" Returns the value of field price ..." />
-            <marker date="1513722897382" expanded="true" signature="4624:4665" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4674:4750" ph=" Returns the value of field status ..." />
-            <marker date="1513722897382" expanded="true" signature="4784:4826" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="4835:4877" ph=" Initialize method for model. ..." />
-            <marker date="1513722897382" expanded="true" signature="4912:5260" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="5269:5457" ph=" Allows to query a set of records that match the specified conditions ..." />
-            <marker date="1513722897382" expanded="true" signature="5511:5565" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="5574:5751" ph=" Allows to query the first record that match the specified conditions ..." />
-            <marker date="1513722897382" expanded="true" signature="5810:5869" ph="{...}" />
-            <marker date="1513722897382" expanded="true" signature="5878:5960" ph=" Returns table name mapped in the model. ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/auctions/enter.volt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-153">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_auctions_show.volt.php" />
+    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_auctions_viewing.volt.php" />
+    <entry file="file://$PROJECT_DIR$/public/css/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="1" lean-forward="false" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/auctionsModer/new.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="45" column="0" lean-forward="true" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/userinfo/edit.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="79" column="24" lean-forward="true" selection-start-line="79" selection-start-column="24" selection-end-line="79" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/users/edit.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1707">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/UsersController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="180" column="19" lean-forward="true" selection-start-line="180" selection-start-column="19" selection-end-line="180" selection-end-column="19" />
+          <folding>
+            <marker date="1513439729362" expanded="false" signature="1427:2417" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/coordination/index.phtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="142" column="0" lean-forward="true" selection-start-line="142" selection-start-column="0" selection-end-line="142" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/auctions/show.volt">
+    <entry file="file://$PROJECT_DIR$/app/controllers/AuctionsModerController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        <state relative-caret-position="3757">
+          <caret line="222" column="0" lean-forward="true" selection-start-line="222" selection-start-column="0" selection-end-line="222" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_auctions_show.volt.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/SessionController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="79" column="6" lean-forward="true" selection-start-line="79" selection-start-column="6" selection-end-line="79" selection-end-column="6" />
+        <state relative-caret-position="340">
+          <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/RegisterController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="33" column="56" lean-forward="false" selection-start-line="33" selection-start-column="56" selection-end-line="33" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/library/Elements.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1547">
+          <caret line="91" column="0" lean-forward="true" selection-start-line="91" selection-start-column="0" selection-end-line="91" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1104,73 +815,135 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_auctions_viewing.volt.php">
+    <entry file="file://$PROJECT_DIR$/cache/c__openserver_domains_simplemod2_app_views_tasksmoder_index.volt.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="83" column="0" lean-forward="true" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
+        <state relative-caret-position="238">
+          <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/edit.phtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1309">
+          <caret line="79" column="0" lean-forward="true" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasks/mytasks.volt">
+    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/new.phtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="43" column="46" lean-forward="false" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+        <state relative-caret-position="1292">
+          <caret line="78" column="0" lean-forward="true" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/coordination/index.phtml">
+    <entry file="file://$PROJECT_DIR$/app/plugins/NotFoundPlugin.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="78" column="38" lean-forward="false" selection-start-line="78" selection-start-column="38" selection-end-line="78" selection-end-column="38" />
+        <state relative-caret-position="188">
+          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/styles.css">
+    <entry file="file://$PROJECT_DIR$/app/views/tasks/index.volt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="1" lean-forward="false" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        <state relative-caret-position="204">
+          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/tasksModer/index.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/tasks/doingtasks.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7">
+          <caret line="41" column="59" lean-forward="true" selection-start-line="41" selection-start-column="59" selection-end-line="41" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/auctions/show.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="107" column="21" lean-forward="true" selection-start-line="107" selection-start-column="21" selection-end-line="107" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/ErrorsController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Tasks.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="185" column="0" lean-forward="false" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/AuctionsController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="407" column="0" lean-forward="false" selection-start-line="407" selection-start-column="0" selection-end-line="407" selection-end-column="0" />
-          <folding>
-            <marker date="1513722897465" expanded="true" signature="11034:12277" ph="{...}" />
-            <marker date="1513722897465" expanded="true" signature="11210:11443" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="11316:11411" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="11317:11410" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12435:12661" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12534:12629" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12535:12628" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12826:13054" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12927:13022" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="12928:13021" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="13135:13480" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="13196:13256" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="13298:13448" ph="..." />
-            <marker date="1513722897465" expanded="true" signature="13299:13447" ph="..." />
-          </folding>
+        <state relative-caret-position="103">
+          <caret line="444" column="56" lean-forward="false" selection-start-line="444" selection-start-column="56" selection-end-line="444" selection-end-column="56" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/CoordinationController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="766">
-          <caret line="115" column="69" lean-forward="false" selection-start-line="115" selection-start-column="69" selection-end-line="115" selection-end-column="69" />
+        <state relative-caret-position="154">
+          <caret line="202" column="0" lean-forward="true" selection-start-line="202" selection-start-column="0" selection-end-line="202" selection-end-column="0" />
+          <folding>
+            <element signature="n#createAction#0;n#CoordinationController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/TasksModerController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="199" column="0" lean-forward="true" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
+          <folding>
+            <element signature="n#createAction#0;n#TasksModerController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/TasksController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="404" column="0" lean-forward="false" selection-start-line="404" selection-start-column="0" selection-end-line="404" selection-end-column="0" />
+          <folding>
+            <marker date="1513768157792" expanded="true" signature="9905:10122" ph="SELECT * FRO... Users" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/tasks/mytasks.volt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="35" column="36" lean-forward="false" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/auctionsModer/new.volt">
+    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="48" column="43" lean-forward="false" selection-start-line="48" selection-start-column="43" selection-end-line="48" selection-end-column="43" />
+        <state relative-caret-position="272">
+          <caret line="60" column="46" lean-forward="false" selection-start-line="60" selection-start-column="46" selection-end-line="60" selection-end-column="46" />
           <folding />
         </state>
       </provider>
