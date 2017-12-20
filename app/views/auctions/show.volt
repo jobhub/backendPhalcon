@@ -78,22 +78,18 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Номер предложения</th>
-            <th>Пользователь</th>
+            <th>Исполнитель</th>
             <th>Срок</th>
             <th>Описание</th>
             <th>Стоимость</th>
-
-            <th></th>
-            <th></th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         {% if page.items is defined %}
             {% for offer in page.items %}
                 <tr>
-                    <td>{{ offer.getOfferId() }}</td>
-                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), "Профиль") }}</td>
+                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), offer.users.userinfo.getLastname()) }}</td>
                     <td>{{ offer.getDeadline() }}</td>
                     <td>{{ offer.getDescription() }}</td>
                     <td>{{ offer.getPrice() }}</td>

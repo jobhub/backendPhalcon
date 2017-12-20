@@ -1,6 +1,6 @@
 <div class="page-header">
     <h1>
-        Мои выполняемые задания
+        Мне выполняют задания
     </h1>
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
@@ -18,23 +18,22 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Номер Задания</th>
+                <th>Название</th>
             <th>Категория</th>
             <th>Описание</th>
             <th>Адрес</th>
             <th>Дата работ</th>
             <th>Цена</th>
             <th>Статус</th>
-                <th></th>
-                <th></th>
-            </tr>
+                <th colspan="2">Действия</th>
+                 </tr>
         </thead>
         <tbody>
         {% if page.items is defined %}
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.tasks.getTaskid() }}</td>
+                <td>{{ link_to("auctions/show/"~task.tasks.getTaskid(),task.tasks.getName()) }}</td>
                             <td>{{ task.tasks.categories.getCategoryName() }}</td>
                             <td>{{ task.tasks.getDescription() }}</td>
                             <td>{{ task.tasks.getaddress() }}</td>
@@ -44,7 +43,6 @@
 
                 <td>{{ link_to("tasks/edit/"~task.tasks.getTaskid(), "Редактировать") }}</td>
                 <td>{{ link_to("tasks/delete/"~task.tasks.getTaskid(), "Удалить") }}</td>
-                <td>{{ link_to("auctions/show/"~task.tasks.getTaskid(), "Аукцион") }}</td>
             </tr>
         {% endfor %}
         {% endif %}

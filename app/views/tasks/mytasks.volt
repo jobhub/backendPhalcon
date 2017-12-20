@@ -23,10 +23,8 @@
             <th>Стоимость</th>
             <th>Статус</th>
 
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th colspan="2">Действия</th>
+                <th>Тендер/Чат</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +32,7 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.getName() }}</td>
+                <td>{{ link_to("auctions/show/"~task.getTaskid(), task.getName()) }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getaddress() }}</td>

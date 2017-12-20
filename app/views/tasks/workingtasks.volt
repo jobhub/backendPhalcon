@@ -1,6 +1,6 @@
 <div class="page-header">
     <h1>
-        Мне выполняют задания
+        Мои выполняемые задания
     </h1>
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
@@ -15,7 +15,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Номер Задания</th>
+                <th>Название</th>
             <th>Категория</th>
             <th>Описание</th>
             <th>Адрес</th>
@@ -23,10 +23,7 @@
             <th>Стоимость</th>
             <th>Статус</th>
 
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th colspan="2">Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +31,7 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.tasks.getTaskId() }}</td>
+                <td>{{ task.tasks.getName() }}</td>
             <td>{{ task.tasks.categories.getCategoryName() }}</td>
             <td>{{ task.tasks.getDescription() }}</td>
             <td>{{ task.tasks.getaddress() }}</td>

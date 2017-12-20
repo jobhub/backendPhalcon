@@ -5,8 +5,8 @@
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
     <p>  {{ link_to("offers/myoffers/"~userId, "Мои предложения") }}</p>
-    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мои выполняемые задания") }}</p>
-    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мне выполняют задания") }}</p>
+    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мне выполняют задания") }}</p>
+    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мои выполняемые задания") }}</p>
 </div>
 
 {{ content() }}
@@ -15,16 +15,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Номер предложения</th>
                 <th>Наименование работ</th>
                 <th>Описание работ</th>
-            <th>Тендер</th>
             <th>Описание предложения</th>
             <th>Сроки</th>
             <th>Стоимость</th>
-
-                <th></th>
-                <th></th>
+                <th colspan="2">Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -32,10 +28,8 @@
         {% for offers in page.items %}
 
             <tr>
-                <td>{{ offers.getOfferId() }}</td>
-                <td>{{ offers.auctions.tasks.getName() }}</td>
+                <td>{{ link_to("auctions/viewing/"~offers.getAuctionId(),offers.auctions.tasks.getName()) }}</td>
                 <td>{{ offers.auctions.tasks.getDescription() }}</td>
-            <td>{{link_to("auctions/viewing/"~offers.getAuctionId(), "Тендер") }}</td>
             <td>{{ offers.getDescription() }}</td>
             <td>{{ offers.getDeadline() }}</td>
             <td>{{ offers.getPrice() }}</td>

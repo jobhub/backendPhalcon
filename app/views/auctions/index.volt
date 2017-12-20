@@ -43,28 +43,26 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>Название</th>
             <th>Категория</th>
-            <th>Название</th>
             <th>Описание</th>
             <th>Адрес</th>
             <th>Стоимость</th>
             <th>Конец Тендера</th>
-                <th></th>
-                <th></th>
+                <th>Заказчик</th>
             </tr>
         </thead>
         <tbody>
         {% if page.items is defined %}
         {% for auction in page.items %}
             <tr>
+                <td>{{ link_to("auctions/viewing/"~auction.auctions.getAuctionid(),auction.auctions.tasks.getName()) }}</td>
             <td>{{ auction.auctions.tasks.categories.getCategoryName() }}</td>
-            <td>{{ auction.auctions.tasks.getName() }}</td>
             <td>{{ auction.auctions.tasks.getDescription() }}</td>
             <td>{{ auction.auctions.tasks.getaddress() }}</td>
             <td>{{ auction.auctions.tasks.getPrice() }}</td>
             <td>{{ auction.auctions.getDateEnd() }}</td>
 
-                <td>{{ link_to("auctions/viewing/"~auction.auctions.getAuctionid(), "Просмотреть") }}</td>
                 <td>{{ link_to("userinfo/viewprofile/"~auction.auctions.tasks.getUserId(), auction.auctions.tasks.users.userinfo.getLastname()) }}</td>
 
             </tr>
