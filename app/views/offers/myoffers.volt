@@ -58,10 +58,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("offers/search", "Первая") }}</li>
-                <li>{{ link_to("offers/search?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("offers/search?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("offers/search?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("offers/myoffers/"~userId, "Первая") }}</li>
+                <li>{{ link_to("offers/myoffers/"~userId~"?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("offers/myoffers/"~userId~"?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("offers/myoffers/"~userId~"?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

@@ -5,8 +5,8 @@
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
     <p>  {{ link_to("offers/myoffers/"~userId, "Мои предложения") }}</p>
-    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мне выполняют задания") }}</p>
-    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мои выполняемые задания") }}</p>
+    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мои выполняемые задания") }}</p>
+    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мне выполняют задания") }}</p>
 </div>
 
 {{ content() }}
@@ -21,7 +21,10 @@
             <th>Адрес</th>
             <th>Дата работ</th>
             <th>Стоимость</th>
+            <th>Статус</th>
 
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
             </tr>
@@ -31,16 +34,21 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.tasks.getTaskid() }}</td>
-                            <td>{{ task.tasks.categories.getCategoryName() }}</td>
-                            <td>{{ task.tasks.getDescription() }}</td>
-                            <td>{{ task.tasks.getaddress() }}</td>
-                            <td>{{ task.tasks.getDeadline() }}</td>
-                            <td>{{ task.tasks.getPrice() }}</td>
+                <td>{{ task.getTaskId() }}</td>
+            <td>{{ task.categories.getCategoryName() }}</td>
+            <td>{{ task.getDescription() }}</td>
+            <td>{{ task.getaddress() }}</td>
+            <td>{{ task.getDeadline() }}</td>
+            <td>{{ task.getPrice() }}</td>
+            <td>{{ task.getStatus() }}</td>
 
-                <td>{{ link_to("tasks/edit/"~task.tasks.getTaskid(), "Редактировать") }}</td>
-                <td>{{ link_to("tasks/delete/"~task.tasks.getTaskid(), "Удалить") }}</td>
-                <td>{{ link_to("auctions/show/"~task.tasks.getTaskid(), "Аукцион") }}</td>
+                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
+                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
+                {% if task.status is 'Поиск'%}
+                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Тендер") }}</td>
+                {% elseif task.status is 'Выполняется'%}
+                <td>{{ link_to("coordination/index/"~task.getTaskid(), "Чат") }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         {% endif %}
@@ -57,10 +65,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("tasks/index", "Первая") }}</li>
-                <li>{{ link_to("tasks/index?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("tasks/index?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("tasks/index?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("tasks/workingtasks/"~userId, "Первая") }}</li>
+                <li>{{ link_to("tasks/workingtasks/"~userId~"?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("tasks/workingtasks/"~userId~"?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("tasks/workingtasks/"~userId~"?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

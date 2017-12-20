@@ -408,11 +408,12 @@ class TasksController extends ControllerBase
         $this->view->setVar("userId", $userId);
 
       //  $query = $this->modelsManager->createQuery('SELECT Tasks.taskId, Tasks.categoryId, Tasks.description, Tasks.address, Task.deadline, Tasks.price, Tasks.status FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
-        $query = $this->modelsManager->createQuery('SELECT * FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
+        $query = $this->modelsManager->createQuery('SELECT * FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId  AND Tasks.Status = :status:');
         
       $tasks  = $query->execute(
             [
                 'userid' => "$userId",
+                'status' => "Выполняется",
             ]
         );
 
@@ -479,11 +480,12 @@ class TasksController extends ControllerBase
         $this->view->setVar("userId", $userId);
 
         //  $query = $this->modelsManager->createQuery('SELECT Tasks.taskId, Tasks.categoryId, Tasks.description, Tasks.address, Task.deadline, Tasks.price, Tasks.status FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
+
         $query = $this->modelsManager->createQuery('SELECT * FROM Tasks, Auctions, Offers WHERE Offers.userId=:userid: AND Auctions.selectedOffer=Offers.offerId AND Tasks.taskId=Auctions.taskId');
 
         $tasks  = $query->execute(
             [
-                'userid' => "$userId",
+                'userid' => $userId,
             ]
         );
 
