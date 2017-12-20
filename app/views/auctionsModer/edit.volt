@@ -28,7 +28,9 @@
 <div class="form-group">
     <label for="fieldSelectedoffer" class="col-sm-2 control-label">Выбранное предложение (ID)</label>
     <div class="col-sm-10">
-        {{ text_field("selectedOffer", "type" : "numeric", "class" : "form-control", "id" : "fieldSelectedoffer") }}
+        <!--{{ text_field("selectedOffer", "type" : "numeric", "class" : "form-control", "id" : "fieldSelectedoffer") }}-->
+         {{ select('selectedOffer', offers, 'using':['offerId', 'description'], 'class':'form-control', 'id':'fieldSelectedOffer')}}
+
     </div>
 </div>
 

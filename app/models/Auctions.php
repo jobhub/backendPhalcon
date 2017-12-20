@@ -74,7 +74,10 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     public function setSelectedOffer($selectedOffer)
     {
-        $this->selectedOffer = $selectedOffer;
+        if($selectedOffer == "")
+            $selectedOffer = null;
+        else
+            $this->selectedOffer = $selectedOffer;
 
         return $this;
     }
@@ -132,6 +135,7 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     public function getSelectedOffer()
     {
+
         return $this->selectedOffer;
     }
 

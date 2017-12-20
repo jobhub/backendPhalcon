@@ -43,6 +43,9 @@ class LogsController extends ControllerBase
             'page' => $numberPage
         ]);
 
+        $users = Users::find();
+        $this->view->setVar('users',$users);
+
         $this->view->page = $paginator->getPaginate();
     }
 

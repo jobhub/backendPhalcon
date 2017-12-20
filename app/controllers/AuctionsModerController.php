@@ -41,6 +41,9 @@ class AuctionsModerController extends ControllerBase
         $tasks = Tasks::find();
         $this->view->setVar('tasks',$tasks);
 
+        $offers = Offers::find();
+        $this->view->setVar('offers',$offers);
+
         $paginator = new Paginator([
             'data' => $auctions,
             'limit'=> 10,
@@ -57,6 +60,8 @@ class AuctionsModerController extends ControllerBase
     {
         $tasks = Tasks::find();
         $this->view->setVar('tasks',$tasks);
+        $offers = Offers::find();
+        $this->view->setVar('offers',$offers);
     }
 
     /**
@@ -82,6 +87,8 @@ class AuctionsModerController extends ControllerBase
 
             $tasks = Tasks::find();
             $this->view->setVar('tasks',$tasks);
+            $offers = Offers::find();
+            $this->view->setVar('offers',$offers);
 
             $this->view->auctionId = $auction->getAuctionid();
 
