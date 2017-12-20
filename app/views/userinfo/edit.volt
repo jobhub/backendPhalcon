@@ -57,7 +57,7 @@
 <div class="form-group">
     <label for="fieldAddress" class="col-sm-2 control-label">Адрес</label>
     <div class="col-sm-10">
-        {{ text_field("address", "size" : 30, "class" : "form-control", "id" : "fieldAddress") }}
+        {{  text_area("address", "cols": "30", "rows": "4", "class" : "form-control", "id" : "fieldAddress") }}
     </div>
 </div>
 

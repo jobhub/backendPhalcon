@@ -354,9 +354,12 @@ class AuctionsController extends ControllerBase
         }
         $task=Tasks::find($auction->getTaskId());
         $task=$task->getFirst();
-        $categories=Categories::find();
-        $this->view->setVar("categories", $categories);
-        $this->tag->setDefault("auctionId",$auction->getAuctionId());
+     //   $categoryId=$task->getCategoryId();
+     //   $category=Categories::find("categoryId=$categoryId");
+     //   $this->view->setVar("category", $category);
+        $this->view->setVar("auction", $auction);
+        $this->view->setVar("task", $task);
+      /*  $this->tag->setDefault("auctionId",$auction->getAuctionId());
         $this->tag->setDefault("name", $task->getName());
         $this->tag->setDefault("categoryId", $task->getCategoryid());
         $this->tag->setDefault("description", $task->getDescription());
@@ -364,7 +367,7 @@ class AuctionsController extends ControllerBase
         $this->tag->setDefault("deadline", $task->getDeadline());
         $this->tag->setDefault("price", $task->getPrice());
         $this->tag->setDefault("dateStart",$auction->getDateStart());
-        $this->tag->setDefault("dateEnd",$auction->getDateEnd());
+        $this->tag->setDefault("dateEnd",$auction->getDateEnd());*/
 
         $this->persistent->parameters = null;
 
@@ -413,17 +416,19 @@ class AuctionsController extends ControllerBase
         }
             $task=Tasks::find($auction->getTaskId());
             $task=$task->getFirst();
-            $categories=Categories::find();
-            $this->view->setVar("categories", $categories);
-            $this->tag->setDefault("auctionId",$auction->getAuctionId());
-            $this->tag->setDefault("name", $task->getName());
-            $this->tag->setDefault("categoryId", $task->getCategoryid());
-            $this->tag->setDefault("description", $task->getDescription());
-            $this->tag->setDefault("address", $task->getaddress());
-            $this->tag->setDefault("deadline", $task->getDeadline());
-            $this->tag->setDefault("price", $task->getPrice());
-            $this->tag->setDefault("dateStart",$auction->getDateStart());
-            $this->tag->setDefault("dateEnd",$auction->getDateEnd());
+            $this->view->setVar("task", $task);
+            $this->view->setVar("auction", $auction);
+        /*  $categories=Categories::find();
+           $this->view->setVar("categories", $categories);
+           $this->tag->setDefault("auctionId",$auction->getAuctionId());
+           $this->tag->setDefault("name", $task->getName());
+           $this->tag->setDefault("categoryId", $task->getCategoryid());
+           $this->tag->setDefault("description", $task->getDescription());
+           $this->tag->setDefault("address", $task->getaddress());
+           $this->tag->setDefault("deadline", $task->getDeadline());
+           $this->tag->setDefault("price", $task->getPrice());
+           $this->tag->setDefault("dateStart",$auction->getDateStart());
+           $this->tag->setDefault("dateEnd",$auction->getDateEnd());*/
     }
 
     public function choiceAction($offerId)

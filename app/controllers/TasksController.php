@@ -382,7 +382,7 @@ class TasksController extends ControllerBase
          $parameters["order"] = "taskId";
         $tasks = Tasks::find("userId=$userId");
         if (count($tasks) == 0) {
-            $this->flash->notice("Такого задания не существует");
+            $this->flash->notice("Задания не найдены");
         }
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");

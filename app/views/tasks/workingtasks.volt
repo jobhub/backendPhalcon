@@ -34,20 +34,20 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.getTaskId() }}</td>
-            <td>{{ task.categories.getCategoryName() }}</td>
-            <td>{{ task.getDescription() }}</td>
-            <td>{{ task.getaddress() }}</td>
-            <td>{{ task.getDeadline() }}</td>
-            <td>{{ task.getPrice() }}</td>
-            <td>{{ task.getStatus() }}</td>
+                <td>{{ task.tasks.getTaskId() }}</td>
+            <td>{{ task.tasks.categories.getCategoryName() }}</td>
+            <td>{{ task.tasks.getDescription() }}</td>
+            <td>{{ task.tasks.getaddress() }}</td>
+            <td>{{ task.tasks.getDeadline() }}</td>
+            <td>{{ task.tasks.getPrice() }}</td>
+            <td>{{ task.tasks.getStatus() }}</td>
 
-                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
-                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
-                {% if task.status is 'Поиск'%}
-                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Тендер") }}</td>
-                {% elseif task.status is 'Выполняется'%}
-                <td>{{ link_to("coordination/index/"~task.getTaskid(), "Чат") }}</td>
+                <td>{{ link_to("tasks/edit/"~task.tasks.getTaskid(), "Редактировать") }}</td>
+                <td>{{ link_to("tasks/delete/"~task.tasks.getTaskid(), "Удалить") }}</td>
+                {% if task.tasks.status is 'Поиск'%}
+                <td>{{ link_to("auctions/show/"~task.tasks.getTaskid(), "Тендер") }}</td>
+                {% elseif task.tasks.status is 'Выполняется'%}
+                <td>{{ link_to("coordination/index/"~task.tasks.getTaskid(), "Чат") }}</td>
                 {% endif %}
             </tr>
         {% endfor %}

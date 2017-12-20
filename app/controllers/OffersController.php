@@ -554,7 +554,7 @@ class OffersController extends ControllerBase
         // $parameters["order"] = "taskId";
         $offers = Offers::find("userId=$userId");
         if (count($offers) == 0) {
-            $this->flash->notice("TПредложение не найдено");
+            $this->flash->notice("Предложений не найдено");
         }
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");
