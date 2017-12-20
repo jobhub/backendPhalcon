@@ -74,7 +74,7 @@
         {% for task in page.items %}
             <tr>
                 <td>{{ task.getName() }}</td>
-            <td>{{ link_to("",task.users.getEmail()) }}</td>
+            <td>{{ link_to("userinfo/viewprofile/"~task.users.getUserId(),task.users.getEmail()) }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getAddress() }}</td>
