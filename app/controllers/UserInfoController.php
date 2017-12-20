@@ -293,11 +293,11 @@ class UserinfoController extends ControllerBase
 
             return;
         }
-        if($userinfo->getMale()===1)
+        if($userinfo->getMale()==1)
             $userinfo->setMale("Мужской");
         else
             $userinfo->setMale("Женский");
-        if($userinfo->getExecutor()===1)
+        if($userinfo->getExecutor()==1)
             $userinfo->setExecutor("Да");
         else
             $userinfo->setExecutor("Нет");

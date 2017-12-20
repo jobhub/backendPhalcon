@@ -12,17 +12,10 @@
 {{ form("offers/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
-    <label for="fieldOfferid" class="col-sm-2 control-label">ID предложения</label>
+    <label for="fieldUserid" class="col-sm-2 control-label">Пользователь</label>
     <div class="col-sm-10">
-        {{ text_field("offerId", "type" : "numeric", "class" : "form-control", "id" : "fieldOfferid") }}
-    </div>
-</div>
-
-<div class="form-group">
-    <label for="fieldUserid" class="col-sm-2 control-label">ID пользователя</label>
-    <div class="col-sm-10">
-        {{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}
-        <!--{{ select('userId', users, 'using':['userid', 'firstname'],"class" : "form-control", "id" : "fieldUserid") }}-->
+        {{ select('userId', users, 'using':['userId', 'email'],'useEmpty':true,
+                'emptyValue':null, 'emptyText':'', 'class':'form-control', 'id':'fieldUserid') }}
     </div>
 </div>
 
