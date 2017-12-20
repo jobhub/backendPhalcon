@@ -32,7 +32,7 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{ task.getTaskid() }}</td>
+                <td>{{ task.getTaskId() }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getaddress() }}</td>

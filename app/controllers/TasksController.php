@@ -385,6 +385,7 @@ class TasksController extends ControllerBase
         if (!is_array($parameters)) {
             $parameters = [];
         }
+
         // $parameters["userId"] = $userId;
         // $parameters["order"] = "taskId";
        /* $offers = Offers::find("userId=$userId");
@@ -398,6 +399,8 @@ class TasksController extends ControllerBase
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");
         //   $this->view->setVar("categories", $categories->getCategoryName());
+
+
 
         $paginator = new Paginator([
             'data' => $tasks,

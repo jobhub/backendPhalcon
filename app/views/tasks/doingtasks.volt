@@ -30,16 +30,16 @@
         {% for task in page.items %}
 
             <tr>
-                <td>{{  }}</td>
-            <td>{{ }}</td>
-            <td>{{  }}</td>
-            <td>{{  }}</td>
-            <td>{{  }}</td>
-            <td>{{ }}</td>
+                <td>{{ task.tasks.getTaskid() }}</td>
+                            <td>{{ task.tasks.categories.getCategoryName() }}</td>
+                            <td>{{ task.tasks.getDescription() }}</td>
+                            <td>{{ task.tasks.getaddress() }}</td>
+                            <td>{{ task.tasks.getDeadline() }}</td>
+                            <td>{{ task.tasks.getPrice() }}</td>
 
-                <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
-                <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
-                <td>{{ link_to("auctions/show/"~task.getTaskid(), "Аукцион") }}</td>
+                <td>{{ link_to("tasks/edit/"~task.tasks.getTaskid(), "Редактировать") }}</td>
+                <td>{{ link_to("tasks/delete/"~task.tasks.getTaskid(), "Удалить") }}</td>
+                <td>{{ link_to("auctions/show/"~task.tasks.getTaskid(), "Аукцион") }}</td>
             </tr>
         {% endfor %}
         {% endif %}
