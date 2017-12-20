@@ -179,64 +179,52 @@ class CoordinationController extends ControllerBase
         ]);
     }
 
-    /**
-     * Saves a message edited
-     *
-     */
-    public
-    function saveAction()
-    {
+    public function endAction(){
+        if(!$this->request->isPost()) {
+            /*$taskId = $this->request->getPost('taskId');
+            $auction = Auctions::find("taskId=$taskId");
+            $auction = $auction->getFirst();*/
 
-        if (!$this->request->isPost()) {
-            $this->dispatcher->forward([
-                'controller' => "messages",
-                'action' => 'index'
-            ]);
+            $auctionId = $this->request->getPost('auctionId');
 
-            return;
-        }
+            $task = Auctions::findFirstByAuctionId($auctionId)->tasks;
 
-        $messageId = $this->request->getPost("messageId");
-        $message = Messages::findFirstBymessageId($messageId);
+            $task->setStatus(2);
 
-        if (!$message) {
-            $this->flash->error("message does not exist " . $messageId);
+            if (!$task->save()) {
+                foreach ($task->getMessages() as $message) {
+                    $this->flash->error($message);
+                }
 
-            $this->dispatcher->forward([
-                'controller' => "messages",
-                'action' => 'index'
-            ]);
+                $this->dispatcher->forward([
+                    'controller' => "coordination",
+                    'action' => 'index'
+                ]);
 
-            return;
-        }
-
-        $message->setAuctionid($this->request->getPost("auctionId"));
-        $message->setInput($this->request->getPost("input"));
-        $message->setMessage($this->request->getPost("message"));
-        $message->setDate($this->request->getPost("date"));
-
-
-        if (!$message->save()) {
-
-            foreach ($message->getMessages() as $message) {
-                $this->flash->error($message);
+                return;
             }
 
+            /*if (!$auction) {
+                $this->flash->error("Такого тендера ещё нет. Создайте! ");
+
+                $this->dispatcher->forward([
+                    'controller' => "auctions",
+                    'action' => 'new'
+                ]);
+
+                return;
+            }*/
+
+
+
+        } else{
             $this->dispatcher->forward([
-                'controller' => "messages",
-                'action' => 'edit',
-                'params' => [$message->getMessageid()]
+                'controller' => "coordination",
+                'action' => 'index'
             ]);
 
             return;
         }
-
-        $this->flash->success("message was updated successfully");
-
-        $this->dispatcher->forward([
-            'controller' => "messages",
-            'action' => 'index'
-        ]);
     }
 
 

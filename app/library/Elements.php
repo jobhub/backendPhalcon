@@ -22,7 +22,7 @@ class Elements extends Component
             ],
             'tasks' => [
                 'caption' => 'Задания',
-                'action' => 'index'
+                'action' => 'mytasks/'
             ],
             'auctions' => [
                 'caption' => 'Тендеры',
@@ -89,6 +89,9 @@ class Elements extends Component
                 'caption' => 'Выйти',
                 'action' => 'end'
             ];
+
+            $this->_headerMenu['navbar-left']['tasks']['action'].=$auth['id'];
+
             unset($this->_headerMenu['navbar-right']['register']);
             if($auth['role']!= "Moderator") {
                 unset($this->_headerMenu['navbar-right']['users']);

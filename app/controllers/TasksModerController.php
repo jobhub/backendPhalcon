@@ -97,6 +97,7 @@ class TasksModerController extends ControllerBase
             $this->tag->setDefault("address", $task->getAddress());
             $this->tag->setDefault("deadline", $task->getDeadline());
             $this->tag->setDefault("price", $task->getPrice());
+            $this->tag->setDefault("status", $task->getStatus());
             
         }
     }
@@ -188,6 +189,7 @@ class TasksModerController extends ControllerBase
         $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
+        $task->setStatus($this->request->getPost("Status"));
         
 
         if (!$task->save()) {

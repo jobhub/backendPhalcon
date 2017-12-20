@@ -182,7 +182,16 @@ class Tasks extends \Phalcon\Mvc\Model
      */
     public function setStatus($status)
     {
-        $this->status = $status;
+        if($status == 0){
+            $this->status = 'Поиск';
+        } else if($status == 1){
+            $this->status = 'Выполняется';
+        }
+        else if($status == 2){
+            $this->status = 'Завершено';
+        }
+        else
+            $this->status = $status;
 
         return $this;
     }

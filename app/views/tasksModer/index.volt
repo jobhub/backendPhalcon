@@ -40,6 +40,14 @@
     </div>
 </div>
 
+<div class="form-group">
+    <label for="fieldStatus" class="col-sm-2 control-label">Статус</label>
+    <div class="col-sm-10">
+        {{ select_static('status', ['Поиск':'Поиск','Выполняется':'Выполняется','Завершено':'Завершено'],"useEmpty":true,"emptyValue":null,
+        'emptyText':'',"class" : "form-control", "id" : "fieldStatus") }}
+    </div>
+</div>
+
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
@@ -60,6 +68,7 @@
             <th>Описание</th>
             <th>Адрес</th>
             <th>Дата завершения</th>
+            <th>Статус</th>
             <th>Цена</th>
 
                 <th></th>
@@ -77,6 +86,7 @@
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getAddress() }}</td>
             <td>{{ task.getDeadline() }}</td>
+            <td>{{ task.getStatus() }}</td>
             <td>{{ task.getPrice() }}</td>
 
                 <td>{{ link_to("tasksModer/edit/"~task.getTaskid(), "Изменить") }}</td>
