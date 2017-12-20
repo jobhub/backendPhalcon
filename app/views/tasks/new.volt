@@ -33,14 +33,14 @@
 <div class="form-group">
     <label for="fieldDescription" class="col-sm-2 control-label">Описание</label>
     <div class="col-sm-10">
-        {{ text_field("description", "size" : 1000, "class" : "form-control", "id" : "fieldDescription") }}
+        {{ text_area("description", "cols": "30", "rows": "4", "class" : "form-control", "id" : "fieldDescription") }}
     </div>
 </div>
 
 <div class="form-group">
     <label for="fieldaddress" class="col-sm-2 control-label">Адрес</label>
     <div class="col-sm-10">
-        {{ text_field("address", "size" : 100, "class" : "form-control", "id" : "fieldaddress") }}
+        {{ text_area("address","cols": "30", "rows": "4", "class" : "form-control", "id" : "fieldaddress") }}
     </div>
 </div>
 

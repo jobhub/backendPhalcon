@@ -5,8 +5,8 @@
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
     <p>  {{ link_to("offers/myoffers/"~userId, "Мои предложения") }}</p>
-    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мои выполняемые задания") }}</p>
-    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мне выполняют задания") }}</p>
+    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мне выполняют задания") }}</p>
+    <p>  {{ link_to("tasks/workingtasks/"~userId, "Мои выполняемые задания") }}</p>
 </div>
 
 {{ content() }}
@@ -55,7 +55,7 @@
         </tbody>
     </table>
 </div>
-
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -73,3 +73,4 @@
         </nav>
     </div>
 </div>
+{% endif %}

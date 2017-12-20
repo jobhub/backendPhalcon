@@ -71,7 +71,7 @@
         {{ auction.getDateEnd() }}
     </div>
 </div>
-</form>
+
 
 
 <div class="form-group">

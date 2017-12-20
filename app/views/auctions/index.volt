@@ -43,14 +43,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>№ Тендера</th>
             <th>Категория</th>
             <th>Название</th>
             <th>Описание</th>
             <th>Адрес</th>
             <th>Стоимость</th>
             <th>Конец Тендера</th>
-
                 <th></th>
                 <th></th>
             </tr>
@@ -59,7 +57,6 @@
         {% if page.items is defined %}
         {% for auction in page.items %}
             <tr>
-                <td>{{ auction.auctions.getAuctionid() }}</td>
             <td>{{ auction.auctions.tasks.categories.getCategoryName() }}</td>
             <td>{{ auction.auctions.tasks.getName() }}</td>
             <td>{{ auction.auctions.tasks.getDescription() }}</td>
@@ -76,7 +73,7 @@
         </tbody>
     </table>
 </div>
-
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -94,4 +91,5 @@
         </nav>
     </div>
 </div>
+{% endif %}
 

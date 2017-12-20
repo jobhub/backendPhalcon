@@ -402,6 +402,7 @@ class AuctionsController extends ControllerBase
     public function viewingAction($auctionId)
     {
             $auction=Auctions::findFirstByAuctionId($auctionId);
+            $this->session->set('auctionId',$auctionId);
             //$auction=$auction->getFirst();
             $this->view->setVar('auction',$auction);
         if (!$auction) {

@@ -416,6 +416,7 @@ class TasksController extends ControllerBase
                 'status' => "Выполняется",
             ]
         );
+        $this->view->setVar("task", $tasks);
 
 
         /*$t=null;
