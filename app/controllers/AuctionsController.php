@@ -19,6 +19,16 @@ class AuctionsController extends ControllerBase
     {
         $this->persistent->parameters = null;
 
+
+        $today = date("Y-m-d");
+        $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
+
+        $auctions= $query->execute(
+            [
+                'today' => "$today",
+            ]
+        );
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Auctions', $_POST);
@@ -27,13 +37,6 @@ class AuctionsController extends ControllerBase
             $numberPage = $this->request->getQuery("page", "int");
         }
 
-        $parameters = $this->persistent->parameters;
-        if (!is_array($parameters)) {
-            $parameters = [];
-        }
-        $parameters["order"] = "auctionId";
-
-        $auctions = Auctions::find($parameters);
         if (count($auctions) == 0) {
             $this->flash->notice("Такого тендера не существует");
         }
