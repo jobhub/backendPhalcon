@@ -2,6 +2,7 @@
  
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
+use Phalcon\Mvc\Model\Query;
 
 
 class TasksController extends ControllerBase
@@ -341,16 +342,40 @@ class TasksController extends ControllerBase
 
     public function doingtasksAction($userId)
     {
+
         $this->persistent->parameters = null;
 
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
         $this->view->setVar("userId", $userId);
 
+      //  $query = $this->modelsManager->createQuery('SELECT Tasks.taskId, Tasks.categoryId, Tasks.description, Tasks.address, Task.deadline, Tasks.price, Tasks.status FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
+        $query = $this->modelsManager->createQuery('SELECT * FROM Users, Tasks, Auctions, Offers WHERE Users.userId=:userid: and Tasks.userId=Users.userId AND Auctions.taskId=Tasks.taskId AND Offers.auctionId=Auctions.auctionId AND Auctions.selectedOffer=Offers.offerId');
+        
+      $tasks  = $query->execute(
+            [
+                'userid' => "$userId",
+            ]
+        );
+
+
+        /*$t=null;
+       foreach ($tasks as $task)
+       {
+           $s=$task->taskId;
+           $t=(Tasks::find("taskId=$s"));
+       }
+
+
+
+       $taskIds=$tasks->rows;
+       $tasks=Tasks::find("userId=$userId");
+       $auctions=$tasks->auctions->offers;
+       $offers=$auctions->offers;
+*/
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Tasks', $_POST);
-            $query->andWhere();
             $this->persistent->parameters = $query->getParams();
         } else {
             $numberPage = $this->request->getQuery("page", "int");
@@ -362,13 +387,13 @@ class TasksController extends ControllerBase
         }
         // $parameters["userId"] = $userId;
         // $parameters["order"] = "taskId";
-        $offers = Offers::find("userId=$userId");
+       /* $offers = Offers::find("userId=$userId");
         if (count($offers) == 0) {
             $this->flash->notice("Задание не найдено");
-        }
+        }*/
 
-        $tasks=$offers->auctions;
-        $tasks=$offers->auctions->tasks;
+      //  $tasks=$offers->auctions;
+      //  $tasks=$offers->auctions->tasks;
 
         // $categoryId=$tasks->getCategoryId();
         //   $categories=Categories::findFirst("categoryId=$categoryId");

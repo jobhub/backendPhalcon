@@ -7,6 +7,7 @@ class Auctions extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $auctionId;
@@ -73,11 +74,7 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     public function setSelectedOffer($selectedOffer)
     {
-        if($selectedOffer == ""){
-            $this->selectedOffer = null;
-        }else {
-            $this->selectedOffer = $selectedOffer;
-        }
+        $this->selectedOffer = $selectedOffer;
 
         return $this;
     }
@@ -158,18 +155,27 @@ class Auctions extends \Phalcon\Mvc\Model
         return $this->dateEnd;
     }
 
-
-
     /**
      * Initialize method for model.
      */
-
     public function initialize()
     {
         $this->setSchema("service_services");
         $this->setSource("auctions");
-        $this->hasOne('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
-        $this->hasOne('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+        $this->hasMany('auctionId', 'Messages', 'auctionId', ['alias' => 'Messages']);
+        $this->hasMany('auctionId', 'Offers', 'auctionId', ['alias' => 'Offers']);
+        $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
+        $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'auctions';
     }
 
     /**
@@ -192,16 +198,6 @@ class Auctions extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'auctions';
     }
 
 }
