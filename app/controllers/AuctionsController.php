@@ -446,12 +446,30 @@ class AuctionsController extends ControllerBase
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
-                'action' => 'index'
+                'action' => 'show',
+                'params' => [$auctionId]
             ]);
 
             return;
         }
         $auction->setSelectedOffer($offerId);
+        $task = $auction->Tasks;
+        $task->setStatus(1);
+
+        if (!$task->save()) {
+
+            foreach ($task->getMessages() as $message) {
+                $this->flash->error($message);
+            }
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'show',
+                'params' => [$auctionId]
+            ]);
+
+            return;
+        }
 
         if (!$auction->save()) {
 
@@ -461,18 +479,19 @@ class AuctionsController extends ControllerBase
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
-                'action' => 'show',
-                'params' => [$auction->getAuctionid()]
+                'action' => 'index',
+                'params' => [$task->getTaskId()]
             ]);
 
             return;
         }
 
-        $this->flash->success("auction was updated successfully");
+        $this->flash->success("Исполнитель был избран");
 
         $this->dispatcher->forward([
-            'controller' => "tasks",
-            'action' => 'index'
+            'controller' => "coordination",
+            'action' => 'index',
+            'params' => [$task->getTaskId()]
         ]);
 
     }

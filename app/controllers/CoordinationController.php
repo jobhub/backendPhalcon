@@ -180,10 +180,6 @@ class CoordinationController extends ControllerBase
     }
 
     public function endAction(){
-        if(!$this->request->isPost()) {
-            /*$taskId = $this->request->getPost('taskId');
-            $auction = Auctions::find("taskId=$taskId");
-            $auction = $auction->getFirst();*/
 
             $auctionId = $this->request->getPost('auctionId');
 
@@ -204,27 +200,12 @@ class CoordinationController extends ControllerBase
                 return;
             }
 
-            /*if (!$auction) {
-                $this->flash->error("Такого тендера ещё нет. Создайте! ");
 
-                $this->dispatcher->forward([
-                    'controller' => "auctions",
-                    'action' => 'new'
-                ]);
-
-                return;
-            }*/
-
-
-
-        } else{
-            $this->dispatcher->forward([
-                'controller' => "coordination",
-                'action' => 'index'
-            ]);
-
-            return;
-        }
+        $this->dispatcher->forward([
+            'controller' => "tasks",
+            'action' => 'mytasks',
+            'params' => [$this->session->get('auth')['id']]
+        ]);
     }
 
 

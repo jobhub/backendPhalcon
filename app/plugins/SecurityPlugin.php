@@ -53,7 +53,7 @@ class SecurityPlugin extends Plugin
 			//Private area resources
             //Тоже надо бы из БД взять
 			$privateResources = [
-                'coordination'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'coordination'      => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
                 'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks'],
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
