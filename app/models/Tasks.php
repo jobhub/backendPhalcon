@@ -154,8 +154,9 @@ class Tasks extends \Phalcon\Mvc\Model
      */
     public function setDeadline($deadline)
     {
-        if($deadline="")
+        if($deadline=="")
             $deadline=null;
+        else
         $this->deadline = $deadline;
 
         return $this;

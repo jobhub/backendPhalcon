@@ -398,8 +398,8 @@ class AuctionsController extends ControllerBase
 
     public function viewingAction($auctionId)
     {
-            $auction=Auctions::find($auctionId);
-            $auction=$auction->getFirst();
+            $auction=Auctions::findFirstByAuctionId($auctionId);
+            //$auction=$auction->getFirst();
             $this->view->setVar('auction',$auction);
         if (!$auction) {
             $this->flash->error("Такого тендера не существует");

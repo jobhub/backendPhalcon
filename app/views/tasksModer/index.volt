@@ -23,7 +23,7 @@
     <div class="col-sm-10">
         <!--{{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}-->
         {{ select('userId', users, 'using':['userId', 'email'],'useEmpty':true,
-        'emptyValue':null, 'emptyText':'', 'class':'form-control', 'id':'fieldCategoryid') }}
+        'emptyValue':null, 'emptyText':'', 'class':'form-control', 'id':'fieldUserid') }}
     </div>
 </div>
 
@@ -74,7 +74,7 @@
         {% for task in page.items %}
             <tr>
                 <td>{{ task.getName() }}</td>
-            <td>{{ task.users.getEmail() }}</td>
+            <td>{{ link_to("",task.users.getEmail()) }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getAddress() }}</td>

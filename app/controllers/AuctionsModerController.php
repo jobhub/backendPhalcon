@@ -38,6 +38,9 @@ class AuctionsModerController extends ControllerBase
             $this->flash->notice("Не найдено ни одного тендера");
         }
 
+        $tasks = Tasks::find();
+        $this->view->setVar('tasks',$tasks);
+
         $paginator = new Paginator([
             'data' => $auctions,
             'limit'=> 10,
@@ -52,7 +55,8 @@ class AuctionsModerController extends ControllerBase
      */
     public function newAction()
     {
-
+        $tasks = Tasks::find();
+        $this->view->setVar('tasks',$tasks);
     }
 
     /**
@@ -75,6 +79,9 @@ class AuctionsModerController extends ControllerBase
 
                 return;
             }
+
+            $tasks = Tasks::find();
+            $this->view->setVar('tasks',$tasks);
 
             $this->view->auctionId = $auction->getAuctionid();
 

@@ -17,16 +17,11 @@
 {{ form("auctionsModer/save", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
-    <label for="fieldAuctionid" class="col-sm-2 control-label">ID тендера</label>
-    <div class="col-sm-10">
-        {{ text_field("auctionId", "type" : "numeric", "class" : "form-control", "id" : "fieldAuctionid") }}
-    </div>
-</div>
-
-<div class="form-group">
     <label for="fieldTaskid" class="col-sm-2 control-label">ID задания</label>
     <div class="col-sm-10">
-        {{ text_field("taskId", "type" : "numeric", "class" : "form-control", "id" : "fieldTaskid") }}
+        <!--{{ text_field("taskId", "type" : "numeric", "class" : "form-control", "id" : "fieldTaskid") }}-->
+        {{ select('taskId', tasks, 'using':['taskId', 'name'],'useEmpty':true,
+                       'emptyValue':null, 'emptyText':'', 'class':'form-control', 'id':'fieldTaskId') }}
     </div>
 </div>
 
