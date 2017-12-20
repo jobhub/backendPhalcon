@@ -217,6 +217,19 @@ class OffersController extends ControllerBase
                 return;
             }
 
+            $auctions=Auctions::find("selectedOffer=$offerId");
+            if(count($auctions)!=0)
+            {
+                $this->flash->error("Нельзя редактировать предложение, которые была выбрано как исполняемое в тендере");
+
+                $this->dispatcher->forward([
+                    'controller' => "offers",
+                    'action' => 'myoffers'
+                ]);
+
+                return;
+            }
+
             $this->view->offerId = $offer->getOfferid();
             $this->tag->setDefault("offerId", $offer->getOfferid());
             $this->tag->setDefault("deadline", $offer->getDeadline());
@@ -482,6 +495,18 @@ class OffersController extends ControllerBase
                 return;
             }
 
+            $auctions=Auctions::find("selectedOffer=$offerId");
+            if(count($auctions)!=0)
+            {
+                $this->flash->error("Нельзя удалить предложение, которые была выбрано как исполняемое в тендере");
+
+                $this->dispatcher->forward([
+                    'controller' => "offers",
+                    'action' => 'myoffers'
+                ]);
+
+                return;
+            }
             if (!$offer->delete()) {
 
                 foreach ($offer->getMessages() as $message) {

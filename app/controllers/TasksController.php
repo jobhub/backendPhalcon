@@ -140,6 +140,62 @@ class TasksController extends ControllerBase
         }
     }
 
+    public function editingAction($taskId)
+    {
+        $auth=$this->session->get("auth");
+        $taskUserId=Tasks::findFirst("taskId=$taskId");
+        if($taskUserId == false)
+        {
+            $this->flash->notice("Такого задания не существует");
+
+            $this->dispatcher->forward([
+                "controller" => "tasks",
+                "action" => "index"
+            ]);
+
+            return;
+        }
+        $taskUserId=$taskUserId->getUserId();
+        if($auth['id']===$taskUserId)
+        {
+            if (!$this->request->isPost()) {
+
+                $task = Tasks::findFirstBytaskId($taskId);
+                if (!$task) {
+                    $this->flash->error("Такого задания не существует");
+
+                    $this->dispatcher->forward([
+                        'controller' => "tasks",
+                        'action' => 'index'
+                    ]);
+
+                    return;
+                }
+                $categories=Categories::find();
+                $this->view->setVar("categories", $categories);
+
+                $this->view->taskId = $task->getTaskid();
+
+                $this->tag->setDefault("taskId", $task->getTaskid());
+                $this->tag->setDefault("userId", $task->getUserid());
+                $this->tag->setDefault("categoryId", $task->getCategoryid());
+                $this->tag->setDefault("description", $task->getDescription());
+                $this->tag->setDefault("address", $task->getaddress());
+                $this->tag->setDefault("deadline", $task->getDeadline());
+                $this->tag->setDefault("price", $task->getPrice());
+
+                $this->session->set("taskId", $task->getTaskid());
+            }
+            else
+            {
+                $this->dispatcher->forward([
+                    'controller' => "tasks",
+                    'action' => 'index'
+                ]);
+            }
+        }
+    }
+
     /**
      * Creates a new task
      */
@@ -275,6 +331,8 @@ class TasksController extends ControllerBase
 
             return;
         }
+
+
 
         if (!$task->delete()) {
 
