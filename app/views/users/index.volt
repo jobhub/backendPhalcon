@@ -12,10 +12,6 @@
 {{ form("users/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
-    <label for="fieldUserid" class="col-sm-1 control-label">ID</label>
-    <div class="col-sm-2">
-        {{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}
-    </div>
 
     <label for="fieldEmail" class="col-sm-1 control-label">Email</label>
     <div class="col-sm-2">
@@ -26,14 +22,16 @@
     <div class="col-sm-2">
         {{ text_field("phone", "size" : 30, "class" : "form-control", "id" : "fieldPhone") }}
     </div>
-</div>
 
-<div class="form-group">
-    <label for="fieldRole" class="col-sm-1 control-label">Роль</label>
-    <div class="col-sm-2">
-        {{ select_static("role",['':'','User':'Пользователь', 'Guests': 'Гость', 'Moderator':'Модератор'], "class" : "form-control", "id" : "fieldRole") }}
+    <div class="form-group">
+        <label for="fieldRole" class="col-sm-1 control-label">Роль</label>
+        <div class="col-sm-2">
+            {{ select_static("role",['':'','User':'Пользователь', 'Guests': 'Гость', 'Moderator':'Модератор'], "class" : "form-control", "id" : "fieldRole") }}
+        </div>
     </div>
 </div>
+
+
 
 
 
@@ -49,7 +47,6 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID пользователя</th>
             <th>Email</th>
             <th>Телефон</th>
             <th>Имя</th>
@@ -67,7 +64,6 @@
         {% if page.items is defined %}
         {% for user in page.items %}
             <tr>
-                <td>{{ user.getUserid() }}</td>
             <td>{{ user.getEmail() }}</td>
             <td>{{ user.getPhone() }}</td>
             <td>{{ user.userinfo.getFirstname() }}</td>

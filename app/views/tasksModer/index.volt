@@ -12,13 +12,6 @@
 {{ form("tasksModer/index", "method":"post", "autocomplete" : "off", "class" : "form-horizontal") }}
 
 <div class="form-group">
-    <label for="fieldTaskid" class="col-sm-2 control-label">ID задания</label>
-    <div class="col-sm-10">
-        {{ text_field("taskId", "type" : "numeric", "class" : "form-control", "id" : "fieldTaskid") }}
-    </div>
-</div>
-
-<div class="form-group">
     <label for="fieldName" class="col-sm-2 control-label">Название</label>
     <div class="col-sm-10">
         {{ text_field("name", "size" : 50, "class" : "form-control", "id" : "fieldName") }}
@@ -26,9 +19,11 @@
 </div>
 
 <div class="form-group">
-    <label for="fieldUserid" class="col-sm-2 control-label">ID пользователя</label>
+    <label for="fieldUserid" class="col-sm-2 control-label">Пользователь</label>
     <div class="col-sm-10">
-        {{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}
+        <!--{{ text_field("userId", "type" : "numeric", "class" : "form-control", "id" : "fieldUserid") }}-->
+        {{ select('userId', users, 'using':['userId', 'email'],'useEmpty':true,
+        'emptyValue':null, 'emptyText':'', 'class':'form-control', 'id':'fieldCategoryid') }}
     </div>
 </div>
 
@@ -61,9 +56,8 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>ID задания</th>
-                <th>Название</th>
-            <th>ID пользователя</th>
+            <th>Название</th>
+            <th>Пользователь</th>
             <th>Категория</th>
             <th>Описание</th>
             <th>Адрес</th>
@@ -79,9 +73,8 @@
         {% if page.items is defined %}
         {% for task in page.items %}
             <tr>
-                <td>{{ task.getTaskid() }}</td>
                 <td>{{ task.getName() }}</td>
-            <td>{{ task.getUserid() }}</td>
+            <td>{{ task.users.getEmail() }}</td>
             <td>{{ task.categories.getCategoryName() }}</td>
             <td>{{ task.getDescription() }}</td>
             <td>{{ task.getAddress() }}</td>
