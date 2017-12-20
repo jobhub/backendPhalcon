@@ -11,10 +11,6 @@ class Elements extends Component
 {
     private $_headerMenu = [
         'navbar-left' => [
-            'index' => [
-                'caption' => 'Домой',
-                'action' => 'index'
-            ],
 
             'userinfo' => [
                 'caption' => 'Профиль',

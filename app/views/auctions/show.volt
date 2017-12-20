@@ -78,22 +78,18 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Номер предложения</th>
-            <th>Пользователь</th>
+            <th>Исполнитель</th>
             <th>Срок</th>
             <th>Описание</th>
             <th>Стоимость</th>
-
-            <th></th>
-            <th></th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         {% if page.items is defined %}
             {% for offer in page.items %}
                 <tr>
-                    <td>{{ offer.getOfferId() }}</td>
-                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), "Профиль") }}</td>
+                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), offer.users.userinfo.getLastname()) }}</td>
                     <td>{{ offer.getDeadline() }}</td>
                     <td>{{ offer.getDescription() }}</td>
                     <td>{{ offer.getPrice() }}</td>
@@ -105,7 +101,7 @@
     </table>
 </div>
 
-
+{% if page.total_pages>1 %}
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -123,3 +119,4 @@
         </nav>
     </div>
 </div>
+{% endif %}

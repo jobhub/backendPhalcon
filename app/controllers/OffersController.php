@@ -110,9 +110,11 @@ class OffersController extends ControllerBase
 
             return;
         }
-
-        $auctionId = $this->request->getPost("auctionId");
-        $auction = Auctions::findFirstByauctionId($auctionId);
+        if($this->session->get('auctionId')!=null) {
+            $auctionId = $this->session->get('auctionId');
+            $auction = Auctions::findFirst("auctionId=$auctionId");
+            $this->session->remove('auctionId');
+        }
         if (!$auction) {
             $this->flash->error("Такого тендера не существует ");
 
@@ -133,6 +135,17 @@ class OffersController extends ControllerBase
                 "action" => "index"
             ]);
             $this->flash->error("Вы не являетесь исполнителем ");
+            return;
+        }
+        $taskId=$auction->getTaskId();
+        $task=Tasks::findFirst("taskId=$taskId");
+        if($userid==$task->getUserId())
+        {
+            $this->dispatcher->forward([
+                "controller" => "auctions",
+                "action" => "index"
+            ]);
+            $this->flash->error("Нельзя вступить в собственный тендер");
             return;
         }
         $offers=Offers::find("userId=$userid and auctionId=$auctionId");

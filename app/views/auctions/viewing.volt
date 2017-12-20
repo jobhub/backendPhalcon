@@ -73,6 +73,7 @@
 </div>
 
 
+
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
         {{ submit_button('Вступить', 'class': 'btn btn-default') }}
