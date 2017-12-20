@@ -5,8 +5,8 @@
     <p> {{ link_to("tasks/new", "Создать задание") }}</p>
     <p> {{ link_to("tasks/mytasks/"~userId, "Мои задания") }}</p>
     <p>  {{ link_to("offers/myoffers/"~userId, "Мои предложения") }}</p>
-    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мне выполняют задания") }}</p>
     <p>  {{ link_to("tasks/workingtasks/"~userId, "Мои выполняемые задания") }}</p>
+    <p>  {{ link_to("tasks/doingtasks/"~userId, "Мне выполняют задания") }}</p>
 </div>
 
 {{ content() }}
@@ -21,6 +21,7 @@
             <th>Адрес</th>
             <th>Дата работ</th>
             <th>Стоимость</th>
+            <th>Статус</th>
 
                 <th></th>
                 <th></th>
@@ -39,6 +40,7 @@
             <td>{{ task.getaddress() }}</td>
             <td>{{ task.getDeadline() }}</td>
             <td>{{ task.getPrice() }}</td>
+            <td>{{ task.getStatus() }}</td>
 
                 <td>{{ link_to("tasks/edit/"~task.getTaskid(), "Редактировать") }}</td>
                 <td>{{ link_to("tasks/delete/"~task.getTaskid(), "Удалить") }}</td>
@@ -63,10 +65,10 @@
     <div class="col-sm-11">
         <nav>
             <ul class="pagination">
-                <li>{{ link_to("tasks/search", "Первая") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.before, "Предыдущая") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.next, "Следующая") }}</li>
-                <li>{{ link_to("tasks/search?page="~page.last, "Последняя") }}</li>
+                <li>{{ link_to("tasks/mytasks/"~userId, "Первая") }}</li>
+                <li>{{ link_to("tasks/mytasks/"~userId~"?page="~page.before, "Предыдущая") }}</li>
+                <li>{{ link_to("tasks/mytasks/"~userId~"?page="~page.next, "Следующая") }}</li>
+                <li>{{ link_to("tasks/mytasks/"~userId~"?page="~page.last, "Последняя") }}</li>
             </ul>
         </nav>
     </div>

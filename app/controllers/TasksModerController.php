@@ -125,6 +125,7 @@ class TasksModerController extends ControllerBase
         $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
+        $task->setStatus($this->request->getPost("Status"));
         
 
         if (!$task->save()) {
