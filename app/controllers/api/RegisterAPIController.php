@@ -1,44 +1,21 @@
 <?php
 
 use Phalcon\Http\Response;
+use Phalcon\Mvc\Controller;
+use Phalcon\Dispatcher;
+use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
-class RegisterController extends ControllerBase
+class RegisterAPIController extends Controller
 {
-
-    public function initialize()
-    {
-        $this->tag->setTitle('Регистрация');
-        parent::initialize();
-    }
-
-
-
     public function indexAction()
     {
-        $form = new RegisterForm;
-
+        // Формируем ответ
         if ($this->request->isPost()) {
-
-            if (!$form->isValid($_POST)) {
-                $messages = $form->getMessages();
-
-                foreach ($messages as $message) {
-                    $this->flash->error($message);
-                }
-                $this->view->form = $form;
-                return true;
-            }
+            $response = new Response();
 
             $phone = $this->request->getPost('phone');
             $email = $this->request->getPost('email');
             $password = $this->request->getPost('password');
-            $repeatPassword = $this->request->getPost('repeatPassword');
-
-            if ($password != $repeatPassword) {
-                $this->flash->error('Пароли различны.');
-                $this->view->form = $form;
-                return true;
-            }
 
             $user = Users::findFirst(
                 [
@@ -51,9 +28,12 @@ class RegisterController extends ControllerBase
             );
 
             if ($user != false) {
-                $this->flash->error("Такой пользователь уже существует");
-                $this->view->form = $form;
-                return true;
+                $response->setJsonContent(
+                    [
+                        "status" => "ALREADY_EXISTS"
+                    ]
+                );
+                return $response;
             }
 
             $this->db->begin();
@@ -67,9 +47,20 @@ class RegisterController extends ControllerBase
             if ($user->save() == false) {
                 $this->db->rollback();
 
+                $errors = [];
+
                 foreach ($user->getMessages() as $message) {
-                    $this->flash->error((string)$message);
+                    $errors[] = $message->getMessage();
                 }
+
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA",
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+
             } else {
                 //Регистрация прошла успешно
                 $userInfo = new Userinfo();
@@ -82,40 +73,59 @@ class RegisterController extends ControllerBase
                 if ($userInfo->save() == false) {
 
                     $this->db->rollback();
+                    $errors = [];
+
                     foreach ($userInfo->getMessages() as $message) {
-                        $this->flash->error((string)$message);
+                        $errors[] = $message->getMessage();
                     }
+
+
+                    $response->setJsonContent(
+                        [
+                            "status" => "WRONG_DATA",
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
                 }
 
                 $setting = new Settings();
                 $setting->setUserId($user->getUserId());
 
+
                 if ($setting->save() == false) {
 
                     $this->db->rollback();
+                    $errors = [];
+
                     foreach ($setting->getMessages() as $message) {
-                        $this->flash->error((string)$message);
+                        $errors[] = $message->getMessage();
                     }
+
+
+                    $response->setJsonContent(
+                        [
+                            "status" => "WRONG_DATA",
+                            "errors" => $errors
+                        ]
+                    );
+
+                    return $response;
                 }
-
-                $this->tag->setDefault('email', '');
-                $this->tag->setDefault('password', '');
-                $this->flash->success('Спасибо за регистрацию.');
-
-
-                $this->db->commit();
-                return $this->dispatcher->forward(
-                    [
-                        "controller" => "session",
-                        "action" => "start",
-                    ]
-                );
-
             }
+            $this->db->commit();
+            $response->setJsonContent(
+                [
+                    "status" => "OK"
+                ]
+            );
+            return $response;
         }
+        else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
-        $this->view->form = $form;
+            throw $exception;
+        }
     }
-
 }
 

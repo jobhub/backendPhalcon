@@ -92,6 +92,8 @@ class SecurityPlugin extends Plugin
 				'session'    => ['index', 'register', 'start', 'end', 'action'],
                 'authorized'    => ['index', 'register', 'start', 'end', 'action'],
                 'auctions'      => ['index'],
+                'registerAPI'      => ['index'],
+                'sessionAPI'      => ['index'],
 			];
 			foreach ($publicResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

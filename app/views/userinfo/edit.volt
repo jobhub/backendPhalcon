@@ -1,11 +1,3 @@
-<div class="row">
-    <nav>
-        <ul class="pager">
-            <li class="previous">{{ link_to("userinfo", "Go Back") }}</li>
-        </ul>
-    </nav>
-</div>
-
 <div class="page-header">
     <h1>
         Редактирование профиля

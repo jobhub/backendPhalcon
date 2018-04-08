@@ -38,6 +38,17 @@ class MessagesController extends ControllerBase
             $this->flash->notice("Не найдено ни одного сообщения");
         }
 
+        //$auctions = Auctions::find();
+
+        $query = $this->modelsManager->createQuery('SELECT auctionId, Tasks.name as name FROM Tasks, Auctions WHERE Auctions.taskId=Tasks.taskId');
+
+        $auctions = $query->execute();
+
+        /*foreach($auctions as $auction) {
+            $auction->taskname = $auction->tasks->getName();
+        }*/
+        $this->view->setVar('auctions',$auctions);
+
         $paginator = new Paginator([
             'data' => $messages,
             'limit'=> 20,

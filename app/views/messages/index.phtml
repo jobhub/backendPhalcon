@@ -52,7 +52,7 @@
             <td><?php
                 if($message->getAuctionId()!= null) {
                     $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
-                    echo Tasks::findFirstByTaskId($auction->getTaskId())->getName();
+                    echo $this->tag->link('auctions\show',Tasks::findFirstByTaskId($auction->getTaskId())->getName());
                 }?></td>
             <td>
             <?php if ($message->getInput() == 1) { ?>
