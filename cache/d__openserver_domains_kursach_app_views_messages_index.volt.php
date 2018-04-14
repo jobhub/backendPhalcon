@@ -9,9 +9,16 @@
 <?= $this->tag->form(['messages/index', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
 
 <div class="form-group">
-    <label for="fieldAuctionid" class="col-sm-2 control-label">Название задания</label>
+    <label for="fieldMessageid" class="col-sm-2 control-label">ID сообщения</label>
     <div class="col-sm-10">
-            <?= $this->tag->select(['auctionId', $auctions, 'using' => ['auctionId', 'name'], 'useEmpty' => true, 'emptyValue' => null, 'emptyText' => '', 'class' => 'form-control', 'id' => 'fieldAuctionid']) ?>
+        <?= $this->tag->textField(['messageId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldMessageid']) ?>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fieldAuctionid" class="col-sm-2 control-label">ID аукциона</label>
+    <div class="col-sm-10">
+        <?= $this->tag->textField(['auctionId', 'type' => 'numeric', 'class' => 'form-control', 'id' => 'fieldAuctionid']) ?>
     </div>
 </div>
 
@@ -21,6 +28,13 @@
         <?= $this->tag->selectStatic(['input', ['' => '', '1' => 'От исполнителя', '0' => 'От заказчика'], 'class' => 'form-control', 'id' => 'fieldInput']) ?>
     </div>
 </div>
+
+<!--<div class="form-group">
+    <label for="fieldDate" class="col-sm-2 control-label">Дата и время отправки</label>
+    <div class="col-sm-10">
+        <?= $this->tag->dateField(['date', 'type' => 'datetime', 'class' => 'form-control', 'id' => 'fieldDate']) ?>
+    </div>
+</div>-->
 
 
 <div class="form-group">
@@ -36,7 +50,8 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-            <th>Задание</th>
+                <th>ID сообщения</th>
+            <th>ID аукциона</th>
             <th>Тип сообщения</th>
             <th>Текст сообщения</th>
             <th>Дата и время отправки</th>
@@ -49,15 +64,8 @@
         <?php if (isset($page->items)) { ?>
         <?php foreach ($page->items as $message) { ?>
             <tr>
-            <td><?php
-                if($message->getAuctionId()!= null) {
-                    $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
-<<<<<<< HEAD
-                    echo Tasks::findFirstByTaskId($auction->getTaskId())->getName();
-=======
-                    echo $this->tag->link('auctions\show',Tasks::findFirstByTaskId($auction->getTaskId())->getName());
->>>>>>> 29ec5cd9a151b8ac0d7ecf95413ffc7a172e2843
-                }?></td>
+                <td><?= $message->getMessageid() ?></td>
+            <td><?= $message->getAuctionid() ?></td>
             <td>
             <?php if ($message->getInput() == 1) { ?>
                          От исполнителя
@@ -77,7 +85,7 @@
     </table>
 </div>
 
-<?php if ($page->total_pages > 1) { ?>
+
 <div class="row">
     <div class="col-sm-1">
         <p class="pagination" style="line-height: 1.42857;padding: 6px 12px;">
@@ -95,4 +103,3 @@
         </nav>
     </div>
 </div>
-<?php }?>

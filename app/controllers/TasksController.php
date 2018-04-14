@@ -155,6 +155,21 @@ class TasksController extends ControllerBase
 
             return;
         }
+        $auction = Auctions::findFirst("taskId=$taskId");
+        $auctionId=$auction->getAuctionId();
+        $offers=Offers::find("auctionId=$auctionId");
+
+        if(count($offers)>0)
+        {
+            $this->flash->error("Нельзя редактировать тендер, на который откликнулись люди");
+
+            $this->dispatcher->forward([
+                'controller' => "tasks",
+                'action' => 'mytasks'
+            ]);
+
+            return;
+        }
         $taskUserId=$taskUserId->getUserId();
         if($auth['id']===$taskUserId)
         {
@@ -331,10 +346,24 @@ class TasksController extends ControllerBase
 
             return;
         }
+        $auction = Auctions::findFirst("taskId=$taskId");
+        $auctionId=$auction->getAuctionId();
+        $offers=Offers::find("auctionId=$auctionId");
+
+        if(count($offers)>0)
+        {
+            $this->flash->error("Нельзя удалить тендер, на который откликнулись люди");
+
+            $this->dispatcher->forward([
+                'controller' => "tasks",
+                'action' => 'mytasks'
+            ]);
+
+            return;
+        }
 
 
-
-        if (!$task->delete()) {
+        if (!$auction->delete() and !$task->delete()) {
 
             foreach ($task->getMessages() as $message) {
                 $this->flash->error($message);
@@ -342,7 +371,7 @@ class TasksController extends ControllerBase
 
             $this->dispatcher->forward([
                 'controller' => "tasks",
-                'action' => 'search'
+                'action' => 'mytasks'
             ]);
 
             return;
@@ -352,7 +381,7 @@ class TasksController extends ControllerBase
 
         $this->dispatcher->forward([
             'controller' => "tasks",
-            'action' => "index"
+            'action' => "mytasks"
         ]);
     }
 
