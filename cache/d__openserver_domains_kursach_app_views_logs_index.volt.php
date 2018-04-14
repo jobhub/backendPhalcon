@@ -41,28 +41,28 @@
 <div class="row">
     <table class="table table-bordered">
         <thead>
-        <tr>
-            <th>№ Лога</th>
+            <tr>
+                <th>№ Лога</th>
             <th>ID пользователя</th>
             <th>Controller</th>
             <th>Action</th>
             <th>Дата</th>
-            <th></th>
-        </tr>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
         <?php if (isset($page->items)) { ?>
-            <?php foreach ($page->items as $log) { ?>
-                <tr>
-                    <td><?= $log->getLogid() ?></td>
-                    <td><?= $log->getUserid() ?></td>
-                    <td><?= $log->getController() ?></td>
-                    <td><?= $log->getAction() ?></td>
-                    <td><?= $log->getDate() ?></td>
+        <?php foreach ($page->items as $log) { ?>
+            <tr>
+                <td><?= $log->getLogid() ?></td>
+            <td><?= $log->getUserid() ?></td>
+            <td><?= $log->getController() ?></td>
+            <td><?= $log->getAction() ?></td>
+            <td><?= $log->getDate() ?></td>
 
-                    <td><?= $this->tag->linkTo(['logs/delete/' . $log->getLogid(), 'Удалить']) ?></td>
-                </tr>
-            <?php } ?>
+                <td><?= $this->tag->linkTo(['logs/delete/' . $log->getLogid(), 'Удалить']) ?></td>
+            </tr>
+        <?php } ?>
         <?php } ?>
         </tbody>
     </table>

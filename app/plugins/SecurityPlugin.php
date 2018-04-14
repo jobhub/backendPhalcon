@@ -55,7 +55,7 @@ class SecurityPlugin extends Plugin
 			$privateResources = [
                 'coordination'      => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
 
-                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks', 'workingtasks'],
+                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks', 'workingtasks','editing'],
 
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],

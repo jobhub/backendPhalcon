@@ -114,6 +114,7 @@ class UserinfoController extends ControllerBase
                 $this->tag->setDefault("address", $userinfo->address);
                 $this->tag->setDefault("about", $userinfo->about);
                 $this->tag->setDefault("executor", $userinfo->executor);
+                $this->session->set("executor", $userinfo->executor);
             }
         }
         else
@@ -214,7 +215,12 @@ class UserinfoController extends ControllerBase
         //$userinfo->Male = $this->request->getPost("male");
         $userinfo->setAddress($this->request->getPost("address"));
         $userinfo->setAbout($this->request->getPost("about"));
-        $userinfo->setExecutor($this->request->getPost("executor"));
+        if(isset($_POST["executor"])) {
+            $userinfo->setExecutor($this->request->getPost("executor"));
+        }
+        else{
+            $userinfo->setExecutor(0);
+        }
 
         if (!$userinfo->save()) {
 

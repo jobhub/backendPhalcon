@@ -306,7 +306,21 @@ class AuctionsController extends ControllerBase
     {
         $auction = Auctions::findFirstByauctionId($auctionId);
         if (!$auction) {
-            $this->flash->error("auction was not found");
+            $this->flash->error("Тендер не найден");
+
+            $this->dispatcher->forward([
+                'controller' => "auctions",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
+
+        $offers=Offers::find("auctionId=$auctionId");
+
+        if(count($offers)>0)
+        {
+            $this->flash->error("Нельзя удалить тендер, на который откликнулись люди");
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
@@ -330,7 +344,7 @@ class AuctionsController extends ControllerBase
             return;
         }
 
-        $this->flash->success("auction was deleted successfully");
+        $this->flash->success("Тендер удален успешно");
 
         $this->dispatcher->forward([
             'controller' => "auctions",
