@@ -89,11 +89,19 @@
         <?php if (isset($page->items)) { ?>
             <?php foreach ($page->items as $offer) { ?>
                 <tr>
+<<<<<<< HEAD:cache/d__openserver_domains_kursach_app_views_auctions_show.volt.php
                     <td><?= $this->tag->linkTo(['userinfo/viewprofile/' . $offer->getUserId(), $offer->users->userinfo->getLastname()]) ?></td>
                     <td><?= $offer->getDeadline() ?></td>
                     <td><?= $offer->getDescription() ?></td>
                     <td><?= $offer->getPrice() ?></td>
                     <td><?= $this->tag->linkTo(['auctions/choice/' . $offer->getOfferId(), 'Выбрать']) ?></td>
+=======
+                    <td>{{ link_to("userinfo/viewprofile/"~offer.getUserId(), offer.users.userinfo.getLastname()) }}</td>
+                    <td>{{ offer.getDeadline() }}</td>
+                    <td>{{ offer.getDescription() }}</td>
+                    <td>{{ offer.getPrice() }}</td>
+                    <td>{{ link_to("auctions/choice/"~offer.getOfferId(), "Выбрать") }}</td>
+>>>>>>> 29ec5cd9a151b8ac0d7ecf95413ffc7a172e2843:app/views/auctions/show.volt
                 </tr>
             <?php } ?>
         <?php } ?>

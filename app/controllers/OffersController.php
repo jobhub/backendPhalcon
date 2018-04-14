@@ -37,11 +37,11 @@ class OffersController extends ControllerBase
             $this->flash->notice("Предложение не найдено");
         }
 
-        $userinfo = Userinfo::find();
+        $users = Users::find();
 
 
         //$this->view->$users = $users;
-        $this->view->setVar("users", $userinfo);
+        $this->view->setVar("users", $users);
 
         $paginator = new Paginator([
             'data' => $offers,

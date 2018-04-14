@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Http\Response;
+
 class SessionController extends ControllerBase
 {
     public function initialize()
@@ -10,7 +12,6 @@ class SessionController extends ControllerBase
 
     private function _registerSession($user)
     {
-    	
         $this->session->set(
             "auth",
             [
@@ -30,6 +31,7 @@ class SessionController extends ControllerBase
 
     public function startAction()
     {
+        
         if ($this->request->isPost()) {
             // Получаем данные от пользователя
             $email    = $this->request->getPost("email");
@@ -78,7 +80,6 @@ class SessionController extends ControllerBase
 
     public function endAction()
     {
-        //$this->session->destroy();
         $this->session->remove('auth');
         $this->session->destroy();
         $this->flash->success('До свидания!');

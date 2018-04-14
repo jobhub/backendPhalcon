@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View\Engine\Php as PhpEngine;
 use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Mvc\Dispatcher;
@@ -30,6 +31,17 @@ $di->setShared('url', function () {
     return $url;
 });
 
+/*$di->setShared('api', function () {
+    $config = $this->getConfig();
+
+    $controller = new Controller();
+    $controller->setDI($this);
+    $controller->setViewsDir($config->application->APIDir);
+
+
+    return $controller;
+});*/
+
 /**
  * Setting up the view component
  */
@@ -56,7 +68,6 @@ $di->setShared('view', function () {
         '.phtml' => PhpEngine::class
 
     ]);
-
     return $view;
 });
 

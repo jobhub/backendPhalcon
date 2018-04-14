@@ -17,8 +17,13 @@ class AuctionsController extends ControllerBase
      */
     public function indexAction()
     {
-        $this->persistent->parameters = null;
+        //test---------------------------------------------
+        if($this->request->isGet() && isset($_GET['mobile'])){
+            return $this->getTenders();
+        }
+        //---------------------------------------------
 
+        $this->persistent->parameters = null;
 
         $today = date("Y-m-d");
         $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
@@ -48,6 +53,19 @@ class AuctionsController extends ControllerBase
         ]);
 
         $this->view->page = $paginator->getPaginate();
+    }
+    
+    public function getTenders(){
+        $today = date("Y-m-d");
+        $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
+
+        $auctions= $query->execute(
+            [
+                'today' => "$today",
+            ]
+        );
+        
+        return json_encode($auctions);
     }
 
     /**

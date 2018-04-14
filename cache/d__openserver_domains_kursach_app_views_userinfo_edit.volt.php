@@ -1,3 +1,4 @@
+<<<<<<< HEAD:cache/d__openserver_domains_kursach_app_views_userinfo_edit.volt.php
 <div class="row">
     <nav>
         <ul class="pager">
@@ -6,6 +7,8 @@
     </nav>
 </div>
 
+=======
+>>>>>>> 29ec5cd9a151b8ac0d7ecf95413ffc7a172e2843:app/views/userinfo/edit.volt
 <div class="page-header">
     <h1>
         Редактирование профиля
