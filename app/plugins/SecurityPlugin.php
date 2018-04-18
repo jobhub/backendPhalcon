@@ -60,6 +60,7 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
                 'userinfo'   =>['index', 'edit', 'save','viewprofile'],
+                'userinfoAPI' => ['index', 'edit']
 			];
 
 			foreach ($privateResources as $resource => $actions) {
