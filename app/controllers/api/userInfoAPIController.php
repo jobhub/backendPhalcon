@@ -24,13 +24,10 @@ class UserinfoAPIController extends Controller
 
                     return $response;
                 }
-
-
                 return json_encode($userinfo);
         }
         else{
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
             throw $exception;
         }
     }
