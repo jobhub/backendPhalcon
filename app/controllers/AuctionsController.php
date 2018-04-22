@@ -217,7 +217,7 @@ class AuctionsController extends ControllerBase
             $this->session->remove("taskId");
         }
 
-        $today = date("Y-m-d");
+        $today = date("d-m-Y h:m");
         $auction->setTaskid($taskId);
         $auction->setDatestart($this->request->getPost("dateStart"));
         $auction->setDateend($this->request->getPost("dateEnd"));
