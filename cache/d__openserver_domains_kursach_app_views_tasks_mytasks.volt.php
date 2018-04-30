@@ -40,7 +40,7 @@
             <td><?= $task->getPrice() ?></td>
             <td><?= $task->getStatus() ?></td>
 
-                <td><?= $this->tag->linkTo(['tasks/editing/' . $task->getTaskid(), 'Редактировать']) ?></td>
+                <td><?= $this->tag->linkTo(['tasks/edit/' . $task->getTaskid(), 'Редактировать']) ?></td>
                 <td><?= $this->tag->linkTo(['tasks/delete/' . $task->getTaskid(), 'Удалить']) ?></td>
                 <?php if ($task->status == 'Поиск') { ?>
                 <td><?= $this->tag->linkTo(['auctions/show/' . $task->getTaskid(), 'Тендер']) ?></td>
