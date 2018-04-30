@@ -361,8 +361,6 @@ class TasksController extends ControllerBase
 
             return;
         }
-
-
         if (!$auction->delete() and !$task->delete()) {
 
             foreach ($task->getMessages() as $message) {
@@ -388,8 +386,6 @@ class TasksController extends ControllerBase
     public function mytasksAction($userId)
     {
         $this->persistent->parameters = null;
-
-
 
         $auth = $this->session->get('auth');
         $userId = $auth['id'];

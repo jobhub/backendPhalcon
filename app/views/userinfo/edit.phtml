@@ -6,11 +6,15 @@
     </h1>
 </div>
 
+
+
+
 <?= $this->getContent() ?>
 
 <?= $this->tag->form(['userinfo/save', 'method' => 'post', 'autocomplete' => 'off', 'class' => 'form-horizontal']) ?>
 
-
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/public/js/ajaxupload.js"></script>
 
 <div class="form-group">
     <label for="fieldFirstname" class="col-sm-2 control-label">Имя</label>
@@ -61,20 +65,41 @@
         <?= $this->tag->textArea(['about', 'cols' => '30', 'rows' => '4', 'class' => 'form-control', 'id' => 'fieldAbout']) ?>
     </div>
 </div>
+<div class="form-group">
+    <label for="fieldRaitingExecutor" class="col-sm-2 control-label">Рейтинг исполнителя</label>
+    <div class="col-sm-10">
+        <?= $userinfo->getRaitingExecutor();/*$this->tag->numericField(['raitingExecutor', 'min' => '0', 'max'=>'10', 'class' => 'form-control', 'id' => 'fieldRaitingExecutor']) */?>
+    </div>
+</div>
+<div class="form-group">
+    <label for="fieldRaitingClient" class="col-sm-2 control-label">Рейтинг заказчика</label>
+    <div class="col-sm-10">
+        <?= $userinfo->getRaitingClient();// $this->tag->numericField(['raitingClient', 'min' => '0', 'max'=>'10', 'class' => 'form-control', 'id' => 'fieldRaitingClient']) ?>
+    </div>
+</div>
+<!--<div class="form-group">
+    <label for="fieldPathToPhoto" class="col-sm-2 control-label">Путь к изображению профиля</label>
+    <div class="col-sm-10">
+        <?= $this->tag->textField(['pathToPhoto', 'length'=>'260', 'class' => 'form-control', 'id' => 'fieldPathToPhoto']) ?>
+    </div>
+</div>-->
+<!--<div class="form-group">
+    <div class="col-md-6 col-md-offset-3">
+        <img src=
+            <?php
+            echo '"'.$userinfo->getPathToPhoto().'"';
+            ?>
+        >
+    </div>
+</div>-->
 
+
+
+<!--
 <div class="form-group">
     <label for="fieldExecutor" class="col-sm-2 control-label">Исполнитель</label>
     <div class="col-sm-10">
-          <input type="checkbox" name="executor" onclick="<script type='text/javascript'{if (this.checked == true){this.checked=false}; else {this.checked=true};}/>" <?php if($this->session->get("executor")=="1")
-        {
-            echo "value=1 Checked ";
-        }
-        else
-            {
-                echo "value=0 ";
-            }
-           $this->session->remove("executor"); ?>
-
+          <input type="checkbox" name="executor" onclick="<script type='text/javascript'{if (this.checked == true){this.checked=false}; else {this.checked=true};}/>"
           />
         <!--   <script>
             $("checkbox").on("click", function () {
@@ -87,16 +112,17 @@
                     $(this).attr("value","1");
                 }
             })
-        </script>-->
+        </script>
 
 
-        <!--  <?= $this->tag->selectStatic(['executor', ['1' => 'Да', '0' => 'Нет'], 'class' => 'form-control', 'id' => 'fieldExecutor']) ?>-->
 
     </div>
 </div>
+-->
 
 
-<?= $this->tag->hiddenField(['id']) ?>
+
+<!--<?= $this->tag->hiddenField(['id']) ?>-->
 
 <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
@@ -104,4 +130,18 @@
     </div>
 </div>
 
+
 </form>
+<div class="col-md-6 col-md-offset-3">
+    <div class="image-preview">
+        <img id="preview" src="" alt="">
+    </div>
+    <form id="upload-image" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="file" name="image" id="image">
+        </div>
+        <input type="submit" class="btn btn-default" id="btnImg">
+    </form>
+    <div id="result">
+    </div>
+</div>

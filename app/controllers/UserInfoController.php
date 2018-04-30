@@ -105,7 +105,7 @@ class UserinfoController extends ControllerBase
 
                 $this->view->userId = $userinfo->userId;
 
-
+                $this->view->setVar('userinfo',$userinfo);
                 $this->tag->setDefault("firstname", $userinfo->firstname);
                 $this->tag->setDefault("patronymic", $userinfo->patronymic);
                 $this->tag->setDefault("lastname", $userinfo->lastname);
@@ -114,7 +114,11 @@ class UserinfoController extends ControllerBase
                 $this->tag->setDefault("address", $userinfo->address);
                 $this->tag->setDefault("about", $userinfo->about);
                 $this->tag->setDefault("executor", $userinfo->executor);
+                $this->tag->setDefault("raitingExecutor", $userinfo->raitingExecutor);
+                $this->tag->setDefault("raitingClient", $userinfo->raitingClient);
+                $this->tag->setDefault("pathToPhoto", $userinfo->pathToPhoto);
                 $this->session->set("executor", $userinfo->executor);
+
             }
         }
         else
@@ -191,7 +195,7 @@ class UserinfoController extends ControllerBase
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
         $userinfo = Userinfo::findFirstByuserId($userId);
-
+        $this->view->setVar('userinfo',$userinfo);
         if (!$userinfo) {
             $this->flash->error("Пользователь не найден");
 
@@ -203,24 +207,36 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $userinfo->setUserid($auth['id']);
-        $userinfo->setFirstname($this->request->getPost("firstname"));
-        $userinfo->setPatronymic($this->request->getPost("patronymic"));
-        $userinfo->setLastname($this->request->getPost("lastname"));
-        $userinfo->setBirthday($this->request->getPost("birthday"));
-        if($this->request->getPost("male")==="1")
-            $userinfo->setMale("1");
-        else
-            $userinfo->setMale("0");
-        //$userinfo->Male = $this->request->getPost("male");
-        $userinfo->setAddress($this->request->getPost("address"));
-        $userinfo->setAbout($this->request->getPost("about"));
-        if(isset($_POST["executor"])) {
-            $userinfo->setExecutor($this->request->getPost("executor"));
-        }
-        else{
-            $userinfo->setExecutor(0);
-        }
+
+
+
+            $userinfo->setUserid($auth['id']);
+            $userinfo->setFirstname($this->request->getPost("firstname"));
+            $userinfo->setPatronymic($this->request->getPost("patronymic"));
+            $userinfo->setLastname($this->request->getPost("lastname"));
+            $userinfo->setBirthday($this->request->getPost("birthday"));
+            if($this->request->getPost("male")==="1")
+                $userinfo->setMale("1");
+            else
+                $userinfo->setMale("0");
+            //$userinfo->Male = $this->request->getPost("male");
+            $userinfo->setAddress($this->request->getPost("address"));
+            $userinfo->setAbout($this->request->getPost("about"));
+            // $userinfo->setRaitingExecutor($this->request->getPost('raitingExecutor'));
+            // $userinfo->setRaitingClient($this->request->getPost('raitingClient'));
+            //$userinfo->setPathToPhoto($this->request->$imageFullName);
+            if(isset($_POST["executor"])) {
+                $userinfo->setExecutor($this->request->getPost("executor"));
+            }
+            else{
+                $userinfo->setExecutor(0);
+            }
+
+
+
+
+
+
 
         if (!$userinfo->save()) {
 
@@ -322,5 +338,47 @@ class UserinfoController extends ControllerBase
 
 
     }
+
+    public function handlerAction()
+    {
+
+// Проверяем установлен ли массив файлов и массив с переданными данными
+if(isset($_FILES) && isset($_FILES['image'])) {
+   // echo $_FILES;
+//Переданный массив сохраняем в переменной
+    $image = $_FILES['image'];
+   // echo $image;
+// Проверяем размер файла и если он превышает заданный размер
+// завершаем выполнение скрипта и выводим ошибку
+    if ($image['size'] > 200000) {
+        die('error');
+    }
+
+// Достаем формат изображения
+    $imageFormat = explode('.', $image['name']);
+    $imageFormat = $imageFormat[1];
+
+// Генерируем новое имя для изображения. Можно сохранить и со старым
+// но это не рекомендуется делать
+    $imageFullName = '/public/img/' . hash('crc32',time()) . '.' . $imageFormat;
+   // echo $imageFullName;
+// Сохраняем тип изображения в переменную
+    $imageType = $image['type'];
+
+// Сверяем доступные форматы изображений, если изображение соответствует,
+// копируем изображение в папку images
+    $uploaddir = '/public/img/';
+    $uploadfile = $uploaddir . basename($_FILES['image']['name']);
+    if ($imageType == 'image/jpeg' || $imageType == 'image/png') {
+        if (move_uploaded_file($image['tmp_name'],$uploadfile)) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+    }
+}
+
+    }
+
 
 }

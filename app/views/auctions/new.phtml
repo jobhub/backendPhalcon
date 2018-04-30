@@ -39,7 +39,7 @@
 <div class="form-group">
     <label for="fieldDeadline" class="col-sm-2 control-label">Дата работ</label>
     <div class="col-sm-10">
-        <?= $this->tag->dateField(['deadline', 'class' => 'form-control', 'id' => 'fieldDeadline', 'readonly' => 'true']) ?>
+        <?= $this->tag->dateTimeLocalField(['deadline', 'class' => 'form-control', 'id' => 'fieldDeadline', 'readonly' => 'true']) ?>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
 <div class="form-group">
     <label for="fieldDateend" class="col-sm-2 control-label">Дата окончания тендера</label>
     <div class="col-sm-10">
-        <?= $this->tag->dateField(['dateEnd', 'class' => 'form-control', 'id' => 'fieldDateend']) ?>
+        <?= $this->tag->dateTimeLocalField(['dateEnd', 'class' => 'form-control', 'id' => 'fieldDateend']) ?>
     </div>
 </div>
 

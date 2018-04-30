@@ -57,7 +57,7 @@ class AuctionsController extends ControllerBase
     
     public function getTenders(){
         $today = date("Y-m-d");
-        $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
+        $query = $this->modelsManager->createQuery('SELECT * FROM tender, tasks WHERE tasks.status=\'Поиск\' AND tasks.taskId=tender.taskId AND tender.dateEnd>:today:');
 
         $auctions= $query->execute(
             [
@@ -217,7 +217,7 @@ class AuctionsController extends ControllerBase
             $this->session->remove("taskId");
         }
 
-        $today = date("Y-m-d");
+        $today = date("d-m-Y h:m");
         $auction->setTaskid($taskId);
         $auction->setDatestart($this->request->getPost("dateStart"));
         $auction->setDateend($this->request->getPost("dateEnd"));

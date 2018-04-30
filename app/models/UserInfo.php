@@ -67,6 +67,14 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $executor;
 
+
+    /**
+     * @var integer
+     * @Column(type="tyniint", length=4, nullable=false)
+     */
+    protected $raitingExecutor;
+    protected $raitingClient;
+    protected $pathToPhoto;
     /**
      * Method to set the value of field userId
      *
@@ -186,6 +194,25 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this;
     }
 
+    public function setRaitingExecutor($raitingExecutor)
+    {
+        $this->raitingExecutor = $raitingExecutor;
+
+        return $this;
+    }
+    public function setRaitingClient($raitingClient)
+    {
+        $this->raitingClient = $raitingClient;
+
+        return $this;
+    }
+    public function setPathToPhoto($pathToPhoto)
+    {
+        $this->pathToPhoto = $pathToPhoto;
+
+        return $this;
+    }
+
     /**
      * Returns the value of field userId
      *
@@ -274,6 +301,18 @@ class Userinfo extends \Phalcon\Mvc\Model
     public function getExecutor()
     {
         return $this->executor;
+    }
+    public function getRaitingExecutor()
+    {
+        return $this->raitingExecutor;
+    }
+    public function getRaitingClient()
+    {
+        return $this->raitingClient;
+    }
+    public function getPathToPhoto()
+    {
+        return $this->pathToPhoto;
     }
 
     /**
