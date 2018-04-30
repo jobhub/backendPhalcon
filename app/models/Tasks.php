@@ -74,6 +74,24 @@ class Tasks extends \Phalcon\Mvc\Model
      * @param integer $taskId
      * @return $this
      */
+
+    protected $longitude;
+    protected $latitude;
+
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
     public function setTaskId($taskId)
     {
         $this->taskId = $taskId;
@@ -286,6 +304,14 @@ class Tasks extends \Phalcon\Mvc\Model
     public function getStatus()
     {
         return $this->status;
+    }
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+    public function getLongitude()
+    {
+        return $this->longitude;
     }
 
     /**

@@ -74,6 +74,9 @@ class TasksController extends ControllerBase
      */
     public function newAction()
     {
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/map.js",true);
         $categories=Categories::find();
         $this->view->setVar("categories", $categories);
 
@@ -237,7 +240,11 @@ class TasksController extends ControllerBase
         $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
-        
+        $coords=$this->request->getPost("coord");
+        $latitude=strstr($coords,',',true);
+        $longitude=substr(strstr($coords,','),1);
+        $task->setLatitude($latitude);
+        $task->setLongitude($longitude);
 
         if (!$task->save()) {
             foreach ($task->getMessages() as $message) {
@@ -303,6 +310,7 @@ class TasksController extends ControllerBase
         $task->setAddress($this->request->getPost("address"));
         $task->setDeadline($this->request->getPost("deadline"));
         $task->setPrice($this->request->getPost("price"));
+
         
 
         if (!$task->save()) {

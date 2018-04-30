@@ -22,9 +22,13 @@ class AuctionsController extends ControllerBase
             return $this->getTenders();
         }
         //---------------------------------------------
-
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/mapTender.js",true);
         $this->persistent->parameters = null;
-
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/mapTender.js",true);
         $today = date("Y-m-d");
         $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
 
@@ -33,7 +37,28 @@ class AuctionsController extends ControllerBase
                 'today' => "$today",
             ]
         );
+        $keys=['name','description','address','price','latitude','longitude','deadline','dateStart','dateEnde','link'];
+        for( $i=0; $i<$auctions->count(); $i++)
+        {
 
+            $val[]=$auctions[$i]->tasks->getName();
+            $val[]=$auctions[$i]->tasks->getDescription();
+            $val[]=$auctions[$i]->tasks->getAddress();
+            $val[]=$auctions[$i]->tasks->getPrice();
+            $val[]=$auctions[$i]->tasks->getLatitude();
+            $val[]=$auctions[$i]->tasks->getLongitude();
+            $val[]=$auctions[$i]->tasks->getDeadline();
+            $val[]=$auctions[$i]->auctions->getDateStart();
+            $val[]=$auctions[$i]->auctions->getDateEnd();
+            $val[]='http://localhost/auctions/viewing/'.$auctions[$i]->auctions->getAuctionId();
+            $tasks[]=array_combine($keys,$val);
+            unset($val);
+        }
+        $json=json_encode($tasks);
+        echo "<script>
+                var values=".$json.";
+                setMarks(values)
+              </script>";
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Auctions', $_POST);
@@ -113,7 +138,6 @@ class AuctionsController extends ControllerBase
      */
     public function newAction($taskId)
     {
-
         $task=Tasks::find($taskId);
         $task=$task->getFirst();
 
@@ -130,6 +154,7 @@ class AuctionsController extends ControllerBase
         }
 
         $taskId=$task->getTaskId();
+        $this->session->set('taskId',$taskId);
         $auctions=Auctions::find("taskId=$taskId");
         if (count($auctions) == 0) {
             $this->view->setVar("task", $task);
@@ -217,10 +242,11 @@ class AuctionsController extends ControllerBase
             $this->session->remove("taskId");
         }
 
-        $today = date("d-m-Y h:m");
+        $today = date("Y-m-d h:m");
         $auction->setTaskid($taskId);
-        $auction->setDatestart($this->request->getPost("dateStart"));
-        $auction->setDateend($this->request->getPost("dateEnd"));
+       // $auction->setDatestart($this->request->getPost("dateStart"));
+        $dateEnd=date_format(date_create($this->request->getPost("dateEnd")),"Y-m-d h:m");
+        $auction->setDateend($dateEnd);
         $auction->setDateStart($today);
         
 
@@ -379,7 +405,8 @@ class AuctionsController extends ControllerBase
 
             $this->dispatcher->forward([
                 'controller' => "auctions",
-                'action' => 'new'
+                'action' => 'new',
+                'params' => [$taskId]
             ]);
 
             return;
@@ -433,6 +460,9 @@ class AuctionsController extends ControllerBase
 
     public function viewingAction($auctionId)
     {
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/mapTask.js",true);
             $auction=Auctions::findFirstByAuctionId($auctionId);
             $this->session->set('auctionId',$auctionId);
             //$auction=$auction->getFirst();
