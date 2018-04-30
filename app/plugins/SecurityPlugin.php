@@ -86,7 +86,7 @@ class SecurityPlugin extends Plugin
             //БД, все БД.
 			$publicResources = [
              //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'userinfo'   =>['viewprofile'],
+                'userinfo'   =>['viewprofile','handler'],
 				'index'      => ['index'],
 				'register'   => ['index'],
 				'errors'     => ['show401', 'show404', 'show500'],

@@ -87,6 +87,8 @@ class UserinfoController extends ControllerBase
      */
     public function editAction($userId)
     {
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("/public/js/ajaxupload.js",true);
         $auth=$this->session->get("auth");
         if($userId===$auth["id"]) {
             if (!$this->request->isPost()) {
@@ -304,6 +306,7 @@ class UserinfoController extends ControllerBase
 
     public function viewprofileAction($userId)
     {
+
         $userinfo = Userinfo::findFirstByuserId($userId);
         if (!$userinfo) {
             $this->flash->error("Пользователь не найден");
@@ -341,43 +344,89 @@ class UserinfoController extends ControllerBase
 
     public function handlerAction()
     {
-
+        include('../library/SimpleImage.php');
 // Проверяем установлен ли массив файлов и массив с переданными данными
 if(isset($_FILES) && isset($_FILES['image'])) {
    // echo $_FILES;
-//Переданный массив сохраняем в переменной
-    $image = $_FILES['image'];
+    $auth = $this->session->get('auth');
+    $userId = $auth['id'];
+    $userinfo = Userinfo::findFirstByuserId($userId);
+    if ($userinfo) {
+    $userinfo->setUserid($auth['id']);
+
+
+       if (($_FILES['image']['size'] > 5242880)) {
+            die('error');
+        }
+        //$imageType=exif_imagetype($_FILES['image']['tmp_name']);
+       /* if($imageType!=IMAGETYPE_JPEG||$imageType!=IMAGETYPE_PNG||$imageType!=IMAGETYPE_GIF)
+        {
+            die('error');
+        }*/
+        $image = new SimpleImage();
+        $image->load($_FILES['image']['tmp_name']);
+        $image->resizeToWidth(200);
+
+        $imageFormat = pathinfo($_FILES['image']['name'],PATHINFO_EXTENSION );
+        $format=$imageFormat;
+        if($imageFormat=='jpeg'||'jpg')
+            $imageFormat=IMAGETYPE_JPEG;
+        elseif ($imageFormat=='png')
+            $imageFormat=IMAGETYPE_PNG;
+        elseif ($imageFormat=='gif')
+            $imageFormat=IMAGETYPE_GIF;
+        else {
+             die('error');
+         }
+        $filename=$_SERVER['DOCUMENT_ROOT'].'/public/img/'. hash('crc32',$userinfo->getUserId()).'.'.$format;
+        //if()
+        {
+            $image->save($filename,$imageFormat);
+            $imageFullName=str_replace('D:/OSPanel/domains/localhost','',$filename);
+            $userinfo->setPathToPhoto($imageFullName);
+            $userinfo->save();
+            echo 'success';
+        }
+       /* else{
+            echo 'error';
+        }*/
+
+        /*
+   // $image = $_FILES['image'];
    // echo $image;
 // Проверяем размер файла и если он превышает заданный размер
 // завершаем выполнение скрипта и выводим ошибку
-    if ($image['size'] > 200000) {
+    if ($_FILES['image']['size'] > 200000) {
         die('error');
     }
 
 // Достаем формат изображения
-    $imageFormat = explode('.', $image['name']);
-    $imageFormat = $imageFormat[1];
+
 
 // Генерируем новое имя для изображения. Можно сохранить и со старым
 // но это не рекомендуется делать
-    $imageFullName = '/public/img/' . hash('crc32',time()) . '.' . $imageFormat;
+    $imageFullName = $_SERVER['DOCUMENT_ROOT'].'/public/img/' . hash('crc32',time()) . '.' . $imageFormat;
    // echo $imageFullName;
 // Сохраняем тип изображения в переменную
-    $imageType = $image['type'];
+    $imageType = $_FILES['image']['type'];
+
 
 // Сверяем доступные форматы изображений, если изображение соответствует,
 // копируем изображение в папку images
-    $uploaddir = '/public/img/';
-    $uploadfile = $uploaddir . basename($_FILES['image']['name']);
+
     if ($imageType == 'image/jpeg' || $imageType == 'image/png') {
-        if (move_uploaded_file($image['tmp_name'],$uploadfile)) {
+        if ($image->save($imageFullName,$imageType))//move_uploaded_file($image['tmp_name'],$imageFullName))
+            {
+            $imageFullName=str_replace('D:/OpenServer/domains/kursach','',$imageFullName);
+            $userinfo->setPathToPhoto($imageFullName);
+            $userinfo->save();
             echo 'success';
         } else {
             echo 'error';
         }
-    }
+    }*/
 }
-
+}
     }
 
 

@@ -1,7 +1,6 @@
 $(document).ready(function () {
 
     function readImage ( input ) {
-        console.log('hi');
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
@@ -17,10 +16,6 @@ $(document).ready(function () {
 
         $(destination).removeClass();
 
-        if(msg)
-        {
-            $(destination).addClass('alert alert-danger').text(msg);
-        }
 
         if (msg == 'success') {
             $(destination).addClass('alert alert-success').text('Файл успешно загружен.');
@@ -40,7 +35,6 @@ $(document).ready(function () {
         e.preventDefault();
 
         var formData = new FormData(this);
-        console.log('em');
         $.ajax({
             type:'POST', // Тип запроса
             url: 'handler', // Скрипт обработчика
