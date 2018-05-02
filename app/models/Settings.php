@@ -14,9 +14,23 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=true)
+     * @Column(type="integer", length=4, nullable=false)
      */
-    protected $searchRadius;
+    protected $notifictionEmail;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=4, nullable=false)
+     */
+    protected $notificationSms;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=4, nullable=false)
+     */
+    protected $notificationPush;
 
     /**
      * Method to set the value of field userId
@@ -32,19 +46,40 @@ class Settings extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field searchRadius
+     * Method to set the value of field notifictionEmail
      *
-     * @param integer $searchRadius
+     * @param integer $notifictionEmail
      * @return $this
      */
-    public function setSearchRadius($searchRadius)
+    public function setNotifictionEmail($notifictionEmail)
     {
-        if($searchRadius == ""){
-            $searchRadius = null;
-        }
-        else {
-            $this->searchRadius = $searchRadius;
-        }
+        $this->notifictionEmail = $notifictionEmail;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field notificationSms
+     *
+     * @param integer $notificationSms
+     * @return $this
+     */
+    public function setNotificationSms($notificationSms)
+    {
+        $this->notificationSms = $notificationSms;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field notificationPush
+     *
+     * @param integer $notificationPush
+     * @return $this
+     */
+    public function setNotificationPush($notificationPush)
+    {
+        $this->notificationPush = $notificationPush;
 
         return $this;
     }
@@ -60,14 +95,33 @@ class Settings extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field searchRadius
+     * Returns the value of field notifictionEmail
      *
      * @return integer
      */
-    public function getSearchRadius()
+    public function getNotifictionEmail()
     {
+        return $this->notifictionEmail;
+    }
 
-        return $this->searchRadius;
+    /**
+     * Returns the value of field notificationSms
+     *
+     * @return integer
+     */
+    public function getNotificationSms()
+    {
+        return $this->notificationSms;
+    }
+
+    /**
+     * Returns the value of field notificationPush
+     *
+     * @return integer
+     */
+    public function getNotificationPush()
+    {
+        return $this->notificationPush;
     }
 
     /**
@@ -78,16 +132,6 @@ class Settings extends \Phalcon\Mvc\Model
         $this->setSchema("service_services");
         $this->setSource("settings");
         $this->hasOne('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'settings';
     }
 
     /**
@@ -110,6 +154,16 @@ class Settings extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'settings';
     }
 
 }

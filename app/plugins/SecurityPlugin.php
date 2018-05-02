@@ -54,13 +54,12 @@ class SecurityPlugin extends Plugin
             //Тоже надо бы из БД взять
 			$privateResources = [
                 'coordination'      => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
-
                 'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks', 'workingtasks','editing'],
-
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
-                'userinfo'   =>['index', 'edit', 'save','viewprofile'],
-                'userinfoAPI' => ['index', 'edit']
+                'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
+                'userinfoAPI' => ['index', 'edit'],
+                'tasksAPI' => ['index']
 			];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -95,6 +94,8 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index'],
                 'registerAPI'      => ['index'],
                 'sessionAPI'      => ['index'],
+                'categoriesAPI' => ['index'],
+                'tenderAPI' => ['index']
 			];
 			foreach ($publicResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

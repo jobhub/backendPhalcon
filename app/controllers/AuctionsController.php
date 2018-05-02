@@ -86,7 +86,7 @@ class AuctionsController extends ControllerBase
     
     public function getTenders(){
         $today = date("Y-m-d");
-        $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
+        $query = $this->modelsManager->createQuery('SELECT * FROM tender, tasks WHERE tasks.status=\'Поиск\' AND tasks.taskId=tender.taskId AND tender.dateEnd>:today:');
 
         $auctions= $query->execute(
             [
