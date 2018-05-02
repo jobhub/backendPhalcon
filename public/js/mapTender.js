@@ -1,7 +1,10 @@
+
+var myMap;
+
 ymaps.ready(init);
 
 function init() {
-    var myMap;
+
     var myPlacemark;
 
     myMap = new ymaps.Map("map", {
@@ -131,5 +134,53 @@ function setMarkAddress(address) {
 
 }
 function setMarks(tasks) {
-    console.log('setMarks: ',tasks);
+
+    ymaps.ready(function() {
+        console.log('setMarks: ', tasks);
+       /* console.log('Coord1: ', tasks[2].coords);
+        console.log('Coord2: ', tasks[1].coords);
+        placemark1ForMap1 = new ymaps.Placemark(tasks[2].coords);
+        placemark1ForMap2 = new ymaps.Placemark(tasks[1].coords);
+        console.log('placemark1: ', placemark1ForMap1);
+        console.log('placemark2: ', placemark1ForMap2);
+
+        myMap.geoObjects.add(placemark1ForMap1);
+        myMap.geoObjects.add(placemark1ForMap2);*/
+
+        /*for (var i = 0; i < tasks.length; i++) {
+            var center = tasks[i].latitude + ',' + tasks[i].longitude;
+            placemark = new ymaps.Placemark(center,
+                {balloonContent: tasks[i].name});
+        }
+        myMap.setBounds(myMap.geoObjects.getBounds());*/
+
+
+        for(var i=0;i<tasks.length;i++)
+        {
+          //  console.log('Coord'+i+': ', tasks[i].coords);
+            placemark=new ymaps.Placemark(tasks[i].coords);
+            placemark.options.set('preset', 'islands#darkBlueDotIconWithCaption');
+            placemark.properties.set('iconCaption', tasks[i].name);
+            var content='<div>Описание: '+tasks[i].description+'</div>'+
+                '<div>Адрес: '+tasks[i].address+'</div>'+
+                '<div>Стоимость: '+tasks[i].price+'</div>'+
+                '<div>Дата: '+tasks[i].deadline+'</div>'+
+                '<div>Дата конца тендера:'+tasks[i].dateEnd+'</div>'+
+                '<div><a href='+'"'+tasks[i].link+'"'+'>Ссылка на тендер'+'</a></div>';
+            console.log('content'+i+': ',content);
+            placemark.properties.set('balloonContent',content);
+
+
+           //console.log('name'+i+': ',tasks[i].name);
+           // console.log('name'+i+': ', placemark.name);
+           // console.log('description'+i+': ',tasks[i].description);
+           // console.log('description'+i+': ',placemark.description);
+          //  console.log('placemark'+i+': ', placemark);
+            var err=myMap.geoObjects.add(placemark);
+
+          //  console.log('err'+i+': ', err);
+        }
+        myMap.setBounds(myMap.geoObjects.getBounds());
+    }
+);
 }

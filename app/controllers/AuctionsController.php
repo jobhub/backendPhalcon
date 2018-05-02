@@ -37,7 +37,7 @@ class AuctionsController extends ControllerBase
                 'today' => "$today",
             ]
         );
-        $keys=['name','description','address','price','latitude','longitude','deadline','dateStart','dateEnde','link'];
+        $keys=['name','description','address','price','coords','deadline','dateStart','dateEnd','link'];
         for( $i=0; $i<$auctions->count(); $i++)
         {
 
@@ -45,13 +45,17 @@ class AuctionsController extends ControllerBase
             $val[]=$auctions[$i]->tasks->getDescription();
             $val[]=$auctions[$i]->tasks->getAddress();
             $val[]=$auctions[$i]->tasks->getPrice();
-            $val[]=$auctions[$i]->tasks->getLatitude();
-            $val[]=$auctions[$i]->tasks->getLongitude();
+            $x=(double)$auctions[$i]->tasks->getLatitude();
+            $y=(double)$auctions[$i]->tasks->getLongitude();
+            $coords[]=$x;
+            $coords[]=$y;
+            $val[]=$coords;
             $val[]=$auctions[$i]->tasks->getDeadline();
             $val[]=$auctions[$i]->auctions->getDateStart();
             $val[]=$auctions[$i]->auctions->getDateEnd();
             $val[]='http://localhost/auctions/viewing/'.$auctions[$i]->auctions->getAuctionId();
             $tasks[]=array_combine($keys,$val);
+            unset($coords);
             unset($val);
         }
         $json=json_encode($tasks);
