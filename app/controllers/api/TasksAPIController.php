@@ -19,15 +19,32 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             //$today = date("Y-m-d");
-            $query = $this->modelsManager->createQuery('SELECT * FROM tasks LEFT OUTER JOIN tender ON tasks.taskId=tender.taskId WHERE tasks.userId = :userId:');
+            //$query = $this->modelsManager->createQuery('SELECT * FROM tasks LEFT OUTER JOIN auctions ON tasks.taskId=auctions.taskId WHERE tasks.userId = :userId:');
 
-            $auctions = $query->execute(
+            $tasks = Tasks::findByUserId($userId);
+
+            for($i = 0; $i < $tasks->count();$i++){
+
+                $auction = Auctions::findFirstByTaskId($tasks[$i]->getTaskId());
+                $count = 0;
+                if($auction == false) {
+                    $auction = null;
+                }
+                else{
+                    //-----------------temporary----AuctionId - может надо будет исправить-------------------
+                    $offers = Offers::findByTenderId($auction->getTenderId());
+                    $count  =$offers->count();
+                }
+                $TasksAndTenders[] = ['tasks' => $tasks[$i], 'auctions' => $auction,'offersCount' => $count];
+            }
+
+            /*$auctions = $query->execute(
                 [
                     'userId' => "$userId"
                 ]
-            );
+            );*/
 
-            return json_encode($auctions);
+            return json_encode($TasksAndTenders);
         } else if ($this->request->isPut()) {
 
             $this->db->begin();
@@ -60,39 +77,17 @@ class TasksAPIController extends Controller
                 );
                 return $response;
             }
-            $tender = new Tender();
 
-            //$today = date("d-m-Y h:m");
-            $tender->setTaskId($task->getTaskId());
-            $tender->setDateStart(date('Y-m-d H:m'));
-            $tender->setDateEnd(date('Y-m-d H:m',strtotime($this->request->getPut("dateEnd"))));
-            //$tender->setDateStart($today);
-
-
-            if (!$tender->save()) {
-
-                $this->db->rollback();
-                foreach ($tender->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-
-                $response->setJsonContent(
-                    [
-                        "status" => "WRONG_DATA",
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
-            }
             $this->db->commit();
+            $taskAndTender['tasks'] = $task;
+            $taskAndTender['auctions'] = null;
             $response->setJsonContent(
                 [
+                    "taskAndTender" => $taskAndTender,
                     "status" => "OK"
                 ]
             );
             return $response;
-
-        }else if($this->request->isDelete()){
 
         }
         else {
@@ -103,8 +98,115 @@ class TasksAPIController extends Controller
 
     }
 
-    public function addAction()
+    public function deleteAction($taskId)
     {
+        if($this->request->isDelete()){
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
 
+            $task = Tasks::findFirstByTaskId($taskId);
+
+            if($task->getUserId() == $userId){
+                $auction = Auctions::findFirstByTaskId($task->getTaskId());
+                if($auction)
+                    $offers = Offers::findByTenderId($auction->getTenderId());
+                if($auction==false || $offers->count()==0){
+                    if (!$task->delete()) {
+
+                        foreach ($task->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+
+                        $response->setJsonContent(
+                            [
+                                "status" => "WRONG_DATA",
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => "OK"
+                        ]
+                    );
+                    return $response;
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA",
+                        "errors" => ['Есть предложения исполнения задания']
+                    ]
+                );
+                return $response;
+            }
+            $response->setJsonContent(
+                [
+                    "status" => "WRONG_DATA",
+                    "errors" => ['Задание не принадлежит пользователю']
+                ]
+            );
+            return $response;
+        }
+        else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function changeAction(){
+        if($this->request->isPost()){
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $task = Tasks::findFirstByTaskId($this->request->getPost("taskId"));
+
+
+            if($userId == $task->getUserId()) {
+                $task->setCategoryid($this->request->getPost("categoryId"));
+                $task->setName($this->request->getPost("name"));
+                $task->setDescription($this->request->getPut("description"));
+
+
+                $task->setDeadline(date('Y-m-d H:m', strtotime($this->request->getPut("deadline"))));
+                $task->setPrice($this->request->getPut("price"));
+
+
+                if (!$task->save()) {
+                    foreach ($task->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => "WRONG_DATA",
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+                $response->setJsonContent(
+                    [
+                        "status" => "OK"
+                    ]
+                );
+                return $response;
+            }
+            $response->setJsonContent(
+                [
+                    "status" => "WRONG_DATA",
+                    "errors" => ['Задание не принадлежит пользователю']
+                ]
+            );
+            return $response;
+
+        }
+        else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
     }
 }

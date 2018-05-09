@@ -55,11 +55,14 @@ class SecurityPlugin extends Plugin
 			$privateResources = [
                 'coordination'      => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
                 'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks', 'workingtasks','editing'],
-                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
+                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create','delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
                 'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
-                'userinfoAPI' => ['index', 'edit'],
-                'tasksAPI' => ['index']
+                'userinfoAPI' => ['index', 'settings', 'about'],
+                'tasksAPI' => ['index','delete','change'],
+                'tenderAPI' => ['delete'],
+                'reviewsAPI' => ['index'],
+                'offersAPI' => ['getForTender']
 			];
 
 			foreach ($privateResources as $resource => $actions) {

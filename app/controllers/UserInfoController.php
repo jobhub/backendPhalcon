@@ -382,7 +382,7 @@ if(isset($_FILES) && isset($_FILES['image'])) {
         //if()
         {
             $image->save($filename,$imageFormat);
-            $imageFullName=str_replace('D:/OSPanel/domains/localhost','',$filename);
+            $imageFullName=str_replace('C:/OpenServer/domains/simpleMod2','',$filename);
             $userinfo->setPathToPhoto($imageFullName);
             $userinfo->save();
             echo 'success';
