@@ -68,8 +68,58 @@ class UserinfoAPIController extends Controller
             $userinfo->setFirstname($this->request->getPost("firstname"));
             $userinfo->setPatronymic($this->request->getPost("patronymic"));
             $userinfo->setLastname($this->request->getPost("lastname"));
-            $userinfo->setBirthday(date('Y-m-d H:m',strtotime($this->request->getPost("birthday"))));
+            $userinfo->setAddress($this->request->getPost("address"));
+            $userinfo->setBirthday(date('Y-m-d H:m', strtotime($this->request->getPost("birthday"))));
             $userinfo->setMale($this->request->getPost("male"));
+
+            if (!$userinfo->save()) {
+
+                foreach ($userinfo->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "errors" => $errors,
+                        "status" => "WRONG_DATA"
+                    ]);
+
+                return $response;
+            }
+            $response->setJsonContent(
+                [
+                    "status" => "OK"
+                ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    public function aboutAction()
+    {
+        $auth = $this->session->get("auth");
+
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $userId = $auth['id'];
+            $userinfo = Userinfo::findFirstByuserId($userId);
+
+            if (!$userinfo) {
+                $errors[] = "Пользователь не авторизован";
+                $response->setJsonContent(
+                    [
+                        "errors" => $errors,
+                        "status" => "FAIL"
+                    ]);
+
+                return $response;
+            }
+
+            $userinfo->setAbout($this->request->getPost("about"));
 
             if (!$userinfo->save()) {
 
@@ -117,12 +167,27 @@ class UserinfoAPIController extends Controller
 
                 return $response;
             }
-            if(isset($_POST["notificationEmail"]))
-                $settings->setNotifictionEmail($this->request->getPost("notificationEmail"));
-            if(isset($_POST["notificationSms"]))
-                $settings->setNotifictionSms($this->request->getPost("notificationSms"));
-            if(isset($_POST["notificationPush"]))
-                $settings->setNotifictionPush($this->request->getPost("notificationPush"));
+            if (isset($_POST["notificationEmail"]))
+                $settings->setNotificationEmail($this->request->getPost("notificationEmail"));
+            if (isset($_POST["notificationSms"]))
+                $settings->setNotificationSms($this->request->getPost("notificationSms"));
+            if (isset($_POST["notificationPush"]))
+                $settings->setNotificationPush($this->request->getPost("notificationPush"));
+
+            /*if($settings->getNotificationEmail())
+                $settings->setNotificationEmail(1);
+            else
+                $settings->setNotificationEmail(0);
+
+            if($settings->getNotificationSms())
+                $settings->setNotificationSms(1);
+            else
+                $settings->setNotificationSms(0);
+
+            if($settings->getNotificationPush())
+                $settings->setNotificationPush(1);
+            else
+                $settings->setNotificationPush(0);*/
 
 
             if (!$settings->save()) {

@@ -16,7 +16,7 @@ class Settings extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=4, nullable=false)
      */
-    protected $notifictionEmail;
+    protected $notificationEmail;
 
     /**
      *
@@ -46,14 +46,14 @@ class Settings extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field notifictionEmail
+     * Method to set the value of field notificationEmail
      *
-     * @param integer $notifictionEmail
+     * @param integer $notificationEmail
      * @return $this
      */
-    public function setNotifictionEmail($notifictionEmail)
+    public function setNotificationEmail($notificationEmail)
     {
-        $this->notifictionEmail = $notifictionEmail;
+        $this->notificationEmail = $notificationEmail;
 
         return $this;
     }
@@ -95,13 +95,13 @@ class Settings extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field notifictionEmail
+     * Returns the value of field notificationEmail
      *
      * @return integer
      */
-    public function getNotifictionEmail()
+    public function getNotificationEmail()
     {
-        return $this->notifictionEmail;
+        return $this->notificationEmail;
     }
 
     /**
@@ -123,6 +123,8 @@ class Settings extends \Phalcon\Mvc\Model
     {
         return $this->notificationPush;
     }
+
+
 
     /**
      * Initialize method for model.
