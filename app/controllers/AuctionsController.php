@@ -22,13 +22,12 @@ class AuctionsController extends ControllerBase
             return $this->getTenders();
         }
         //---------------------------------------------
-        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
-        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
-        $this->assets->addJs("/public/js/mapTender.js",true);
         $this->persistent->parameters = null;
         $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
         $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
         $this->assets->addJs("/public/js/mapTender.js",true);
+        $this->assets->addCss("/css/style.css",true);
+        $this->assets->addCss("/assets/plugins/footable/css/footable.core.css",true);
         $today = date("Y-m-d");
         $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
 
@@ -415,6 +414,10 @@ class AuctionsController extends ControllerBase
 
             return;
         }
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/mapTask.js",true);
+
         $task=Tasks::find($auction->getTaskId());
         $task=$task->getFirst();
      //   $categoryId=$task->getCategoryId();

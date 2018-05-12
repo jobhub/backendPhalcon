@@ -393,6 +393,8 @@ class TasksController extends ControllerBase
 
     public function mytasksAction($userId)
     {
+        $this->assets->addCss("/css/style.css",true);
+        $this->assets->addCss("/assets/plugins/footable/css/footable.core.css",true);
         $this->persistent->parameters = null;
 
         $auth = $this->session->get('auth');

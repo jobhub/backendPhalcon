@@ -1,11 +1,12 @@
-<div class="page-header">
-    <h1>
-        Пользователи
-    </h1>
-    <p>
-        <?= $this->tag->linkTo(['users/new', 'Создать пользователя']) ?>
-    </p>
+<div class="breadcrumb-info text-center">
+<div class="page-title">
+    <h1> Пользователи</h1>
 </div>
+</div>
+
+<p class="col-sm-offset-1 ">
+    <?= $this->tag->linkTo(['users/new', 'Создать пользователя']) ?>
+</p>
 
 <?= $this->getContent() ?>
 
@@ -37,14 +38,17 @@
 
 
 <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-        <?= $this->tag->submitButton(['Фильтр', 'class' => 'btn btn-default']) ?>
+    <div class="col-sm-offset-9 col-sm-10">
+        <?= $this->tag->submitButton(['Фильтр', 'class' => 'btn btn-primary']) ?>
     </div>
 </div>
 </form>
 
-<div class="row">
-    <table class="table table-bordered">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
         <thead>
         <tr>
             <th>Email</th>
@@ -85,6 +89,8 @@
         </tbody>
     </table>
 </div>
+            </div>
+        </div>
 
 <div class="row">
     <div class="col-sm-1">
@@ -103,5 +109,7 @@
         </nav>
     </div>
 </div>
+    </div>
+
 
 

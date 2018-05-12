@@ -127,7 +127,7 @@ class OffersController extends ControllerBase
 
         $auth=$this->session->get('auth');
         $userid=$auth['id'];
-        $executor=Userinfo::findFirst("userId=$userid")->getExecutor();
+       /* $executor=Userinfo::findFirst("userId=$userid")->getExecutor();
         if($executor==0)
         {
             $this->dispatcher->forward([
@@ -136,7 +136,7 @@ class OffersController extends ControllerBase
             ]);
             $this->flash->error("Вы не являетесь исполнителем ");
             return;
-        }
+        }*/
         $taskId=$auction->getTaskId();
         $task=Tasks::findFirst("taskId=$taskId");
         if($userid==$task->getUserId())

@@ -17,6 +17,11 @@ class CoordinationController extends ControllerBase
      */
     public function indexAction($taskId = null)
     {
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
+        $this->assets->addJs("/public/js/mapTask.js",true);
+        $this->assets->addCss("/public/css/style.css",true);
+
         if ($taskId == null) {
             $auctionId = $this->session->get('coord')['auctionId'];
         }

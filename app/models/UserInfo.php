@@ -253,6 +253,12 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this->lastname;
     }
 
+
+    public function getFIO()
+    {
+        return "$this->lastname $this->firstname $this->patronymic";
+    }
+
     /**
      * Returns the value of field birthday
      *
@@ -270,7 +276,10 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function getMale()
     {
-        return $this->male;
+        if($this->male==0)
+        return 'женский';
+        else
+            return 'мужской';
     }
 
     /**
