@@ -204,12 +204,20 @@ class CoordinationController extends ControllerBase
 
                 return;
             }
-
-
+            $subjectId=null;
+        if($this->session->get('auth'['id'])==$task->getUserId())
+        {
+            $offer=Offers::findFirstByOfferId($task->auctions->getSelectedOffer());
+            $subjectId=$offer->getUserId();
+        }
+        else
+        {
+            $subjectId=$task->getUserId();
+        }
         $this->dispatcher->forward([
-            'controller' => "tasks",
-            'action' => 'mytasks',
-            'params' => [$this->session->get('auth')['id']]
+            'controller' => "reviews",
+            'action' => 'new',
+            'params' => [$subjectId]
         ]);
     }
 

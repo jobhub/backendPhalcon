@@ -24,10 +24,36 @@ class UserinfoController extends ControllerBase
 
         if($userid["id"])
         {
+            //$query = $this->modelsManager->createQuery('SELECT lastname, patronymic, firstname, pathToPhoto, reviewDate, raiting, textReview FROM reviews, userinfo WHERE reviews.userId_object=:userId: AND reviews.userId_subject=userinfo.userId');
+           // $query = $this->modelsManager->createQuery('SELECT userinfo.lastname, userinfo.patronymic, userinfo.firstname, pathToPhoto, reviews.reviewDate, reviews.raiting, reviews.textReview FROM reviews, userinfo WHERE reviews.userId_object=:userId: AND reviews.userId_subject=userinfo.userId');
+            $query = $this->modelsManager->createQuery('SELECT * FROM reviews INNER JOIN userinfo ON reviews.userId_subject=userinfo.userId 
+                WHERE reviews.userId_object = :userId:');
+
+            $id=$userid["id"];
+            $reviews  = $query->execute(
+                [
+                    'userId' => $id
+                ]
+            );
+            $rev=null;
+            foreach ($reviews as $row)
+            {
+                $rev['owner'][]= $row->userinfo->lastname.' '.$row->userinfo->firstname.' '.$row->userinfo->patronymic;
+                $rev['avatar'][]=$row->userinfo->pathToPhoto;
+                $rev['date'][]=$row->reviews->reviewDate;
+                $rev['raiting'][]=$row->reviews->raiting;
+                $rev['text'][]=$row->reviews->textReview;
+                if($row->reviews->executor=="1")
+                    $rev['role'][]='исполнителя';
+                else
+                    $rev['role'][]='заказчика';
+            }
+           $this->view->setVar('reviews',$rev);
+
           $this->dispatcher->forward([
               'controller' => "userinfo",
               'action' => 'edit',
-              'params' => [$userid["id"]]
+              'params' => [$id]
           ]);
         }
     }
@@ -227,12 +253,7 @@ class UserinfoController extends ControllerBase
             // $userinfo->setRaitingExecutor($this->request->getPost('raitingExecutor'));
             // $userinfo->setRaitingClient($this->request->getPost('raitingClient'));
             //$userinfo->setPathToPhoto($this->request->$imageFullName);
-            if(isset($_POST["executor"])) {
-                $userinfo->setExecutor($this->request->getPost("executor"));
-            }
-            else{
-                $userinfo->setExecutor(0);
-            }
+
 
 
 
@@ -375,7 +396,7 @@ if(isset($_FILES) && isset($_FILES['image'])) {
         //if()
         {
             $image->save($filename,$imageFormat);
-            $imageFullName=str_replace('C:/OpenServer/domains/simpleMod2','',$filename);
+            $imageFullName=str_replace('D:/OSPanel/domains/localhost','',$filename);
             $userinfo->setPathToPhoto($imageFullName);
             $userinfo->save();
             echo 'success';

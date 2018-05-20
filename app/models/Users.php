@@ -192,6 +192,10 @@ class Users extends \Phalcon\Mvc\Model
         $this->hasMany('userId', 'Offers', 'userId', ['alias' => 'Offers']);
         $this->hasMany('userId', 'Tasks', 'userId', ['alias' => 'Tasks']);
         $this->hasOne('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->hasMany('userId', 'Reviews','userId_subject', ['alias'=>'Reviews']);
+        $this->hasMany('userId', 'Reviews','userId_object', ['alias'=>'Reviews']);
+
+
     }
 
     /**

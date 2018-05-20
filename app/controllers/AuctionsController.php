@@ -37,6 +37,7 @@ class AuctionsController extends ControllerBase
             ]
         );
         $keys=['name','description','address','price','coords','deadline','dateStart','dateEnd','link'];
+
         for( $i=0; $i<$auctions->count(); $i++)
         {
 
@@ -467,10 +468,19 @@ class AuctionsController extends ControllerBase
 
     public function viewingAction($auctionId)
     {
+
         $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
         $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
         $this->assets->addJs("/public/js/mapTask.js",true);
             $auction=Auctions::findFirstByAuctionId($auctionId);
+            if($auction->tasks->userId==$this->session->get('auth')['id'])
+            {
+                $this->dispatcher->forward([
+                    'controller' => "auctions",
+                    'action' => 'show',
+                    'params' => [$auction->getTaskId()]
+                ]);
+            }
             $this->session->set('auctionId',$auctionId);
             //$auction=$auction->getFirst();
             $this->view->setVar('auction',$auction);

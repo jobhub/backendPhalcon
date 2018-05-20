@@ -10,7 +10,7 @@ class Auctions extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $tenderId;
+    protected $auctionId;
 
     /**
      *
@@ -18,6 +18,13 @@ class Auctions extends \Phalcon\Mvc\Model
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $taskId;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=true)
+     */
+    protected $selectedOffer;
 
     /**
      *
@@ -34,14 +41,14 @@ class Auctions extends \Phalcon\Mvc\Model
     protected $dateEnd;
 
     /**
-     * Method to set the value of field tenderId
+     * Method to set the value of field auctionId
      *
-     * @param integer $tenderId
+     * @param integer $auctionId
      * @return $this
      */
-    public function setTenderId($tenderId)
+    public function setAuctionId($auctionId)
     {
-        $this->tenderId = $tenderId;
+        $this->auctionId = $auctionId;
 
         return $this;
     }
@@ -55,6 +62,22 @@ class Auctions extends \Phalcon\Mvc\Model
     public function setTaskId($taskId)
     {
         $this->taskId = $taskId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field selectedOffer
+     *
+     * @param integer $selectedOffer
+     * @return $this
+     */
+    public function setSelectedOffer($selectedOffer)
+    {
+        if($selectedOffer == "")
+            $selectedOffer = null;
+        else
+            $this->selectedOffer = $selectedOffer;
 
         return $this;
     }
@@ -86,13 +109,13 @@ class Auctions extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field tenderId
+     * Returns the value of field auctionId
      *
      * @return integer
      */
-    public function getTenderId()
+    public function getAuctionId()
     {
-        return $this->tenderId;
+        return $this->auctionId;
     }
 
     /**
@@ -103,6 +126,17 @@ class Auctions extends \Phalcon\Mvc\Model
     public function getTaskId()
     {
         return $this->taskId;
+    }
+
+    /**
+     * Returns the value of field selectedOffer
+     *
+     * @return integer
+     */
+    public function getSelectedOffer()
+    {
+
+        return $this->selectedOffer;
     }
 
     /**
@@ -126,19 +160,6 @@ class Auctions extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field auctionId
-     *
-     * @param integer $auctionId
-     * @return $this
-     */
-    public function setAuctionId($auctionId)
-    {
-        $this->auctionId = $auctionId;
-
-        return $this;
-    }
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -149,6 +170,16 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->hasMany('auctionId', 'Offers', 'auctionId', ['alias' => 'Offers']);
         $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
         $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'auctions';
     }
 
     /**
@@ -172,15 +203,4 @@ class Auctions extends \Phalcon\Mvc\Model
     {
         return parent::findFirst($parameters);
     }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'auctions';
-    }
-
 }
