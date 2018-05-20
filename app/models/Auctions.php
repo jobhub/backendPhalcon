@@ -3,6 +3,15 @@
 class Auctions extends \Phalcon\Mvc\Model
 {
 
+    /*/**
+     *
+     * @var integer
+     * @Primary
+     * @Identity
+     * @Column(type="integer", length=11, nullable=false)
+
+    protected $tenderId;*/
+
     /**
      *
      * @var integer
@@ -10,7 +19,7 @@ class Auctions extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $tenderId;
+    protected $auctionId;
 
     /**
      *
@@ -136,6 +145,16 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->auctionId = $auctionId;
 
         return $this;
+    }
+
+    /**
+     * Method to get the value of field auctionId
+     *
+     * return int
+     */
+    public function getAuctionId()
+    {
+        return $this->auctionId;
     }
 
     /**

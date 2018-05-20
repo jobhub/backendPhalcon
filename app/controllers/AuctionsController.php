@@ -39,7 +39,6 @@ class AuctionsController extends ControllerBase
         $keys=['name','description','address','price','coords','deadline','dateStart','dateEnd','link'];
         for( $i=0; $i<$auctions->count(); $i++)
         {
-
             $val[]=$auctions[$i]->tasks->getName();
             $val[]=$auctions[$i]->tasks->getDescription();
             $val[]=$auctions[$i]->tasks->getAddress();
@@ -62,6 +61,7 @@ class AuctionsController extends ControllerBase
                 var values=".$json.";
                 setMarks(values)
               </script>";
+
         $numberPage = 1;
         if ($this->request->isPost()) {
             $query = Criteria::fromInput($this->di, 'Auctions', $_POST);
@@ -173,7 +173,6 @@ class AuctionsController extends ControllerBase
             $this->tag->setDefault("address", $task->getaddress());
             $this->tag->setDefault("deadline", $task->getDeadline());
             $this->tag->setDefault("price", $task->getPrice());
-
         }
         else {
 
