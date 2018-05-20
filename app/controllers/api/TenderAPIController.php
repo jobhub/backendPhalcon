@@ -15,15 +15,46 @@ class TenderAPIController extends Controller
     {
         if ($this->request->isGet()) {
             $today = date("Y-m-d");
-            $query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
+            /*$query = $this->modelsManager->createQuery('SELECT * FROM Auctions, Tasks WHERE Tasks.status=\'Поиск\' AND Tasks.taskId=Auctions.taskId AND Auctions.dateEnd>:today:');
 
             $auctions = $query->execute(
                 [
                     'today' => "$today",
                 ]
-            );
+            );*/
 
-            return json_encode($auctions);
+            $auctions = Auctions::find("dateEnd > '$today'");
+
+            $auctionAndTask = null;
+
+            foreach ($auctions as $auction){
+                $task = $auction->tasks;
+                $user = Userinfo::findFirstByUserId($task->getUserId());
+
+                $auctionAndTask[] = ['tender' => $auction, 'tasks' => $task, 'userinfo' => $user];
+            }
+
+            /*$response = new Response();
+
+            if($auctionAndTask != null){
+                $response->setJsonContent(
+                    [
+                        "otherAuctions" => $auctionAndTask
+                    ]
+                );
+            }
+            else{
+                $response->setJsonContent(
+                    [
+                        "otherAuctions" => '[]'
+                    ]
+                );
+            }
+
+            return $response;*/
+            return json_encode($auctionAndTask);
+
+
         } else if ($this->request->isPut()) {
             $response = new Response();
             $tender = new Auctions();
@@ -42,11 +73,11 @@ class TenderAPIController extends Controller
 
                 $tenderOld = Auctions::findFirstByTaskId($this->request->getPut("taskId"));
 
-                if ($tenderOld != null) {
+                if (!$tenderOld) {
 
                     $tender->setTaskId($this->request->getPut("taskId"));
-                    $tender->setDateStart(date('Y-m-d H:m'));
-                    $tender->setDateEnd(date('Y-m-d H:m', strtotime($this->request->getPut("dateEnd"))));
+                    $tender->setDateStart(date('Y-m-d H:m:s'));
+                    $tender->setDateEnd(date('Y-m-d H:m:s', strtotime($this->request->getPut("dateEnd"))));
                     //$tender->setDateStart($today);
 
 
@@ -103,11 +134,11 @@ class TenderAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $auction = Auctions::findFirstByTenderId($tenderId);
+            $auction = Auctions::findFirstByAuctionId($tenderId);
 
             if($auction->tasks->getUserId() == $userId){
                 //$auction = Auctions::findFirstByTaskId($task->getTaskId());
-                $offers = Offers::findByTenderId($auction->getTenderId());
+                $offers = Offers::findByAuctionId($auction->getAuctionId());
                 /*if($offers->count()==0){*/
                 if (!$auction->delete()) {
 

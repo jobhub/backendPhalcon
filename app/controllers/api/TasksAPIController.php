@@ -23,6 +23,8 @@ class TasksAPIController extends Controller
 
             $tasks = Tasks::findByUserId($userId);
 
+            $TasksAndTenders = [];
+
             for($i = 0; $i < $tasks->count();$i++){
 
                 $auction = Auctions::findFirstByTaskId($tasks[$i]->getTaskId());
@@ -32,7 +34,7 @@ class TasksAPIController extends Controller
                 }
                 else{
                     //-----------------temporary----AuctionId - может надо будет исправить-------------------
-                    $offers = Offers::findByTenderId($auction->getTenderId());
+                    $offers = Offers::findByAuctionId($auction->getAuctionId());
                     $count  =$offers->count();
                 }
                 $TasksAndTenders[] = ['tasks' => $tasks[$i], 'auctions' => $auction,'offersCount' => $count];
@@ -58,9 +60,11 @@ class TasksAPIController extends Controller
             $task->setCategoryid($this->request->getPut("categoryId"));
             $task->setName($this->request->getPut("name"));
             $task->setDescription($this->request->getPut("description"));
+            $task->setLatitude($this->request->getPut("latitude"));
+            $task->setLongitude($this->request->getPut("longitude"));
 
 
-            $task->setDeadline(date('Y-m-d H:m',strtotime($this->request->getPut("deadline"))));
+            $task->setDeadline(date('Y-m-d H:m:s',strtotime($this->request->getPut("deadline"))));
             $task->setPrice($this->request->getPut("price"));
 
 
@@ -79,7 +83,7 @@ class TasksAPIController extends Controller
             }
 
             $this->db->commit();
-            $taskAndTender['tasks'] = $task;
+            $taskAndTender['tasks'] = Tasks::findFirstByTaskId($task->getTaskId());
             $taskAndTender['auctions'] = null;
             $response->setJsonContent(
                 [
@@ -110,7 +114,7 @@ class TasksAPIController extends Controller
             if($task->getUserId() == $userId){
                 $auction = Auctions::findFirstByTaskId($task->getTaskId());
                 if($auction)
-                    $offers = Offers::findByTenderId($auction->getTenderId());
+                    $offers = Offers::findByAuctionId($auction->getAuctionId());
                 if($auction==false || $offers->count()==0){
                     if (!$task->delete()) {
 
@@ -208,5 +212,13 @@ class TasksAPIController extends Controller
 
             throw $exception;
         }
+    }
+
+    public function getAllTasks(){
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $tasks = Tasks::findByUserId();
+
+        return json_encode($tasks);
     }
 }

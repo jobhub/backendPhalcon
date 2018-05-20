@@ -41,15 +41,57 @@ class SessionAPIController extends Controller
             if ($user !== false) {
                 $this->_registerSession($user);
 
+                $response = new Response();
+                $userinfo = Userinfo::findFirstByuserId($user->getUserId());
+                if (!$userinfo) {
+
+                    $response->setJsonContent(
+                        [
+                            "status" => ["status" => "FAIL"]
+                        ]);
+
+                    return $response;
+                }
+                /*$user = Users::findFirstByuserId($user->getUserId());
+                if (!$user) {
+                    $response->setJsonContent(
+                        [
+                            "status" => "FAIL"
+                        ]);
+                    return $response;
+                }*/
+
+                $user_min['userId'] = $user->getUserId();
+                $user_min['email'] = $user->getEmail();
+                $user_min['phone'] = $user->getPhone();
+
+                $settings = Settings::findFirstByuserId($user->getUserId());
+                if (!$settings) {
+
+                    $response->setJsonContent(
+                        [
+                            "status" => ["status" => "FAIL"]
+                        ]);
+
+                    return $response;
+                }
+                $info['userinfo'] = $userinfo;
+                $info['user'] = $user_min;
+                $info['settings'] = $settings;
+
+
+
                 $response->setJsonContent(
                     [
-                        "status" => "OK"
+
+                        "status" => ["status" => "OK"],
+                        "allForUser" => $info
                     ]
                 );
             } else {
                 $response->setJsonContent(
                     [
-                        "status" => "FAIL"
+                        "status" => ["status" => "FAIL"]
                     ]);
             }
 

@@ -17,18 +17,18 @@ class OffersAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $tender = Auctions::findFirstByTenderId($tenderId);
+            $tender = Auctions::findFirstByAuctionId($tenderId);
             //$task = Tasks::findFirstbyTaskId($taskId);
             $task = $tender->tasks;
             if ($task->getUserId() == $userId) {
-                $offers = Offers::findByTenderId($tenderId);
+                $offers = Offers::findByAuctionId($tenderId);
                 $offerWithUser = null;
-                if($offers) {
-                    for($i = 0; $i < $offers->count(); $i++) {
+                if ($offers) {
+                    for ($i = 0; $i < $offers->count(); $i++) {
                         $offer = $offers[$i];
                         $userinfo = Userinfo::findFirstByUserId($offers[$i]->getUserId());
 
-                        $offerWithUser[] = ['Offer' => $offer,'Userinfo'=>$userinfo];
+                        $offerWithUser[] = ['Offer' => $offer, 'Userinfo' => $userinfo];
                     }
                 }
 
@@ -47,8 +47,83 @@ class OffersAPIController extends Controller
                     "errors" => ['Задание не принадлежит пользователю']
                 ]
             );
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
         }
-        else {
+    }
+
+    public function addAction()
+    {
+        if ($this->request->isPut()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $tenderId = $this->request->getPut("tenderId");
+
+            $tender = Auctions::findFirstByAuctionId($tenderId);
+
+            if (!$tender) {
+                $response->setJsonContent(
+                    [
+                        "status" => "FAIL",
+                        "errors" => ['Такого тендера не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            $offers = Offers::findByAuctionId($tenderId);
+
+            $exists = false;
+            foreach ($offers as $offer) {
+                if ($offer->getUserId() == $userId) {
+                    $exists = true;
+                    break;
+                }
+            }
+            if ($exists) {
+                $response->setJsonContent(
+                    [
+                        "status" => "FAIL",
+                        "errors" => ['Пользователь уже оставил предложение для данного тендера']
+                    ]
+                );
+                return $response;
+            }
+
+            $offer = new Offers();
+
+            $offer->setUserId($userId);
+            $offer->setAuctionId($tenderId);
+            $offer->setDeadline(date('Y-m-d H:m:s',strtotime($this->request->getPut("deadline"))));
+            $offer->setPrice($this->request->getPut("price"));
+            $offer->setDescription($this->request->getPut("description"));
+
+            if (!$offer->save()) {
+                $this->db->rollback();
+                foreach ($offer->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA",
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => "OK"
+                ]
+            );
+            return $response;
+
+
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
