@@ -135,7 +135,6 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     public function getSelectedOffer()
     {
-
         return $this->selectedOffer;
     }
 
@@ -170,6 +169,7 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->hasMany('auctionId', 'Offers', 'auctionId', ['alias' => 'Offers']);
         $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
         $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+        $this->hasMany('auctionId', 'Reviews','auctionId', ['alias'=>'Reviews']);
     }
 
     /**

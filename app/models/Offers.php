@@ -229,4 +229,40 @@ class Offers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public function getScore()
+    {
+        $C=$this->users->getFinishedTasks();
+        $R=$this->users->userInfo->getRaitingExecutor();
+        $categoryId=(int)$this->auctions->tasks->getCategoryId();
+        $r=$this->users->getRatingForCategory($categoryId);
+        $ctask=(double)$this->auctions->tasks->getPrice()/$this->getPrice();
+        $t=1;
+
+        $otime=strtotime($this->getDeadline())/3600;
+        $ttime=strtotime($this->auctions->tasks->getDeadline())/3600;
+        $atime=strtotime($this->auctions->getDateEnd())/3600;
+
+        $deltat=$ttime-$atime;
+        if($otime<$ttime)
+        {
+            if($ttime-$otime<$deltat/2)
+                $t=1.5;
+            else
+            {
+                $t=1.25;
+            }
+          //  $t=(double)($ttime-$otime) /*/($otime-$atime)*/;
+        }
+        else
+        {
+            if($otime-$ttime>$deltat/2)
+                $t=0.5;
+            else
+                $t=0.75;
+         //  $t=($otime-$ttime) /*/($otime-$atime)*/;
+        }
+        $S=0.1*$C*(0.5*$R+$r+5)*$ctask*$t;
+        return $S;
+    }
+
 }
