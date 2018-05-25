@@ -156,6 +156,23 @@ $this->assets->outputCss();
                             </div>
                         </div>
                     </div>
+                    <?php
+                    echo $this->tag->form(
+                        [
+                            "coordination/end",
+                            "autocomplete" => "off",
+                            "class" => "form-horizontal"
+                        ]
+                    );
+                    ?>
+
+                    <?= $this->tag->hiddenField(['auctionId']) ?>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <?php echo $this->tag->submitButton(["Завершить задание", "class" => "btn btn-primary"]) ?>
+                        </div>
+                    </div>
+                    <?php echo $this->tag->endForm(); ?>
                 </div>
         </div>
 

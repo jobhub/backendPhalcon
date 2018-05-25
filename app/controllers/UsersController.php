@@ -109,7 +109,6 @@ class UsersController extends ControllerBase
     public function editAction($userId)
     {
         if (!$this->request->isPost()) {
-
             $user = Users::findFirstByuserId($userId);
             if (!$user) {
                 $this->flash->error("Пользователь не найден");

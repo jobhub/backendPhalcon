@@ -582,4 +582,6 @@ class OffersController extends ControllerBase
         $this->view->page = $paginator->getPaginate();
     }
 
+
+
 }

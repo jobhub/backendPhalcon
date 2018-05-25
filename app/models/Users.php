@@ -192,6 +192,10 @@ class Users extends \Phalcon\Mvc\Model
         $this->hasMany('userId', 'Offers', 'userId', ['alias' => 'Offers']);
         $this->hasMany('userId', 'Tasks', 'userId', ['alias' => 'Tasks']);
         $this->hasOne('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->hasMany('userId', 'Reviews','userId_subject', ['alias'=>'Reviews']);
+        $this->hasMany('userId', 'Reviews','userId_object', ['alias'=>'Reviews']);
+
+
     }
 
     /**
@@ -226,4 +230,27 @@ class Users extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public function getFinishedTasks()
+    {
+        $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
+        $count = $query->execute(
+            [
+                'userId' => "$this->userId",
+            ]
+        );
+        $count=$count[0]['c'];
+        return $count;
+    }
+    public function getRatingForCategory($idCategory)
+    {
+        $query=$this->getModelsManager()->createQuery('SELECT AVG(reviews.raiting) AS a FROM reviews, auctions, tasks, users WHERE tasks.categoryId=:categoryId: AND tasks.taskId=auctions.taskId AND auctions.auctionId=reviews.auctionId AND reviews.userId_object=:userId: AND reviews.executor=1');
+        $avg = $query->execute(
+            [
+                'userId' => "$this->userId",
+                'categoryId'=>$idCategory
+            ]
+        );
+        $avg=$avg[0]['a'];
+        return $avg;
+    }
 }

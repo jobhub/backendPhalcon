@@ -62,7 +62,7 @@ class SecurityPlugin extends Plugin
                 'tasksAPI' => ['index','delete','change'],
                 'tenderAPI' => ['delete'],
                 'reviewsAPI' => ['index'],
-                'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete']
+                'offersAPI' => ['getForTender']
 			];
 
 			foreach ($privateResources as $resource => $actions) {

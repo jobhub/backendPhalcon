@@ -190,26 +190,45 @@ class CoordinationController extends ControllerBase
 
             $task = Auctions::findFirstByAuctionId($auctionId)->tasks;
 
-            $task->setStatus(2);
+        $auth = $this->session->get('auth');
+        $objectId=null;
+        if($auth['id']==$task->getUserId())
+        {
+            //отзыв на исполнителя
+            $offer=Offers::findFirstByOfferId($task->auctions[0]->getSelectedOffer());
+            $objectId=$offer->getUserId();
+            $this->session->set('executor',1);
+            $this->session->set('subjectId',$auth['id']);
+        }
+        else
+        {
+            //отзыв на заказчика
+            $objectId=$task->getUserId();
+            $this->session->set('executor',0);
+            $offer=Offers::findFirstByOfferId($task->auctions[0]->getSelectedOffer());
+            $this->session->set('subjectId',$offer->getUserId());
+        }
+        $this->session->set('coordination',true);
 
-            if (!$task->save()) {
-                foreach ($task->getMessages() as $message) {
-                    $this->flash->error($message);
-                }
+        $task->setStatus(2);
 
-                $this->dispatcher->forward([
-                    'controller' => "coordination",
-                    'action' => 'index'
-                ]);
-
-                return;
+        if (!$task->save()) {
+            foreach ($task->getMessages() as $message) {
+                $this->flash->error($message);
             }
 
+            $this->dispatcher->forward([
+                'controller' => "coordination",
+                'action' => 'index'
+            ]);
+
+            return;
+        }
 
         $this->dispatcher->forward([
-            'controller' => "tasks",
-            'action' => 'mytasks',
-            'params' => [$this->session->get('auth')['id']]
+            'controller' => "reviews",
+            'action' => 'new',
+            'params' => [$objectId]
         ]);
     }
 

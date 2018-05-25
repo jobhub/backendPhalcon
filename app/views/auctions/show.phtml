@@ -114,6 +114,7 @@
                                 <th class="footable-sortable">Срок<span class="footable-sort-indicator"></span></th>
                                 <th class="footable-sortable">Описание<span class="footable-sort-indicator"></span></th>
                                 <th class="footable-sortable">Стоимость<span class="footable-sort-indicator"></span></th>
+                                <th class="footable-sortable">Score<span class="footable-sort-indicator"></span></th>
                                 <th class="footable-sortable">Действия<span class="footable-sort-indicator"></span></th>
                             </tr>
                             </thead>
@@ -127,6 +128,7 @@
                                 <td><?= date('h:m d.m.Y',strtotime($offer->getDeadline()))?></td>
                                 <td><?= $offer->getDescription() ?></td>
                                 <td><?= $offer->getPrice() ?></td>
+                                <td><?= $offer->getScore() ?></td>
                                 <td><?= $this->tag->linkTo(['auctions/choice/' . $offer->getOfferId(), 'Выбрать']) ?></td>
                             </tr>
                             <tr>

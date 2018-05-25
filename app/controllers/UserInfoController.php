@@ -8,11 +8,11 @@ class UserinfoController extends ControllerBase
 {
 
 
-    public function initialize()
-    {
-        $this->tag->setTitle('');
-        parent::initialize();
-    }
+     public function initialize()
+     {
+         $this->tag->setTitle('');
+         parent::initialize();
+     }
 
     /**
      * Index action
@@ -20,14 +20,15 @@ class UserinfoController extends ControllerBase
     public function indexAction()
     {
         $this->persistent->parameters = null;
-        $userid = $this->session->get("auth");
+        $userid=$this->session->get("auth");
 
-        if ($userid["id"]) {
-            $this->dispatcher->forward([
-                'controller' => "userinfo",
-                'action' => 'edit',
-                'params' => [$userid["id"]]
-            ]);
+        if($userid["id"])
+        {
+          $this->dispatcher->forward([
+              'controller' => "userinfo",
+              'action' => 'edit',
+              'params' => [$userid["id"]]
+          ]);
         }
     }
 
@@ -64,7 +65,7 @@ class UserinfoController extends ControllerBase
 
         $paginator = new Paginator([
             'data' => $userinfo,
-            'limit' => 10,
+            'limit'=> 10,
             'page' => $numberPage
         ]);
 
@@ -86,10 +87,10 @@ class UserinfoController extends ControllerBase
      */
     public function editAction($userId)
     {
-        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js", false);
-        $this->assets->addJs("/public/js/ajaxupload.js", true);
-        $auth = $this->session->get("auth");
-        if ($userId === $auth["id"]) {
+        $this->assets->addJs("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js",false);
+        $this->assets->addJs("/public/js/ajaxupload.js",true);
+        $auth=$this->session->get("auth");
+        if($userId===$auth["id"]) {
             if (!$this->request->isPost()) {
 
                 $userinfo = Userinfo::findFirstByuserId($userId);
@@ -106,7 +107,7 @@ class UserinfoController extends ControllerBase
 
                 $this->view->userId = $userinfo->userId;
 
-                $this->view->setVar('userinfo', $userinfo);
+                $this->view->setVar('userinfo',$userinfo);
                 $this->tag->setDefault("firstname", $userinfo->firstname);
                 $this->tag->setDefault("patronymic", $userinfo->patronymic);
                 $this->tag->setDefault("lastname", $userinfo->lastname);
@@ -121,11 +122,13 @@ class UserinfoController extends ControllerBase
                 $this->session->set("executor", $userinfo->executor);
 
             }
-        } else {
+        }
+        else
+        {
             $this->dispatcher->forward([
                 'controller' => "userinfo",
                 'action' => 'index'
-            ]);
+                ]);
         }
     }
 
@@ -194,7 +197,7 @@ class UserinfoController extends ControllerBase
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
         $userinfo = Userinfo::findFirstByuserId($userId);
-        $this->view->setVar('userinfo', $userinfo);
+        $this->view->setVar('userinfo',$userinfo);
         if (!$userinfo) {
             $this->flash->error("Пользователь не найден");
 
@@ -207,26 +210,34 @@ class UserinfoController extends ControllerBase
         }
 
 
-        $userinfo->setUserid($auth['id']);
-        $userinfo->setFirstname($this->request->getPost("firstname"));
-        $userinfo->setPatronymic($this->request->getPost("patronymic"));
-        $userinfo->setLastname($this->request->getPost("lastname"));
-        $userinfo->setBirthday($this->request->getPost("birthday"));
-        if ($this->request->getPost("male") === "1")
-            $userinfo->setMale("1");
-        else
-            $userinfo->setMale("0");
-        //$userinfo->Male = $this->request->getPost("male");
-        $userinfo->setAddress($this->request->getPost("address"));
-        $userinfo->setAbout($this->request->getPost("about"));
-        // $userinfo->setRaitingExecutor($this->request->getPost('raitingExecutor'));
-        // $userinfo->setRaitingClient($this->request->getPost('raitingClient'));
-        //$userinfo->setPathToPhoto($this->request->$imageFullName);
-        if (isset($_POST["executor"])) {
-            $userinfo->setExecutor($this->request->getPost("executor"));
-        } else {
-            $userinfo->setExecutor(0);
-        }
+
+
+            $userinfo->setUserid($auth['id']);
+            $userinfo->setFirstname($this->request->getPost("firstname"));
+            $userinfo->setPatronymic($this->request->getPost("patronymic"));
+            $userinfo->setLastname($this->request->getPost("lastname"));
+            $userinfo->setBirthday($this->request->getPost("birthday"));
+            if($this->request->getPost("male")==="1")
+                $userinfo->setMale("1");
+            else
+                $userinfo->setMale("0");
+            //$userinfo->Male = $this->request->getPost("male");
+            $userinfo->setAddress($this->request->getPost("address"));
+            $userinfo->setAbout($this->request->getPost("about"));
+            // $userinfo->setRaitingExecutor($this->request->getPost('raitingExecutor'));
+            // $userinfo->setRaitingClient($this->request->getPost('raitingClient'));
+            //$userinfo->setPathToPhoto($this->request->$imageFullName);
+            if(isset($_POST["executor"])) {
+                $userinfo->setExecutor($this->request->getPost("executor"));
+            }
+            else{
+                $userinfo->setExecutor(0);
+            }
+
+
+
+
+
 
 
         if (!$userinfo->save()) {
@@ -308,7 +319,7 @@ class UserinfoController extends ControllerBase
             return;
         }
 
-        $this->view->setVar('userinfo', $userinfo);
+        $this->view->setVar('userinfo',$userinfo);
 
 
         /*$this->tag->setDefault("firstname", $userinfo->firstname);
@@ -328,92 +339,87 @@ class UserinfoController extends ControllerBase
     {
         include('../library/SimpleImage.php');
 // Проверяем установлен ли массив файлов и массив с переданными данными
-        if (isset($_FILES) && isset($_FILES['image'])) {
-            // echo $_FILES;
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserId($userId);
-            if ($userinfo) {
-                $userinfo->setUserid($auth['id']);
+if(isset($_FILES) && isset($_FILES['image'])) {
+   // echo $_FILES;
+    $auth = $this->session->get('auth');
+    $userId = $auth['id'];
+    $userinfo = Userinfo::findFirstByuserId($userId);
+    if ($userinfo) {
+    $userinfo->setUserid($auth['id']);
 
 
-                if (($_FILES['image']['size'] > 5242880)) {
-                    die('error');
-                }
-                //$imageType=exif_imagetype($_FILES['image']['tmp_name']);
-                /* if($imageType!=IMAGETYPE_JPEG||$imageType!=IMAGETYPE_PNG||$imageType!=IMAGETYPE_GIF)
-                 {
-                     die('error');
-                 }*/
-                $image = new SimpleImage();
-                $image->load($_FILES['image']['tmp_name']);
-                $image->resizeToWidth(200);
-
-                $imageFormat = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $format = $imageFormat;
-                if ($imageFormat == 'jpeg' || 'jpg')
-                    $imageFormat = IMAGETYPE_JPEG;
-                elseif ($imageFormat == 'png')
-                    $imageFormat = IMAGETYPE_PNG;
-                elseif ($imageFormat == 'gif')
-                    $imageFormat = IMAGETYPE_GIF;
-                else {
-                    die('error');
-                }
-                $filename = $_SERVER['DOCUMENT_ROOT'] . '/public/img/' . hash('crc32', $userinfo->getUserId()) . '.' . $format;
-                //if()
-                {
-                    $image->save($filename, $imageFormat);
-                    $imageFullName = str_replace('C:/OpenServer/domains/simpleMod2', '', $filename);
-                    $userinfo->setPathToPhoto($imageFullName);
-                    $userinfo->save();
-
-                    if(isset($_GET['api'])){
-                        return $userinfo->getPathToPhoto();
-                    }
-
-                    echo 'success';
-                }
-                /* else{
-                     echo 'error';
-                 }*/
-
-                /*
-           // $image = $_FILES['image'];
-           // echo $image;
-        // Проверяем размер файла и если он превышает заданный размер
-        // завершаем выполнение скрипта и выводим ошибку
-            if ($_FILES['image']['size'] > 200000) {
-                die('error');
-            }
-
-        // Достаем формат изображения
-
-
-        // Генерируем новое имя для изображения. Можно сохранить и со старым
-        // но это не рекомендуется делать
-            $imageFullName = $_SERVER['DOCUMENT_ROOT'].'/public/img/' . hash('crc32',time()) . '.' . $imageFormat;
-           // echo $imageFullName;
-        // Сохраняем тип изображения в переменную
-            $imageType = $_FILES['image']['type'];
-
-
-        // Сверяем доступные форматы изображений, если изображение соответствует,
-        // копируем изображение в папку images
-
-            if ($imageType == 'image/jpeg' || $imageType == 'image/png') {
-                if ($image->save($imageFullName,$imageType))//move_uploaded_file($image['tmp_name'],$imageFullName))
-                    {
-                    $imageFullName=str_replace('D:/OpenServer/domains/kursach','',$imageFullName);
-                    $userinfo->setPathToPhoto($imageFullName);
-                    $userinfo->save();
-                    echo 'success';
-                } else {
-                    echo 'error';
-                }
-            }*/
-            }
+       if (($_FILES['image']['size'] > 5242880)) {
+            die('error');
         }
+        //$imageType=exif_imagetype($_FILES['image']['tmp_name']);
+       /* if($imageType!=IMAGETYPE_JPEG||$imageType!=IMAGETYPE_PNG||$imageType!=IMAGETYPE_GIF)
+        {
+            die('error');
+        }*/
+        $image = new SimpleImage();
+        $image->load($_FILES['image']['tmp_name']);
+        $image->resizeToWidth(200);
+
+        $imageFormat = pathinfo($_FILES['image']['name'],PATHINFO_EXTENSION );
+        $format=$imageFormat;
+        if($imageFormat=='jpeg'||'jpg')
+            $imageFormat=IMAGETYPE_JPEG;
+        elseif ($imageFormat=='png')
+            $imageFormat=IMAGETYPE_PNG;
+        elseif ($imageFormat=='gif')
+            $imageFormat=IMAGETYPE_GIF;
+        else {
+             die('error');
+         }
+        $filename=$_SERVER['DOCUMENT_ROOT'].'/public/img/'. hash('crc32',$userinfo->getUserId()).'.'.$format;
+        //if()
+        {
+            $image->save($filename,$imageFormat);
+            $imageFullName=str_replace('C:/OpenServer/domains/simpleMod2','',$filename);
+            $userinfo->setPathToPhoto($imageFullName);
+            $userinfo->save();
+            echo 'success';
+        }
+       /* else{
+            echo 'error';
+        }*/
+
+        /*
+   // $image = $_FILES['image'];
+   // echo $image;
+// Проверяем размер файла и если он превышает заданный размер
+// завершаем выполнение скрипта и выводим ошибку
+    if ($_FILES['image']['size'] > 200000) {
+        die('error');
+    }
+
+// Достаем формат изображения
+
+
+// Генерируем новое имя для изображения. Можно сохранить и со старым
+// но это не рекомендуется делать
+    $imageFullName = $_SERVER['DOCUMENT_ROOT'].'/public/img/' . hash('crc32',time()) . '.' . $imageFormat;
+   // echo $imageFullName;
+// Сохраняем тип изображения в переменную
+    $imageType = $_FILES['image']['type'];
+
+
+// Сверяем доступные форматы изображений, если изображение соответствует,
+// копируем изображение в папку images
+
+    if ($imageType == 'image/jpeg' || $imageType == 'image/png') {
+        if ($image->save($imageFullName,$imageType))//move_uploaded_file($image['tmp_name'],$imageFullName))
+            {
+            $imageFullName=str_replace('D:/OpenServer/domains/kursach','',$imageFullName);
+            $userinfo->setPathToPhoto($imageFullName);
+            $userinfo->save();
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+    }*/
+}
+}
     }
 
 

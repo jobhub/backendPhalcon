@@ -334,4 +334,27 @@ class Elements extends Component
 		</div><!-- /.footer-bottom -->
 	</div><!-- /.footer -->';
     }
+
+    public function getRating($podpis, $rating)
+    {
+        echo '<div class="rating">';
+        for($i=10;$i>0;$i--)
+        {
+            $class='';
+            if($i%2==0)
+                $class='full';
+            else
+                $class='half';
+
+            if($i!=$rating)
+            {
+                echo "<input type=\"radio\" disabled id=\"star".$podpis.$i."\"/><label class = \"".$class."\" for=\"star".$podpis.$i."\"></label>";
+            }
+            else
+            {
+                echo "<input type=\"radio\" disabled checked id=\"star".$podpis.$i."\"/><label class = \"".$class."\" for=\"star".$podpis.$i."\"></label>";
+            }
+        }
+        echo '</div>';
+    }
 }
