@@ -97,7 +97,7 @@ class OffersAPIController extends Controller
 
             $offer->setUserId($userId);
             $offer->setAuctionId($tenderId);
-            $offer->setDeadline(date('Y-m-d H:m:s',strtotime($this->request->getPut("deadline"))));
+            $offer->setDeadline(date('Y-m-d H:m:s', strtotime($this->request->getPut("deadline"))));
             $offer->setPrice($this->request->getPut("price"));
             $offer->setDescription($this->request->getPut("description"));
 
@@ -117,12 +117,88 @@ class OffersAPIController extends Controller
 
             $response->setJsonContent(
                 [
+                    "offer" => $offer,
                     "status" => "OK"
                 ]
             );
             return $response;
 
 
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function getForUserAction()
+    {
+        if ($this->request->isGet()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $offers = Offers::findByUserId($userId);
+            $offerWithTask = [];
+            if ($offers) {
+                for ($i = 0; $i < $offers->count(); $i++) {
+                    $offer = $offers[$i];
+                    $auction = $offer->Auctions;
+                    $task = $offer->auctions->tasks;
+                    $userinfo = $task->Users->userinfo;
+
+                    $offerWithTask[] = ['Offer' => $offer,'Tasks' => $task, 'Userinfo' => $userinfo, 'Tender'=> $auction];
+                }
+            }
+
+            return json_encode($offerWithTask);
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function deleteAction($offerId){
+        if($this->request->isDelete()) {
+            $offer = Offers::findFirstByOfferId($offerId);
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            if($offer->getUserId() == $userId){
+                if (!$offer->delete()) {
+
+                    foreach ($offer->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+
+                    $response->setJsonContent(
+                        [
+                            "status" => "WRONG_DATA",
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => "OK"
+                    ]
+                );
+                return $response;
+            } else{
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA",
+                        "errors" => ['Предложение не принадлежит пользователю']
+                    ]
+                );
+                return $response;
+            }
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 

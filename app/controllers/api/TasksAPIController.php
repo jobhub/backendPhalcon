@@ -28,23 +28,38 @@ class TasksAPIController extends Controller
             for($i = 0; $i < $tasks->count();$i++){
 
                 $auction = Auctions::findFirstByTaskId($tasks[$i]->getTaskId());
+                //$offers = Offers::findByAuctionId($auction->getAuctionId());
                 $count = 0;
                 if($auction == false) {
                     $auction = null;
+                    $offers = [];
+                    $offerWithUser = null;
                 }
                 else{
-                    //-----------------temporary----AuctionId - может надо будет исправить-------------------
                     $offers = Offers::findByAuctionId($auction->getAuctionId());
-                    $count  =$offers->count();
-                }
-                $TasksAndTenders[] = ['tasks' => $tasks[$i], 'auctions' => $auction,'offersCount' => $count];
-            }
+                    $offerWithUser = null;
+                    if ($offers) {
+                        for ($j = 0; $j < $offers->count(); $j++) {
+                            $offer = $offers[$j];
+                            $userinfo = Userinfo::findFirstByUserId($offers[$j]->getUserId());
 
-            /*$auctions = $query->execute(
+                            $offerWithUser[] = ['Offer' => $offer, 'Userinfo' => $userinfo];
+                        }
+                    }
+                }
+                $TasksAndTenders[] = ['tasks' => $tasks[$i], 'auctions' => $auction,'offers' => $offerWithUser];
+                //$TasksAndTenders[] = ['tasks' => $tasks[$i], 'auctions' => $auction,'offerCount' => $count];
+
+
+            }
+            /*$response = new Response();
+
+            $response->setJsonContent(
                 [
-                    'userId' => "$userId"
+                    "offersWithUser" => $TasksAndTenders
                 ]
-            );*/
+            );
+            return $response;*/
 
             return json_encode($TasksAndTenders);
         } else if ($this->request->isPut()) {
@@ -171,11 +186,14 @@ class TasksAPIController extends Controller
             if($userId == $task->getUserId()) {
                 $task->setCategoryid($this->request->getPost("categoryId"));
                 $task->setName($this->request->getPost("name"));
-                $task->setDescription($this->request->getPut("description"));
+                $task->setDescription($this->request->getPost("description"));
+                $task->setDescription($this->request->getPost("description"));
+                $task->setLatitude($this->request->getPost("latitude"));
+                $task->setLongitude($this->request->getPost("longitude"));
 
 
-                $task->setDeadline(date('Y-m-d H:m', strtotime($this->request->getPut("deadline"))));
-                $task->setPrice($this->request->getPut("price"));
+                $task->setDeadline(date('Y-m-d H:m', strtotime($this->request->getPost("deadline"))));
+                $task->setPrice($this->request->getPost("price"));
 
 
                 if (!$task->save()) {
