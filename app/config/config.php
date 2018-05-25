@@ -7,11 +7,19 @@ defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirn
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
 return new \Phalcon\Config([
-    'database' => [
+    /*'database' => [
         'adapter'     => 'Mysql',
         'host'        => 'podrabotka.clb0gjbj00ec.eu-central-1.rds.amazonaws.com',
         'username'    => 'Administrator',
         'password'    => 'xqyPVLhgfrCmXUseZPUJ',
+        'dbname'      => 'service_services',
+        'charset'     => 'utf8',
+    ],*/
+    'database' => [
+        'adapter'     => 'Mysql',
+        'host'        => 'localhost',
+        'username'    => 'root',
+        'password'    => '',
         'dbname'      => 'service_services',
         'charset'     => 'utf8',
     ],
