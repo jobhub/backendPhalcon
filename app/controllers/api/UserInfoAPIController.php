@@ -215,4 +215,84 @@ class UserinfoAPIController extends Controller
             throw $exception;
         }
     }
+
+    public function handlerAction()
+    {
+        $response = new Response();
+        include('../library/SimpleImage.php');
+// Проверяем установлен ли массив файлов и массив с переданными данными
+        if(isset($_FILES) && isset($_FILES['image'])) {
+            // echo $_FILES;
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $userinfo = Userinfo::findFirstByuserId($userId);
+            if ($userinfo) {
+                $userinfo->setUserid($auth['id']);
+
+
+                if (($_FILES['image']['size'] > 5242880)) {
+                    $response->setJsonContent(
+                        [
+                            "error" => 'Размер файла слишком большой',
+                            "status" => "WRONG_DATA"
+                        ]
+                    );
+                    return $response;
+                }
+                $image = new SimpleImage();
+                $image->load($_FILES['image']['tmp_name']);
+                $image->resizeToWidth(200);
+
+                $imageFormat = pathinfo($_FILES['image']['name'],PATHINFO_EXTENSION );
+                $format=$imageFormat;
+                if($imageFormat=='jpeg'||'jpg')
+                    $imageFormat=IMAGETYPE_JPEG;
+                elseif ($imageFormat=='png')
+                    $imageFormat=IMAGETYPE_PNG;
+                elseif ($imageFormat=='gif')
+                    $imageFormat=IMAGETYPE_GIF;
+                else {
+                    $response->setJsonContent(
+                        [
+                            "error" => 'Данный формат не поддерживается',
+                            "status" => "WRONG_DATA"
+                        ]
+                    );
+                    return $response;
+                }
+                $filename=$_SERVER['DOCUMENT_ROOT'].'/public/img/'. hash('crc32',$userinfo->getUserId()).'.'.$format;
+                //if()
+                {
+                    $image->save($filename,$imageFormat);
+                    $imageFullName=str_replace('C:/OpenServer/domains/simpleMod2','',$filename);
+                    $userinfo->setPathToPhoto($imageFullName);
+                    $userinfo->save();
+
+
+
+                    //return $userinfo->getPathToPhoto();
+                    $response->setJsonContent(
+                        [
+                            'pathToPhoto' => $userinfo->getPathToPhoto(),
+                            "status" => "OK"
+                        ]
+                    );
+                    return $response;
+                }
+
+            }
+            $response->setJsonContent(
+                [
+                    "status" => "WRONG_DATA"
+                ]
+            );
+            return $response;
+        }
+        $response->setJsonContent(
+            [
+                "status" => "WRONG_DATA"
+            ]
+        );
+        return $response;
+    }
 }

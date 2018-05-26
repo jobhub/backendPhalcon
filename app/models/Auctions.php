@@ -2,7 +2,6 @@
 
 class Auctions extends \Phalcon\Mvc\Model
 {
-
     /**
      *
      * @var integer
@@ -10,8 +9,7 @@ class Auctions extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $tenderId;
-
+    protected $auctionId;
     /**
      *
      * @var integer
@@ -33,18 +31,6 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     protected $dateEnd;
 
-    /**
-     * Method to set the value of field tenderId
-     *
-     * @param integer $tenderId
-     * @return $this
-     */
-    public function setTenderId($tenderId)
-    {
-        $this->tenderId = $tenderId;
-
-        return $this;
-    }
 
     /**
      * Method to set the value of field taskId
@@ -85,15 +71,6 @@ class Auctions extends \Phalcon\Mvc\Model
         return $this;
     }
 
-    /**
-     * Returns the value of field tenderId
-     *
-     * @return integer
-     */
-    public function getTenderId()
-    {
-        return $this->tenderId;
-    }
 
     /**
      * Returns the value of field taskId
@@ -139,6 +116,16 @@ class Auctions extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to get the value of field auctionId
+     *
+     * @return int
+     */
+    public function getAuctionId()
+    {
+        return $this->auctionId;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -149,6 +136,7 @@ class Auctions extends \Phalcon\Mvc\Model
         $this->hasMany('auctionId', 'Offers', 'auctionId', ['alias' => 'Offers']);
         $this->belongsTo('selectedOffer', '\Offers', 'offerId', ['alias' => 'Offers']);
         $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+        $this->hasMany('auctionId', 'Reviews','auctionId', ['alias'=>'Reviews']);
     }
 
     /**

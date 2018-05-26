@@ -232,7 +232,14 @@ class Users extends \Phalcon\Mvc\Model
 
     public function getFinishedTasks()
     {
-        $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
+       // $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
+
+
+        $query = $this->modelsManager->createQuery(
+            'SELECT COUNT(*) AS c FROM offers INNER JOIN auctions ON offers.auctionId = auctions.auctionId
+              INNER JOIN Tasks ON auctions.taskId = auctions.taskId
+              WHERE offers.userdId = :userId: AND offers.selected = 1 AND tasks.status=\'Завершено\'');
+
         $count = $query->execute(
             [
                 'userId' => "$this->userId",

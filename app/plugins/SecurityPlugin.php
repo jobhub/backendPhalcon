@@ -58,11 +58,12 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create','delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
                 'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
-                'userinfoAPI' => ['index', 'settings', 'about'],
+                'userinfoAPI' => ['index', 'settings', 'about', 'handler'],
                 'tasksAPI' => ['index','delete','change'],
                 'tenderAPI' => ['delete'],
                 'reviewsAPI' => ['index'],
-                'offersAPI' => ['getForTender']
+                'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete'],
+                'reviews' =>['new','create']
 			];
 
 			foreach ($privateResources as $resource => $actions) {
