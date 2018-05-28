@@ -63,7 +63,8 @@ class SecurityPlugin extends Plugin
                 'tenderAPI' => ['delete'],
                 'reviewsAPI' => ['index'],
                 'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete'],
-                'reviews' =>['new','create']
+                'reviews' =>['new','create'],
+                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens']
 			];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -195,5 +196,19 @@ class SecurityPlugin extends Plugin
             return false;
 		}
 
+		//Отправление push уведомлений
+		if(($controller == "Coordination" && $action == "create")){
+            if ($this->session->get('push_token_id')) {
+                $this->sendPush();
+            }
+        }
+        if(($controller == "CoordinationAPI" && $action == "addMessage")) {
+            if ($this->session->get('push_token_id')) {
+                $this->sendPush();
+            }
+        }
+
 	}
+
+
 }

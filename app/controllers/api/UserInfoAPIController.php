@@ -4,6 +4,7 @@ use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
+use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class UserinfoAPIController extends Controller
 {
@@ -233,7 +234,7 @@ class UserinfoAPIController extends Controller
                 if (($_FILES['image']['size'] > 5242880)) {
                     $response->setJsonContent(
                         [
-                            "error" => 'Размер файла слишком большой',
+                            "error" => ['Размер файла слишком большой'],
                             "status" => "WRONG_DATA"
                         ]
                     );
@@ -254,7 +255,7 @@ class UserinfoAPIController extends Controller
                 else {
                     $response->setJsonContent(
                         [
-                            "error" => 'Данный формат не поддерживается',
+                            "error" => ['Данный формат не поддерживается'],
                             "status" => "WRONG_DATA"
                         ]
                     );

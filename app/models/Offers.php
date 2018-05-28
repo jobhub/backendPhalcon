@@ -48,6 +48,13 @@ class Offers extends \Phalcon\Mvc\Model
     protected $price;
 
     /**
+     *
+     * @var integer
+     * @Column(type="integer", length=4, nullable=false)
+     */
+    protected $selected;
+
+    /**
      * Method to set the value of field offerId
      *
      * @param integer $offerId
@@ -124,6 +131,18 @@ class Offers extends \Phalcon\Mvc\Model
 
         return $this;
     }
+    /**
+     * Method to set the value of field selected
+     *
+     * @param integer $selected
+     * @return $this
+     */
+    public function setSelected($selected)
+    {
+        $this->selected = $selected;
+
+        return $this;
+    }
 
     /**
      * Returns the value of field offerId
@@ -183,6 +202,16 @@ class Offers extends \Phalcon\Mvc\Model
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /**
+     * Returns the value of field selected
+     *
+     * @return integer
+     */
+    public function getSelected()
+    {
+        return $this->selected;
     }
 
     /**

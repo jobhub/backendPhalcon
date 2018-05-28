@@ -5,7 +5,7 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Model\Query;
-
+use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class TasksAPIController extends Controller
 {

@@ -237,8 +237,8 @@ class Users extends \Phalcon\Mvc\Model
 
         $query = $this->modelsManager->createQuery(
             'SELECT COUNT(*) AS c FROM offers INNER JOIN auctions ON offers.auctionId = auctions.auctionId
-              INNER JOIN Tasks ON auctions.taskId = auctions.taskId
-              WHERE offers.userdId = :userId: AND offers.selected = 1 AND tasks.status=\'Завершено\'');
+              INNER JOIN tasks ON auctions.taskId = auctions.taskId
+              WHERE offers.userId = :userId: AND offers.selected = 1 AND tasks.status=\'Завершено\'');
 
         $count = $query->execute(
             [

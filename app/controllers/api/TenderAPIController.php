@@ -4,7 +4,7 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
-
+use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class TenderAPIController extends Controller
 {

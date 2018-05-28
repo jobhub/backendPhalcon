@@ -137,6 +137,64 @@ class CoordinationController extends ControllerBase
 
     }
 
+    public function sendPush($message){
+        $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
+        $auctionId = $message->getAuctionId();
+
+        $offer = Offers::findFirst("auctionId = $auctionId and selected = true");
+
+        $this->sendPushToUser($message,$auction->tasks->getUserId());
+
+        $this->sendPushToUser($message,$offer->getUserId());
+    }
+
+    private function sendPushToUser($message, $userId){
+        $curl = curl_init();
+
+        $token = Tokens::findFirstByUserId($userId);
+
+        if($token) {
+
+            $tokenStr = $token->getToken();
+
+            $messageText = $message->getMessage();
+            $date = $message->getDate();
+            $auction = $message->getAuctionId();
+            $input = $message->getInput();
+            $messageId = $message->getMessageId();
+
+            $fields = array('to' => $tokenStr,
+                'data' => array(
+                    'message' => $messageText,
+                    'date' => $date,
+                    'auctionId' => $auction,
+                    'input' => $input,
+                    'messageId' => $messageId
+                ));
+
+            $fields = json_encode($fields);
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "http://fcm.googleapis.com/fcm/send",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $fields,
+                CURLOPT_HTTPHEADER => array(
+                    "Cache-Control: no-cache",
+                    "Content-Type: application/json",
+                    "Authorization: key=AAAASAGah7I:APA91bHZCCENZwnetcwZmSz3oI0WOU0gOwefoB9Mvx-zZ23HQLfIXg3dx9829rcl0MyJpCdTiRebPg2HxQfvA60p-U209ufvQoJI4-3W_YahmXrJHw5dPiiJ_rfVpw_ku6ZxNNWv-L3V"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+        }
+    }
 
     /**
      * Creates a new message
@@ -177,6 +235,8 @@ class CoordinationController extends ControllerBase
         foreach($_POST as $key=>$value){
             unset($_POST[$key]);
         }
+
+        $this->sendPush($message);
 
         $this->dispatcher->forward([
             'controller' => "coordination",
