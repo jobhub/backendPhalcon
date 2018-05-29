@@ -52,11 +52,8 @@
             <td><?php
                 if($message->getAuctionId()!= null) {
                     $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
-<<<<<<< HEAD
-                    echo Tasks::findFirstByTaskId($auction->getTaskId())->getName();
-=======
                     echo $this->tag->link('auctions\show',Tasks::findFirstByTaskId($auction->getTaskId())->getName());
->>>>>>> 29ec5cd9a151b8ac0d7ecf95413ffc7a172e2843
+
                 }?></td>
             <td>
             <?php if ($message->getInput() == 1) { ?>

@@ -46,11 +46,12 @@ class CoordinationAPIController extends Controller
 
             if (!$message->save()) {
                 foreach ($message->getMessages() as $message) {
-                    $this->flash->error($message);
+                    $errors[] = $message->getMessage();
                 }
 
                 $response->setJsonContent(
                     [
+                        "errors" => $errors,
                         "status" => "WRONG_DATA"
                     ]
                 );
@@ -92,10 +93,24 @@ class CoordinationAPIController extends Controller
 
             $offer = Offers::findFirst("userId = $userId and auctionId = $auctionId");
             if ($userId == $auction->tasks->getUserId()) {
+                $review = Reviews::findFirst(["auctionId =:auctionId: and executor = :executor:",
+                        'bind' => [
+                            'auctionId' => $auction->getAuctionId(),
+                            'executor' => 1
+                        ]
+                    ]
+                );
                 $input = 0;
-            } else if ($offer != null && $offer->getSelected() == 1)
+            } else if ($offer != null && $offer->getSelected() == 1) {
+                $review = Reviews::findFirst(["auctionId =:auctionId: and executor = :executor:",
+                        'bind' => [
+                            'auctionId' => $auction->getAuctionId(),
+                            'executor' => 0
+                        ]
+                    ]
+                );
                 $input = 1;
-            else {
+            } else {
                 //Вообще не имеет отношения к этому заданию
                 $response->setJsonContent(
                     [
@@ -112,10 +127,12 @@ class CoordinationAPIController extends Controller
                 if(!$messages)
                     $messages = [];
 
+                $written = $review?1:0;
                 $response->setJsonContent(
                     [
                         "status" => ['status' => "OK"],
-                        "messages" =>$messages
+                        "messages" =>$messages,
+                        'reviewWritten' =>$written
                     ]
                 );
                 return $response;
@@ -302,7 +319,110 @@ class CoordinationAPIController extends Controller
         }
     }
 
-    public function sendPush($message){
+    public function finishTaskAction(){
+        if($this->request->isPost()){
+
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $response = new Response();
+
+            $auction = Auctions::findFirstByAuctionId($this->request->getPost("tenderId"));
+            $offer = Offers::findFirst(["auctionId =:auctionId: and selected = 1",
+                'bind' => [
+                    'auctionId' => $auction->getAuctionId()
+                ]
+            ]);
+
+            $task = $auction->tasks;
+
+            if($task->getUserId() == $userId || $offer->getUserId() == $userId) {
+                $task->setStatus(3);
+
+                if (!$task->save()) {
+                    foreach ($task->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "errors" => $errors,
+                            "status" => "WRONG_DATA"
+                        ]);
+                    return $response;
+                }
+
+                $response->setJsonContent(
+                    [
+                        "status" => "OK"
+                    ]
+                );
+                return $response;
+            }
+            else{
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA"
+                    ]);
+
+                return $response;
+            }
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function completeTaskAction(){
+        if($this->request->isPost()){
+
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $response = new Response();
+
+            $auction = Auctions::findFirstByAuctionId($this->request->getPost("tenderId"));
+
+            $task = $auction->tasks;
+
+            if($task->getUserId() == $userId) {
+                $task->setStatus(2);
+
+                if (!$task->save()) {
+                    foreach ($task->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "errors" => $errors,
+                            "status" => "WRONG_DATA"
+                        ]);
+                    return $response;
+                }
+
+                $response->setJsonContent(
+                    [
+                        "status" => "OK"
+                    ]
+                );
+                return $response;
+            }
+            else{
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA"
+                    ]);
+
+                return $response;
+            }
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    private function sendPush($message){
         $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
         $auctionId = $message->getAuctionId();
 

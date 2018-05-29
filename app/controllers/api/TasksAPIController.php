@@ -239,4 +239,60 @@ class TasksAPIController extends Controller
 
         return json_encode($tasks);
     }
+
+    /*public function selectExecutorAction(){
+        if($this->request->isPost()){
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $task = Tasks::findFirstByTaskId($this->request->getPost("taskId"));
+            $offer = Offers::findFirstByOfferId($this->request->getPost("offerId"));
+            $auction = Auctions::findFirstByTaskId($task->getTaskId());
+
+            if($userId == $task->getUserId()) {
+               if($offer->getAuctionId() == $auction->getAuctionId()) {
+                   $task->setStatus(1);
+                   if (!$task->save()) {
+                       foreach ($task->getMessages() as $message) {
+                           $errors[] = $message->getMessage();
+                       }
+                       $response->setJsonContent(
+                           [
+                               "status" => "WRONG_DATA",
+                               "errors" => $errors
+                           ]
+                       );
+                       return $response;
+                   }
+
+                   $response->setJsonContent(
+                       [
+                           "status" => "OK"
+                       ]
+                   );
+                   return $response;
+               }
+                $response->setJsonContent(
+                    [
+                        "status" => "WRONG_DATA",
+                        "errors" => ['Предложение не относится к данному тендеру']
+                    ]
+                );
+                return $response;
+            }
+            $response->setJsonContent(
+                [
+                    "status" => "WRONG_DATA",
+                    "errors" => ['Задание не принадлежит пользователю']
+                ]
+            );
+            return $response;
+
+        }
+        else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }*/
 }

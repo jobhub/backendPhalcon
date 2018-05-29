@@ -209,6 +209,9 @@ class Tasks extends \Phalcon\Mvc\Model
         else if($status == 2){
             $this->status = 'Завершено';
         }
+        else if($status == 3){
+            $this->status = 'Не выполнено';
+        }
         else
             $this->status = $status;
 

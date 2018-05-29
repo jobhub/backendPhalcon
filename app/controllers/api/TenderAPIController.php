@@ -22,12 +22,15 @@ class TenderAPIController extends Controller
                 $userId = $auth['id'];
             }
 
-            $auctions = Auctions::find("dateEnd > '$today'");
+            $auctions = Auctions::find(["dateEnd > :today:",'bind' => ['today'=>$today]]);
 
             $auctionAndTask = [];
 
             foreach ($auctions as $auction){
                 $task = $auction->tasks;
+                if($task->getStatus()!= 'Поиск')
+                    continue;
+
                 $user = Userinfo::findFirstByUserId($task->getUserId());
                 $auctionId = $auction->getAuctionId();
 

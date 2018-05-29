@@ -47,7 +47,7 @@ class CoordinationController extends ControllerBase
         if ($auth) {
             //Пользователь авторизован
             $auction = Auctions::findFirstByAuctionId($auctionId);
-            if ($auction != null && $auction->getSelectedOffer() != null) {
+            if ($auction != null) {
                 //Аукцион существует и проведен
 
                 if ($auction->tasks->getUserId() == $auth['id']) {
@@ -64,10 +64,11 @@ class CoordinationController extends ControllerBase
                     $otherUser = Users::findFirstByUserId($auction->offers->getUserId());
                 } else {
                     $offer = Offers::findFirst([
-                        "offerId = :offerId: AND userId = :userId:",
+                        "auctionId = :auctionId: AND userId = :userId: AND selected = :selected:",
                         "bind" => [
-                            "offerId" => $auction->getSelectedOffer(),
+                            "auctionId" => $auction->getAuctionId(),
                             "userId" => $auth['id'],
+                            "selected" => true
                         ]
                     ]);
                     if ($offer) {

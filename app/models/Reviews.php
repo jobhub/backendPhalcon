@@ -277,6 +277,29 @@ class Reviews extends \Phalcon\Mvc\Model
         return parent::find($parameters);
     }
 
+    public function save($data = null, $whiteList = null)
+    {
+        parent::save($data, $whiteList);
+
+        $reviews = Reviews::find(["userId_object = :userId_object: and executor = :executor:",
+            "bind" => ["userId_object" => $this->getUserIdObject(),"executor"=>$this->getExecutor()]]);
+        $userinfo = Userinfo::findFirstByUserId($this->getUserIdObject());
+
+        if($this->getExecutor() == 1)
+            $sum = $userinfo->getRaitingExecutor();
+        else
+            $sum = $userinfo->getRaitingClient();
+
+        $sum = (($this->getRaiting() * ($reviews->count()+4)) + $sum)/($reviews->count()+5);
+
+        if($this->getExecutor() == 1)
+            $userinfo->setRaitingExecutor($sum);
+        else
+            $userinfo->setRaitingClient($sum);
+
+        $userinfo->save();
+    }
+
     /**
      * Allows to query the first record that match the specified conditions
      *

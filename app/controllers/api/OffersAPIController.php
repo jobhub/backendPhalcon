@@ -169,7 +169,7 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if($offer->getUserId() == $userId){
+            if($offer->getUserId() == $userId && $offer->getSelected()!=1){
                 if (!$offer->delete()) {
 
                     foreach ($offer->getMessages() as $message) {

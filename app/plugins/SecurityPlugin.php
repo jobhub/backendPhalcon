@@ -61,10 +61,10 @@ class SecurityPlugin extends Plugin
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler'],
                 'tasksAPI' => ['index','delete','change'],
                 'tenderAPI' => ['delete'],
-                'reviewsAPI' => ['index'],
+                'reviewsAPI' => ['index', 'addReview'],
                 'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete'],
                 'reviews' =>['new','create'],
-                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens']
+                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask']
 			];
 
 			foreach ($privateResources as $resource => $actions) {
