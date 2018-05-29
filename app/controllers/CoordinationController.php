@@ -237,7 +237,7 @@ class CoordinationController extends ControllerBase
             unset($_POST[$key]);
         }
 
-        $this->sendPush($message);
+        //$this->sendPush($message);
 
         $this->dispatcher->forward([
             'controller' => "coordination",

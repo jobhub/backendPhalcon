@@ -279,25 +279,28 @@ class Reviews extends \Phalcon\Mvc\Model
 
     public function save($data = null, $whiteList = null)
     {
-        parent::save($data, $whiteList);
+        $result = parent::save($data, $whiteList);
 
-        $reviews = Reviews::find(["userId_object = :userId_object: and executor = :executor:",
-            "bind" => ["userId_object" => $this->getUserIdObject(),"executor"=>$this->getExecutor()]]);
-        $userinfo = Userinfo::findFirstByUserId($this->getUserIdObject());
+        if($result) {
+            $reviews = Reviews::find(["userId_object = :userId_object: and executor = :executor:",
+                "bind" => ["userId_object" => $this->getUserIdObject(), "executor" => $this->getExecutor()]]);
+            $userinfo = Userinfo::findFirstByUserId($this->getUserIdObject());
 
-        if($this->getExecutor() == 1)
-            $sum = $userinfo->getRaitingExecutor();
-        else
-            $sum = $userinfo->getRaitingClient();
+            if ($this->getExecutor() == 1)
+                $sum = $userinfo->getRaitingExecutor();
+            else
+                $sum = $userinfo->getRaitingClient();
 
-        $sum = (($this->getRaiting() * ($reviews->count()+4)) + $sum)/($reviews->count()+5);
+            $sum = (($this->getRaiting() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
 
-        if($this->getExecutor() == 1)
-            $userinfo->setRaitingExecutor($sum);
-        else
-            $userinfo->setRaitingClient($sum);
+            if ($this->getExecutor() == 1)
+                $userinfo->setRaitingExecutor($sum);
+            else
+                $userinfo->setRaitingClient($sum);
 
-        $userinfo->save();
+            $userinfo->save();
+        }
+        return $result;
     }
 
     /**
