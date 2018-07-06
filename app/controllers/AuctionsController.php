@@ -38,6 +38,7 @@ class AuctionsController extends ControllerBase
         );
         $keys=['name','description','address','price','coords','deadline','dateStart','dateEnd','link'];
 
+        $tasks = [];
         for( $i=0; $i<$auctions->count(); $i++)
         {
             $val[]=$auctions[$i]->tasks->getName();

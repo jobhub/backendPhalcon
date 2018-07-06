@@ -6,21 +6,19 @@
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
+define('STATUS_OK', 'OK');
+define('STATUS_WRONG','WRONG_DATA');
+define('STATUS_ALREADY_EXISTS','ALREADY_EXISTS');
+
+define('API_URL', 'http://192.168.2.109/');
+
 return new \Phalcon\Config([
-    /*'database' => [
-        'adapter'     => 'Mysql',
-        'host'        => 'podrabotka.clb0gjbj00ec.eu-central-1.rds.amazonaws.com',
-        'username'    => 'Administrator',
-        'password'    => 'xqyPVLhgfrCmXUseZPUJ',
-        'dbname'      => 'service_services',
-        'charset'     => 'utf8',
-    ],*/
     'database' => [
         'adapter'     => 'Mysql',
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
-        'dbname'      => 'service_services',
+        'dbname'      => 'job',
         'charset'     => 'utf8',
     ],
     'application' => [

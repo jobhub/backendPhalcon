@@ -15,7 +15,7 @@ class Tokens extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=160, nullable=true)
+     * @Column(type="string", length=250, nullable=true)
      */
     protected $token;
 

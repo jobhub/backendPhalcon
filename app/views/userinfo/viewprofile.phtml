@@ -72,12 +72,18 @@
                             </div><!-- ./row -->
                         </div><!-- /.tr-fun-fact -->
 
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <?php echo $this->tag->submitButton(["Save", "class" => "btn btn-default"]) ?>
+                            </div>
+                        </div>
+
                         <div class="section display-information">
+
                             <div class="title title-after">
                                 <div class="icon"><img src="/images/icons/2.png" alt="Icon" class="img-responsive"></div>
                                 <span>Профиль пользователя</span>
                             </div>
-
 
                                 <div class="user-image">
                                     <img id="preview" src=<?= '"'.$userinfo->getPathToPhoto().'"' ?> alt="Image" class="img-responsive">

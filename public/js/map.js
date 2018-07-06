@@ -112,7 +112,7 @@ function init() {
 
     }
 
-
+//Задержка
 $('#fieldAddress').on('input', function () {
     console.log('function: ','onInput');
     setTimeout(function () {

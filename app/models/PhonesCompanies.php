@@ -1,6 +1,6 @@
 <?php
 
-class FavoriteCategories extends \Phalcon\Mvc\Model
+class PhonesCompanies extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -9,7 +9,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $categoryId;
+    protected $phoneId;
 
     /**
      *
@@ -17,70 +17,72 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userId;
+    protected $companyId;
 
     /**
-     * Method to set the value of field categoryId
+     * Method to set the value of field phoneId
      *
-     * @param integer $categoryId
+     * @param integer $phoneId
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setPhoneId($phoneId)
     {
-        $this->categoryId = $categoryId;
+        $this->phoneId = $phoneId;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field companyId
      *
-     * @param integer $userId
+     * @param integer $companyId
      * @return $this
      */
-    public function setUserId($userId)
+    public function setCompanyId($companyId)
     {
-        $this->userId = $userId;
+        $this->companyId = $companyId;
 
         return $this;
     }
 
     /**
-     * Returns the value of field categoryId
+     * Returns the value of field phoneId
      *
      * @return integer
      */
-    public function getCategoryId()
+    public function getPhoneId()
     {
-        return $this->categoryId;
+        return $this->phoneId;
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field companyId
      *
      * @return integer
      */
-    public function getUserId()
+    public function getCompanyId()
     {
-        return $this->userId;
+        return $this->companyId;
     }
+
+
 
     /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
-        $this->setSource("favoritecategories");
-        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->setSchema("job");
+        $this->setSource("phonesCompanies");
+        $this->belongsTo('companyId', '\ContactDetailsCompany', 'companyId', ['alias' => 'ContactDetailsCompany']);
+        $this->belongsTo('phoneId', '\Phones', 'phoneId', ['alias' => 'Phones']);
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Favoritecategories[]|Favoritecategories|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return PhonesCompanies[]|PhonesCompanies|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -91,7 +93,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Favoritecategories|\Phalcon\Mvc\Model\ResultInterface
+     * @return PhonesCompanies|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
@@ -105,7 +107,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favoriteCategories';
+        return 'PhonesCompanies';
     }
 
 }

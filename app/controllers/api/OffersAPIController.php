@@ -22,11 +22,28 @@ class OffersAPIController extends Controller
             $task = $tender->tasks;
             if ($task->getUserId() == $userId) {
                 $offers = Offers::findByAuctionId($tenderId);
+
+                $offers2 = [];
+                for ($k=0;$k<$offers->count();$k++)
+                    $offers2[] = $offers[$k];
+
+                //Сортировка
+                for($i=1;$i<=count($offers2)-1;$i++){
+                    for($j=1;$j<=count($offers2)-$i;$j++){
+                        if($offers2[$j-1]->getScore()<$offers2[$j]->getScore()){
+                            $offer = $offers2[$j-1];
+                            $offers2[$j-1] = $offers2[$j];
+                            $offers2[$j] = $offer;
+                        }
+                    }
+                }
+                //
+                //$offers[2]->getScore();
                 $offerWithUser = null;
-                if ($offers) {
+                if ($offers2) {
                     for ($i = 0; $i < $offers->count(); $i++) {
-                        $offer = $offers[$i];
-                        $userinfo = Userinfo::findFirstByUserId($offers[$i]->getUserId());
+                        $offer = $offers2[$i];
+                        $userinfo = Userinfo::findFirstByUserId($offers2[$i]->getUserId());
 
                         $offerWithUser[] = ['Offer' => $offer, 'Userinfo' => $userinfo];
                     }
@@ -97,12 +114,11 @@ class OffersAPIController extends Controller
 
             $offer->setUserId($userId);
             $offer->setAuctionId($tenderId);
-            $offer->setDeadline(date('Y-m-d H:m:s', strtotime($this->request->getPut("deadline"))));
+            $offer->setDeadline(date('Y-m-d H:i:s', strtotime($this->request->getPut("deadline"))));
             $offer->setPrice($this->request->getPut("price"));
             $offer->setDescription($this->request->getPut("description"));
 
             if (!$offer->save()) {
-                $this->db->rollback();
                 foreach ($offer->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }

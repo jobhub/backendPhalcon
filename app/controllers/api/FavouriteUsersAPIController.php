@@ -6,42 +6,28 @@ use Phalcon\Http\Response;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
-class CategoriesAPIController extends Controller
+class FavouriteUsersAPIController extends Controller
 {
-    /**
-     * Index action
-     */
-    public function indexAction()
-    {
-        if ($this->request->isPost() || $this->request->isGet()) {
-            $categories = Categories::find();
-            return json_encode($categories);
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }
-
     public function setFavouriteAction()
     {
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $categoryId = $this->request->getPost('categoryId');
+            $userIdSubject = $auth['id'];
+            $userIdObject = $this->request->getPost('userId');
 
-            $fav = Favoritecategories::findFirst(["userId = :userId: AND categoryId = :categoryId:",
+            $fav = Favoriteusers::findFirst(["userObject = :userIdObject: AND userSubject = :userIdSubject:",
                 "bind" => [
-                "userId" => $userId,
-                "categoryId" => $categoryId,
+                "userIdObject" => $userIdObject,
+                "userIdSubject" => $userIdSubject,
             ]
             ]);
 
             if(!$fav){
 
-                $fav = new Favoritecategories();
-                $fav->setCategoryId($categoryId);
-                $fav->setUserId($userId);
+                $fav = new Favoriteusers();
+                $fav->setUserObject($userIdObject);
+                $fav->setUserSubject($userIdSubject);
 
                 if (!$fav->save()) {
                     foreach ($fav->getMessages() as $message) {
@@ -84,7 +70,7 @@ class CategoriesAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $categoryId = $this->request->getPost('categoryId');
+            /*$categoryId = $this->request->getPost('categoryId');
 
             $fav = Favoritecategories::findFirst(["userId = :userId: AND categoryId = :categoryId:",
                 "bind" => [
@@ -122,7 +108,7 @@ class CategoriesAPIController extends Controller
                 ]
             );
 
-            return $response;
+            return $response;*/
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -137,10 +123,10 @@ class CategoriesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $fav = Favoritecategories::find(["userId = :userId:", "bind" =>
+            /*$fav = Favoritecategories::find(["users_userId = :userId:", "bind" =>
             ["userId" => $userId]]);
 
-            return json_encode($fav);
+            return json_encode($fav);*/
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

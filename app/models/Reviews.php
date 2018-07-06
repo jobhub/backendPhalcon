@@ -299,9 +299,19 @@ class Reviews extends \Phalcon\Mvc\Model
                 $userinfo->setRaitingClient($sum);
 
             $userinfo->save();
+
+            //
+
+            $new = new News();
+            $new->setNewType(2);
+            $new->setIdentify($this->getIdReview());
+            $new->setDate(date("Y-m-d H:i:s"));
+
+            $new->save();
         }
         return $result;
     }
+
 
     /**
      * Allows to query the first record that match the specified conditions

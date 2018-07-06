@@ -14,7 +14,7 @@ class TenderAPIController extends Controller
     public function indexAction()
     {
         if ($this->request->isGet()) {
-            $today = date("Y-m-d");
+            $today = date("Y-m-d H:i:s");
 
             $auth = $this->session->get('auth');
             $userId=null;
@@ -85,8 +85,8 @@ class TenderAPIController extends Controller
                 if (!$tenderOld) {
 
                     $tender->setTaskId($this->request->getPut("taskId"));
-                    $tender->setDateStart(date('Y-m-d H:m:s'));
-                    $tender->setDateEnd(date('Y-m-d H:m:s', strtotime($this->request->getPut("dateEnd"))));
+                    $tender->setDateStart(date('Y-m-d H:i:s'));
+                    $tender->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPut("dateEnd"))));
                     //$tender->setDateStart($today);
 
 

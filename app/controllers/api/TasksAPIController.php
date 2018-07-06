@@ -21,7 +21,8 @@ class TasksAPIController extends Controller
             //$today = date("Y-m-d");
             //$query = $this->modelsManager->createQuery('SELECT * FROM tasks LEFT OUTER JOIN auctions ON tasks.taskId=auctions.taskId WHERE tasks.userId = :userId:');
 
-            $tasks = Tasks::findByUserId($userId);
+            $tasks = Tasks::find(["userId = :userId:","bind" =>["userId" =>$userId],
+                "order" => "status ASC"]);
 
             $TasksAndTenders = [];
 
@@ -78,8 +79,10 @@ class TasksAPIController extends Controller
             $task->setLatitude($this->request->getPut("latitude"));
             $task->setLongitude($this->request->getPut("longitude"));
 
+            $task->setAddress($this->request->getPut("address"));
 
-            $task->setDeadline(date('Y-m-d H:m:s',strtotime($this->request->getPut("deadline"))));
+
+            $task->setDeadline(date('Y-m-d H:i:s',strtotime($this->request->getPut("deadline"))));
             $task->setPrice($this->request->getPut("price"));
 
 
@@ -192,7 +195,7 @@ class TasksAPIController extends Controller
                 $task->setLongitude($this->request->getPost("longitude"));
 
 
-                $task->setDeadline(date('Y-m-d H:m', strtotime($this->request->getPost("deadline"))));
+                $task->setDeadline(date('Y-m-d H:i:s', strtotime($this->request->getPost("deadline"))));
                 $task->setPrice($this->request->getPost("price"));
 
 

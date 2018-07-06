@@ -64,7 +64,14 @@ class SecurityPlugin extends Plugin
                 'reviewsAPI' => ['index', 'addReview'],
                 'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete'],
                 'reviews' =>['new','create'],
-                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask']
+                'categoriesAPI' => ['getFavourite', 'setFavourite','deleteFavourite'],
+                'FavouriteUsersAPI' => ['setFavourite'],
+                'NewsAPI' => ['getNews'],
+                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
+                'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
+                'CompaniesAPI' => ['getCompanies', 'addCompany'],
+                'ContactDetailsCompanyAPI' => ['addContactDetails'],
+                'PhonesAPI' => ['addPhones'],
 			];
 
 			foreach ($privateResources as $resource => $actions) {

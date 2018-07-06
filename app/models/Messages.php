@@ -214,17 +214,22 @@ class Messages extends \Phalcon\Mvc\Model
 
         $offer = Offers::findFirst("auctionId = $auctionId and selected = true");
 
-        $this->sendPushToUser($message,$auction->tasks->getUserId());
+        $this->sendPushToUser($message,$auction->tasks->getUserId(),$offer->getUserId());
 
-        $this->sendPushToUser($message,$offer->getUserId());
+        $this->sendPushToUser($message,$offer->getUserId(),$auction->tasks->getUserId());
     }
 
-    private function sendPushToUser($message, $userId){
+    private function sendPushToUser($message, $userId, $otherUserId){
         $curl = curl_init();
 
+        //$token = Tokens::findByUserId($userId);
         $token = Tokens::findFirstByUserId($userId);
+        $userinfo = Userinfo::findFirstByUserId($otherUserId);
 
         if($token) {
+            /*$tokenStr = [];
+            foreach ($token as $t)
+                $tokenStr[] = $t->getToken();*/
 
             $tokenStr = $token->getToken();
 
@@ -234,13 +239,15 @@ class Messages extends \Phalcon\Mvc\Model
             $input = $message->getInput();
             $messageId = $message->getMessageId();
 
-            $fields = array('to' => $tokenStr,
+            $fields = array('to' => /*json_encode($tokenStr)*/$tokenStr,
+                'body' => $userinfo->getFirstname() . $userinfo->getLastname() . ": " . $messageText,
                 'data' => array(
                     'message' => $messageText,
                     'date' => $date,
                     'auctionId' => $auction,
                     'input' => $input,
-                    'messageId' => $messageId
+                    'messageId' => $messageId,
+                    'type' => 'message'
                 ));
 
             $fields = json_encode($fields);

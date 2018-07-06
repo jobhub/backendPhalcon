@@ -2,3 +2,19 @@ Tue 5 11:29:09 TGM php: [ERROR] 1049: SQLSTATE[HY000] [1049] Unknown database 't
 Tue 5 11:29:18 TGM php: [ERROR] 1049: SQLSTATE[HY000] [1049] Unknown database 'test' in C:\phalcon-devtools-master\scripts\Phalcon\Initializable.php on line 542
 Sat 9 15:40:32 TGM php: [ERROR] Uncaught exception: Class 'UserInfo' not found in C:\phalcon-devtools-master\scripts\Phalcon\Builder\Scaffold.php on line 187
 Mon 11 16:48:47 TGM php: [ERROR] E_COMPILE_ERROR: Cannot redeclare Users::setUserId() in C:\OpenServer\domains\simpleMod2\app\models\Users.php on line 166
+Wed 4 19:40:08 TGM php: [NOTICE] E_NOTICE: Constant STATUS_OK already defined in C:\OpenServer\domains\job\app\config\config.php on line 9
+Wed 4 19:40:08 TGM php: [NOTICE] E_NOTICE: Constant STATUS_WRONG already defined in C:\OpenServer\domains\job\app\config\config.php on line 10
+Wed 4 19:40:08 TGM php: [NOTICE] E_NOTICE: Constant STATUS_ALREADY_EXISTS already defined in C:\OpenServer\domains\job\app\config\config.php on line 11
+Wed 4 19:40:08 TGM php: [NOTICE] E_NOTICE: Constant API_URL already defined in C:\OpenServer\domains\job\app\config\config.php on line 13
+Wed 4 19:47:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_OK already defined in C:\OpenServer\domains\job\app\config\config.php on line 9
+Wed 4 19:47:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_WRONG already defined in C:\OpenServer\domains\job\app\config\config.php on line 10
+Wed 4 19:47:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_ALREADY_EXISTS already defined in C:\OpenServer\domains\job\app\config\config.php on line 11
+Wed 4 19:47:25 TGM php: [NOTICE] E_NOTICE: Constant API_URL already defined in C:\OpenServer\domains\job\app\config\config.php on line 13
+Fri 6 11:20:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_OK already defined in C:\OpenServer\domains\job\app\config\config.php on line 9
+Fri 6 11:20:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_WRONG already defined in C:\OpenServer\domains\job\app\config\config.php on line 10
+Fri 6 11:20:25 TGM php: [NOTICE] E_NOTICE: Constant STATUS_ALREADY_EXISTS already defined in C:\OpenServer\domains\job\app\config\config.php on line 11
+Fri 6 11:20:25 TGM php: [NOTICE] E_NOTICE: Constant API_URL already defined in C:\OpenServer\domains\job\app\config\config.php on line 13
+Fri 6 11:26:13 TGM php: [NOTICE] E_NOTICE: Constant STATUS_OK already defined in C:\OpenServer\domains\job\app\config\config.php on line 9
+Fri 6 11:26:13 TGM php: [NOTICE] E_NOTICE: Constant STATUS_WRONG already defined in C:\OpenServer\domains\job\app\config\config.php on line 10
+Fri 6 11:26:13 TGM php: [NOTICE] E_NOTICE: Constant STATUS_ALREADY_EXISTS already defined in C:\OpenServer\domains\job\app\config\config.php on line 11
+Fri 6 11:26:13 TGM php: [NOTICE] E_NOTICE: Constant API_URL already defined in C:\OpenServer\domains\job\app\config\config.php on line 13

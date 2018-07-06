@@ -120,10 +120,22 @@ $di->set('flash', function () {
  */
 $di->setShared('session', function () {
     $session = new SessionAdapter();
+
     $session->start();
 
     return $session;
 });
+
+$di->set(
+    "cookies",
+    function () {
+        $cookies = new Cookies();
+
+
+
+        return $cookies;
+    }
+);
 
 $di->set(
     "dispatcher",
@@ -157,6 +169,36 @@ $di->set(
     "elements",
     function(){
         return new Elements();
+    }
+);
+
+//API
+
+
+$di->set(
+    "PhonesAPI",
+    function () {
+        $phonesAPI = new PhonesAPIController();
+
+        return $phonesAPI;
+    }
+);
+
+$di->set(
+    "CompaniesAPI",
+    function () {
+        $companiesAPI = new CompaniesAPIController();
+
+        return $companiesAPI;
+    }
+);
+
+$di->set(
+    "ContactDetailsCompanyCompanyAPI",
+    function () {
+        $contactDetailsAPI = new ContactDetailsCompanyAPIController();
+
+        return $contactDetailsAPI;
     }
 );
 
