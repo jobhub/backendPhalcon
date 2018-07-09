@@ -70,7 +70,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("favoritecategories");
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);

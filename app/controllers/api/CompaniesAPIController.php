@@ -12,6 +12,7 @@ class CompaniesAPIController extends Controller
     public function getCompaniesAction()
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
@@ -36,28 +37,34 @@ class CompaniesAPIController extends Controller
             $company = new Companies();
             $company->setName($this->request->getPost("name"));
             $company->setFullname($this->request->getPost("fullName"));
-            $TIN = $this->request->getPost("TIN");
-
-            $result = preg_match('|[0-9]{12}|',$TIN);
-            if(!$result){
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Неверно указан ИНН']
-                    ]
-                );
-                return $response;
-            }
-
             $company->setTin($this->request->getPost("TIN"));
             $company->setRegionId($this->request->getPost("regionId"));
-            $company->setUserid($userId);
+            $company->setWebSite($this->request->getPost("webSite"));
+            $company->setEmail($this->request->getPost("email"));
 
-            $this->db->begin();
+            if($this->request->getPost("isMaster") && $this->request->getPost("isMaster") != 0) {
+
+                if($auth['role'] != ROLE_MODERATOR){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Ошибка доступа']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $company->setIsMaster(true);
+
+                if($this->request->getPost("userId"))
+                    $company->setUserid($this->request->getPost("userId"));
+            }
+            else {
+                $company->setIsMaster(0);
+                $company->setUserid($userId);
+            }
 
             if (!$company->save()) {
-
-                $this->db->rollback();
 
                 foreach ($company->getMessages() as $message) {
                     $errors[] = $message->getMessage();
@@ -70,25 +77,6 @@ class CompaniesAPIController extends Controller
                 );
                 return $response;
             }
-
-            $_POST['companyId'] = $company->getCompanyId();
-
-            $result = $this->ContactDetailsCompanyCompanyAPI->addContactDetailsAction();
-
-            $result = json_decode($result->getContent());
-
-            if ($result->status != STATUS_OK) {
-                $this->db->rollback();
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $result->errors
-                    ]
-                );
-                return $response;
-            }
-
-            $this->db->commit();
 
             $response->setJsonContent(
                 [
@@ -113,7 +101,7 @@ class CompaniesAPIController extends Controller
 
             $company = Companies::findFirstByCompanyId($companyId);
 
-            if ($company && $company->getUserId() == $userId) {
+            if ($company && ($company->getUserId() == $userId || $auth['role'] == ROLE_MODERATOR)) {
                 if (!$company->delete()) {
                     $errors = [];
                     foreach ($company->getMessages() as $message) {
@@ -152,7 +140,7 @@ class CompaniesAPIController extends Controller
 
             $company = Companies::findFirstByCompanyId($this->request->getPut("companyId"));
 
-            if (!$company || $company->getUserId() != $userId) {
+            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -162,10 +150,34 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
-            $company->setName($this->request->getPost("name"));
-            $company->setFullname($this->request->getPost("fullName"));
-            $company->setTin($this->request->getPost("TIN"));
-            $company->setRegionId($this->request->getPost("regionId"));
+            $company->setName($this->request->getPut("name"));
+            $company->setFullname($this->request->getPut("fullName"));
+            $company->setTin($this->request->getPut("TIN"));
+            $company->setRegionId($this->request->getPut("regionId"));
+            $company->setWebSite($this->request->getPut("webSite"));
+            $company->setEmail($this->request->getPut("email"));
+
+            if($this->request->getPut("isMaster") && $this->request->getPut("isMaster") != 0) {
+
+                if($auth['role'] != ROLE_MODERATOR){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Ошибка доступа']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $company->setIsMaster(true);
+
+                if($this->request->getPut("userId"))
+                    $company->setUserid($this->request->getPut("userId"));
+            }
+            else {
+                $company->setIsMaster(0);
+                $company->setUserid($userId);
+            }
 
             if (!$company->save()) {
 

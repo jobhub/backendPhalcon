@@ -70,10 +70,10 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("job");
+        //$this->setSchema("job");
         $this->setSource("phonesPoints");
         $this->belongsTo('phoneId', '\Phones', 'phoneId', ['alias' => 'Phones']);
-        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'Tradepoints']);
+        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'TradePoints']);
     }
 
     /**
@@ -83,7 +83,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'PhonesPoints';
+        return 'phonesPoints';
     }
 
     /**

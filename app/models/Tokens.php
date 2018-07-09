@@ -100,7 +100,7 @@ class Tokens extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("tokens");
         $this->belongsTo('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
     }

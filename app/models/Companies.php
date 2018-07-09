@@ -1,5 +1,11 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Url as UrlValidator;
+use Phalcon\Validation\Validator\Regex;
+use Phalcon\Validation\Validator\Callback;
+
 class Companies extends \Phalcon\Mvc\Model
 {
 
@@ -8,7 +14,7 @@ class Companies extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $companyId;
 
@@ -31,21 +37,42 @@ class Companies extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=15, nullable=true)
      */
-    protected $tIN;
+    protected $TIN;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=true)
+     * @Column(type="integer", length=32, nullable=true)
      */
     protected $regionId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $userId;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=90, nullable=true)
+     */
+    protected $webSite;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=90, nullable=true)
+     */
+    protected $email;
+
+    /**
+     *
+     * @var string
+     * @Column(type="boolean", nullable=true)
+     */
+    protected $isMaster;
 
     /**
      * Method to set the value of field companyId
@@ -94,7 +121,7 @@ class Companies extends \Phalcon\Mvc\Model
      */
     public function setTIN($tIN)
     {
-        $this->tIN = $tIN;
+        $this->TIN = $tIN;
 
         return $this;
     }
@@ -121,6 +148,45 @@ class Companies extends \Phalcon\Mvc\Model
     public function setUserId($userId)
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field webSite
+     *
+     * @param string $webSite
+     * @return $this
+     */
+    public function setWebSite($webSite)
+    {
+        $this->webSite = $webSite;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field email
+     *
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field isMaster
+     *
+     * @param boolean $isMaster
+     * @return $this
+     */
+    public function setIsMaster($isMaster)
+    {
+        $this->isMaster = $isMaster;
 
         return $this;
     }
@@ -162,7 +228,7 @@ class Companies extends \Phalcon\Mvc\Model
      */
     public function getTIN()
     {
-        return $this->tIN;
+        return $this->TIN;
     }
 
     /**
@@ -185,6 +251,116 @@ class Companies extends \Phalcon\Mvc\Model
         return $this->userId;
     }
 
+    /**
+     * Returns the value of field webSite
+     *
+     * @return string
+     */
+    public function getWebSite()
+    {
+        return $this->webSite;
+    }
+
+    /**
+     * Returns the value of field email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Returns the value of field isMaster
+     *
+     * @return boolean
+     */
+    public function getIsMaster()
+    {
+        return $this->isMaster;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        if($this->getEmail()!= null)
+        $validator->add(
+            'email',
+            new EmailValidator(
+                [
+                    'model' => $this,
+                    'message' => 'Введите, пожалуйста, корректный email',
+                ]
+            )
+        );
+
+        if($this->getWebSite()!= null)
+        $validator->add(
+            'webSite',
+            new UrlValidator(
+                [
+                    'model' => $this,
+                    'message' => 'Введите, пожалуйста, корректный URL',
+                ]
+            )
+        );
+
+        if($this->getTIN()!= null)
+        $validator->add(
+            'TIN',
+            new Regex(
+                [
+                    "pattern" => "/^(\d{10}|\d{12})$/",
+                    "message" => "Введите корректный ИНН",
+                ]
+            )
+        );
+
+        if($this->getRegionId()!= null){
+            $validator->add(
+                'regionId',
+                new Callback(
+                    [
+                        "message" => "Такой регион не существует",
+                        "callback" => function($company) {
+                            $region = Regions::findFirstByRegionId($company->getRegionId());
+
+                            if($region)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        if($this->getUserId()!= null){
+            $validator->add(
+                'userId',
+                new Callback(
+                    [
+                        "message" => "Такого пользователя не существует",
+                        "callback" => function($company) {
+                            $user = Users::findFirstByUserId($company->getUserId());
+
+                            if($user)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        return $this->validate($validator);
+    }
 
 
     /**
@@ -192,9 +368,10 @@ class Companies extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("job");
+        //$this->setSchema("public");
         $this->setSource("companies");
-        $this->hasMany('companyId', 'Companiescategories', 'companyId', ['alias' => 'Companiescategories']);
+        $this->hasMany('companyId', '\CompaniesCategories', 'companyId', ['alias' => 'CompaniesCategories']);
+        $this->hasMany('companyId', '\PhonesCompanies', 'companyId', ['alias' => 'PhonesCompanies']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
         $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
     }

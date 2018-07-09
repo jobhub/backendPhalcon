@@ -322,7 +322,7 @@ class Tasks extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("tasks");
         $this->hasMany('taskId', 'Auctions', 'taskId', ['alias' => 'Auctions']);
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);

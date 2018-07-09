@@ -185,7 +185,7 @@ class Users extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("users");
         $this->hasMany('userId', 'Favoritecategories', 'userId', ['alias' => 'Favoritecategories']);
         $this->hasMany('userId', 'Logs', 'userId', ['alias' => 'Logs']);

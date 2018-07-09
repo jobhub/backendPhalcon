@@ -1,68 +1,68 @@
 <?php
 
-class Phones extends \Phalcon\Mvc\Model
+class CompaniesCategories extends \Phalcon\Mvc\Model
 {
 
     /**
      *
      * @var integer
      * @Primary
-     * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $phoneId;
+    protected $companyId;
 
     /**
      *
-     * @var string
-     * @Column(type="string", length=20, nullable=false)
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $phone;
+    protected $categoryId;
 
     /**
-     * Method to set the value of field phoneId
+     * Method to set the value of field companyId
      *
-     * @param integer $phoneId
+     * @param integer $companyId
      * @return $this
      */
-    public function setPhoneId($phoneId)
+    public function setCompanyId($companyId)
     {
-        $this->phoneId = $phoneId;
+        $this->companyId = $companyId;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field phone
+     * Method to set the value of field categoryId
      *
-     * @param string $phone
+     * @param integer $categoryId
      * @return $this
      */
-    public function setPhone($phone)
+    public function setCategoryId($categoryId)
     {
-        $this->phone = $phone;
+        $this->categoryId = $categoryId;
 
         return $this;
     }
 
     /**
-     * Returns the value of field phoneId
+     * Returns the value of field companyId
      *
      * @return integer
      */
-    public function getPhoneId()
+    public function getCompanyId()
     {
-        return $this->phoneId;
+        return $this->companyId;
     }
 
     /**
-     * Returns the value of field phone
+     * Returns the value of field categoryId
      *
-     * @return string
+     * @return integer
      */
-    public function getPhone()
+    public function getCategoryId()
     {
-        return $this->phone;
+        return $this->categoryId;
     }
 
     /**
@@ -70,10 +70,8 @@ class Phones extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-       //$this->setSchema("public");
-        $this->setSource("phones");
-        $this->hasMany('phoneId', 'Phonescompanies', 'phoneId', ['alias' => 'Phonescompanies']);
-        $this->hasMany('phoneId', 'Phonespoints', 'phoneId', ['alias' => 'Phonespoints']);
+        //$this->setSchema("public");
+        $this->setSource("companiesCategories");
     }
 
     /**
@@ -83,14 +81,14 @@ class Phones extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'phones';
+        return 'CompaniesCategories';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Phones[]|Phones|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return CompaniesCategories[]|CompaniesCategories|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -101,7 +99,7 @@ class Phones extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Phones|\Phalcon\Mvc\Model\ResultInterface
+     * @return CompaniesCategories|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

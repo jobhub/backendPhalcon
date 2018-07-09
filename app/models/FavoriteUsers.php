@@ -70,7 +70,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("favoriteUsers");
         $this->belongsTo('userObject', '\Users', 'userId', ['alias' => 'Users']);
         $this->belongsTo('userSubject', '\Users', 'userId', ['alias' => 'Users']);

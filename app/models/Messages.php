@@ -8,23 +8,9 @@ class Messages extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $messageId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    protected $auctionId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=4, nullable=false)
-     */
-    protected $input;
 
     /**
      *
@@ -36,9 +22,23 @@ class Messages extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", nullable=false)
+     * @Column(type="string", nullable=true)
      */
     protected $date;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $userIdObject;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $userIdSubject;
 
     /**
      * Method to set the value of field messageId
@@ -49,32 +49,6 @@ class Messages extends \Phalcon\Mvc\Model
     public function setMessageId($messageId)
     {
         $this->messageId = $messageId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field auctionId
-     *
-     * @param integer $auctionId
-     * @return $this
-     */
-    public function setAuctionId($auctionId)
-    {
-        $this->auctionId = $auctionId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field input
-     *
-     * @param integer $input
-     * @return $this
-     */
-    public function setInput($input)
-    {
-        $this->input = $input;
 
         return $this;
     }
@@ -106,6 +80,32 @@ class Messages extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field userIdObject
+     *
+     * @param integer $userIdObject
+     * @return $this
+     */
+    public function setUserIdObject($userIdObject)
+    {
+        $this->userIdObject = $userIdObject;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field userIdSubject
+     *
+     * @param integer $userIdSubject
+     * @return $this
+     */
+    public function setUserIdSubject($userIdSubject)
+    {
+        $this->userIdSubject = $userIdSubject;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field messageId
      *
      * @return integer
@@ -113,26 +113,6 @@ class Messages extends \Phalcon\Mvc\Model
     public function getMessageId()
     {
         return $this->messageId;
-    }
-
-    /**
-     * Returns the value of field auctionId
-     *
-     * @return integer
-     */
-    public function getAuctionId()
-    {
-        return $this->auctionId;
-    }
-
-    /**
-     * Returns the value of field input
-     *
-     * @return integer
-     */
-    public function getInput()
-    {
-        return $this->input;
     }
 
     /**
@@ -156,13 +136,34 @@ class Messages extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field userIdObject
+     *
+     * @return integer
+     */
+    public function getUserIdObject()
+    {
+        return $this->userIdObject;
+    }
+
+    /**
+     * Returns the value of field userIdSubject
+     *
+     * @return integer
+     */
+    public function getUserIdSubject()
+    {
+        return $this->userIdSubject;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("public");
         $this->setSource("messages");
-        $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);
+        $this->belongsTo('userIdObject', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('userIdSubject', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**
@@ -195,83 +196,6 @@ class Messages extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-
-    public function save($data = null, $whiteList = null)
-    {
-        $result = parent::save($data, $whiteList);
-
-        if($result) {
-            $this->sendPush($this);
-        }
-        return $result;
-    }
-
-    private function sendPush($message){
-        $auction = Auctions::findFirstByAuctionId($message->getAuctionId());
-        $auctionId = $message->getAuctionId();
-
-        $offer = Offers::findFirst("auctionId = $auctionId and selected = true");
-
-        $this->sendPushToUser($message,$auction->tasks->getUserId(),$offer->getUserId());
-
-        $this->sendPushToUser($message,$offer->getUserId(),$auction->tasks->getUserId());
-    }
-
-    private function sendPushToUser($message, $userId, $otherUserId){
-        $curl = curl_init();
-
-        //$token = Tokens::findByUserId($userId);
-        $token = Tokens::findFirstByUserId($userId);
-        $userinfo = Userinfo::findFirstByUserId($otherUserId);
-
-        if($token) {
-            /*$tokenStr = [];
-            foreach ($token as $t)
-                $tokenStr[] = $t->getToken();*/
-
-            $tokenStr = $token->getToken();
-
-            $messageText = $message->getMessage();
-            $date = $message->getDate();
-            $auction = $message->getAuctionId();
-            $input = $message->getInput();
-            $messageId = $message->getMessageId();
-
-            $fields = array('to' => /*json_encode($tokenStr)*/$tokenStr,
-                'body' => $userinfo->getFirstname() . $userinfo->getLastname() . ": " . $messageText,
-                'data' => array(
-                    'message' => $messageText,
-                    'date' => $date,
-                    'auctionId' => $auction,
-                    'input' => $input,
-                    'messageId' => $messageId,
-                    'type' => 'message'
-                ));
-
-            $fields = json_encode($fields);
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => "http://fcm.googleapis.com/fcm/send",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => $fields,
-                CURLOPT_HTTPHEADER => array(
-                    "Cache-Control: no-cache",
-                    "Content-Type: application/json",
-                    "Authorization: key=AAAASAGah7I:APA91bHZCCENZwnetcwZmSz3oI0WOU0gOwefoB9Mvx-zZ23HQLfIXg3dx9829rcl0MyJpCdTiRebPg2HxQfvA60p-U209ufvQoJI4-3W_YahmXrJHw5dPiiJ_rfVpw_ku6ZxNNWv-L3V"
-                ),
-            ));
-
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-
-            curl_close($curl);
-        }
     }
 
 }

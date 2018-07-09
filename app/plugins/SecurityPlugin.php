@@ -69,9 +69,9 @@ class SecurityPlugin extends Plugin
                 'NewsAPI' => ['getNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
                 'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
-                'CompaniesAPI' => ['getCompanies', 'addCompany'],
-                'ContactDetailsCompanyAPI' => ['addContactDetails'],
-                'PhonesAPI' => ['addPhones'],
+                'CompaniesAPI' => ['getCompanies', 'addCompany', 'editCompany', 'deleteCompany'],
+                'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint'],
+                'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint']
 			];
 
 			foreach ($privateResources as $resource => $actions) {

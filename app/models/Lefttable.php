@@ -3,7 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 
-class ContactDetailsCompany extends \Phalcon\Mvc\Model
+class Lefttable extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -11,40 +11,26 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyId;
+    protected $idshnik;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=90, nullable=false)
+     * @Column(type="string", length=40, nullable=true)
      */
     protected $email;
 
     /**
+     * Method to set the value of field idshnik
      *
-     * @var string
-     * @Column(type="string", length=45, nullable=true)
-     */
-    protected $fax;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=90, nullable=true)
-     */
-    protected $webSite;
-
-    /**
-     * Method to set the value of field companyId
-     *
-     * @param integer $companyId
+     * @param integer $idshnik
      * @return $this
      */
-    public function setCompanyId($companyId)
+    public function setIdshnik($idshnik)
     {
-        $this->companyId = $companyId;
+        $this->idshnik = $idshnik;
 
         return $this;
     }
@@ -63,39 +49,13 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field fax
-     *
-     * @param string $fax
-     * @return $this
-     */
-    public function setFax($fax)
-    {
-        $this->fax = $fax;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field webSite
-     *
-     * @param string $webSite
-     * @return $this
-     */
-    public function setWebSite($webSite)
-    {
-        $this->webSite = $webSite;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field companyId
+     * Returns the value of field idshnik
      *
      * @return integer
      */
-    public function getCompanyId()
+    public function getIdshnik()
     {
-        return $this->companyId;
+        return $this->idshnik;
     }
 
     /**
@@ -106,26 +66,6 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
     public function getEmail()
     {
         return $this->email;
-    }
-
-    /**
-     * Returns the value of field fax
-     *
-     * @return string
-     */
-    public function getFax()
-    {
-        return $this->fax;
-    }
-
-    /**
-     * Returns the value of field webSite
-     *
-     * @return string
-     */
-    public function getWebSite()
-    {
-        return $this->webSite;
     }
 
     /**
@@ -155,9 +95,8 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("job");
-        $this->setSource("contactDetailsCompany");
-        $this->belongsTo('companyId', '\Companies', 'companyId', ['alias' => 'Companies']);
+        $this->setSchema("public");
+        $this->setSource("leftTable");
     }
 
     /**
@@ -167,14 +106,14 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'ContactDetailsCompany';
+        return 'leftTable';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ContactDetailsCompany[]|ContactDetailsCompany|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return Lefttable[]|Lefttable|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -185,7 +124,7 @@ class ContactDetailsCompany extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ContactDetailsCompany|\Phalcon\Mvc\Model\ResultInterface
+     * @return Lefttable|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

@@ -249,7 +249,7 @@ class Reviews extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("reviews");
         $this->belongsTo('userId_object', '\Users', 'userId', ['alias' => 'Users']);
         $this->belongsTo('userId_subject', '\Users', 'userId', ['alias' => 'Users']);

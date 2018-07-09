@@ -132,7 +132,7 @@ class Auctions extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("public");
         $this->setSource("auctions");
         $this->hasMany('auctionId', 'Messages', 'auctionId', ['alias' => 'Messages']);
         $this->hasMany('auctionId', 'Offers', 'auctionId', ['alias' => 'Offers']);

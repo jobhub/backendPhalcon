@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
 class PhonesCompanies extends \Phalcon\Mvc\Model
 {
 
@@ -65,16 +67,58 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
         return $this->companyId;
     }
 
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
 
+        $validator->add(
+            'phoneId',
+            new Callback(
+                [
+                    "message" => "Телефон не был создан",
+                    "callback" => function($phoneCompany) {
+                        $phone = Phones::findFirstByPhoneId($phoneCompany->getPhoneId());
+
+                        if($phone)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'companyId',
+            new Callback(
+                [
+                    "message" => "Такая компания не существует",
+                    "callback" => function($phoneCompany) {
+                        $phone = Companies::findFirstByCompanyId($phoneCompany->getCompanyId());
+
+                        if($phone)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
+    }
 
     /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("job");
+        //$this->setSchema("job");
         $this->setSource("phonesCompanies");
-        $this->belongsTo('companyId', '\ContactDetailsCompany', 'companyId', ['alias' => 'ContactDetailsCompany']);
+        $this->belongsTo('companyId', '\Companies', 'companyId', ['alias' => 'Companies']);
         $this->belongsTo('phoneId', '\Phones', 'phoneId', ['alias' => 'Phones']);
     }
 
@@ -107,7 +151,7 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'PhonesCompanies';
+        return 'phonesCompanies';
     }
 
 }

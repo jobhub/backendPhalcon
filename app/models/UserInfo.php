@@ -329,7 +329,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("userinfo");
         $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);

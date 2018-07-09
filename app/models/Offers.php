@@ -219,7 +219,7 @@ class Offers extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("offers");
         $this->hasOne('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
         $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);

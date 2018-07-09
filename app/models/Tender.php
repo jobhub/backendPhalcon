@@ -129,7 +129,7 @@ class Tender extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("service_services");
         $this->setSource("tender");
         $this->hasMany('tenderId', 'Messages', 'tenderId', ['alias' => 'Messages']);
         $this->hasMany('tenderId', 'Offers', 'tenderId', ['alias' => 'Offers']);

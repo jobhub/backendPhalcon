@@ -6,20 +6,32 @@
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
+
+/*
+ * Статусы
+ */
 define('STATUS_OK', 'OK');
 define('STATUS_WRONG','WRONG_DATA');
 define('STATUS_ALREADY_EXISTS','ALREADY_EXISTS');
+
+/*
+ * Роли
+ */
+define('ROLE_GUEST', 'Guests');
+define('ROLE_USER', 'User');
+define('ROLE_MODERATOR', 'Moderator');
+
 
 define('API_URL', 'http://192.168.2.109/');
 
 return new \Phalcon\Config([
     'database' => [
-        'adapter'     => 'Mysql',
+        'adapter'     => 'postgresql',
+        'username'    => 'postgres',
+        'password'    => '1234',
+        'port'        => '5432',
         'host'        => 'localhost',
-        'username'    => 'root',
-        'password'    => '',
-        'dbname'      => 'job',
-        'charset'     => 'utf8',
+        'dbname'      => 'service_services',
     ],
     'application' => [
         'appDir'         => APP_PATH . '/',

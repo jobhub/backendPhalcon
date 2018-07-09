@@ -70,7 +70,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("service_services");
+        //$this->setSchema("public");
         $this->setSource("categories");
         $this->hasMany('categoryId', 'Favoritecategories', 'categoryId', ['alias' => 'Favoritecategories']);
         $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);

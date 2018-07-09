@@ -31,7 +31,6 @@ class SessionController extends ControllerBase
 
     public function startAction()
     {
-        
         if ($this->request->isPost()) {
             // Получаем данные от пользователя
             $email    = $this->request->getPost("email");

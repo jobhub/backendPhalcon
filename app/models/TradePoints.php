@@ -1,5 +1,11 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Url as UrlValidator;
+use Phalcon\Validation\Validator\Regex;
+use Phalcon\Validation\Validator\Callback;
+
 class TradePoints extends \Phalcon\Mvc\Model
 {
 
@@ -7,7 +13,7 @@ class TradePoints extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $pointId;
 
@@ -21,14 +27,14 @@ class TradePoints extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", nullable=false)
+     * @Column(type="string", length=53, nullable=false)
      */
     protected $longitude;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=false)
+     * @Column(type="string", length=53, nullable=false)
      */
     protected $latitude;
 
@@ -42,7 +48,7 @@ class TradePoints extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $companyId;
 
@@ -52,6 +58,34 @@ class TradePoints extends \Phalcon\Mvc\Model
      * @Column(type="string", length=100, nullable=true)
      */
     protected $time;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=45, nullable=true)
+     */
+    protected $email;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $userManager;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=90, nullable=true)
+     */
+    protected $webSite;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=150, nullable=true)
+     */
+    protected $address;
 
     /**
      * Method to set the value of field pointId
@@ -145,6 +179,58 @@ class TradePoints extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field email
+     *
+     * @param string $email
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field userManager
+     *
+     * @param integer $userManager
+     * @return $this
+     */
+    public function setUserManager($userManager)
+    {
+        $this->userManager = $userManager;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field webSite
+     *
+     * @param string $webSite
+     * @return $this
+     */
+    public function setWebSite($webSite)
+    {
+        $this->webSite = $webSite;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field address
+     *
+     * @param string $address
+     * @return $this
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field pointId
      *
      * @return integer
@@ -215,14 +301,120 @@ class TradePoints extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Returns the value of field userManager
+     *
+     * @return integer
+     */
+    public function getUserManager()
+    {
+        return $this->userManager;
+    }
+
+    /**
+     * Returns the value of field webSite
+     *
+     * @return string
+     */
+    public function getWebSite()
+    {
+        return $this->webSite;
+    }
+
+    /**
+     * Returns the value of field address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        if ($this->getEmail() != null)
+            $validator->add(
+                'email',
+                new EmailValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный email',
+                    ]
+                )
+            );
+        if ($this->getWebSite() != null)
+            $validator->add(
+                'webSite',
+                new UrlValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный URL',
+                    ]
+                )
+            );
+
+        if($this->getUserManager() != null){
+            $validator->add(
+                'userManager',
+                new Callback(
+                    [
+                        "message" => "Такого пользователя не существует",
+                        "callback" => function($company) {
+                            $user = Users::findFirstByUserId($company->getUserManager());
+                            if($user)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        $validator->add(
+            'companyId',
+            new Callback(
+                [
+                    "message" => "Такая компания не существует",
+                    "callback" => function($phoneCompany) {
+                        $phone = Companies::findFirstByCompanyId($phoneCompany->getCompanyId());
+
+                        if($phone)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("job");
         $this->setSource("tradePoints");
         $this->hasMany('pointId', 'PhonesPoints', 'pointId', ['alias' => 'PhonesPoints']);
         $this->belongsTo('companyId', '\Companies', 'companyId', ['alias' => 'Companies']);
+        $this->belongsTo('userManager', '\Users', 'userId', ['alias' => 'Users']);
     }
 
     /**
@@ -232,7 +424,7 @@ class TradePoints extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'TradePoints';
+        return 'tradePoints';
     }
 
     /**
