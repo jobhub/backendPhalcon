@@ -14,7 +14,7 @@ class TradePointsAPIController extends Controller
      *
      * @method GET
      * @param integer $companyId
-     * @return string - json array of TradePoints, если все успешно,
+     * @return string - json array of [TradePoint, phones], если все успешно,
      * или json array в формате Status в ином случае
      */
     public function getPointsForCompanyAction($companyId)
@@ -40,7 +40,30 @@ class TradePointsAPIController extends Controller
 
             $tradePoints = TradePoints::findByCompanyId($companyId);
 
-            return json_encode($tradePoints);
+            $pointsWithPhones = [];
+
+            foreach($tradePoints as $tradePoint){
+                if($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == ""){
+                    $tradePoint->setWebSite($company->getWebSite());
+                }
+
+                if($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == ""){
+                    $tradePoint->setEmail($company->getEmail());
+                }
+
+                $phones = PhonesPoints::findByPointId($tradePoint->getPointId());
+                if($phones->count() == 0){
+                    $phones = PhonesCompanies::findByCompanyId($company->getCompanyId());
+                }
+                $phones2 = [];
+                foreach($phones as $phone){
+                    $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
+                }
+
+                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' =>$phones2];
+            }
+
+            return json_encode($pointsWithPhones);
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -53,7 +76,7 @@ class TradePointsAPIController extends Controller
      *
      * @method GET
      * @param  int $userIdManager необязательный
-     * @return string - json array of TradePoints
+     * @return string - json array of [TradePoint, phones]
      */
     public function getPointsForUserManagerAction($userIdManager = null)
     {
@@ -73,7 +96,33 @@ class TradePointsAPIController extends Controller
                     }
                 }
             }
-            return json_encode($tradePoints);
+
+            $pointsWithPhones = [];
+
+            foreach($tradePoints as $tradePoint){
+
+                $company = $tradePoint->companies;
+                if($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == ""){
+                    $tradePoint->setWebSite($company->getWebSite());
+                }
+
+                if($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == ""){
+                    $tradePoint->setEmail($company->getEmail());
+                }
+
+                $phones = PhonesPoints::findByPointId($tradePoint->getPointId());
+                if($phones->count() == 0){
+                    $phones = PhonesCompanies::findByCompanyId($company->getCompanyId());
+                }
+                $phones2 = [];
+                foreach($phones as $phone){
+                    $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
+                }
+
+                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' =>$phones2];
+            }
+
+            return json_encode($pointsWithPhones);
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

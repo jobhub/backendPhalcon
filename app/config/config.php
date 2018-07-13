@@ -13,6 +13,7 @@ defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 define('STATUS_OK', 'OK');
 define('STATUS_WRONG','WRONG_DATA');
 define('STATUS_ALREADY_EXISTS','ALREADY_EXISTS');
+define('STATUS_UNRESOLVED_ERROR','UNRESOLVED_ERROR');
 
 /*
  * Роли

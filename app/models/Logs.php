@@ -168,7 +168,7 @@ class Logs extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        //$this->setSchema("service_services");
         $this->setSource("logs");
     }
 

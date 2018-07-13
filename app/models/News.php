@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class News extends \Phalcon\Mvc\Model
 {
 
@@ -8,23 +11,23 @@ class News extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $newId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $newType;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $identify;
+    protected $subjectId;
 
     /**
      *
@@ -32,6 +35,13 @@ class News extends \Phalcon\Mvc\Model
      * @Column(type="string", nullable=false)
      */
     protected $date;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $newText;
 
     /**
      * Method to set the value of field newId
@@ -60,14 +70,14 @@ class News extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field identify
+     * Method to set the value of field subjectId
      *
-     * @param integer $identify
+     * @param integer $subjectId
      * @return $this
      */
-    public function setIdentify($identify)
+    public function setSubjectId($subjectId)
     {
-        $this->identify = $identify;
+        $this->subjectId = $subjectId;
 
         return $this;
     }
@@ -81,6 +91,19 @@ class News extends \Phalcon\Mvc\Model
     public function setDate($date)
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field newText
+     *
+     * @param string $newText
+     * @return $this
+     */
+    public function setNewText($newText)
+    {
+        $this->newText = $newText;
 
         return $this;
     }
@@ -106,13 +129,13 @@ class News extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field identify
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getIdentify()
+    public function getSubjectId()
     {
-        return $this->identify;
+        return $this->subjectId;
     }
 
     /**
@@ -126,11 +149,57 @@ class News extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field newText
+     *
+     * @return string
+     */
+    public function getNewText()
+    {
+        return $this->newText;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'subjectId',
+            new Callback(
+                [
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($new) {
+                        if($new->getNewType() == 0){
+                            //новость пользователя
+                            $user = Users::findFirstByUserId($new->getSubjectId());
+
+                            if($user)
+                                return true;
+                            return false;
+                        } else  if($new->getNewType() == 1){
+                            $company = Companies::findFirstByCompanyId($new->getSubjectId());
+
+                            if($company)
+                                return true;
+                            return false;
+                        } else
+                            return false;
+                    }]
+            )
+        );
+
+        return $this->validate($validator);
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        //$this->setSchema("service_services");
         $this->setSource("news");
     }
 
@@ -166,15 +235,17 @@ class News extends \Phalcon\Mvc\Model
         return 'news';
     }
 
+
     public function save($data = null, $whiteList = null)
     {
         $result = parent::save($data, $whiteList);
 
-        if($result) {
+        /*(if($result) {
             $this->sendPush($this);
-        }
+        }*/
         return $result;
     }
+
 
     private function sendPush($new)
     {
@@ -264,6 +335,7 @@ class News extends \Phalcon\Mvc\Model
         $this->sendPushToUser($new,$userIds, $listNew);
     }
 
+
     private function sendPushToUser($new, $userIds, $newInfo)
     {
         $curl = curl_init();
@@ -316,4 +388,5 @@ class News extends \Phalcon\Mvc\Model
             curl_close($curl);
         }
     }
+
 }

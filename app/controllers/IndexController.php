@@ -10,7 +10,6 @@ class IndexController extends ControllerBase
 
     public function indexAction()
     {
-        //$this->view->setTemplateAfter('main');
         $this->assets->addJs("http://api-maps.yandex.ru/2.1/?lang=ru_RU",false);
         $this->assets->addJs("/public/js/mapTender.js",true);
     }

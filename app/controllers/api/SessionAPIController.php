@@ -38,7 +38,7 @@ class SessionAPIController extends Controller
             // Формируем ответ
             $response = new Response();
 
-            if ($user !== false) {
+            if ($user) {
                 $this->_registerSession($user);
 
                 $response = new Response();
@@ -47,19 +47,12 @@ class SessionAPIController extends Controller
 
                     $response->setJsonContent(
                         [
-                            "status" => ["status" => "FAIL"]
+                            "status" => STATUS_UNRESOLVED_ERROR,
+                            "errors" => ['Нет userinfo при существующем user']
                         ]);
 
                     return $response;
                 }
-                /*$user = Users::findFirstByuserId($user->getUserId());
-                if (!$user) {
-                    $response->setJsonContent(
-                        [
-                            "status" => "FAIL"
-                        ]);
-                    return $response;
-                }*/
 
                 $user_min['userId'] = $user->getUserId();
                 $user_min['email'] = $user->getEmail();
@@ -67,10 +60,10 @@ class SessionAPIController extends Controller
 
                 $settings = Settings::findFirstByuserId($user->getUserId());
                 if (!$settings) {
-
                     $response->setJsonContent(
                         [
-                            "status" => ["status" => "FAIL"]
+                            "status" => STATUS_UNRESOLVED_ERROR,
+                            "error" => ['Нет settings при существующем user']
                         ]);
 
                     return $response;
@@ -84,14 +77,15 @@ class SessionAPIController extends Controller
                 $response->setJsonContent(
                     [
 
-                        "status" => ["status" => "OK"],
+                        "status" => STATUS_OK,
                         "allForUser" => $info
                     ]
                 );
             } else {
                 $response->setJsonContent(
                     [
-                        "status" => ["status" => "FAIL"]
+                        "status" => STATUS_WRONG,
+                        'errors' => ['Неверные логин или пароль']
                     ]);
             }
 

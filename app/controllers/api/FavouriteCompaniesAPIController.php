@@ -5,29 +5,39 @@ use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+use Phalcon\Mvc\Dispatcher;
 
-class FavouriteUsersAPIController extends Controller
+class FavouriteCompaniesAPIController extends Controller
 {
+    /**
+     * Подписывает текущего пользователя на компанию
+     *
+     * @method POST
+     *
+     * @param companyId
+     *
+     * @return Response с json ответом в формате Status
+     */
     public function setFavouriteAction()
     {
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
-            $userIdSubject = $auth['id'];
-            $userIdObject = $this->request->getPost('userId');
+            $userId = $auth['id'];
+            $companyId = $this->request->getPost('companyId');
 
-            $fav = Favoriteusers::findFirst(["userObject = :userIdObject: AND userSubject = :userIdSubject:",
+            $fav = FavoriteCompanies::findFirst(["userId = :userId: AND companyId = :companyId:",
                 "bind" => [
-                "userIdObject" => $userIdObject,
-                "userIdSubject" => $userIdSubject,
+                "userId" => $userId,
+                "companyId" => $companyId,
             ]
             ]);
 
             if(!$fav){
 
-                $fav = new Favoriteusers();
-                $fav->setUserObject($userIdObject);
-                $fav->setUserSubject($userIdSubject);
+                $fav = new FavoriteCompanies();
+                $fav->setUserId($userId);
+                $fav->setCompanyId($companyId);
 
                 if (!$fav->save()) {
                     foreach ($fav->getMessages() as $message) {
@@ -53,7 +63,7 @@ class FavouriteUsersAPIController extends Controller
             $response->setJsonContent(
                 [
                     "status" => "ALREADY_EXISTS",
-                    "errors" => ["already exists"]
+                    "errors" => ["Пользователь уже подписан на компанию"]
                 ]
             );
             return $response;
@@ -64,18 +74,27 @@ class FavouriteUsersAPIController extends Controller
         }
     }
 
-    public function deleteFavouriteAction()
+
+    /**
+     * Отменяет подписку на компанию
+     *
+     * @method DELETE
+     *
+     * @param $companyId
+     *
+     * @return Response с json ответом в формате Status
+     */
+    public function deleteFavouriteAction($companyId)
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isDelete()) {
             $response = new Response();
             $auth = $this->session->get('auth');
-            $userSubject = $auth['id'];
-            $userObject = $this->request->getPost('userObject');
+            $userId = $auth['id'];
 
-            $fav = FavoriteUsers::findFirst(["userObject = :userObject: AND userSubject = :userSubject:",
+            $fav = FavoriteCompanies::findFirst(["userId = :userId: AND companyId = :companyId:",
                 "bind" => [
-                    "userObject" => $userObject,
-                    "userSubject" => $userSubject,
+                    "userId" => $userId,
+                    "companyId" => $companyId,
                 ]
             ]);
 
@@ -104,7 +123,7 @@ class FavouriteUsersAPIController extends Controller
             $response->setJsonContent(
                 [
                     "status" => "WRONG_DATA",
-                    "errors" => ["Пользователь не подписан"]
+                    "errors" => ["Пользователь не подписан на компанию"]
                 ]
             );
 
@@ -116,17 +135,20 @@ class FavouriteUsersAPIController extends Controller
         }
     }
 
-    public function getFavouriteAction()
+    public function getFavouritesAction()
     {
 
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            /*$fav = Favoritecategories::find(["users_userId = :userId:", "bind" =>
-            ["userId" => $userId]]);
+            $favs = FavoriteCompanies::find(["userId = :userId: ",
+                "bind" => [
+                    "userId" => $userId,
+                ]
+            ]);
 
-            return json_encode($fav);*/
+            return json_encode($favs);
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

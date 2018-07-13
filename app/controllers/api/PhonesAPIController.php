@@ -70,7 +70,20 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-
+                $phoneCompany = PhonesCompanies::findFirst(["companyId = :companyId: AND phoneId = :phoneId:",
+                    'bind' =>
+                        ['companyId' => $company->getCompanyId(),
+                            'phoneId' => $phone->getPhoneId()
+                        ]]);
+                if ($phoneCompany) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_ALREADY_EXISTS,
+                            "errors" => ['Телефон уже привязан к компании']
+                        ]
+                    );
+                    return $response;
+                }
                 $phoneCompany = new PhonesCompanies();
 
                 $phoneCompany->setCompanyId($company->getCompanyId());
@@ -201,7 +214,22 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $phonePoint= new PhonesPoints();
+            $phonePoint = PhonesPoints::findFirst(["pointId = :pointId: AND phoneId = :phoneId:",
+                'bind' =>
+                    ['pointId' => $point->getPointId(),
+                        'phoneId' => $phone->getPhoneId()
+                    ]]);
+            if ($phonePoint) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_ALREADY_EXISTS,
+                        "errors" => ['Телефон уже привязан к точке оказания услуг']
+                    ]
+                );
+                return $response;
+            }
+
+            $phonePoint = new PhonesPoints();
 
             $phonePoint->setPointId($point->getPointId());
             $phonePoint->setPhoneId($phone->getPhoneId());
@@ -254,11 +282,11 @@ class PhonesAPIController extends Controller
             $response = new Response();
 
             $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
-            ["companyId" => $companyId,
-                "phoneId" => $phoneId]
+                ["companyId" => $companyId,
+                    "phoneId" => $phoneId]
             ]);
 
-            if(!$phonesCompany){
+            if (!$phonesCompany) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -270,20 +298,14 @@ class PhonesAPIController extends Controller
 
             $company = $phonesCompany->companies;
 
-            if ($company && ($company->getUserId() == $userId || $auth['role'] == ROLE_MODERATOR)) {
-                if (!$company->delete()) {
-                    $errors = [];
-                    foreach ($company->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
+            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
             }
 
             if (!$phonesCompany->delete()) {
@@ -299,7 +321,430 @@ class PhonesAPIController extends Controller
                 );
                 return $response;
             }
+
             //TODO удаление телефона из таблицы Phones, если нет ссылок.
+
+            $phone = Phones::findFirstByPhoneId($phoneId);
+
+            if($phone->countOfReferences() == 0)
+                $phone->delete();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Убирает телефон из списка телефонов точки
+     *
+     * @method DELETE
+     *
+     * @param (Обязательные) int $phoneId
+     * @param int $pointId
+     * @return Phalcon\Http\Response с json массивом в формате Status
+     */
+    public function deletePhoneFromTradePointAction($phoneId, $pointId)
+    {
+        if ($this->request->isDelete()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $phonesPoint = PhonesPoints::findFirst(["pointId = :pointId: and phoneId = :phoneId:", "bind" =>
+                ["pointId" => $pointId,
+                    "phoneId" => $phoneId]
+            ]);
+
+            if (!$phonesPoint) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Телефон не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            $point = $phonesPoint->tradepoints;
+            $company = $point->companies;
+
+            if (!$company || !$point ||
+                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
+
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$phonesPoint->delete()) {
+                $errors = [];
+                foreach ($phonesPoint->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            //TODO удаление телефона из таблицы Phones, если нет других ссылок.
+            $phone = Phones::findFirstByPhoneId($phoneId);
+
+            if($phone->countOfReferences() == 0)
+                $phone->delete();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+
+    /**
+     * Изменяет определенный номер телефона у определенной точки услуг
+     * @method PUT
+     * @param integer pointId, string phone (новый) и integer phoneId (старый)
+     * @return Phalcon\Http\Response с json ответом в формате Status;
+     */
+    public function editPhoneInTradePointAction()
+    {
+        if ($this->request->isPut()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $point = TradePoints::findFirstByPointId($this->request->getPut("pointId"));
+
+            if (!$point) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Такая точка оказания услуг не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            $company = $point->companies;
+
+            if (!$company || !$point ||
+                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->begin();
+
+            if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
+
+                $phone = Phones::findFirstByPhoneId($this->request->getPut("phoneId"));
+
+                if(!$phone){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Id старого номера не существует']
+                        ]
+                    );
+                    return $response;
+                }
+
+                if($phone->countOfReferences() < 2){
+                    $phone->setPhone($this->request->getPut("phone"));
+                } else{
+
+                    $phone = new Phones();
+                    $phone->setPhone($this->request->getPut("phone"));
+
+                    $phonePoint = new PhonesPoints();
+                }
+
+                $phonesPoint = PhonesPoints::findFirst(["pointId = :pointId: and phoneId = :phoneId:", "bind" =>
+                    ["pointId" => $this->request->getPut("pointId"),
+                        "phoneId" => $this->request->getPut("phoneId")]
+                ]);
+
+                if(!$phonesPoint){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Телефон не связан с точкой оказания услуг']
+                        ]
+                    );
+                    return $response;
+                }
+
+                if (!$phonesPoint->delete()) {
+                    $errors = [];
+                    foreach ($phonesPoint->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+                if (!$phone->save()) {
+
+                    $this->db->rollback();
+                    $errors = [];
+                    foreach ($phone->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+                $phonePoint->setPointId($point->getPointId());
+                $phonePoint->setPhoneId($phone->getPhoneId());
+
+                if (!$phonePoint->save()) {
+
+                    $this->db->rollback();
+                    $errors = [];
+                    foreach ($phonePoint->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+            } else {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нужно указать новый номер телефона phone и id старого phoneId']
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    'status' => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    public function testAction(){
+        $response = new Response();
+        $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
+            ["companyId" => $this->request->getPut("companyId"),
+                "phoneId" => $this->request->getPut("phoneId")]
+        ]);
+
+        //$phonesCompany->setPhoneId($this->request->getPut("phoneId2"));
+        $phonesCompany->setCompanyId(21);
+
+        if (!$phonesCompany->save()) {
+
+            $this->db->rollback();
+            $errors = [];
+            foreach ($phonesCompany->getMessages() as $message) {
+                $errors[] = $message->getMessage();
+            }
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => $errors
+                ]
+            );
+            return $response;
+        }
+
+        $response->setJsonContent(
+            [
+                'status' => STATUS_OK
+            ]
+        );
+        return $response;
+    }
+
+    /**
+     * Изменяет определенный номер телефона у определенной компании
+     * @method PUT
+     * @param integer companyId, string phone (новый) и integer phoneId (старый)
+     * @return Phalcon\Http\Response с json ответом в формате Status;
+     */
+    public function editPhoneInCompanyAction()
+    {
+        if ($this->request->isPut()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
+                ["companyId" => $this->request->getPut("companyId"),
+                    "phoneId" => $this->request->getPut("phoneId")]
+            ]);
+
+            if (!$phonesCompany) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Телефон не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            $company = $phonesCompany->companies;
+
+            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->begin();
+
+            if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
+
+                $phone = Phones::findFirstByPhoneId($this->request->getPut("phoneId"));
+
+                if(!$phone){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Id старого номера не существует']
+                        ]
+                    );
+                    return $response;
+                }
+
+                if($phone->countOfReferences() < 2){
+                    $phone->setPhone($this->request->getPut("phone"));
+
+                } else{
+                    //Удаляем предыдущую связь, создаем новый телефон и связываем с ним
+                    $phone = new Phones();
+                    $phone->setPhone($this->request->getPut("phone"));
+
+                }
+
+                if (!$phonesCompany->delete()) {
+                    $errors = [];
+                    foreach ($phonesCompany->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+                $phonesCompany = new PhonesCompanies();
+
+                if (!$phone->save()) {
+
+                    $this->db->rollback();
+                    $errors = [];
+                    foreach ($phone->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+                $phonesCompany->setCompanyId($company->getCompanyId());
+                $phonesCompany->setPhoneId($phone->getPhoneId());
+
+                if (!$phonesCompany->save()) {
+
+                    $this->db->rollback();
+                    $errors = [];
+                    foreach ($phonesCompany->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+            } else {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нужно указать новый номер телефона phone и id старого phoneId']
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    'status' => STATUS_OK
+                ]
+            );
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

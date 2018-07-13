@@ -66,13 +66,17 @@ class SecurityPlugin extends Plugin
                 'reviews' =>['new','create'],
                 'categoriesAPI' => ['getFavourite', 'setFavourite','deleteFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite'],
-                'NewsAPI' => ['getNews'],
+                'NewsAPI' => ['getNews' ,'addNew' ,'deleteNew' ,'editNew' ,'getOwnNews', 'getSubjectNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
                 'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
                 'CompaniesAPI' => ['getCompanies', 'addCompany', 'editCompany', 'deleteCompany'],
-                'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint'],
-                'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint']
-			];
+                'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
+                    'deletePhoneFromTradePoint','editPhoneInTradePoint','editPhoneInCompany', 'test'],
+                'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint'],
+                'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
+                'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites']
+
+            ];
 
 			foreach ($privateResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class FavoriteUsers extends \Phalcon\Mvc\Model
 {
 
@@ -63,6 +66,50 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
     public function getUserObject()
     {
         return $this->userObject;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'userObject',
+            new Callback(
+                [
+                    "message" => "Пользователь для подписки не существует",
+                    "callback" => function($favCompany) {
+                        $user = Users::findFirstByUserId($favCompany->getUserObject());
+
+                        if($user)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'userSubject',
+            new Callback(
+                [
+                    "message" => "Пользователь подписчик не существует",
+                    "callback" => function($favCompany) {
+                        $user = Users::findFirstByUserId($favCompany->getUserSubject());
+
+                        if($user)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
     }
 
     /**

@@ -19,7 +19,8 @@ class NotFoundPlugin extends Plugin
 	 * @param Event $event
 	 * @param MvcDispatcher $dispatcher
 	 * @param \Exception $exception
-	 * @return boolean
+     *
+     * @return boolean
 	 */
 	public function beforeException(Event $event, MvcDispatcher $dispatcher, \Exception $exception)
 	{

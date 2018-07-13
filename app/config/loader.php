@@ -2,6 +2,8 @@
 
 $loader = new \Phalcon\Loader();
 
+require BASE_PATH."/vendor/autoload.php";
+
 /**
  * We're a registering a set of directories taken from the configuration file
  */
