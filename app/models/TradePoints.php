@@ -88,6 +88,13 @@ class TradePoints extends \Phalcon\Mvc\Model
     protected $address;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
+
+    /**
      * Method to set the value of field pointId
      *
      * @param integer $pointId
@@ -341,6 +348,29 @@ class TradePoints extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -370,15 +400,15 @@ class TradePoints extends \Phalcon\Mvc\Model
                 )
             );
 
-        if($this->getUserManager() != null){
+        if ($this->getUserManager() != null) {
             $validator->add(
                 'userManager',
                 new Callback(
                     [
                         "message" => "Такого пользователя не существует",
-                        "callback" => function($company) {
+                        "callback" => function ($company) {
                             $user = Users::findFirstByUserId($company->getUserManager());
-                            if($user)
+                            if ($user)
                                 return true;
                             return false;
                         }
@@ -392,10 +422,10 @@ class TradePoints extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Такая компания не существует",
-                    "callback" => function($phoneCompany) {
+                    "callback" => function ($phoneCompany) {
                         $phone = Companies::findFirstByCompanyId($phoneCompany->getCompanyId());
 
-                        if($phone)
+                        if ($phone)
                             return true;
                         return false;
                     }
@@ -427,14 +457,43 @@ class TradePoints extends \Phalcon\Mvc\Model
         return 'tradePoints';
     }
 
+    public function delete($delete = false, $data = null, $whiteList = null)
+    {
+        if (!$delete) {
+            $this->setDeleted(true);
+            return $this->save();
+        } else {
+            $result = parent::delete($data, $whiteList);
+            return $result;
+        }
+    }
+
+    public function restore()
+    {
+        $this->setDeleted(false);
+        return $this->save();
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
      * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
      */
-    public static function find($parameters = null)
+    public static function find($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
         return parent::find($parameters);
     }
 
@@ -442,10 +501,23 @@ class TradePoints extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
      * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
      */
-    public static function findFirst($parameters = null)
+    public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
+
         return parent::findFirst($parameters);
     }
 

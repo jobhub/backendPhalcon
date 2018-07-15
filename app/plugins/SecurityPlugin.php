@@ -74,7 +74,9 @@ class SecurityPlugin extends Plugin
                     'deletePhoneFromTradePoint','editPhoneInTradePoint','editPhoneInCompany', 'test'],
                 'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint'],
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
-                'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites']
+                'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
+                'ServicesAPI' => ['deleteService', 'addService', 'editService', 'getServicesForCompany',
+                    'linkServiceWithPoint', 'unlinkServiceAndPoint']
 
             ];
 

@@ -135,6 +135,12 @@ class FavouriteCompaniesAPIController extends Controller
         }
     }
 
+
+    /**
+     * Возвращает подписки пользователя на компании
+     *
+     * @return string - json array с подписками (просто id-шники)
+     */
     public function getFavouritesAction()
     {
 

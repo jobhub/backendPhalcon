@@ -44,6 +44,13 @@ class News extends \Phalcon\Mvc\Model
     protected $newText;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
+
+    /**
      * Method to set the value of field newId
      *
      * @param integer $newId
@@ -159,6 +166,29 @@ class News extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -203,14 +233,43 @@ class News extends \Phalcon\Mvc\Model
         $this->setSource("news");
     }
 
+    public function delete($delete = false, $data = null, $whiteList = null)
+    {
+        if (!$delete) {
+            $this->setDeleted(true);
+            return $this->save();
+        } else {
+            $result = parent::delete($data, $whiteList);
+            return $result;
+        }
+    }
+
+    public function restore()
+    {
+        $this->setDeleted(false);
+        return $this->save();
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return News[]|News|\Phalcon\Mvc\Model\ResultSetInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
      */
-    public static function find($parameters = null)
+    public static function find($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
         return parent::find($parameters);
     }
 
@@ -218,10 +277,23 @@ class News extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return News|\Phalcon\Mvc\Model\ResultInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
      */
-    public static function findFirst($parameters = null)
+    public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            } else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
+
         return parent::findFirst($parameters);
     }
 

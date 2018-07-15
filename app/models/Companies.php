@@ -49,7 +49,7 @@ class Companies extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=32, nullable=false)
+     * @Column(type="integer", length=32, nullable=true)
      */
     protected $userId;
 
@@ -70,9 +70,16 @@ class Companies extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="boolean", nullable=true)
+     * @Column(type="string", nullable=true)
      */
     protected $isMaster;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
 
     /**
      * Method to set the value of field companyId
@@ -181,12 +188,25 @@ class Companies extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field isMaster
      *
-     * @param boolean $isMaster
+     * @param string $isMaster
      * @return $this
      */
     public function setIsMaster($isMaster)
     {
         $this->isMaster = $isMaster;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }
@@ -274,12 +294,23 @@ class Companies extends \Phalcon\Mvc\Model
     /**
      * Returns the value of field isMaster
      *
-     * @return boolean
+     * @return string
      */
     public function getIsMaster()
     {
         return $this->isMaster;
     }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
 
     /**
      * Validations and business logic
@@ -290,49 +321,49 @@ class Companies extends \Phalcon\Mvc\Model
     {
         $validator = new Validation();
 
-        if($this->getEmail()!= null)
-        $validator->add(
-            'email',
-            new EmailValidator(
-                [
-                    'model' => $this,
-                    'message' => 'Введите, пожалуйста, корректный email',
-                ]
-            )
-        );
+        if ($this->getEmail() != null)
+            $validator->add(
+                'email',
+                new EmailValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный email',
+                    ]
+                )
+            );
 
-        if($this->getWebSite()!= null)
-        $validator->add(
-            'webSite',
-            new UrlValidator(
-                [
-                    'model' => $this,
-                    'message' => 'Введите, пожалуйста, корректный URL',
-                ]
-            )
-        );
+        if ($this->getWebSite() != null)
+            $validator->add(
+                'webSite',
+                new UrlValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный URL',
+                    ]
+                )
+            );
 
-        if($this->getTIN()!= null)
-        $validator->add(
-            'TIN',
-            new Regex(
-                [
-                    "pattern" => "/^(\d{10}|\d{12})$/",
-                    "message" => "Введите корректный ИНН",
-                ]
-            )
-        );
+        if ($this->getTIN() != null)
+            $validator->add(
+                'TIN',
+                new Regex(
+                    [
+                        "pattern" => "/^(\d{10}|\d{12})$/",
+                        "message" => "Введите корректный ИНН",
+                    ]
+                )
+            );
 
-        if($this->getRegionId()!= null){
+        if ($this->getRegionId() != null) {
             $validator->add(
                 'regionId',
                 new Callback(
                     [
                         "message" => "Такой регион не существует",
-                        "callback" => function($company) {
+                        "callback" => function ($company) {
                             $region = Regions::findFirstByRegionId($company->getRegionId());
 
-                            if($region)
+                            if ($region)
                                 return true;
                             return false;
                         }
@@ -341,16 +372,16 @@ class Companies extends \Phalcon\Mvc\Model
             );
         }
 
-        if($this->getUserId()!= null){
+        if ($this->getUserId() != null) {
             $validator->add(
                 'userId',
                 new Callback(
                     [
                         "message" => "Такого пользователя не существует",
-                        "callback" => function($company) {
+                        "callback" => function ($company) {
                             $user = Users::findFirstByUserId($company->getUserId());
 
-                            if($user)
+                            if ($user)
                                 return true;
                             return false;
                         }
@@ -361,7 +392,6 @@ class Companies extends \Phalcon\Mvc\Model
 
         return $this->validate($validator);
     }
-
 
     /**
      * Initialize method for model.
@@ -376,14 +406,74 @@ class Companies extends \Phalcon\Mvc\Model
         $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
     }
 
+    public function delete($delete = false, $data = null, $whiteList = null)
+    {
+        if (!$delete) {
+            $this->db->begin();
+            $this->setDeleted(true);
+            if (!$this->save()) {
+                $this->db->rollback();
+                return false;
+            }
+            /*$query = $this->modelsManager->createQuery("UPDATE TradePoints SET deleted = true WHERE companyId = :companyId:");
+            $result  = $query->execute(
+                [
+                    'companyId' => $this->getCompanyId()
+                ]
+            );
+
+            if(!$result){
+
+            }*/
+
+            //каскадное 'удаление' точек оказания услуг
+            $tradePoints = TradePoints::findByCompanyId($this->getCompanyId());
+
+            if (!$tradePoints->delete()) {
+                $this->db->rollback();
+                return false;
+            }
+
+            //каскадное 'удаление' новостей
+            $news = News::find(['subjectId = :comppanyId: AND typeNew = 1', 'bind' => ['companyId' => $this->getCompanyId()]]);
+
+            if (!$news->delete()) {
+                $this->db->rollback();
+                return false;
+            }
+
+        } else {
+            $result = parent::delete($data, $whiteList);
+            return $result;
+        }
+    }
+
+    public function restore()
+    {
+        $this->setDeleted(false);
+        return $this->save();
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Companies[]|Companies|\Phalcon\Mvc\Model\ResultSetInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
      */
-    public static function find($parameters = null)
+    public static function find($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
         return parent::find($parameters);
     }
 
@@ -391,10 +481,22 @@ class Companies extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Companies|\Phalcon\Mvc\Model\ResultInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
      */
-    public static function findFirst($parameters = null)
+    public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
+
         return parent::findFirst($parameters);
     }
 
