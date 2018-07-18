@@ -4,8 +4,9 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends \Phalcon\Mvc\Model
+class Requests extends \Phalcon\Mvc\Model
 {
+
     /**
      *
      * @var integer
@@ -13,7 +14,7 @@ class Tasks extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $taskId;
+    protected $requestId;
 
     /**
      *
@@ -27,14 +28,7 @@ class Tasks extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryId;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=false)
-     */
-    protected $name;
+    protected $serviceId;
 
     /**
      *
@@ -48,52 +42,31 @@ class Tasks extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $deadline;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=true)
-     */
-    protected $price;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=true)
-     */
-    protected $status;
+    protected $dateEnd;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $polygon;
+    protected $deleted;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=32, nullable=true)
+     * @Column(type="integer", nullable=false)
      */
-    protected $regionId;
+    protected $status;
 
     /**
+     * Method to set the value of field requestId
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=true)
-     */
-    protected $pointId;
-
-    /**
-     * Method to set the value of field taskId
-     *
-     * @param integer $taskId
+     * @param integer $requestId
      * @return $this
      */
-    public function setTaskId($taskId)
+    public function setRequestId($requestId)
     {
-        $this->taskId = $taskId;
+        $this->requestId = $requestId;
 
         return $this;
     }
@@ -112,27 +85,14 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field categoryId
+     * Method to set the value of field serviceId
      *
-     * @param integer $categoryId
+     * @param integer $serviceId
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setServiceId($serviceId)
     {
-        $this->categoryId = $categoryId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
+        $this->serviceId = $serviceId;
 
         return $this;
     }
@@ -151,35 +111,22 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field deadline
+     * Method to set the value of field dateEnd
      *
-     * @param string $deadline
+     * @param string $dateEnd
      * @return $this
      */
-    public function setDeadline($deadline)
+    public function setDateEnd($dateEnd)
     {
-        $this->deadline = $deadline;
+        $this->dateEnd = $dateEnd;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field price
+     * Method to set the value of field deleted
      *
-     * @param integer $price
-     * @return $this
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field status
-     *
-     * @param integer $status
+     * @param string $status
      * @return $this
      */
     public function setStatus($status)
@@ -190,52 +137,26 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field polygon
+     * Method to set the value of field deleted
      *
-     * @param string $polygon
+     * @param string $deleted
      * @return $this
      */
-    public function setPolygon($polygon)
+    public function setDeleted($deleted)
     {
-        $this->polygon = $polygon;
+        $this->deleted = $deleted;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field regionId
-     *
-     * @param integer $regionId
-     * @return $this
-     */
-    public function setRegionId($regionId)
-    {
-        $this->regionId = $regionId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field pointId
-     *
-     * @param integer $pointId
-     * @return $this
-     */
-    public function setPointId($pointId)
-    {
-        $this->pointId = $pointId;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field taskId
+     * Returns the value of field requestId
      *
      * @return integer
      */
-    public function getTaskId()
+    public function getRequestId()
     {
-        return $this->taskId;
+        return $this->requestId;
     }
 
     /**
@@ -249,23 +170,13 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field categoryId
+     * Returns the value of field serviceId
      *
      * @return integer
      */
-    public function getCategoryId()
+    public function getServiceId()
     {
-        return $this->categoryId;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
+        return $this->serviceId;
     }
 
     /**
@@ -279,63 +190,33 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field deadline
+     * Returns the value of field dateEnd
      *
      * @return string
      */
-    public function getDeadline()
+    public function getDateEnd()
     {
-        return $this->deadline;
+        return $this->dateEnd;
     }
 
     /**
-     * Returns the value of field price
+     * Returns the value of field deleted
      *
-     * @return integer
+     * @return string
      */
-    public function getPrice()
+    public function getDeleted()
     {
-        return $this->price;
+        return $this->deleted;
     }
 
     /**
-     * Returns the value of field status
+     * Returns the value of field deleted
      *
      * @return integer
      */
     public function getStatus()
     {
         return $this->status;
-    }
-
-    /**
-     * Returns the value of field polygon
-     *
-     * @return string
-     */
-    public function getPolygon()
-    {
-        return $this->polygon;
-    }
-
-    /**
-     * Returns the value of field regionId
-     *
-     * @return integer
-     */
-    public function getRegionId()
-    {
-        return $this->regionId;
-    }
-
-    /**
-     * Returns the value of field pointId
-     *
-     * @return integer
-     */
-    public function getPointId()
-    {
-        return $this->pointId;
     }
 
     /**
@@ -354,6 +235,7 @@ class Tasks extends \Phalcon\Mvc\Model
                     "message" => "Такой пользователь не существует",
                     "callback" => function ($request) {
                         $user = Users::findFirstByUserId($request->getUserId());
+
                         if ($user)
                             return true;
                         return false;
@@ -363,7 +245,7 @@ class Tasks extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'categoryId',
+            'serviceId',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
@@ -400,12 +282,10 @@ class Tasks extends \Phalcon\Mvc\Model
     public function initialize()
     {
         //$this->setSchema("public");
-        $this->setSource("tasks");
-        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
-        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'Tradepoints']);
-        $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
-        $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
+        $this->setSource("requests");
+        $this->belongsTo('serviceId', '\Services', 'serviceId', ['alias' => 'Services']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
     }
 
     /**
@@ -415,17 +295,46 @@ class Tasks extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tasks';
+        return 'requests';
+    }
+
+    public function delete($delete = false, $data = null, $whiteList = null)
+    {
+        if (!$delete) {
+            $this->setDeleted(true);
+            return $this->save();
+        } else {
+            $result = parent::delete($data, $whiteList);
+            return $result;
+        }
+    }
+
+    public function restore()
+    {
+        $this->setDeleted(false);
+        return $this->save();
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Tasks[]|Tasks|\Phalcon\Mvc\Model\ResultSetInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
      */
-    public static function find($parameters = null)
+    public static function find($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            }else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
         return parent::find($parameters);
     }
 
@@ -433,10 +342,23 @@ class Tasks extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Tasks|\Phalcon\Mvc\Model\ResultInterface
+     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
+     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
      */
-    public static function findFirst($parameters = null)
+    public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+
+        if ($addParamNotDeleted) {
+            $conditions = $parameters['conditions'];
+
+            if (trim($conditions) != "") {
+                $conditions .= ' AND deleted != true';
+            } else{
+                $conditions .= 'deleted != true';
+            }
+            $parameters['conditions'] = $conditions;
+        }
+
         return parent::findFirst($parameters);
     }
 

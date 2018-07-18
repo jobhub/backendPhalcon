@@ -372,23 +372,22 @@ class Companies extends \Phalcon\Mvc\Model
             );
         }
 
-        if ($this->getUserId() != null) {
-            $validator->add(
-                'userId',
-                new Callback(
-                    [
-                        "message" => "Такого пользователя не существует",
-                        "callback" => function ($company) {
-                            $user = Users::findFirstByUserId($company->getUserId());
+        $validator->add(
+            'userId',
+            new Callback(
+                [
+                    "message" => "Такого пользователя не существует",
+                    "callback" => function ($company) {
+                        $user = Users::findFirstByUserId($company->getUserId());
 
-                            if ($user)
-                                return true;
-                            return false;
-                        }
-                    ]
-                )
-            );
-        }
+                        if ($user)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
 
         return $this->validate($validator);
     }
@@ -469,7 +468,7 @@ class Companies extends \Phalcon\Mvc\Model
 
             if (trim($conditions) != "") {
                 $conditions .= ' AND deleted != true';
-            }else{
+            } else {
                 $conditions .= 'deleted != true';
             }
             $parameters['conditions'] = $conditions;
@@ -491,7 +490,7 @@ class Companies extends \Phalcon\Mvc\Model
 
             if (trim($conditions) != "") {
                 $conditions .= ' AND deleted != true';
-            }else{
+            } else {
                 $conditions .= 'deleted != true';
             }
             $parameters['conditions'] = $conditions;

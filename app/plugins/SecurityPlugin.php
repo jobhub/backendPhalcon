@@ -76,7 +76,8 @@ class SecurityPlugin extends Plugin
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService', 'getServicesForCompany',
-                    'linkServiceWithPoint', 'unlinkServiceAndPoint']
+                    'linkServiceWithPoint', 'unlinkServiceAndPoint'],
+                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest'],
 
             ];
 

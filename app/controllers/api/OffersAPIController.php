@@ -5,6 +5,7 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+use Phalcon\Mvc\Dispatcher;
 
 class OffersAPIController extends Controller
 {

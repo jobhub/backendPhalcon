@@ -8,7 +8,7 @@ class Categories extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $categoryId;
 
@@ -18,6 +18,20 @@ class Categories extends \Phalcon\Mvc\Model
      * @Column(type="string", length=45, nullable=false)
      */
     protected $categoryName;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $parentId;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $detail;
 
     /**
      * Method to set the value of field categoryId
@@ -46,6 +60,32 @@ class Categories extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field parentId
+     *
+     * @param integer $parentId
+     * @return $this
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field detail
+     *
+     * @param string $detail
+     * @return $this
+     */
+    public function setDetail($detail)
+    {
+        $this->detail = $detail;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field categoryId
      *
      * @return integer
@@ -66,13 +106,32 @@ class Categories extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field parentId
+     *
+     * @return integer
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * Returns the value of field detail
+     *
+     * @return string
+     */
+    public function getDetail()
+    {
+        return $this->detail;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("categories");
-        $this->hasMany('categoryId', 'Favoritecategories', 'categoryId', ['alias' => 'Favoritecategories']);
         $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);
     }
 
