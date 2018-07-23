@@ -33,6 +33,12 @@ class ReviewsAPIController extends Controller
         }
     }
 
+    /**
+     * Добавляет отзыв.
+     *
+     *
+     * @return Response
+     */
     public function addReviewAction()
     {
         if ($this->request->isPost()) {
@@ -62,7 +68,7 @@ class ReviewsAPIController extends Controller
                     $review = new Reviews();
                     $review->setAuctionId($auction->getAuctionId());
                     $review->setExecutor(1);
-                    $review->setRaiting($this->request->getPost("rating"));
+                    $review->setRating($this->request->getPost("rating"));
                     $review->setReviewDate(date('Y-m-d H:i:s'));
                     $review->setTextReview($this->request->getPost("textReview"));
                     $review->setUserIdSubject($userId);
@@ -112,7 +118,7 @@ class ReviewsAPIController extends Controller
                     $review = new Reviews();
                     $review->setAuctionId($auction->getAuctionId());
                     $review->setExecutor(0);
-                    $review->setRaiting($this->request->getPost("rating"));
+                    $review->setRating($this->request->getPost("rating"));
                     $review->setReviewDate(date('Y-m-d H:i:s'));
                     $review->setTextReview($this->request->getPost("textReview"));
                     $review->setUserIdSubject($userId);

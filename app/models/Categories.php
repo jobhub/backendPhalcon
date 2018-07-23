@@ -31,7 +31,14 @@ class Categories extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $detail;
+    protected $description;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=260, nullable=true)
+     */
+    protected $img;
 
     /**
      * Method to set the value of field categoryId
@@ -73,14 +80,27 @@ class Categories extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field detail
+     * Method to set the value of field description
      *
-     * @param string $detail
+     * @param string $description
      * @return $this
      */
-    public function setDetail($detail)
+    public function setDescription($description)
     {
-        $this->detail = $detail;
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field img
+     *
+     * @param string $img
+     * @return $this
+     */
+    public function setImg($img)
+    {
+        $this->img = $img;
 
         return $this;
     }
@@ -116,13 +136,23 @@ class Categories extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field detail
+     * Returns the value of field description
      *
      * @return string
      */
-    public function getDetail()
+    public function getDescription()
     {
-        return $this->detail;
+        return $this->description;
+    }
+
+    /**
+     * Returns the value of field img
+     *
+     * @return string
+     */
+    public function getImg()
+    {
+        return $this->img;
     }
 
     /**
@@ -130,7 +160,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("public");
+        //$this->setSchema("public");
         $this->setSource("categories");
         $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);
     }

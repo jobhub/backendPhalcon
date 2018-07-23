@@ -57,7 +57,7 @@ class ReviewsController extends ControllerBase
             return;
         }
         $review=new Reviews();
-        $review->setRaiting($this->request->getPost('raiting'));
+        $review->setRating($this->request->getPost('raiting'));
         $today = date("Y-m-d h:m");
         $review->setReviewDate($today);
         $review->setTextReview($this->request->getPost('textReview'));

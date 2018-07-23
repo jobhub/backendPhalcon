@@ -206,4 +206,130 @@ class CompaniesAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Делает указанного пользователя менеджером компании
+     *
+     * @method POST
+     *
+     * @params userId, companyId
+     *
+     * @return string - json array - объект Status
+     */
+    public function setManagerAction(){
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            if(!Companies::checkUserHavePermission($userId,$this->request->getPost('companyId'), 'addManager')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $companyManager = new CompaniesManagers();
+            $companyManager->setUserId($this->request->getPost('userId'));
+            $companyManager->setCompanyId($this->request->getPost('companyId'));
+
+
+            if (!$companyManager->save()) {
+                $errors = [];
+                foreach ($companyManager->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет пользователя из менеджеров компании
+     *
+     * @method DELETE
+     *
+     * @param $userManagerId
+     * @param $companyId
+     *
+     * @return string - json array - объект Status
+     */
+    public function deleteManagerAction($companyId,$userManagerId){
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            if(!Companies::checkUserHavePermission($userId,$companyId, 'deleteManager')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $companyManager = CompaniesManagers::findFirst(['companyId = :companyId: AND userId = :userId:',
+                'bind' => ['companyId' => $companyId, 'userId' => $userManagerId]]);
+
+            if(!$companyManager){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь не является менеджером компании']
+                    ]
+                );
+                return $response;
+            }
+
+
+            if (!$companyManager->delete()) {
+                $errors = [];
+                foreach ($companyManager->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }

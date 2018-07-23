@@ -6,9 +6,17 @@
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
+/*
+ * Статусы процесса выполнения задания
+ */
+define('STATUS_WAIT', 0);
+define('STATUS_EXECUTING',1);
+define('STATUS_REJECTED',2);
+define('STATUS_EXECUTED',3);
+define('STATUS_NON_EXECUTED',4);
 
 /*
- * Статусы
+ * Статусы выполнения запросов
  */
 define('STATUS_OK', 'OK');
 define('STATUS_WRONG','WRONG_DATA');

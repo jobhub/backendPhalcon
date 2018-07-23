@@ -4,9 +4,8 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Requests extends \Phalcon\Mvc\Model
+class Requests extends NotDeletedModel
 {
-
     /**
      *
      * @var integer
@@ -21,7 +20,7 @@ class Requests extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId;
+    protected $subjectId;
 
     /**
      *
@@ -59,6 +58,14 @@ class Requests extends \Phalcon\Mvc\Model
     protected $status;
 
     /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $subjectType;
+
+
+    /**
      * Method to set the value of field requestId
      *
      * @param integer $requestId
@@ -72,14 +79,21 @@ class Requests extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field subjectId
      *
-     * @param integer $userId
+     * @param integer $subjectId
      * @return $this
      */
-    public function setUserId($userId)
+    public function setSubjectId($subjectId)
     {
-        $this->userId = $userId;
+        $this->subjectId = $subjectId;
+
+        return $this;
+    }
+
+    public function setSubjectType($subjectType)
+    {
+        $this->subjectType = $subjectType;
 
         return $this;
     }
@@ -160,13 +174,23 @@ class Requests extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getUserId()
+    public function getSubjectId()
     {
-        return $this->userId;
+        return $this->subjectId;
+    }
+
+    /**
+     * Returns the value of field subjectId
+     *
+     * @return integer
+     */
+    public function getSubjectType()
+    {
+        return $this->subjectType;
     }
 
     /**
@@ -229,16 +253,12 @@ class Requests extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userId',
+            'subjectId',
             new Callback(
                 [
-                    "message" => "Такой пользователь не существует",
-                    "callback" => function ($request) {
-                        $user = Users::findFirstByUserId($request->getUserId());
-
-                        if ($user)
-                            return true;
-                        return false;
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($service) {
+                        return Subjects::checkSubjectExists($service->getSubjectId(), $service->getSubjectType());
                     }
                 ]
             )
@@ -284,7 +304,6 @@ class Requests extends \Phalcon\Mvc\Model
         //$this->setSchema("public");
         $this->setSource("requests");
         $this->belongsTo('serviceId', '\Services', 'serviceId', ['alias' => 'Services']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
         $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
     }
 
@@ -296,70 +315,6 @@ class Requests extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'requests';
-    }
-
-    public function delete($delete = false, $data = null, $whiteList = null)
-    {
-        if (!$delete) {
-            $this->setDeleted(true);
-            return $this->save();
-        } else {
-            $result = parent::delete($data, $whiteList);
-            return $result;
-        }
-    }
-
-    public function restore()
-    {
-        $this->setDeleted(false);
-        return $this->save();
-    }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null, $addParamNotDeleted = true)
-    {
-
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
-            }else{
-                $conditions .= 'deleted != true';
-            }
-            $parameters['conditions'] = $conditions;
-        }
-        return parent::find($parameters);
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null, $addParamNotDeleted = true)
-    {
-
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
-            } else{
-                $conditions .= 'deleted != true';
-            }
-            $parameters['conditions'] = $conditions;
-        }
-
-        return parent::findFirst($parameters);
     }
 
 }

@@ -6,7 +6,7 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class TradePoints extends \Phalcon\Mvc\Model
+class TradePoints extends NotDeletedModel
 {
 
     /**
@@ -457,68 +457,22 @@ class TradePoints extends \Phalcon\Mvc\Model
         return 'tradePoints';
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
-    {
-        if (!$delete) {
-            $this->setDeleted(true);
-            return $this->save();
-        } else {
-            $result = parent::delete($data, $whiteList);
-            return $result;
-        }
+    public static function checkUserHavePermission($userId, $pointId){
+        $point = TradePoints::findFirstByPointId($pointId);
+
+        if(!$point)
+            return false;
+
+        $company = $pointId->companies;
+
+        $user = Users::findFirstByUserId($userId);
+
+        if(Companies::checkUserHavePermission($userId,$company->getCompanyId()))
+            return true;
+
+        if($userId == $point->getUserManager())
+            return true;
+
+        return false;
     }
-
-    public function restore()
-    {
-        $this->setDeleted(false);
-        return $this->save();
-    }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null, $addParamNotDeleted = true)
-    {
-
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
-            }else{
-                $conditions .= 'deleted != true';
-            }
-            $parameters['conditions'] = $conditions;
-        }
-        return parent::find($parameters);
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null, $addParamNotDeleted = true)
-    {
-
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
-            }else{
-                $conditions .= 'deleted != true';
-            }
-            $parameters['conditions'] = $conditions;
-        }
-
-        return parent::findFirst($parameters);
-    }
-
 }

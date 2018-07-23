@@ -59,26 +59,31 @@ class SecurityPlugin extends Plugin
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
                 'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler'],
-                'tasksAPI' => ['index','delete','change'],
+
                 'tenderAPI' => ['delete'],
                 'reviewsAPI' => ['index', 'addReview'],
-                'offersAPI' => ['getForTender', 'add', 'getForUser' , 'delete'],
                 'reviews' =>['new','create'],
+
+                'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
+
                 'categoriesAPI' => ['getFavourite', 'setFavourite','deleteFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite'],
                 'NewsAPI' => ['getNews' ,'addNew' ,'deleteNew' ,'editNew' ,'getOwnNews', 'getSubjectNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
-                'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
-                'CompaniesAPI' => ['getCompanies', 'addCompany', 'editCompany', 'deleteCompany'],
+
+                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager'],
+
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
                     'deletePhoneFromTradePoint','editPhoneInTradePoint','editPhoneInCompany', 'test'],
                 'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint'],
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
-                'ServicesAPI' => ['deleteService', 'addService', 'editService', 'getServicesForCompany',
+                'ServicesAPI' => ['deleteService', 'addService', 'editService',
                     'linkServiceWithPoint', 'unlinkServiceAndPoint'],
-                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest'],
+                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest', 'getRequests'],
 
+                'TasksAPI' => ['addTask','deleteTask','editTask','getTasksForCurrentUser','selectOffer'],
+                'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject' , 'deleteOffer', 'editOffer', 'getForTask',],
             ];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -94,6 +99,7 @@ class SecurityPlugin extends Plugin
                 'admin/auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'categoriesAPI' => ['addCategory' , 'editCategory']
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -113,8 +119,12 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index'],
                 'registerAPI'      => ['index'],
                 'sessionAPI'      => ['index'],
-                'categoriesAPI' => ['index'],
-                'tenderAPI' => ['index']
+                'categoriesAPI' => ['index', 'getCategories'],
+                'tenderAPI' => ['index'],
+
+                'CompaniesAPI' => ['getCompanies',],
+                'TasksAPI' => ['getTasksForSubject'],
+                'ServicesAPI' => ['getServicesForSubject']
 			];
 			foreach ($publicResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

@@ -1,6 +1,10 @@
 <?php
 
-class Offers extends \Phalcon\Mvc\Model
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
+
+class Offers extends NotDeletedModel
 {
 
     /**
@@ -8,28 +12,28 @@ class Offers extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $offerId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId;
+    protected $subjectId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $auctionId;
+    protected $taskId;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $deadline;
 
@@ -43,16 +47,30 @@ class Offers extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=true)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $price;
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=4, nullable=false)
+     * @var string
+     * @Column(type="string", nullable=true)
      */
     protected $selected;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $subjectType;
 
     /**
      * Method to set the value of field offerId
@@ -68,27 +86,34 @@ class Offers extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field subjectId
      *
-     * @param integer $userId
+     * @param integer $subjectId
      * @return $this
      */
-    public function setUserId($userId)
+    public function setSubjectId($subjectId)
     {
-        $this->userId = $userId;
+        $this->subjectId = $subjectId;
+
+        return $this;
+    }
+
+    public function setSubjectType($subjectType)
+    {
+        $this->subjectType = $subjectType;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field auctionId
+     * Method to set the value of field taskId
      *
-     * @param integer $auctionId
+     * @param integer $taskId
      * @return $this
      */
-    public function setAuctionId($auctionId)
+    public function setTaskId($taskId)
     {
-        $this->auctionId = $auctionId;
+        $this->taskId = $taskId;
 
         return $this;
     }
@@ -131,10 +156,11 @@ class Offers extends \Phalcon\Mvc\Model
 
         return $this;
     }
+
     /**
      * Method to set the value of field selected
      *
-     * @param integer $selected
+     * @param string $selected
      * @return $this
      */
     public function setSelected($selected)
@@ -155,23 +181,33 @@ class Offers extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getUserId()
+    public function getSubjectId()
     {
-        return $this->userId;
+        return $this->subjectId;
     }
 
     /**
-     * Returns the value of field auctionId
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getAuctionId()
+    public function getSubjectType()
     {
-        return $this->auctionId;
+        return $this->subjectType;
+    }
+
+    /**
+     * Returns the value of field taskId
+     *
+     * @return integer
+     */
+    public function getTaskId()
+    {
+        return $this->taskId;
     }
 
     /**
@@ -207,7 +243,7 @@ class Offers extends \Phalcon\Mvc\Model
     /**
      * Returns the value of field selected
      *
-     * @return integer
+     * @return string
      */
     public function getSelected()
     {
@@ -215,15 +251,105 @@ class Offers extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'subjectId',
+            new Callback(
+                [
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($task) {
+                        if($task->getSubjectType() == 0) {
+                            $user = Users::findFirstByUserId($task->getSubjectId());
+                            if ($user)
+                                return true;
+                            return false;
+                        } else if($task->getSubjectType() == 1){
+                            $company = Companies::findFirstByCompanyId($task->getSubjectId());
+                            if ($company)
+                                return true;
+                            return false;
+                        } else
+                            return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'taskId',
+            new Callback(
+                [
+                    "message" => "Задание не существует",
+                    "callback" => function ($offer) {
+                        $task = Tasks::findFirstByTaskId($offer->getTaskId());
+
+                        if ($task)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'deadline',
+            new PresenceOf(
+                [
+                    "message" => "Дата завершения задания должна быть указана",
+                ]
+            )
+        );
+
+        $validator->add(
+            'price',
+            new PresenceOf(
+                [
+                    "message" => "Цена должна быть указана",
+                ]
+            )
+        );
+
+        return $this->validate($validator);
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        //$this->setSchema("service_services");
+        //$this->setSchema("public");
         $this->setSource("offers");
-        $this->hasOne('offerId', 'Auctions', 'selectedOffer', ['alias' => 'Auctions']);
-        $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
     }
 
     /**
@@ -236,91 +362,35 @@ class Offers extends \Phalcon\Mvc\Model
         return 'offers';
     }
 
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Offers[]|Offers|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null)
+    public static function checkUserHavePermission($userId, $offerId, $right = null)
     {
-        return parent::find($parameters);
-    }
+        $offer = Offers::findFirstByOfferId($offerId);
+        $user = Users::findFirstByUserId($userId);
 
-    public function save($data = null, $whiteList = null)
-    {
-        $result = parent::save($data, $whiteList);
+        if (!$offer)
+            return false;
 
-        if($result) {
-            $new = new News();
-            $new->setNewType(1);
-            $new->setIdentify($this->getOfferId());
+        if ($offer->getSubjectType() == 1) {
+            //Предложение компании
+            $rightCompany = 'Offers';
+            if($right == 'delete')
+                $rightCompany = 'deleteOffer';
+            else if($right == 'get')
+                $rightCompany = 'getOffers';
+            else if($right == 'edit')
+                $rightCompany = 'editOffers';
 
-            $new->setDate(date("Y-m-d H:i:s"));
-            $new->save();
-        }
-        return $result;
-    }
-
-    public function delete($data = null, $whiteList = null)
-    {
-        $result = parent::delete($data, $whiteList);
-
-        if($result) {
-            $new = News::findFirst(["newType = 1 and identify = :identify:",
-                "bind" => ["identify" => $this->getOfferId()]]);
-
-            if($new){
-                $new->delete();
+            if (!Companies::checkUserHavePermission($userId, $offer->getSubjectId(), $rightCompany)) {
+                return false;
             }
+            return true;
+        } else if ($offer->getSubjectType() == 0) {
+            if ($offer->getSubjectId() != $userId && $user->getRole() != ROLE_MODERATOR) {
+                return false;
+            }
+            return true;
         }
-        return $result;
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Offers|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null)
-    {
-        return parent::findFirst($parameters);
-    }
-
-    public function getScore()
-    {
-        $C=$this->users->getFinishedTasks()*0.05 + 0.5;
-
-        if($C > 1)
-            $C = 1;
-
-        $R=$this->users->userInfo->getRaitingExecutor();
-        $categoryId=(int)$this->auctions->tasks->getCategoryId();
-        $r=$this->users->getRatingForCategory($categoryId);
-        $ctask=(double)$this->auctions->tasks->getPrice()/$this->getPrice();
-        $t=1;
-
-        $otime=strtotime($this->getDeadline())/3600;
-
-        $ttime=strtotime($this->auctions->tasks->getDeadline())/3600;
-
-        $atime=strtotime($this->auctions->getDateEnd())/3600;
-
-        $deltat=$ttime-$atime;
-        $deltao=$otime-$atime;
-        if($otime<$ttime)
-        {
-            $t = ($deltao)/($deltat) * (-0.5) + 1.5;
-            if($t > 1.5)
-                $t = 1.5;
-        }
-        else
-        {
-            $t = $deltat/$deltao;
-        }
-        $S= $C*(0.5*$R+$r+5)/10*$ctask*$t;
-        return $S;
+        return false;
     }
 
 }

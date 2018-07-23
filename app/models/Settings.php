@@ -14,21 +14,21 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Column(type="integer", length=4, nullable=false)
+     * @Column(type="string", nullable=false)
      */
     protected $notificationEmail;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=4, nullable=false)
+     * @Column(type=""string", nullable=false)
      */
     protected $notificationSms;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=4, nullable=false)
+     * @Column(type="string", nullable=false)
      */
     protected $notificationPush;
 
@@ -123,8 +123,6 @@ class Settings extends \Phalcon\Mvc\Model
     {
         return $this->notificationPush;
     }
-
-
 
     /**
      * Initialize method for model.

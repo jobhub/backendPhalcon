@@ -7,9 +7,17 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class RegisterAPIController extends Controller
 {
+    /**
+     * Регистрирует пользователя в системе
+     *
+     * @method POST
+     *
+     * @params (user) phone, email, password, (userinfo) firstname, lastname, male
+     *
+     * @return Response
+     */
     public function indexAction()
     {
-        // Формируем ответ
         if ($this->request->isPost()) {
             $response = new Response();
 
@@ -30,7 +38,8 @@ class RegisterAPIController extends Controller
             if ($user != false) {
                 $response->setJsonContent(
                     [
-                        "status" => "ALREADY_EXISTS"
+                        "status" => STATUS_ALREADY_EXISTS,
+                        'errors' => ['Пользователь с таким телефоном/email-ом уже зарегистрирован']
                     ]
                 );
                 return $response;
@@ -38,21 +47,36 @@ class RegisterAPIController extends Controller
 
             $this->db->begin();
 
+            $phoneObject = new Phones();
+            $phoneObject->setPhone($phone);
+
+            if ($phoneObject->save() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($phoneObject->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
             $user = new Users();
-            $user->setEMail($email);
-            $user->setPhone($phone);
+            $user->setEmail($email);
+            $user->setPhoneId($phoneObject->getPhoneId());
             $user->setPassword($password);
             $user->setRole("User");
 
             if ($user->save() == false) {
                 $this->db->rollback();
-
                 $errors = [];
-
                 foreach ($user->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
-
                 $response->setJsonContent(
                     [
                         "status" => "WRONG_DATA",
@@ -61,69 +85,59 @@ class RegisterAPIController extends Controller
                 );
                 return $response;
 
-            } else {
-                //Регистрация прошла успешно
-                $userInfo = new Userinfo();
-                $userInfo->setUserId($user->getUserId());
-                $userInfo->setFirstname($this->request->getPost('firstname'));
-                $userInfo->setLastname($this->request->getPost('lastname'));
-                $userInfo->setMale($this->request->getPost('male'));
-                $userInfo->setExecutor(0);
-
-                if ($userInfo->save() == false) {
-
-                    $this->db->rollback();
-                    $errors = [];
-
-                    foreach ($userInfo->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-
-
-                    $response->setJsonContent(
-                        [
-                            "status" => "WRONG_DATA",
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $setting = new Settings();
-                $setting->setUserId($user->getUserId());
-
-
-                if ($setting->save() == false) {
-
-                    $this->db->rollback();
-                    $errors = [];
-
-                    foreach ($setting->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-
-
-                    $response->setJsonContent(
-                        [
-                            "status" => "WRONG_DATA",
-                            "errors" => $errors
-                        ]
-                    );
-
-                    return $response;
-                }
             }
+
+            $userInfo = new Userinfo();
+            $userInfo->setUserId($user->getUserId());
+            $userInfo->setFirstname($this->request->getPost('firstname'));
+            $userInfo->setLastname($this->request->getPost('lastname'));
+            $userInfo->setMale($this->request->getPost('male'));
+
+            if ($userInfo->save() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($userInfo->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $setting = new Settings();
+            $setting->setUserId($user->getUserId());
+
+
+            if ($setting->save() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($setting->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+
+                return $response;
+            }
+
             $this->db->commit();
+
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
             throw $exception;
         }
     }

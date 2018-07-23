@@ -6,7 +6,10 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class Companies extends \Phalcon\Mvc\Model
+use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
+use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
+
+class Companies extends NotDeletedModel
 {
 
     /**
@@ -407,96 +410,55 @@ class Companies extends \Phalcon\Mvc\Model
 
     public function delete($delete = false, $data = null, $whiteList = null)
     {
-        if (!$delete) {
-            $this->db->begin();
-            $this->setDeleted(true);
-            if (!$this->save()) {
-                $this->db->rollback();
-                return false;
-            }
-            /*$query = $this->modelsManager->createQuery("UPDATE TradePoints SET deleted = true WHERE companyId = :companyId:");
-            $result  = $query->execute(
-                [
-                    'companyId' => $this->getCompanyId()
-                ]
-            );
+        try {
+            // Создаем менеджера транзакций
+            $manager = new TxManager();
+            // Запрос транзакции
+            $transaction = $manager->get();
+            $this->setTransaction($transaction);
+            $result = parent::delete($delete, $data, $whiteList);
 
-            if(!$result){
-
-            }*/
-
-            //каскадное 'удаление' точек оказания услуг
-            $tradePoints = TradePoints::findByCompanyId($this->getCompanyId());
-
-            if (!$tradePoints->delete()) {
-                $this->db->rollback();
-                return false;
+            if (!$result) {
+                $transaction->rollback(
+                    "Невозможно удалить компанию"
+                );
+                return $result;
             }
 
-            //каскадное 'удаление' новостей
-            $news = News::find(['subjectId = :comppanyId: AND typeNew = 1', 'bind' => ['companyId' => $this->getCompanyId()]]);
+            if (!$delete) {
+                //каскадное 'удаление' точек оказания услуг
+                $tradePoints = TradePoints::findByCompanyId($this->getCompanyId());
+                foreach ($tradePoints as $tradePoint)
+                    $tradePoint->setTransaction($transaction);
+                if (!$tradePoints->delete()) {
+                    $transaction->rollback(
+                        "Невозможно удалить точки оказания услуг"
+                    );
+                    return false;
+                }
 
-            if (!$news->delete()) {
-                $this->db->rollback();
-                return false;
-            }
-
-        } else {
-            $result = parent::delete($data, $whiteList);
-            return $result;
-        }
-    }
-
-    public function restore()
-    {
-        $this->setDeleted(false);
-        return $this->save();
-    }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null, $addParamNotDeleted = true)
-    {
-
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
+                //каскадное 'удаление' новостей
+                $news = News::find(["subjectId = :companyId: ANd newType = 1",
+                    'bind' =>
+                        ['companyId' => $this->getCompanyId()
+                        ]]);
+                foreach ($news as $new)
+                    $new->setTransaction($transaction);
+                if (!$news->delete()) {
+                    $transaction->rollback(
+                        "Невозможно удалить новости компании"
+                    );
+                    return false;
+                }
+                $transaction->commit();
+                return true;
             } else {
-                $conditions .= 'deleted != true';
+                $transaction->commit();
+                return $result;
             }
-            $parameters['conditions'] = $conditions;
+        } catch (TxFailed $e) {
+            return false;
         }
-        return parent::find($parameters);
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @$addParamNotDeleted - по умолчанию ищутся только те записи, что не помечены, как удаленные
-     * @return TradePoints|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null, $addParamNotDeleted = true)
-    {
-        if ($addParamNotDeleted) {
-            $conditions = $parameters['conditions'];
-
-            if (trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
-            } else {
-                $conditions .= 'deleted != true';
-            }
-            $parameters['conditions'] = $conditions;
-        }
-
-        return parent::findFirst($parameters);
     }
 
     /**
@@ -509,4 +471,35 @@ class Companies extends \Phalcon\Mvc\Model
         return 'companies';
     }
 
+    public static function checkUserHavePermission($userId, $companyId, $right = null)
+    {
+        $managerRights = ['edit', 'addService', 'editService'];
+
+        $company = Companies::findFirstByCompanyId($companyId);
+        $user = Users::findFirstByUserId($userId);
+
+        if (!$company)
+            return false;
+
+        //владелец и модераторы могут все
+        if ($company->getUserId() == $userId || $user->getRole() == ROLE_MODERATOR) {
+            return true;
+        } else {
+            $companiesManagers = CompaniesManagers::findFirst(
+                ['companyId = :companyId: AND userId = :userId:',
+                    'bind' => ['companyId' => $companyId, 'userId' => $userId]]);
+
+            if (!$companiesManagers)
+                return false;
+
+            if($right == null)
+                return false;
+
+            foreach ($managerRights as $managerRight) {
+                if ($managerRight == $right)
+                    return true;
+            }
+        }
+        return false;
+    }
 }

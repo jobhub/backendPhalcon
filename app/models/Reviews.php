@@ -1,13 +1,16 @@
 <?php
-
-class Reviews extends \Phalcon\Mvc\Model
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
+class Reviews extends NotDeletedModel
 {
 
     /**
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Identity
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $idReview;
 
@@ -21,44 +24,65 @@ class Reviews extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $reviewDate;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=4, nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $executor;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId_object;
+    protected $objectId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId_subject;
+    protected $subjectId;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $raiting;
+    protected $rating;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $fake;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $auctionId;
+    protected $objectType;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $subjectType;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
 
     /**
      * Method to set the value of field idReview
@@ -113,27 +137,27 @@ class Reviews extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field userId_object
+     * Method to set the value of field objectId
      *
-     * @param integer $userId_object
+     * @param integer $objectId
      * @return $this
      */
-    public function setUserIdObject($userId_object)
+    public function setObjectId($objectId)
     {
-        $this->userId_object = $userId_object;
+        $this->objectId = $objectId;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field userId_subject
+     * Method to set the value of field subjectId
      *
-     * @param integer $userId_subject
+     * @param integer $subjectId
      * @return $this
      */
-    public function setUserIdSubject($userId_subject)
+    public function setSubjectId($subjectId)
     {
-        $this->userId_subject = $userId_subject;
+        $this->subjectId = $subjectId;
 
         return $this;
     }
@@ -141,12 +165,51 @@ class Reviews extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field raiting
      *
-     * @param integer $raiting
+     * @param integer $rating
      * @return $this
      */
-    public function setRaiting($raiting)
+    public function setRating($rating)
     {
-        $this->raiting = $raiting;
+        $this->rating = $rating;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field fake
+     *
+     * @param string $fake
+     * @return $this
+     */
+    public function setFake($fake)
+    {
+        $this->fake = $fake;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field objectType
+     *
+     * @param integer $objectType
+     * @return $this
+     */
+    public function setObjectType($objectType)
+    {
+        $this->objectType = $objectType;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field subjectType
+     *
+     * @param integer $subjectType
+     * @return $this
+     */
+    public function setSubjectType($subjectType)
+    {
+        $this->subjectType = $subjectType;
 
         return $this;
     }
@@ -192,23 +255,23 @@ class Reviews extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field userId_object
+     * Returns the value of field objectId
      *
      * @return integer
      */
-    public function getUserIdObject()
+    public function getObjectId()
     {
-        return $this->userId_object;
+        return $this->objectId;
     }
 
     /**
-     * Returns the value of field userId_subject
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getUserIdSubject()
+    public function getSubjectId()
     {
-        return $this->userId_subject;
+        return $this->subjectId;
     }
 
     /**
@@ -216,32 +279,98 @@ class Reviews extends \Phalcon\Mvc\Model
      *
      * @return integer
      */
-    public function getRaiting()
+    public function getRating()
     {
-        return $this->raiting;
+        return $this->rating;
     }
 
     /**
-     * Method to set the value of field auctionId
+     * Returns the value of field fake
      *
-     * @param integer $auctionId
+     * @return string
+     */
+    public function getFake()
+    {
+        return $this->fake;
+    }
+
+    /**
+     * Returns the value of field objectType
+     *
+     * @return integer
+     */
+    public function getObjectType()
+    {
+        return $this->objectType;
+    }
+
+    /**
+     * Returns the value of field subjectType
+     *
+     * @return integer
+     */
+    public function getSubjectType()
+    {
+        return $this->subjectType;
+    }
+
+    /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
      * @return $this
      */
-    public function setAuctionId($auctionId)
+    public function setDeleted($deleted)
     {
-        $this->auctionId = $auctionId;
+        $this->deleted = $deleted;
 
         return $this;
     }
 
     /**
-     * Method to get the value of field auctionId
+     * Returns the value of field deleted
      *
-     * @return int
+     * @return string
      */
-    public function getAuctionId()
+    public function getDeleted()
     {
-        return $this->auctionId;
+        return $this->deleted;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'subjectId',
+            new Callback(
+                [
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($service) {
+                        return Subjects::checkSubjectExists($service->getSubjectId(), $service->getSubjectType());
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'objectId',
+            new Callback(
+                [
+                    "message" => "Объект отзыва не существует",
+                    "callback" => function ($service) {
+                        return Subjects::checkSubjectExists($service->getObjectId(), $service->getObjectType());
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
     }
 
     /**
@@ -249,11 +378,8 @@ class Reviews extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("service_services");
+        //$this->setSchema("public");
         $this->setSource("reviews");
-        $this->belongsTo('userId_object', '\Users', 'userId', ['alias' => 'Users']);
-        $this->belongsTo('userId_subject', '\Users', 'userId', ['alias' => 'Users']);
-        $this->belongsTo('auctionId', '\Auctions', 'auctionId', ['alias' => 'Auctions']);
     }
 
     /**
@@ -265,63 +391,4 @@ class Reviews extends \Phalcon\Mvc\Model
     {
         return 'reviews';
     }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Reviews[]|Reviews|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null)
-    {
-        return parent::find($parameters);
-    }
-
-    public function save($data = null, $whiteList = null)
-    {
-        $result = parent::save($data, $whiteList);
-
-        if($result) {
-            $reviews = Reviews::find(["userId_object = :userId_object: and executor = :executor:",
-                "bind" => ["userId_object" => $this->getUserIdObject(), "executor" => $this->getExecutor()]]);
-            $userinfo = Userinfo::findFirstByUserId($this->getUserIdObject());
-
-            if ($this->getExecutor() == 1)
-                $sum = $userinfo->getRaitingExecutor();
-            else
-                $sum = $userinfo->getRaitingClient();
-
-            $sum = (($this->getRaiting() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
-
-            if ($this->getExecutor() == 1)
-                $userinfo->setRaitingExecutor($sum);
-            else
-                $userinfo->setRaitingClient($sum);
-
-            $userinfo->save();
-
-            //
-
-            $new = new News();
-            $new->setNewType(2);
-            $new->setIdentify($this->getIdReview());
-            $new->setDate(date("Y-m-d H:i:s"));
-
-            $new->save();
-        }
-        return $result;
-    }
-
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Reviews|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null)
-    {
-        return parent::findFirst($parameters);
-    }
-
 }

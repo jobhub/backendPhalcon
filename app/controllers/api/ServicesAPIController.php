@@ -16,18 +16,19 @@ class ServicesAPIController extends Controller
      *
      * @method GET
      *
-     * @param $companyId
-     *
+     * @param $subjectId
+     * @param $subjectType
      * @return string - json array услуг (Services).
      */
-    public function getServicesForCompanyAction($companyId)
+    public function getServicesForSubjectAction($subjectId, $subjectType)
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
 
-            $services = Services::findByCompanyId($companyId);
+            $services = Services::find(['subjectId = :subjectId: AND subjectType = :subjectType:',
+                'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType]]);
 
             return json_encode($services);
-        }else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
@@ -45,14 +46,14 @@ class ServicesAPIController extends Controller
      */
     public function deleteServiceAction($serviceId)
     {
-        if($this->request->isDelete()){
+        if ($this->request->isDelete()) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
             $service = Services::findFirstByServiceId($serviceId);
 
-            if(!$service){
+            if (!$service) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -62,9 +63,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $company = Companies::findFirstByCompanyId($service->getCompanyId());
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -74,14 +73,14 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if(!$service->delete()){
+            if (!$service->delete()) {
                 foreach ($service->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
 
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -90,12 +89,11 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
@@ -107,18 +105,20 @@ class ServicesAPIController extends Controller
      *
      * @method PUT
      *
-     * @param serviceId, description, priceMin, priceMax (или же вместо них просто price)
+     * @params serviceId , description, priceMin, priceMax (или же вместо них просто price)
+     * @params (необязательные) companyId или userId.
      * @return Response - с json массивом в формате Status
      */
-    public function editServiceAction(){
-        if($this->request->isPut() && $this->session->get('auth')){
+    public function editServiceAction()
+    {
+        if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
             $service = Services::findFirstByServiceId($this->request->getPut("serviceId"));
 
-            if(!$service){
+            if (!$service) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -128,9 +128,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $company = Companies::findFirstByCompanyId($service->getCompanyId());
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -140,11 +138,19 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
+            if ($this->request->getPost("companyId")) {
+                $service->setSubjectId($this->request->getPost("companyId"));
+                $service->setSubjectType(1);
+            } else if($this->request->getPost("userId")){
+                $service->setSubjectId($this->request->getPost("userId"));
+                $service->setSubjectType(0);
+            }
+
             $service->setDescription($this->request->getPut("description"));
-            if($this->request->getPut("price")){
+            if ($this->request->getPut("price")) {
                 $service->setPriceMin($this->request->getPut("price"));
                 $service->setPriceMax($this->request->getPut("price"));
-            } else{
+            } else {
                 $service->setPriceMin($this->request->getPut("priceMin"));
                 $service->setPriceMax($this->request->getPut("priceMax"));
             }
@@ -155,7 +161,7 @@ class ServicesAPIController extends Controller
                 }
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -164,13 +170,12 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
 
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
@@ -178,7 +183,7 @@ class ServicesAPIController extends Controller
     }
 
     /**
-     * Добавляет новую услугу к компании
+     * Добавляет новую услугу к субъекту
      *
      * @method POST
      *
@@ -187,7 +192,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function addServiceAction(){
+    public function addServiceAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
             $response = new Response();
@@ -195,25 +201,32 @@ class ServicesAPIController extends Controller
             $userId = $auth['id'];
             $service = new Services();
 
-            $company = Companies::findFirstByCompanyId($this->request->getPost("companyId"));
+            if ($this->request->getPost("companyId")) {
+                if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
+                    'addService')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
 
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+                $service->setSubjectId($this->request->getPost("companyId"));
+                $service->setSubjectType(1);
+
+            } else {
+                $service->setSubjectId($userId);
+                $service->setSubjectType(0);
             }
 
-            $service->setCompanyId($this->request->getPost("companyId"));
             $service->setDescription($this->request->getPost("description"));
 
-            if($this->request->getPost("price")){
+            if ($this->request->getPost("price")) {
                 $service->setPriceMin($this->request->getPost("price"));
                 $service->setPriceMax($this->request->getPost("price"));
-            } else{
+            } else {
                 $service->setPriceMin($this->request->getPost("priceMin"));
                 $service->setPriceMax($this->request->getPost("priceMax"));
             }
@@ -227,7 +240,7 @@ class ServicesAPIController extends Controller
                 }
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -236,13 +249,12 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
 
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
@@ -258,7 +270,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function linkServiceWithPointAction(){
+    public function linkServiceWithPointAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
             $response = new Response();
@@ -267,7 +280,7 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceId($this->request->getPost("serviceId"));
 
-            if(!$service){
+            if (!$service) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -277,9 +290,8 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $company = Companies::findFirstByCompanyId($service->getCompanyId());
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+                'linkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -300,7 +312,7 @@ class ServicesAPIController extends Controller
                 }
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -309,13 +321,12 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
 
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;
@@ -332,7 +343,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function unlinkServiceAndPointAction($serviceId, $pointId){
+    public function unlinkServiceAndPointAction($serviceId, $pointId)
+    {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
@@ -340,7 +352,7 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceId($serviceId);
 
-            if(!$service){
+            if (!$service) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -350,9 +362,8 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $company = Companies::findFirstByCompanyId($service->getCompanyId());
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+                'unlinkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -363,9 +374,9 @@ class ServicesAPIController extends Controller
             }
 
             $servicePoint = ServicesPoints::findFirst(['serviceId = :serviceId: AND pointId = :pointId:',
-                'bind' => ['serviceId' => $serviceId , 'pointId' => $pointId]]);
+                'bind' => ['serviceId' => $serviceId, 'pointId' => $pointId]]);
 
-            if(!$servicePoint){
+            if (!$servicePoint) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -382,7 +393,7 @@ class ServicesAPIController extends Controller
                 }
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -391,13 +402,12 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
 
-        }
-        else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
             throw $exception;

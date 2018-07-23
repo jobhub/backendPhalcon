@@ -1,5 +1,9 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
+
 class Userinfo extends \Phalcon\Mvc\Model
 {
 
@@ -60,20 +64,14 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $about;
 
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=4, nullable=false)
-     */
-    protected $executor;
 
 
     /**
      * @var integer
      * @Column(type="tyniint", length=4, nullable=false)
      */
-    protected $raitingExecutor;
-    protected $raitingClient;
+    protected $ratingExecutor;
+    protected $ratingClient;
     protected $pathToPhoto;
     /**
      * Method to set the value of field userId
@@ -150,7 +148,12 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setMale($male)
     {
-        $this->male = $male;
+        if($male == 'мужской' || $male == 'Мужской')
+            $this->male = 1;
+        else if($male == 'женский' || $male == 'Женский')
+            $this->male = 0;
+        else
+            $this->male = $male;
 
         return $this;
     }
@@ -181,28 +184,16 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this;
     }
 
-    /**
-     * Method to set the value of field executor
-     *
-     * @param integer $executor
-     * @return $this
-     */
-    public function setExecutor($executor)
+
+    public function setRatingExecutor($ratingExecutor)
     {
-        $this->executor = $executor;
+        $this->ratingExecutor = $ratingExecutor;
 
         return $this;
     }
-
-    public function setRaitingExecutor($raitingExecutor)
+    public function setRatingClient($ratingClient)
     {
-        $this->raitingExecutor = $raitingExecutor;
-
-        return $this;
-    }
-    public function setRaitingClient($raitingClient)
-    {
-        $this->raitingClient = $raitingClient;
+        $this->ratingClient = $ratingClient;
 
         return $this;
     }
@@ -276,10 +267,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function getMale()
     {
-        if($this->male==0)
-        return 'женский';
-        else
-            return 'мужской';
+        return $this->male;
     }
 
     /**
@@ -302,26 +290,56 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this->about;
     }
 
-    /**
-     * Returns the value of field executor
-     *
-     * @return integer
-     */
-    public function getExecutor()
+    public function getRatingExecutor()
     {
-        return $this->executor;
+        return $this->ratingExecutor;
     }
-    public function getRaitingExecutor()
+    public function getRatingClient()
     {
-        return $this->raitingExecutor;
-    }
-    public function getRaitingClient()
-    {
-        return $this->raitingClient;
+        return $this->ratingClient;
     }
     public function getPathToPhoto()
     {
         return $this->pathToPhoto;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'firstname',
+            new PresenceOf(
+                [
+                    "message" => "Требуется указать имя пользователя",
+                ]
+            )
+        );
+
+        $validator->add(
+            'lastname',
+            new PresenceOf(
+                [
+                    "message" => "Требуется указать фамилию пользователя",
+                ]
+            )
+        );
+
+        $validator->add(
+            'male',
+            new PresenceOf(
+                [
+                    "message" => "Требуется указать пол",
+                ]
+            )
+        );
+
+        return $this->validate($validator);
     }
 
     /**
@@ -331,7 +349,6 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->hasMany('userId', 'Settings', 'userId', ['alias' => 'Settings']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
     }
 

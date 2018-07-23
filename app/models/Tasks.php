@@ -4,10 +4,9 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends \Phalcon\Mvc\Model
+class Tasks extends NotDeletedModel
 {
     /**
-     *
      * @var integer
      * @Primary
      * @Identity
@@ -20,7 +19,7 @@ class Tasks extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId;
+    protected $subjectId;
 
     /**
      *
@@ -80,10 +79,31 @@ class Tasks extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=true)
+     * @var string
+     * @Column(type="string", nullable=true)
      */
-    protected $pointId;
+    protected $deleted;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=true)
+     */
+    protected $longitude;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=true)
+     */
+    protected $latitude;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $subjectType;
 
     /**
      * Method to set the value of field taskId
@@ -99,14 +119,21 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field subjectId
      *
-     * @param integer $userId
+     * @param integer $subjectId
      * @return $this
      */
-    public function setUserId($userId)
+    public function setSubjectId($subjectId)
     {
-        $this->userId = $userId;
+        $this->subjectId = $subjectId;
+
+        return $this;
+    }
+
+    public function setSubjectType($subjectType)
+    {
+        $this->subjectType = $subjectType;
 
         return $this;
     }
@@ -216,14 +243,40 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field pointId
+     * Method to set the value of field deleted
      *
-     * @param integer $pointId
+     * @param string $deleted
      * @return $this
      */
-    public function setPointId($pointId)
+    public function setDeleted($deleted)
     {
-        $this->pointId = $pointId;
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field longitude
+     *
+     * @param string $longitude
+     * @return $this
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field latitude
+     *
+     * @param string $latitude
+     * @return $this
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
 
         return $this;
     }
@@ -239,13 +292,23 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getUserId()
+    public function getSubjectId()
     {
-        return $this->userId;
+        return $this->subjectId;
+    }
+
+    /**
+     * Returns the value of field subjectId
+     *
+     * @return integer
+     */
+    public function getSubjectType()
+    {
+        return $this->subjectType;
     }
 
     /**
@@ -329,13 +392,33 @@ class Tasks extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field pointId
+     * Returns the value of field deleted
      *
-     * @return integer
+     * @return string
      */
-    public function getPointId()
+    public function getDeleted()
     {
-        return $this->pointId;
+        return $this->deleted;
+    }
+
+    /**
+     * Returns the value of field longitude
+     *
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
+
+    /**
+     * Returns the value of field latitude
+     *
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
     }
 
     /**
@@ -348,14 +431,22 @@ class Tasks extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userId',
+            'subjectId',
             new Callback(
                 [
-                    "message" => "Такой пользователь не существует",
-                    "callback" => function ($request) {
-                        $user = Users::findFirstByUserId($request->getUserId());
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($task) {
+                    if($task->getSubjectType() == 0) {
+                        $user = Users::findFirstByUserId($task->getSubjectId());
                         if ($user)
                             return true;
+                        return false;
+                    } else if($task->getSubjectType() == 1){
+                        $company = Companies::findFirstByCompanyId($task->getSubjectId());
+                        if ($company)
+                            return true;
+                        return false;
+                    } else
                         return false;
                     }
                 ]
@@ -366,11 +457,11 @@ class Tasks extends \Phalcon\Mvc\Model
             'categoryId',
             new Callback(
                 [
-                    "message" => "Такая услуга не существует",
-                    "callback" => function ($request) {
-                        $service = Services::findFirstByServiceId($request->getServiceId());
+                    "message" => "Такая категория не существует или она не является дочерней",
+                    "callback" => function ($task) {
+                        $category = Categories::findFirstByCategoryId($task->getCategoryId());
 
-                        if ($service)
+                        if ($category && ($category->getParentId() == null || $category->getParentId() == 0))
                             return true;
                         return false;
                     }
@@ -383,13 +474,73 @@ class Tasks extends \Phalcon\Mvc\Model
             new Callback([
                 "message" => "Поле статус имеет неверное значение. Должно быть одно из следующих:\n0 - запрос в рассмотрении;\n
                 1 - запрос выполняется;\n, 2 - запрос отклонен;\n, 3 - запрос выполнен;\n 4 - запрос не выполнен.",
-                'callback' => function ($request) {
-                    if($request->getStatus() < 0 || $request->getStatus() > 4)
+                'callback' => function ($task) {
+                    if ($task->getStatus() < 0 || $task->getStatus() > 4)
                         return false;
                     return true;
                 }
             ])
         );
+
+        if($this->getLatitude() != null) {
+            $validator->add(
+                'latitude',
+                new Callback([
+                    "message" => "Не указана долгота",
+                    'callback' => function ($task) {
+                        if($task->getLongitude() == null)
+                            return false;
+                        return true;
+                    }
+                ])
+            );
+        }
+
+        if($this->getLongitude() != null) {
+            $validator->add(
+                'longitude',
+                new Callback([
+                    "message" => "Не указана широта",
+                    'callback' => function ($task) {
+                        if($task->getLatitude() == null)
+                            return false;
+                        return true;
+                    }
+                ])
+            );
+        }
+
+        $validator->add(
+            'name',
+            new PresenceOf([
+                "message" => "Должно быть указано название задания"
+            ])
+        );
+
+        $validator->add(
+            'price',
+            new PresenceOf([
+                "message" => "Цена должна быть указана"
+            ])
+        );
+
+        if ($this->getRegionId() != null) {
+            $validator->add(
+                'regionId',
+                new Callback(
+                    [
+                        "message" => "Указанный регион не существует",
+                        "callback" => function ($task) {
+                            $region = Regions::findFirstByRegionId($task->getRegionId());
+
+                            if ($region)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
 
         return $this->validate($validator);
     }
@@ -402,7 +553,6 @@ class Tasks extends \Phalcon\Mvc\Model
         //$this->setSchema("public");
         $this->setSource("tasks");
         $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
-        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'Tradepoints']);
         $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
         $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
         $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
@@ -418,26 +568,36 @@ class Tasks extends \Phalcon\Mvc\Model
         return 'tasks';
     }
 
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Tasks[]|Tasks|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null)
+    public static function checkUserHavePermission($userId, $taskId, $right = null)
     {
-        return parent::find($parameters);
-    }
+        $task = Tasks::findFirstByTaskId($taskId);
+        $user = Users::findFirstByUserId($userId);
 
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Tasks|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null)
-    {
-        return parent::findFirst($parameters);
-    }
+        if (!$task)
+            return false;
 
+        if ($task->getSubjectType() == 1) {
+            //Предложение компании
+            $rightCompany = 'Tasks';
+            if($right == 'delete')
+                $rightCompany = 'deleteTask';
+            else if($right == 'get')
+                $rightCompany = 'getTasks';
+            else if($right == 'edit')
+                $rightCompany = 'editTask';
+            else if($right == 'getOffers')
+                $rightCompany = 'getOffersForTask';
+
+            if (!Companies::checkUserHavePermission($userId, $task->getSubjectId(), $rightCompany)) {
+                return false;
+            }
+            return true;
+        } else if ($task->getSubjectType() == 0) {
+            if ($task->getSubjectId() != $userId && $user->getRole() != ROLE_MODERATOR) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 }

@@ -15,7 +15,7 @@ class RequestsAPIController extends Controller
      * @method POST
      *
      * @params serviceId, description, dateEnd.
-     *
+     * @params (необязательный) companyId
      * @return Response с json массивом в формате Status
      */
     public function addRequestAction()
@@ -27,10 +27,29 @@ class RequestsAPIController extends Controller
 
             $request = new Requests();
 
+            if ($this->request->getPost("companyId")) {
+                if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
+                    'addRequest')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $request->setSubjectId($this->request->getPost("companyId"));
+                $request->setSubjectType(1);
+
+            } else {
+                $request->setSubjectId($userId);
+                $request->setSubjectType(0);
+            }
+
             $request->setServiceId($this->request->getPost("serviceId"));
-            $request->setUserId($userId);
             $request->setDescription($this->request->getPost("description"));
-            $request->setDateEnd(date('Y-m-d H:i:s',strtotime($this->request->getPost("dateEnd"))));
+            $request->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPost("dateEnd"))));
 
             if (!$request->save()) {
                 $errors = [];
@@ -39,7 +58,7 @@ class RequestsAPIController extends Controller
                 }
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -48,7 +67,7 @@ class RequestsAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
@@ -77,10 +96,12 @@ class RequestsAPIController extends Controller
 
             $request = Requests::findFirstByRequestId($requestId);
 
-            if (!request || ($request->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!$request ||
+                (!Subjects::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                    'deleteRequest'))) {
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => ['permission error']
                     ]
                 );
@@ -95,7 +116,7 @@ class RequestsAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -104,7 +125,7 @@ class RequestsAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]
             );
             return $response;
@@ -121,7 +142,7 @@ class RequestsAPIController extends Controller
      *
      * @method PUT
      *
-     * @params requestId, description, dateEnd
+     * @params requestId, description, dateEnd, (необязательные)companyId, userId
      * @return Response с json массивом в формате Status
      */
     public function editRequestAction()
@@ -133,18 +154,28 @@ class RequestsAPIController extends Controller
 
             $request = Requests::findFirstByRequestId($this->request->getPut('requestId'));
 
-            if (!$request || ($request->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!$request ||
+                (!Subjects::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                    'editRequest'))) {
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => ['permission error']
                     ]
                 );
                 return $response;
             }
+            if ($this->request->getPut('companyId')) {
+                $request->setSubjectId($this->request->getPut("companyId"));
+                $request->setSubjectType(1);
+
+            } else if ($this->request->getPut('userId')) {
+                $request->setSubjectId($this->request->getPut('userId'));
+                $request->setSubjectType(0);
+            }
 
             $request->setDescription($this->request->getPut('description'));
-            $request->setDateEnd(date('Y-m-d H:i:s',strtotime($this->request->getPut('dateEnd'))));
+            $request->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPut('dateEnd'))));
 
             if (!$request->save()) {
                 $errors = [];
@@ -154,7 +185,7 @@ class RequestsAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA",
+                        "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
@@ -163,7 +194,58 @@ class RequestsAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Редактирует заявку
+     *
+     * @method GET
+     *
+     * @param $companyId(необязательный)
+     * @return string - json массив с объектами Requests и Status-ом
+     */
+    public function getRequestsAction($companyId = null)
+    {
+        if ($this->request->isGet() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            if($companyId == null){
+                $subjectId = $userId;
+                $subjectType = 0;
+            } else{
+                $subjectId = $companyId;
+                $subjectType = 1;
+            }
+            if (!Subjects::checkUserHavePermission($userId, $subjectId, $subjectType,
+                    'getRequests')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $requests = Requests::find(['subjectId = :subjectId: AND subjectType = :subjectType:',
+                'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType]]);
+
+            $response->setJsonContent(
+                [
+                    'status' => STATUS_OK,
+                    'requests' => $requests
                 ]
             );
             return $response;

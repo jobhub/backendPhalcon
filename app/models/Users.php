@@ -2,8 +2,10 @@
 
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
 
-class Users extends \Phalcon\Mvc\Model
+class Users extends NotDeletedModel
 {
 
     /**
@@ -24,10 +26,10 @@ class Users extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var string
-     * @Column(type="string", length=20, nullable=false)
+     * @var integer
+     * @Column(type="integer", nullable=false)
      */
-    protected $phone;
+    protected $phoneId;
 
     /**
      *
@@ -42,6 +44,13 @@ class Users extends \Phalcon\Mvc\Model
      * @Column(type="string", nullable=false)
      */
     protected $role;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
 
     /**
      * Method to set the value of field userId
@@ -70,14 +79,14 @@ class Users extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field phone
+     * Method to set the value of field phoneId
      *
-     * @param string $phone
+     * @param integer $phoneId
      * @return $this
      */
-    public function setPhone($phone)
+    public function setPhoneId($phoneId)
     {
-        $this->phone = $phone;
+        $this->phoneId = $phoneId;
 
         return $this;
     }
@@ -129,13 +138,13 @@ class Users extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field phone
+     * Returns the value of field phoneId
      *
-     * @return string
+     * @return integer
      */
-    public function getPhone()
+    public function getPhoneId()
     {
-        return $this->phone;
+        return $this->phoneId;
     }
 
     /**
@@ -159,6 +168,29 @@ class Users extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -177,6 +209,46 @@ class Users extends \Phalcon\Mvc\Model
             )
         );
 
+        $validator->add(
+            'phoneId',
+            new Callback(
+                [
+                    "message" => "Телефон не был создан",
+                    "callback" => function($user) {
+                        $phone = Phones::findFirstByPhoneId($user->getPhoneId());
+
+                        if($phone)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'password',
+            new Callback(
+                [
+                    "message" => "Пароль должен содержать не менее 6 символов",
+                    "callback" => function($user) {
+
+                        if($user->getPassword()!= null && strlen($user->getPassword()) >= 6)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'role',
+            new PresenceOf(
+                [
+                    "message" => "Не указана роль пользователя",
+                ]
+            )
+        );
+
         return $this->validate($validator);
     }
 
@@ -189,13 +261,8 @@ class Users extends \Phalcon\Mvc\Model
         $this->setSource("users");
         $this->hasMany('userId', 'Favoritecategories', 'userId', ['alias' => 'Favoritecategories']);
         $this->hasMany('userId', 'Logs', 'userId', ['alias' => 'Logs']);
-        $this->hasMany('userId', 'Offers', 'userId', ['alias' => 'Offers']);
-        $this->hasMany('userId', 'Tasks', 'userId', ['alias' => 'Tasks']);
         $this->hasOne('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
-        $this->hasMany('userId', 'Reviews','userId_subject', ['alias'=>'Reviews']);
-        $this->hasMany('userId', 'Reviews','userId_object', ['alias'=>'Reviews']);
-
-
+        $this->belongsTo('phoneId', 'Phones', 'phoneId', ['alias' => 'Phones']);
     }
 
     /**
@@ -206,28 +273,6 @@ class Users extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'users';
-    }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Users[]|Users|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null)
-    {
-        return parent::find($parameters);
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return Users|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null)
-    {
-        return parent::findFirst($parameters);
     }
 
     public function getFinishedTasks()
