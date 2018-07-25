@@ -1,11 +1,76 @@
 <?php
 
-class NotDeletedModel extends \Phalcon\Mvc\Model
+class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
 {
-    public function delete($delete = false, $data = null, $whiteList = null)
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deleted;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $deletedCascade;
+
+    /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Method to set the value of field deleted
+     *
+     * @param string $deletedCascade
+     * @return $this
+     */
+    public function setDeletedCascade($deletedCascade)
+    {
+        $this->deletedCascade = $deletedCascade;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field deleted
+     *
+     * @return string
+     */
+    public function getDeletedCascade()
+    {
+        return $this->deletedCascade;
+    }
+
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         if (!$delete) {
             $this->setDeleted(true);
+            if($deletedCascade){
+                $this->setDeletedCascade(true);
+            } else{
+                $this->setDeletedCascade(false);
+            }
             return $this->save();
         } else {
             $result = parent::delete($data, $whiteList);
@@ -16,6 +81,7 @@ class NotDeletedModel extends \Phalcon\Mvc\Model
     public function restore()
     {
         $this->setDeleted(false);
+        $this->setDeletedCascade(false);
         return $this->save();
     }
 
@@ -42,7 +108,6 @@ class NotDeletedModel extends \Phalcon\Mvc\Model
                     $conditions .= 'deleted != true';
                 else
                     $conditions = 'deleted != true';
-
             }
 
             if(isset($parameters['conditions']))

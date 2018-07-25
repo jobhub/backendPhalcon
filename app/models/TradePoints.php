@@ -6,7 +6,7 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class TradePoints extends NotDeletedModel
+class TradePoints extends NotDeletedModelWithCascade
 {
 
     /**
@@ -86,13 +86,6 @@ class TradePoints extends NotDeletedModel
      * @Column(type="string", length=150, nullable=true)
      */
     protected $address;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      * Method to set the value of field pointId
@@ -345,29 +338,6 @@ class TradePoints extends NotDeletedModel
     public function getAddress()
     {
         return $this->address;
-    }
-
-    /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**

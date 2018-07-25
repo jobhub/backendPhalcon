@@ -332,4 +332,59 @@ class CompaniesAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Восстанавливает компанию
+     *
+     * @method POST
+     *
+     * @param companyId
+     *
+     * @return string - json array - объект Status - результат операции
+     */
+    public function restoreCompanyAction(){
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $company = Companies::findFirst(['companyId = :companyId:',
+                'bind' => ['companyId' => $this->request->getPost('companyId')]], false);
+
+            if(!$company || !Companies::checkUserHavePermission($userId,$company->getCompanyId(),'restoreCompany')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if(!$company->restore()){
+                $errors = [];
+                foreach ($company->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }

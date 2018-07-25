@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Offers extends NotDeletedModel
+class Offers extends NotDeletedModelWithCascade
 {
 
     /**
@@ -58,12 +58,6 @@ class Offers extends NotDeletedModel
      */
     protected $selected;
 
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      *
@@ -248,29 +242,6 @@ class Offers extends NotDeletedModel
     public function getSelected()
     {
         return $this->selected;
-    }
-
-    /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**

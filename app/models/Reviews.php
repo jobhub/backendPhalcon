@@ -2,7 +2,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
-class Reviews extends NotDeletedModel
+class Reviews extends NotDeletedModelWithCascade
 {
 
     /**
@@ -77,12 +77,6 @@ class Reviews extends NotDeletedModel
      */
     protected $subjectType;
 
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      * Method to set the value of field idReview
@@ -312,29 +306,6 @@ class Reviews extends NotDeletedModel
     public function getSubjectType()
     {
         return $this->subjectType;
-    }
-
-    /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**

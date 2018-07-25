@@ -3,7 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class News extends NotDeletedModel
+class News extends NotDeletedModelWithCascade
 {
 
     /**
@@ -42,13 +42,6 @@ class News extends NotDeletedModel
      * @Column(type="string", nullable=true)
      */
     protected $newText;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      * Method to set the value of field newId
@@ -163,29 +156,6 @@ class News extends NotDeletedModel
     public function getNewText()
     {
         return $this->newText;
-    }
-
-    /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**

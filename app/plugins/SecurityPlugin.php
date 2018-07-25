@@ -58,7 +58,7 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create','delete','enter','viewing','show','choice'],
                 'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
                 'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
-                'userinfoAPI' => ['index', 'settings', 'about', 'handler'],
+                'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser'],
 
                 'tenderAPI' => ['delete'],
                 'reviewsAPI' => ['index', 'addReview'],
@@ -71,7 +71,7 @@ class SecurityPlugin extends Plugin
                 'NewsAPI' => ['getNews' ,'addNew' ,'deleteNew' ,'editNew' ,'getOwnNews', 'getSubjectNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
 
-                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager'],
+                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager' , 'restoreCompany'],
 
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
                     'deletePhoneFromTradePoint','editPhoneInTradePoint','editPhoneInCompany', 'test'],
@@ -119,7 +119,7 @@ class SecurityPlugin extends Plugin
                 'auctions'      => ['index'],
                 'registerAPI'      => ['index'],
                 'sessionAPI'      => ['index'],
-                'categoriesAPI' => ['index', 'getCategories'],
+                'categoriesAPI' => ['index' ,'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
 
                 'CompaniesAPI' => ['getCompanies',],

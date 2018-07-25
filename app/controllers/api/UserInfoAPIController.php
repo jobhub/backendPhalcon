@@ -114,7 +114,7 @@ class UserinfoAPIController extends Controller
                 $response->setJsonContent(
                     [
                         "errors" => $errors,
-                        "status" => "FAIL"
+                        "status" => STATUS_WRONG
                     ]);
 
                 return $response;
@@ -295,5 +295,114 @@ class UserinfoAPIController extends Controller
             ]
         );
         return $response;
+    }
+
+    /**
+     * Удаляет пользователя
+     *
+     * @method DELETE
+     *
+     * @param $userId
+     *
+     * @return string - json array - объект Status - результат операции
+     */
+    public function deleteUserAction($userId){
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $currentUserId = $auth['id'];
+            $response = new Response();
+
+            $user = Users::findFirst(['userId = :userId:',
+                'bind' => ['userId' => $userId]]);
+
+            if(!$user || !Subjects::checkUserHavePermission($currentUserId,$userId,0,'deleteUser')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if(!$user->delete()){
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+    /**
+     * Восстанавливает пользователя
+     *
+     * @method POST
+     *
+     * @param userId
+     *
+     * @return string - json array - объект Status - результат операции
+     */
+    public function restoreUserAction(){
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $user = Users::findFirst(['userId = :userId:',
+                'bind' => ['userId' => $this->request->getPost('userId')]], false);
+
+            if(!$user || !Subjects::checkUserHavePermission($userId,$user->getUserId(),0,'restoreCompany')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if(!$user->restore()){
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
     }
 }

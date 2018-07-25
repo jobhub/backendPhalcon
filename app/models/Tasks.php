@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends NotDeletedModel
+class Tasks extends NotDeletedModelWithCascade
 {
     /**
      * @var integer
@@ -76,13 +76,6 @@ class Tasks extends NotDeletedModel
      * @Column(type="integer", length=32, nullable=true)
      */
     protected $regionId;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      *
@@ -243,19 +236,6 @@ class Tasks extends NotDeletedModel
     }
 
     /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
      * Method to set the value of field longitude
      *
      * @param string $longitude
@@ -389,16 +369,6 @@ class Tasks extends NotDeletedModel
     public function getRegionId()
     {
         return $this->regionId;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**

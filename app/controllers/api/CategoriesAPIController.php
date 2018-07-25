@@ -150,13 +150,13 @@ class CategoriesAPIController extends Controller
     }
 
     /**
-     * Возвращает категории
+     * Возвращает категории в удобном для сайта виде
      *
      * @method GET
      *
      * @return string - json array с категориями
      */
-    public function getCategoriesAction()
+    public function getCategoriesForSiteAction()
     {
         if ($this->request->isGet()) {
 

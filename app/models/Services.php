@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Callback;
 
-class Services extends NotDeletedModel
+class Services extends NotDeletedModelWithCascade
 {
     /**
      *
@@ -48,13 +48,6 @@ class Services extends NotDeletedModel
      * @Column(type="integer", length=32, nullable=true)
      */
     protected $priceMax;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
 
     /**
      *
@@ -149,19 +142,6 @@ class Services extends NotDeletedModel
     }
 
     /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
      * Returns the value of field serviceId
      *
      * @return integer
@@ -229,16 +209,6 @@ class Services extends NotDeletedModel
     public function getPriceMax()
     {
         return $this->priceMax;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
 
