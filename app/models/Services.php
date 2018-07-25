@@ -57,6 +57,13 @@ class Services extends NotDeletedModelWithCascade
     protected $subjectType;
 
     /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $regionId;
+
+    /**
      * Method to set the value of field serviceId
      *
      * @param integer $serviceId
@@ -139,6 +146,29 @@ class Services extends NotDeletedModelWithCascade
         $this->priceMax = $priceMax;
 
         return $this;
+    }
+
+    /**
+     * Method to set the value of field regionId
+     *
+     * @param integer $regionId
+     * @return $this
+     */
+    public function setRegionId($regionId)
+    {
+        $this->regionId = $regionId;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field regionId
+     *
+     * @return integer
+     */
+    public function getRegionId()
+    {
+        return $this->regionId;
     }
 
     /**
@@ -247,6 +277,32 @@ class Services extends NotDeletedModelWithCascade
             )
         );
 
+        //под вопросом. Могут быть проблемы, если указывать id при создании
+        //А так, если id уже есть, предполагается, что услуга ранее была создана
+        if($this->getServiceId() != null)
+        $validator->add(
+            'regionId',
+            new Callback(
+                [
+                    "message" => "Для услуги должна быть указана точка (точки) продаж или, хотя бы, регион",
+                    "callback" => function ($service) {
+                        if ($service->getRegionId() != null) {
+                            $region = Regions::findFirstByRegionId($service->getRegionId());
+
+                            if ($region)
+                                return true;
+                            return false;
+                        }
+
+                        $servicesPoints = ServicesPoints::findFirstByServiceId($service->getServiceId());
+                        if ($servicesPoints)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
 
         $validator->add(
             "datePublication",
@@ -268,6 +324,7 @@ class Services extends NotDeletedModelWithCascade
         //$this->setSchema("public");
         $this->setSource("services");
         $this->hasMany('serviceId', 'ServicesPoints', 'serviceId', ['alias' => 'ServicesPoints']);
+        $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
     }
 
     /**

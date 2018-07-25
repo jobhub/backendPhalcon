@@ -15,7 +15,7 @@ class TasksAPIController extends Controller
      *
      * @method POST
      *
-     * @params (обязательные) categoryId, name, price.
+     * @params (обязательные) categoryId, name, price, dateEnd.
      * @params (необязательные) companyId, description, deadline, polygon, regionId, longitude, latitude.
      *
      * @return string - json array  формате Status
@@ -53,11 +53,13 @@ class TasksAPIController extends Controller
             $task->setDescription($this->request->getPost("description"));
             $task->setDeadline(date('Y-m-d H:i:s', strtotime($this->request->getPost("deadline"))));
             $task->setPrice($this->request->getPost("price"));
-            $task->setStatus(STATUS_WAIT);
+            $task->setStatus(STATUS_ACCEPTING);
             $task->setPolygon($this->request->getPost("polygon"));
             $task->setRegionId($this->request->getPost("regionId"));
             $task->setLatitude($this->request->getPost("latitude"));
             $task->setLongitude($this->request->getPost("longitude"));
+            $task->setDateStart(date('Y-m-d H:i:s'));
+            $task->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPost("dateEnd"))));
 
             if (!$task->save()) {
                 $errors = [];
@@ -155,7 +157,7 @@ class TasksAPIController extends Controller
             $userId = $auth['id'];
 
             $tasks = Tasks::find(["subjectId = :subjectId: AND subjectType = 0 AND status = :status:",
-                "bind" => ["subjectId" => $userId, 'status' => STATUS_WAIT],
+                "bind" => ["subjectId" => $userId, 'status' => STATUS_ACCEPTING],
                 "order" => "status ASC"]);
 
             return json_encode($tasks);
@@ -234,7 +236,7 @@ class TasksAPIController extends Controller
      * Редактирование задания
      *
      * @method PUT
-     * @params (обязательные) taskId, categoryId, name, price.
+     * @params (обязательные) taskId, categoryId, name, price, dateEnd.
      * @params (необязательные)  description, deadline, polygon, regionId, longitude, latitude.
      * @return string - json array в формате Status
      */
@@ -275,8 +277,10 @@ class TasksAPIController extends Controller
             $task->setRegionId($this->request->getPut("regionId"));
             $task->setLatitude($this->request->getPut("latitude"));
             $task->setLongitude($this->request->getPut("longitude"));
+            $task->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPut("dateEnd"))));
 
             if (!$task->save()) {
+                $errors = [];
                 foreach ($task->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -306,6 +310,7 @@ class TasksAPIController extends Controller
 
     /**
      * Выбирает предложение для выполнения заказа
+     *
      * @method POST
      * @params taskId, offerId
      * @return string - json array в формате Status
@@ -316,7 +321,8 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if(!Tasks::checkUserHavePermission($userId,$this->request->getPost('taskId'),'selectOffer')){
+            $task = Tasks::findFirstByTaskId($this->request->getPost('taskId'));
+            if(!Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -328,7 +334,7 @@ class TasksAPIController extends Controller
 
             $offer = Offers::findFirstByOfferId($this->request->getPost('offerId'));
 
-            if(!$offer || $offer->getTaskId()!= $this->request->getPost('taskId')){
+            if(!$offer || $offer->getTaskId() != $this->request->getPost('taskId')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -339,8 +345,10 @@ class TasksAPIController extends Controller
             }
 
             $offer->setSelected(true);
+
             $task = $offer->tasks;
-            $task->setStatus(STATUS_EXECUTING);
+
+            $task->setStatus(STATUS_WAITING_CONFIRM);
             $this->db->begin();
 
             if (!$offer->save()) {
@@ -374,6 +382,136 @@ class TasksAPIController extends Controller
             }
 
             $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Отменяет заказ
+     *
+     * @method PUT
+     *
+     * @params $taskId
+     * @return string - json array в формате Status
+     */
+    public function cancelTaskAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $task = Tasks::findFirstByTaskId($this->request->getPut('taskId'));
+            if(!$task || !Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+            if($task->getStatus() == STATUS_WAITING_CONFIRM ||
+                $task->getStatus() == STATUS_NOT_CONFIRMED || $task->getStatus() == STATUS_ACCEPTING){
+
+                $task->setStatus(STATUS_CANCELED);
+            } else if($task->getStatus() == STATUS_EXECUTING || $task->getStatus()== STATUS_EXECUTED_EXECUTOR){
+                $task->setStatus(STATUS_NOT_EXECUTED);
+            } else{
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['На данном этапе заказ не может быть отменен']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$task->save()) {
+                $errors = [];
+                foreach ($task->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Подтверждает выполнение заказа
+     *
+     * @method PUT
+     *
+     * @params $taskId
+     * @return string - json array в формате Status
+     */
+    public function confirmPerformanceTaskAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $task = Tasks::findFirstByTaskId($this->request->getPut('taskId'));
+            if(!$task || !Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+            if($task->getStatus() != STATUS_EXECUTED_EXECUTOR && $task->getStatus() != STATUS_EXECUTING){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['На данном этапе нельзя подтвердить выполнение заказа']
+                    ]
+                );
+                return $response;
+            }
+
+            $task->setStatus(STATUS_EXECUTED_CLIENT);
+
+            if (!$task->save()) {
+                $errors = [];
+                foreach ($task->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
 
             $response->setJsonContent(
                 [

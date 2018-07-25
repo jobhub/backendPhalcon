@@ -79,11 +79,14 @@ class SecurityPlugin extends Plugin
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
-                    'linkServiceWithPoint', 'unlinkServiceAndPoint'],
-                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest', 'getRequests'],
+                    'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest'],
+                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
+                    'confirmPerformanceRequest'],
 
-                'TasksAPI' => ['addTask','deleteTask','editTask','getTasksForCurrentUser','selectOffer'],
-                'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject' , 'deleteOffer', 'editOffer', 'getForTask',],
+                'TasksAPI' => ['addTask','deleteTask','editTask','getTasksForCurrentUser','selectOffer', 'cancelTask',
+                    'confirmPerformanceTask'],
+                'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject' , 'deleteOffer', 'editOffer', 'getForTask',
+                    'confirmOffer' , 'rejectOffer', 'performTask'],
             ];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -94,12 +97,13 @@ class SecurityPlugin extends Plugin
                 'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'tasksModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete' , ],
                 'auctionsModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'admin/auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
                 'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'categoriesAPI' => ['addCategory' , 'editCategory']
+                'categoriesAPI' => ['addCategory' , 'editCategory'],
+                'offersAPI' => ['addStatus'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {

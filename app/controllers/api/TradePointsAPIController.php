@@ -135,8 +135,9 @@ class TradePointsAPIController extends Controller
      *
      * @method POST
      *
-     * @param (Обязательные)   int companyId, string name, double latitude, double longitude,
-     *        (Необязательные) string email, string webSite, string address, string fax, int userId
+     * @param (Обязательные)   string name, double latitude, double longitude,
+     *        (Необязательные) string email, string webSite, string address, string fax,
+     *         (Необязательные) (int userManagerId, int companyId) - парой
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function addTradePointAction()
@@ -146,21 +147,34 @@ class TradePointsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirstByCompanyId($this->request->getPost("companyId"));
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
-            }
-
             $point = new TradePoints();
 
-            $point->setCompanyId($this->request->getPost("companyId"));
+            if($this->request->getPost("companyId")) {
+                $company = Companies::findFirstByCompanyId($this->request->getPost("companyId"));
+
+                if (!Companies::checkUserHavePermission($userId,$company->getCompanyId(),'addPoint')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $point->setSubjectId($this->request->getPost("companyId"));
+                $point->setSubjectType(1);
+                if($this->request->getPost("userManagerId"))
+                    $point->setUserManager($this->request->getPost("userManagerId"));
+                else {
+                    $point->setUserManager($userId);
+                }
+            } else{
+                $point->setSubjectId($userId);
+                $point->setSubjectType(0);
+                $point->setUserManager($userId);
+            }
+
             $point->setName($this->request->getPost("name"));
             $point->setEmail($this->request->getPost("email"));
             $point->setWebSite($this->request->getPost("webSite"));
@@ -172,7 +186,7 @@ class TradePointsAPIController extends Controller
             $point->setUserManager($this->request->getPost("userId"));
 
             if (!$point->save()) {
-
+                $errors = [];
                 foreach ($point->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -204,8 +218,9 @@ class TradePointsAPIController extends Controller
      *
      * @method PUT
      *
-     * @param (Обязательные)   int pointId, int companyId, string name, double latitude, double longitude,
-     *        (Необязательные) string email, string webSite, string address, string fax, int userId
+     * @param (Обязательные)   int pointId string name, double latitude, double longitude,
+     *        (Необязательные) string email, string webSite, string address, string fax, string time, int userId, int subjectId, int subjectType,
+     *        Точно будут изменены - name, latitude, longitude, email, webSite, address, fax, time
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function editTradePointAction()
@@ -215,12 +230,11 @@ class TradePointsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirstByCompanyId($this->request->getPut("companyId"));
-
             $point = TradePoints::findFirstByPointId($this->request->getPut("pointId"));
 
-            if (!$company || !$point ||
-                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
+            if (!$point ||
+                !Subjects::checkUserHavePermission($userId,$point->getSubjectId(),
+                   $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -230,7 +244,12 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            $point->setCompanyId($this->request->getPut("companyId"));
+            if($this->request->getPut("subjectId") && $this->request->getPut("subjectType")){
+                //Меняем владельца. Не знаю, зачем это может понадобиться
+                $point->setSubjectId($this->request->getPut("subjectId"));
+                $point->setSubjectType($this->request->getPut("subjectType"));
+            }
+
             $point->setName($this->request->getPut("name"));
             $point->setEmail($this->request->getPut("email"));
             $point->setWebSite($this->request->getPut("webSite"));
@@ -239,9 +258,13 @@ class TradePointsAPIController extends Controller
             $point->setAddress($this->request->getPut("address"));
             $point->setFax($this->request->getPut("fax"));
             $point->setTime($this->request->getPut("time"));
-            $point->setUserManager($this->request->getPut("userId"));
 
-            if (!$point->save()) {
+            if($this->request->getPut("userId") && $point->getSubjectType() != 0)
+                $point->setUserManager($this->request->getPut("userId"));
+
+
+
+            if (!$point->update()) {
 
                 foreach ($point->getMessages() as $message) {
                     $errors[] = $message->getMessage();
@@ -297,10 +320,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            $company = $point->companies;
-
-            if (!$company ||
-                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!Subjects::checkUserHavePermission($userId,$point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

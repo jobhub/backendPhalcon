@@ -494,6 +494,11 @@ class Companies extends NotDeletedModelWithCascade
                 return $result;
             }
         } catch (TxFailed $e) {
+            $message = new Message(
+                $e->getMessage()
+            );
+
+            $this->appendMessage($message);
             return false;
         }
     }

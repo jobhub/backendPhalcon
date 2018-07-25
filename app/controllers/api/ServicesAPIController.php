@@ -105,7 +105,7 @@ class ServicesAPIController extends Controller
      *
      * @method PUT
      *
-     * @params serviceId , description, priceMin, priceMax (или же вместо них просто price)
+     * @params serviceId , description, priceMin, priceMax (или же вместо них просто price), regionId
      * @params (необязательные) companyId или userId.
      * @return Response - с json массивом в формате Status
      */
@@ -155,7 +155,10 @@ class ServicesAPIController extends Controller
                 $service->setPriceMax($this->request->getPut("priceMax"));
             }
 
+            $service->setRegionId($this->request->getPut("regionId"));
+
             if (!$service->save()) {
+                $errors = [];
                 foreach ($service->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -188,7 +191,8 @@ class ServicesAPIController extends Controller
      * @method POST
      *
      * @params (обязательные) companyId
-     * @params (необязательные) description, priceMin, priceMax (или же вместо них просто price)
+     * @params (необязательные) description, priceMin, priceMax (или же вместо них просто price),
+     * @params regionId или массив points - массив id tradePoint-ов
      *
      * @return string - json array в формате Status - результат операции
      */
@@ -233,7 +237,23 @@ class ServicesAPIController extends Controller
 
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
+            if(!$this->request->getPost("regionId") && !$this->request->getPost("points"))
+            {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Услуга должна быть связана либо с регионом, либо с точками оказания услуг']
+                    ]
+                );
+                return $response;
+            }
+
+            $service->setRegionId($this->request->getPost("regionId"));
+
+            $this->db->begin();
+
             if (!$service->save()) {
+                $this->db->rollback();
                 $errors = [];
                 foreach ($service->getMessages() as $message) {
                     $errors[] = $message->getMessage();
@@ -246,6 +266,33 @@ class ServicesAPIController extends Controller
                 );
                 return $response;
             }
+
+            //
+            if($this->request->getPost("points")){
+                $points = $this->request->getPost("points");
+                foreach($points as $point){
+                    $servicePoint = new ServicesPoints();
+                    $servicePoint->setServiceId($service->getServiceId());
+                    $servicePoint->setPointId($point);
+
+                    if (!$servicePoint->save()) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($servicePoint->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                }
+            }
+
+            $this->db->commit();
 
             $response->setJsonContent(
                 [
@@ -389,6 +436,146 @@ class ServicesAPIController extends Controller
             if (!$servicePoint->delete()) {
                 $errors = [];
                 foreach ($servicePoint->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Подтверждает выполнить заявку на оказание услуги
+     *
+     * @method PUT
+     *
+     * @params requestId
+     *
+     * @return Response - с json массивом в формате Status
+     */
+    public function confirmRequestAction()
+    {
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+
+            $service = $request->services;
+
+            if (!$service || !Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if($request->getStatus() != STATUS_WAITING_CONFIRM){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя подтвердить заказ на данном этапе']
+                    ]
+                );
+                return $response;
+            }
+
+            $request->setStatus(STATUS_EXECUTING);
+
+            if (!$request->save()) {
+                $errors = [];
+                foreach ($request->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Предоставляющий услугу субъект утверждает, что выполнил заявку
+     *
+     * @method PUT
+     *
+     * @params requestId
+     *
+     * @return Response - с json массивом в формате Status
+     */
+    public function performRequestAction()
+    {
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+
+            $service = $request->services;
+
+            if (!$service || !Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if($request->getStatus() != STATUS_EXECUTING){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя завершить заказ на данном этапе']
+                    ]
+                );
+                return $response;
+            }
+
+            $request->setStatus(STATUS_EXECUTED_EXECUTOR);
+
+            if (!$request->update()) {
+                $errors = [];
+                foreach ($request->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
                 $response->setJsonContent(

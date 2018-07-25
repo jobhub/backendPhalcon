@@ -98,11 +98,12 @@ class ServicesPoints extends \Phalcon\Mvc\Model
             'pointId',
             new Callback(
                 [
-                    "message" => "Такая точка оказания услуг не существует",
+                    "message" => "Такая точка оказания услуг не существует или не связана с компанией услуги",
                     "callback" => function ($servicePoint) {
                         $point = TradePoints::findFirstByPointId($servicePoint->getPointId());
-
-                        if ($point)
+                        $service = Services::findFirstByServiceId($servicePoint->getServiceId());
+                        if ($point && $service &&
+                            (Subjects::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
                             return true;
                         return false;
                     }
@@ -154,6 +155,22 @@ class ServicesPoints extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public function beforeDelete(){
+        //Проверка, можно ли удалить связь с услугой (услуга обязательно должна быть связана с точкой оказания услуг или регионом)
+        $service = Services::findFirstByServiceId($this->getServiceId());
+
+        if($service->getRegionId() != null){
+            return true;
+        }
+
+        $servicesPoints = ServicesPoints::findByServiceId($this->getServiceId());
+
+        if(count($servicesPoints) > 1){
+            return true;
+        }
+        return false;
     }
 
 }

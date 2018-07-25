@@ -75,14 +75,16 @@ class OffersAPIController extends Controller
                 }
             }
 
-            $offer = Offers::findFirst(['taskId = :taskId: AND selected = true',
-                'bind' => ['taskId' => $this->request->getPost("taskId")]]);
+            $task = Tasks::findFirstByTaskId($this->request->getPost("taskId"));
 
-            if ($offer) {
+            /*$offer = Offers::findFirst(['taskId = :taskId: AND selected = true',
+                'bind' => ['taskId' => $this->request->getPost("taskId")]]);*/
+
+            if ($task->getStatus() != STATUS_ACCEPTING) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
-                        "errors" => ['Задание уже выполняется']
+                        "errors" => ['Время приема заявок завершилось']
                     ]
                 );
                 return $response;
@@ -202,7 +204,7 @@ class OffersAPIController extends Controller
      * @method DELETE
      * @param $offerId
      *
-     * @return string - результат операции
+     * @return string - json array в формате Status
      */
     public function deleteOfferAction($offerId)
     {
@@ -223,7 +225,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            if ($offer->getSelected() == true) {
+            if ($offer->getSelected()) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -233,7 +235,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            if (!Offers::checkUserHavePermission($userId, $offerId, 'delete')) {
+            if (!Offers::checkUserHavePermission($userId, $offerId, 'deleteOffer')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -271,7 +273,6 @@ class OffersAPIController extends Controller
         }
     }
 
-
     /**
      * Редактирует предложение на выполнение указанного задания
      *
@@ -289,7 +290,7 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'edit')){
+            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'editOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -302,7 +303,7 @@ class OffersAPIController extends Controller
             $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
             $task = $offer->tasks;
 
-            if(!$task->getStatus() == STATUS_WAIT){
+            if(!$task->getStatus() == STATUS_ACCEPTING){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -351,5 +352,195 @@ class OffersAPIController extends Controller
 
             throw $exception;
         }
+    }
+
+    /**
+     * Подтверждает согласие исполнителя выполнить задание
+     *
+     * @method PUT
+     *
+     * @param offerId
+     *
+     * @return string - json array в формате Status
+     */
+    public function confirmOfferAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'confirmOffer')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+
+            if (!$offer->confirm()) {
+                $errors = [];
+                foreach ($offer->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Исполнитель отказывается от своего первоначального намерения выполнить заказ
+     *
+     * @method PUT
+     *
+     * @param offerId
+     *
+     * @return string - json array в формате Status
+     */
+    public function rejectOfferAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'rejectOffer')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+
+            if (!$offer->reject()) {
+                $errors = [];
+                foreach ($offer->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Исполнитель утверждает, что выполнил заказ
+     *
+     * @method PUT
+     *
+     * @param offerId
+     *
+     * @return string - json array в формате Status
+     */
+    public function performTaskAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+
+            if(!$offer || !Subjects::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'performTask')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $task = $offer->tasks;
+
+            if($task->getStatus() != STATUS_EXECUTING){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя отметить задание как выполненное в текущем состоянии']
+                    ]
+                );
+                return $response;
+            }
+
+            $task->setStatus(STATUS_EXECUTED_EXECUTOR);
+
+            if (!$task->update()) {
+                $errors = [];
+                foreach ($task->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function addStatusAction()
+    {
+        $status = new Statuses();
+        $status->setStatus($this->request->getPost('status'));
+        $status->setStatusId($this->request->getPost('statusId'));
+        return $status->save();
     }
 }

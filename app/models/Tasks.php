@@ -99,6 +99,20 @@ class Tasks extends NotDeletedModelWithCascade
     protected $subjectType;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $dateStart;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $dateEnd;
+
+    /**
      * Method to set the value of field taskId
      *
      * @param integer $taskId
@@ -179,6 +193,32 @@ class Tasks extends NotDeletedModelWithCascade
     public function setDeadline($deadline)
     {
         $this->deadline = $deadline;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field dateStart
+     *
+     * @param string $dateStart
+     * @return $this
+     */
+    public function setDateStart($dateStart)
+    {
+        $this->dateStart = $dateStart;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field dateEnd
+     *
+     * @param string $dateEnd
+     * @return $this
+     */
+    public function setDateEnd($dateEnd)
+    {
+        $this->dateEnd = $dateEnd;
 
         return $this;
     }
@@ -332,6 +372,26 @@ class Tasks extends NotDeletedModelWithCascade
     }
 
     /**
+     * Returns the value of field dateStart
+     *
+     * @return string
+     */
+    public function getDateStart()
+    {
+        return $this->dateStart;
+    }
+
+    /**
+     * Returns the value of field dateEnd
+     *
+     * @return string
+     */
+    public function getDateEnd()
+    {
+        return $this->dateEnd;
+    }
+
+    /**
      * Returns the value of field price
      *
      * @return integer
@@ -442,10 +502,10 @@ class Tasks extends NotDeletedModelWithCascade
         $validator->add(
             'status',
             new Callback([
-                "message" => "Поле статус имеет неверное значение. Должно быть одно из следующих:\n0 - запрос в рассмотрении;\n
-                1 - запрос выполняется;\n, 2 - запрос отклонен;\n, 3 - запрос выполнен;\n 4 - запрос не выполнен.",
+                "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($task) {
-                    if ($task->getStatus() < 0 || $task->getStatus() > 4)
+                $status = Statuses::findFirstByStatusId($task->getStatus());
+                    if (!$status)
                         return false;
                     return true;
                 }
@@ -512,6 +572,35 @@ class Tasks extends NotDeletedModelWithCascade
             );
         }
 
+        $validator->add(
+            'dateStart',
+            new PresenceOf([
+                "message" => "Дата начала приема заявок должна быть указана"
+            ])
+        );
+
+        $validator->add(
+            'dateEnd',
+            new PresenceOf([
+                "message" => "Дата завершения приема заявок должна быть указана"
+            ])
+        );
+
+        $validator->add(
+            'dateEnd',
+            new Callback(
+                [
+                    "message" => "Дата завершения приема заявок должна быть не раньше даты начала и не позже даты завершения задания",
+                    "callback" => function ($task) {
+                        if (strtotime($task->getDateStart()) < strtotime($task->getDateEnd())
+                                && strtotime($task->getDateEnd()) < strtotime($task->getDeadline()))
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
         return $this->validate($validator);
     }
 
@@ -569,5 +658,13 @@ class Tasks extends NotDeletedModelWithCascade
             return true;
         }
         return false;
+    }
+
+    public function beforeDelete(){
+        //Проверка, можно ли удалить задание
+        $offers = Offers::fincByTaskId($this->getTaskId());
+        if(count($offers)!= 0)
+            return false;
+        return true;
     }
 }

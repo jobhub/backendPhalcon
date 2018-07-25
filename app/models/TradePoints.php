@@ -50,7 +50,7 @@ class TradePoints extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyId;
+    protected $subjectId;
 
     /**
      *
@@ -86,6 +86,12 @@ class TradePoints extends NotDeletedModelWithCascade
      * @Column(type="string", length=150, nullable=true)
      */
     protected $address;
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $subjectType;
 
     /**
      * Method to set the value of field pointId
@@ -153,14 +159,21 @@ class TradePoints extends NotDeletedModelWithCascade
     }
 
     /**
-     * Method to set the value of field companyId
+     * Method to set the value of field subjectId
      *
-     * @param integer $companyId
+     * @param integer $subjectId
      * @return $this
      */
-    public function setCompanyId($companyId)
+    public function setSubjectId($subjectId)
     {
-        $this->companyId = $companyId;
+        $this->subjectId = $subjectId;
+
+        return $this;
+    }
+
+    public function setSubjectType($subjectType)
+    {
+        $this->subjectType = $subjectType;
 
         return $this;
     }
@@ -281,13 +294,23 @@ class TradePoints extends NotDeletedModelWithCascade
     }
 
     /**
-     * Returns the value of field companyId
+     * Returns the value of field subjectId
      *
      * @return integer
      */
-    public function getCompanyId()
+    public function getSubjectId()
     {
-        return $this->companyId;
+        return $this->subjectId;
+    }
+
+    /**
+     * Returns the value of field subjectId
+     *
+     * @return integer
+     */
+    public function getSubjectType()
+    {
+        return $this->subjectType;
     }
 
     /**
@@ -388,16 +411,12 @@ class TradePoints extends NotDeletedModelWithCascade
         }
 
         $validator->add(
-            'companyId',
+            'subjectId',
             new Callback(
                 [
-                    "message" => "Такая компания не существует",
-                    "callback" => function ($phoneCompany) {
-                        $phone = Companies::findFirstByCompanyId($phoneCompany->getCompanyId());
-
-                        if ($phone)
-                            return true;
-                        return false;
+                    "message" => "Такой субъект не существует",
+                    "callback" => function ($point) {
+                        return Subjects::checkSubjectExists($point->getSubjectId(), $point->getSubjectType());
                     }
                 ]
             )

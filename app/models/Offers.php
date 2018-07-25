@@ -3,6 +3,10 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Mvc\Model\Message;
+
+use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
+use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 class Offers extends NotDeletedModelWithCascade
 {
@@ -57,6 +61,13 @@ class Offers extends NotDeletedModelWithCascade
      * @Column(type="string", nullable=true)
      */
     protected $selected;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $confirmed;
 
 
     /**
@@ -165,6 +176,19 @@ class Offers extends NotDeletedModelWithCascade
     }
 
     /**
+     * Method to set the value of field confirmed
+     *
+     * @param string $confirmed
+     * @return $this
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field offerId
      *
      * @return integer
@@ -245,6 +269,16 @@ class Offers extends NotDeletedModelWithCascade
     }
 
     /**
+     * Returns the value of field confirmed
+     *
+     * @return string
+     */
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -259,12 +293,12 @@ class Offers extends NotDeletedModelWithCascade
                 [
                     "message" => "Такой субъект не существует",
                     "callback" => function ($task) {
-                        if($task->getSubjectType() == 0) {
+                        if ($task->getSubjectType() == 0) {
                             $user = Users::findFirstByUserId($task->getSubjectId());
                             if ($user)
                                 return true;
                             return false;
-                        } else if($task->getSubjectType() == 1){
+                        } else if ($task->getSubjectType() == 1) {
                             $company = Companies::findFirstByCompanyId($task->getSubjectId());
                             if ($company)
                                 return true;
@@ -310,6 +344,20 @@ class Offers extends NotDeletedModelWithCascade
             )
         );
 
+        $validator->add(
+            'confirmed',
+            new Callback(
+                [
+                    "message" => "Предложение не может быть подтверждено, пока оно не выбрано заказчиком",
+                    "callback" => function ($offer) {
+                        if ($offer->getConfirmed() && !$offer->getSelected())
+                            return false;
+                        return true;
+                    }
+                ]
+            )
+        );
+
         return $this->validate($validator);
     }
 
@@ -341,25 +389,125 @@ class Offers extends NotDeletedModelWithCascade
         if (!$offer)
             return false;
 
-        if ($offer->getSubjectType() == 1) {
-            //Предложение компании
-            $rightCompany = 'Offers';
-            if($right == 'delete')
-                $rightCompany = 'deleteOffer';
-            else if($right == 'get')
-                $rightCompany = 'getOffers';
-            else if($right == 'edit')
-                $rightCompany = 'editOffers';
+        return Subjects::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
+    }
 
-            if (!Companies::checkUserHavePermission($userId, $offer->getSubjectId(), $rightCompany)) {
-                return false;
+    /**
+     * Подтверждает готовность исполнителя выполнить заказ
+     */
+    public function confirm()
+    {
+        $task = Tasks::findFirstByTaskId($this->getTaskId());
+
+        if ($task && $task->getStatus() == STATUS_WAITING_CONFIRM) {
+            if ($this->getSelected()) {
+                try {
+                    // Создаем менеджера транзакций
+                    $manager = new TxManager();
+                    // Запрос транзакции
+                    $transaction = $manager->get();
+                    $this->setTransaction($transaction);
+
+                    $this->setConfirmed(true);
+
+                    if (!$this->update()) {
+                        $transaction->rollback(
+                            "Невозможно подтвердить предложение"
+                        );
+                        return false;
+                    }
+
+                    $task->setStatus(STATUS_EXECUTING);
+
+                    if (!$task->update()) {
+                        $transaction->rollback(
+                            "Не удалось изменить статус задания"
+                        );
+                        return false;
+                    }
+
+                    $transaction->commit();
+                    return true;
+                } catch (TxFailed $e) {
+                    $message = new Message(
+                        $e->getMessage()
+                    );
+
+                    $this->appendMessage($message);
+                    return false;
+                }
             }
-            return true;
-        } else if ($offer->getSubjectType() == 0) {
-            if ($offer->getSubjectId() != $userId && $user->getRole() != ROLE_MODERATOR) {
-                return false;
+            $message = new Message(
+                "Это предложение не выбрано"
+            );
+
+            $this->appendMessage($message);
+            return false;
+        }
+        $message = new Message(
+            "Нельзя подтвердить готовность выполнять задание в текущем состоянии"
+        );
+
+        $this->appendMessage($message);
+        return false;
+    }
+
+    /**
+     * Исполнитель отказывается от своего первоначального намерения выполнить заказ
+     */
+    public function reject()
+    {
+        $task = Tasks::findFirstByTaskId($this->getTaskId());
+
+        if ($task && ($task->getStatus() == STATUS_WAITING_CONFIRM ||
+                $task->getStatus() == STATUS_EXECUTING || $task->getStatus() == STATUS_EXECUTED_EXECUTOR ||
+                $task->getStatus() == STATUS_EXECUTED_CLIENT)) {
+            if ($this->getSelected()) {
+                try {
+                    // Создаем менеджера транзакций
+                    $manager = new TxManager();
+                    // Запрос транзакции
+                    $transaction = $manager->get();
+                    $this->setTransaction($transaction);
+
+                    $this->setConfirmed(false);
+
+                    if (!$this->update()) {
+                        $transaction->rollback(
+                            "Невозможно подтвердить предложение"
+                        );
+                        return false;
+                    }
+
+                    if($task->getStatus() == STATUS_WAITING_CONFIRM) {
+                        $task->setStatus(STATUS_NOT_CONFIRMED);
+
+                        if (strtotime(date("'Y-m-d H:i:s'")) < strtotime($task->getDateEnd())) {
+                            $task->setStatus(STATUS_ACCEPTING);
+                        }
+                    } else{
+                        $task->setStatus(STATUS_NOT_EXECUTED);
+                    }
+
+                    if (!$task->update()) {
+                        $transaction->rollback(
+                            "Не удалось изменить статус задания"
+                        );
+                        return false;
+                    }
+
+                    $transaction->commit();
+                    return true;
+                } catch (TxFailed $e) {
+                    $message = new Message(
+                        $e->getMessage()
+                    );
+
+                    $this->appendMessage($message);
+                    return false;
+                }
             }
-            return true;
+            return false;
         }
         return false;
     }

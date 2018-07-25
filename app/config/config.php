@@ -9,11 +9,20 @@ defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 /*
  * Статусы процесса выполнения задания
  */
-define('STATUS_WAIT', 0);
-define('STATUS_EXECUTING',1);
-define('STATUS_REJECTED',2);
-define('STATUS_EXECUTED',3);
-define('STATUS_NON_EXECUTED',4);
+define('STATUS_ACCEPTING', 0);
+define('STATUS_SELECTION_EXECUTOR',1);
+define('STATUS_CANCELED',2);
+define('STATUS_WAITING_CONFIRM',3);
+define('STATUS_EXECUTING',4);
+define('STATUS_EXECUTED_EXECUTOR',5);
+define('STATUS_EXECUTED_CLIENT',6);
+define('STATUS_NOT_EXECUTED',7);
+define('STATUS_REJECTED_BY_SYSTEM',8);
+define('STATUS_PAID_CLIENT',9);
+define('STATUS_PAID_PART',10);
+define('STATUS_PAID_EXECUTOR',11);
+define('STATUS_PAID_BY_SECURE_TRANSACTION',12);
+define('STATUS_NOT_CONFIRMED',13);
 
 /*
  * Статусы выполнения запросов

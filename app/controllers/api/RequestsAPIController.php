@@ -50,6 +50,7 @@ class RequestsAPIController extends Controller
             $request->setServiceId($this->request->getPost("serviceId"));
             $request->setDescription($this->request->getPost("description"));
             $request->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPost("dateEnd"))));
+            $request->setStatus(STATUS_WAITING_CONFIRM);
 
             if (!$request->save()) {
                 $errors = [];
@@ -253,6 +254,140 @@ class RequestsAPIController extends Controller
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Заказчик отменяет заявку.
+     *
+     * @method PUT
+     *
+     * @param requestId
+     *
+     * @return string - json array в формате Status
+     */
+    public function cancelRequestAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+
+            if(!$request || !Subjects::checkUserHavePermission($userId,$request->getSubjectId(),
+                    $request->getSubjectType(), 'cancelRequest')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if($request->getStatus() != STATUS_WAITING_CONFIRM){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя отменить заказ на данном этапе']
+                    ]
+                );
+                return $response;
+            }
+
+            $request->setStatus(STATUS_CANCELED);
+
+            if (!$request->update()) {
+                $errors = [];
+                foreach ($request->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Заказчик подтверждает выполнение заявки
+     *
+     * @method PUT
+     *
+     * @param requestId
+     *
+     * @return string - json array в формате Status
+     */
+    public function confirmPerformanceRequestAction(){
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+
+            if(!$request || !Subjects::checkUserHavePermission($userId,$request->getSubjectId(),
+                    $request->getSubjectType(), 'cancelRequest')){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if($request->getStatus() != STATUS_EXECUTED_EXECUTOR && $request->getStatus() != STATUS_EXECUTING){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя на данном этапе подтвердить выполнение заказа']
+                    ]
+                );
+                return $response;
+            }
+
+            $request->setStatus(STATUS_EXECUTED_CLIENT);
+
+            if (!$request->update()) {
+                $errors = [];
+                foreach ($request->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
             throw $exception;
         }
     }

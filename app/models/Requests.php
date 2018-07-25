@@ -283,10 +283,10 @@ class Requests extends NotDeletedModelWithCascade
         $validator->add(
             'status',
             new Callback([
-                "message" => "Поле статус имеет неверное значение. Должно быть одно из следующих:\n0 - запрос в рассмотрении;\n
-                1 - запрос выполняется;\n, 2 - запрос отклонен;\n, 3 - запрос выполнен;\n 4 - запрос не выполнен.",
+                "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($request) {
-                    if($request->getStatus() < 0 || $request->getStatus() > 4)
+                    $status = Statuses::findFirstByStatusId($request->getStatus());
+                    if (!$status)
                         return false;
                     return true;
                 }

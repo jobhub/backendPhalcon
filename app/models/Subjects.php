@@ -12,7 +12,7 @@ class Subjects
     {
         $user = Users::findFirstByUserId($userId);
 
-        if(!$user)
+        if (!$user)
             return false;
 
         if ($subjectType == 1) {
@@ -37,17 +37,24 @@ class Subjects
 
     public static function checkSubjectExists($subjectId, $subjectType)
     {
-        if($subjectType == 0) {
+        if ($subjectType == 0) {
             $user = Users::findFirstByUserId($subjectId);
             if ($user)
                 return true;
             return false;
-        } else if($subjectType == 1){
+        } else if ($subjectType == 1) {
             $company = Companies::findFirstByCompanyId($subjectId);
             if ($company)
                 return true;
             return false;
         } else
             return false;
+    }
+
+    public static function equals($subjectId1, $subjectType1, $subjectId2, $subjectType2)
+    {
+        if($subjectId1 == $subjectId2 && $subjectType1 == $subjectType2)
+            return true;
+        return false;
     }
 }
