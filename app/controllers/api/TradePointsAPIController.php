@@ -26,9 +26,7 @@ class TradePointsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $company = Companies::findFirstByCompanyId($companyId);
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!Companies::checkUserHavePermission($userId,$companyId,'getPoints')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -38,7 +36,8 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            $tradePoints = TradePoints::findByCompanyId($companyId);
+            $tradePoints = TradePoints::findByCompanyid($companyId);
+            $company = Companies::findFirstByCompanyid($companyId);
 
             $pointsWithPhones = [];
 
@@ -51,9 +50,9 @@ class TradePointsAPIController extends Controller
                     $tradePoint->setEmail($company->getEmail());
                 }
 
-                $phones = PhonesPoints::findByPointId($tradePoint->getPointId());
+                $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
                 if($phones->count() == 0){
-                    $phones = PhonesCompanies::findByCompanyId($company->getCompanyId());
+                    $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
                 }
                 $phones2 = [];
                 foreach($phones as $phone){
@@ -86,9 +85,9 @@ class TradePointsAPIController extends Controller
             $userId = $auth['id'];
 
             if ($userIdManager == null || $userIdManager == $userId) {
-                $tradePoints = TradePoints::findByUserManager($userId);
+                $tradePoints = TradePoints::findByUsermanager($userId);
             } else {
-                $trades = TradePoints::findByUserManager($userIdManager);
+                $trades = TradePoints::findByUsermanager($userIdManager);
                 $tradePoints = [];
                 foreach ($trades as $point) {
                     if ($point->companies->getUserId() == $userId) {
@@ -110,9 +109,9 @@ class TradePointsAPIController extends Controller
                     $tradePoint->setEmail($company->getEmail());
                 }
 
-                $phones = PhonesPoints::findByPointId($tradePoint->getPointId());
+                $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
                 if($phones->count() == 0){
-                    $phones = PhonesCompanies::findByCompanyId($company->getCompanyId());
+                    $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
                 }
                 $phones2 = [];
                 foreach($phones as $phone){
@@ -150,7 +149,7 @@ class TradePointsAPIController extends Controller
             $point = new TradePoints();
 
             if($this->request->getPost("companyId")) {
-                $company = Companies::findFirstByCompanyId($this->request->getPost("companyId"));
+                $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
 
                 if (!Companies::checkUserHavePermission($userId,$company->getCompanyId(),'addPoint')) {
                     $response->setJsonContent(
@@ -230,10 +229,10 @@ class TradePointsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $point = TradePoints::findFirstByPointId($this->request->getPut("pointId"));
+            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
             if (!$point ||
-                !Subjects::checkUserHavePermission($userId,$point->getSubjectId(),
+                !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),
                    $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
@@ -308,7 +307,7 @@ class TradePointsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $point = TradePoints::findFirstByPointId($pointId);
+            $point = TradePoints::findFirstByPointid($pointId);
 
             if (!$point) {
                 $response->setJsonContent(
@@ -320,7 +319,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            if (!Subjects::checkUserHavePermission($userId,$point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

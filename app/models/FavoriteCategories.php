@@ -7,62 +7,134 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryId;
+    protected $categoryid;
 
     /**
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
-     * Method to set the value of field categoryId
      *
-     * @param integer $categoryId
+     * @var string
+     * @Column(type="string", length=53, nullable=true)
+     */
+    protected $radius;
+
+    /**
+     * Method to set the value of field categoryid
+     *
+     * @param integer $categoryid
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setCategoryId($categoryid)
     {
-        $this->categoryId = $categoryId;
+        $this->categoryid = $categoryid;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field userId
+     * Method to set the value of field userid
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
 
     /**
-     * Returns the value of field categoryId
+     * Method to set the value of field radius
+     *
+     * @param string $radius
+     * @return $this
+     */
+    public function setRadius($radius)
+    {
+        $this->radius = $radius;
+
+        return $this;
+    }
+
+    /**
+     * Returns the value of field categoryid
      *
      * @return integer
      */
     public function getCategoryId()
     {
-        return $this->categoryId;
+        return $this->categoryid;
     }
 
     /**
-     * Returns the value of field userId
+     * Returns the value of field userid
      *
      * @return integer
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
+    }
+
+    /**
+     * Returns the value of field radius
+     *
+     * @return string
+     */
+    public function getRadius()
+    {
+        return $this->radius;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'userid',
+            new Callback(
+                [
+                    "message" => "Пользователь подписчик не существует",
+                    "callback" => function($favCompany) {
+                        $user = Users::findFirstByUserid($favCompany->getUserId());
+                        if($user)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'categoryid',
+            new Callback(
+                [
+                    "message" => "Такая категория не существует",
+                    "callback" => function($favCategory) {
+                        //$company = Categories::findFirstByCompanyId($favCompany->getCompanyId());
+                        if($favCategory->categories!=null)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
     }
 
     /**
@@ -70,17 +142,27 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("service_services");
-        $this->setSource("favoritecategories");
-        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        //$this->setSchema("public");
+        $this->setSource("favoriteCategories");
+        $this->belongsTo('categoryid', '\Categories', 'categoryid', ['alias' => 'Categories']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'FavoriteCategories';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Favoritecategories[]|Favoritecategories|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return FavoriteCategories[]|FavoriteCategories|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -91,21 +173,21 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Favoritecategories|\Phalcon\Mvc\Model\ResultInterface
+     * @return FavoriteCategories|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
     }
 
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
+    public static function findByIds($userId, $categoryId)
     {
-        return 'favoriteCategories';
+        return FavoriteCategories::findFirst(["userid = :userId: AND categoryid = :categoryId:",
+            "bind" => [
+                "userId" => $userId,
+                "categoryId" => $categoryId,
+            ]
+        ]);
     }
 
 }

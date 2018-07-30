@@ -3,7 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class News extends NotDeletedModelWithCascade
+class News extends SubjectsWithNotDeleted
 {
 
     /**
@@ -13,21 +13,7 @@ class News extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $newType;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectId;
+    protected $newid;
 
     /**
      *
@@ -41,43 +27,17 @@ class News extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $newText;
+    protected $newtext;
 
     /**
      * Method to set the value of field newId
      *
-     * @param integer $newId
+     * @param integer $newid
      * @return $this
      */
-    public function setNewId($newId)
+    public function setNewId($newid)
     {
-        $this->newId = $newId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field newType
-     *
-     * @param integer $newType
-     * @return $this
-     */
-    public function setNewType($newType)
-    {
-        $this->newType = $newType;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
+        $this->newid = $newid;
 
         return $this;
     }
@@ -98,12 +58,12 @@ class News extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field newText
      *
-     * @param string $newText
+     * @param string $newtext
      * @return $this
      */
-    public function setNewText($newText)
+    public function setNewText($newtext)
     {
-        $this->newText = $newText;
+        $this->newtext = $newtext;
 
         return $this;
     }
@@ -115,27 +75,7 @@ class News extends NotDeletedModelWithCascade
      */
     public function getNewId()
     {
-        return $this->newId;
-    }
-
-    /**
-     * Returns the value of field newType
-     *
-     * @return integer
-     */
-    public function getNewType()
-    {
-        return $this->newType;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
+        return $this->newid;
     }
 
     /**
@@ -155,7 +95,7 @@ class News extends NotDeletedModelWithCascade
      */
     public function getNewText()
     {
-        return $this->newText;
+        return $this->newtext;
     }
 
     /**
@@ -167,32 +107,9 @@ class News extends NotDeletedModelWithCascade
     {
         $validator = new Validation();
 
-        $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($new) {
-                        if($new->getNewType() == 0){
-                            //новость пользователя
-                            $user = Users::findFirstByUserId($new->getSubjectId());
 
-                            if($user)
-                                return true;
-                            return false;
-                        } else  if($new->getNewType() == 1){
-                            $company = Companies::findFirstByCompanyId($new->getSubjectId());
 
-                            if($company)
-                                return true;
-                            return false;
-                        } else
-                            return false;
-                    }]
-            )
-        );
-
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -236,7 +153,7 @@ class News extends NotDeletedModelWithCascade
 
             $categoryId = $tender->tasks->getCategoryId();
 
-            $favCategories = Favoritecategories::findByCategoryId($categoryId);
+            $favCategories = FavoriteCategories::findByCategoryId($categoryId);
 
             foreach ($favCategories as $favCategory) {
                 $userIds[] = $favCategory->getUserId();

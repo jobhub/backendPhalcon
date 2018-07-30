@@ -61,7 +61,6 @@ class SecurityPlugin extends Plugin
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser'],
 
                 'tenderAPI' => ['delete'],
-                'reviewsAPI' => ['index', 'addReview'],
                 'reviews' =>['new','create'],
 
                 'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
@@ -79,7 +78,8 @@ class SecurityPlugin extends Plugin
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
-                    'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest'],
+                    'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest',
+                    'rejectRequest'],
                 'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
                     'confirmPerformanceRequest'],
 
@@ -87,6 +87,8 @@ class SecurityPlugin extends Plugin
                     'confirmPerformanceTask'],
                 'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject' , 'deleteOffer', 'editOffer', 'getForTask',
                     'confirmOffer' , 'rejectOffer', 'performTask'],
+
+                'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
             ];
 
 			foreach ($privateResources as $resource => $actions) {
@@ -128,7 +130,8 @@ class SecurityPlugin extends Plugin
 
                 'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject']
+                'ServicesAPI' => ['getServicesForSubject'],
+                'ReviewsAPI' => ['getReviews'],
 			];
 			foreach ($publicResources as $resource => $actions) {
 				$acl->addResource(new Resource($resource), $actions);

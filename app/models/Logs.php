@@ -10,14 +10,14 @@ class Logs extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $logId;
+    protected $logid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=true)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      *
@@ -43,12 +43,12 @@ class Logs extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field logId
      *
-     * @param integer $logId
+     * @param integer $logid
      * @return $this
      */
-    public function setLogId($logId)
+    public function setLogId($logid)
     {
-        $this->logId = $logId;
+        $this->logid = $logid;
 
         return $this;
     }
@@ -56,12 +56,12 @@ class Logs extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -112,7 +112,7 @@ class Logs extends \Phalcon\Mvc\Model
      */
     public function getLogId()
     {
-        return $this->logId;
+        return $this->logid;
     }
 
     /**
@@ -122,7 +122,7 @@ class Logs extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**

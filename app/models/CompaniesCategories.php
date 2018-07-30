@@ -9,7 +9,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyId;
+    protected $companyid;
 
     /**
      *
@@ -17,17 +17,17 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryId;
+    protected $categoryid;
 
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyId
+     * @param integer $companyid
      * @return $this
      */
-    public function setCompanyId($companyId)
+    public function setCompanyId($companyid)
     {
-        $this->companyId = $companyId;
+        $this->companyid = $companyid;
 
         return $this;
     }
@@ -35,12 +35,12 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryId
+     * @param integer $categoryid
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setCategoryId($categoryid)
     {
-        $this->categoryId = $categoryId;
+        $this->categoryid = $categoryid;
 
         return $this;
     }
@@ -52,7 +52,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      */
     public function getCompanyId()
     {
-        return $this->companyId;
+        return $this->companyid;
     }
 
     /**
@@ -62,7 +62,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      */
     public function getCategoryId()
     {
-        return $this->categoryId;
+        return $this->categoryid;
     }
 
     /**

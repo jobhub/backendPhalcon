@@ -95,10 +95,10 @@ class RequestsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($requestId);
+            $request = Requests::findFirstByRequestid($requestId);
 
             if (!$request ||
-                (!Subjects::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
                     'deleteRequest'))) {
                 $response->setJsonContent(
                     [
@@ -153,10 +153,10 @@ class RequestsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($this->request->getPut('requestId'));
+            $request = Requests::findFirstByRequestid($this->request->getPut('requestId'));
 
             if (!$request ||
-                (!Subjects::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
                     'editRequest'))) {
                 $response->setJsonContent(
                     [
@@ -212,7 +212,7 @@ class RequestsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $companyId(необязательный)
+     * @param $companyId (необязательный)
      * @return string - json массив с объектами Requests и Status-ом
      */
     public function getRequestsAction($companyId = null)
@@ -222,15 +222,15 @@ class RequestsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if($companyId == null){
+            if ($companyId == null) {
                 $subjectId = $userId;
                 $subjectType = 0;
-            } else{
+            } else {
                 $subjectId = $companyId;
                 $subjectType = 1;
             }
-            if (!Subjects::checkUserHavePermission($userId, $subjectId, $subjectType,
-                    'getRequests')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $subjectId, $subjectType,
+                'getRequests')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -240,8 +240,7 @@ class RequestsAPIController extends Controller
                 return $response;
             }
 
-            $requests = Requests::find(['subjectId = :subjectId: AND subjectType = :subjectType:',
-                'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType]]);
+            $requests = Requests::findBySubject($subjectId,$subjectType);
 
             $response->setJsonContent(
                 [
@@ -267,16 +266,17 @@ class RequestsAPIController extends Controller
      *
      * @return string - json array в формате Status
      */
-    public function cancelRequestAction(){
+    public function cancelRequestAction()
+    {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+            $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
-            if(!$request || !Subjects::checkUserHavePermission($userId,$request->getSubjectId(),
-                    $request->getSubjectType(), 'cancelRequest')){
+            if (!$request || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(),
+                    $request->getSubjectType(), 'cancelRequest')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -286,7 +286,9 @@ class RequestsAPIController extends Controller
                 return $response;
             }
 
-            if($request->getStatus() != STATUS_WAITING_CONFIRM){
+            if ($request->getStatus() != STATUS_WAITING_CONFIRM &&
+                $request->getStatus() != STATUS_EXECUTING &&
+                $request->getStatus() != STATUS_EXECUTED_EXECUTOR) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -296,7 +298,11 @@ class RequestsAPIController extends Controller
                 return $response;
             }
 
-            $request->setStatus(STATUS_CANCELED);
+            if ($request->getStatus() == STATUS_WAITING_CONFIRM)
+                $request->setStatus(STATUS_CANCELED);
+            else {
+                $request->setStatus(STATUS_NOT_EXECUTED);
+            }
 
             if (!$request->update()) {
                 $errors = [];
@@ -334,16 +340,17 @@ class RequestsAPIController extends Controller
      *
      * @return string - json array в формате Status
      */
-    public function confirmPerformanceRequestAction(){
+    public function confirmPerformanceRequestAction()
+    {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+            $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
-            if(!$request || !Subjects::checkUserHavePermission($userId,$request->getSubjectId(),
-                    $request->getSubjectType(), 'cancelRequest')){
+            if (!$request || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(),
+                    $request->getSubjectType(), 'cancelRequest')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -353,7 +360,7 @@ class RequestsAPIController extends Controller
                 return $response;
             }
 
-            if($request->getStatus() != STATUS_EXECUTED_EXECUTOR && $request->getStatus() != STATUS_EXECUTING){
+            if ($request->getStatus() != STATUS_EXECUTED_EXECUTOR && $request->getStatus() != STATUS_EXECUTING) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

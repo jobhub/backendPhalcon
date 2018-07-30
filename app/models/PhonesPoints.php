@@ -9,7 +9,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $phoneId;
+    protected $phoneid;
 
     /**
      *
@@ -17,17 +17,17 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $pointId;
+    protected $pointid;
 
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneId
+     * @param integer $phoneid
      * @return $this
      */
-    public function setPhoneId($phoneId)
+    public function setPhoneId($phoneid)
     {
-        $this->phoneId = $phoneId;
+        $this->phoneid = $phoneid;
 
         return $this;
     }
@@ -35,12 +35,12 @@ class PhonesPoints extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field pointId
      *
-     * @param integer $pointId
+     * @param integer $pointid
      * @return $this
      */
-    public function setPointId($pointId)
+    public function setPointId($pointid)
     {
-        $this->pointId = $pointId;
+        $this->pointid = $pointid;
 
         return $this;
     }
@@ -52,7 +52,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneId;
+        return $this->phoneid;
     }
 
     /**
@@ -62,7 +62,51 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function getPointId()
     {
-        return $this->pointId;
+        return $this->pointid;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'phoneid',
+            new Callback(
+                [
+                    "message" => "Телефон не был создан",
+                    "callback" => function($phoneCompany) {
+                        $phone = Phones::findFirstByPhoneid($phoneCompany->getPhoneId());
+
+                        if($phone)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'pointid',
+            new Callback(
+                [
+                    "message" => "Такая компания не существует",
+                    "callback" => function($phonePoint) {
+                        $point = TradePoints::findFirstByPointid($phonePoint->getPhoneId());
+
+                        if($point)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
     }
 
     /**
@@ -72,8 +116,8 @@ class PhonesPoints extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("job");
         $this->setSource("phonesPoints");
-        $this->belongsTo('phoneId', '\Phones', 'phoneId', ['alias' => 'Phones']);
-        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'TradePoints']);
+        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
+        $this->belongsTo('pointid', '\TradePoints', 'pointid', ['alias' => 'TradePoints']);
     }
 
     /**
@@ -108,4 +152,12 @@ class PhonesPoints extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findByIds($pointId,$phoneId)
+    {
+        return PhonesPoints::findFirst(["pointid = :pointId: AND phoneid = :phoneId:",
+            'bind' =>
+                ['pointId' => $pointId,
+                    'phoneId' => $phoneId
+                ]]);
+    }
 }

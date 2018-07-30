@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Callback;
 
-class Services extends NotDeletedModelWithCascade
+class Services extends SubjectsWithNotDeleted
 {
     /**
      *
@@ -12,14 +12,7 @@ class Services extends NotDeletedModelWithCascade
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectId;
+    protected $serviceid;
 
     /**
      *
@@ -33,65 +26,38 @@ class Services extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $datePublication;
+    protected $datepublication;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $priceMin;
+    protected $pricemin;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $priceMax;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectType;
+    protected $pricemax;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionId;
+    protected $regionid;
 
     /**
      * Method to set the value of field serviceId
      *
-     * @param integer $serviceId
+     * @param integer $serviceid
      * @return $this
      */
-    public function setServiceId($serviceId)
+    public function setServiceId($serviceid)
     {
-        $this->serviceId = $serviceId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    public function setSubjectType($subjectType)
-    {
-        $this->subjectType = $subjectType;
+        $this->serviceid = $serviceid;
 
         return $this;
     }
@@ -112,12 +78,12 @@ class Services extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field datePublication
      *
-     * @param string $datePublication
+     * @param string $datepublication
      * @return $this
      */
-    public function setDatePublication($datePublication)
+    public function setDatePublication($datepublication)
     {
-        $this->datePublication = $datePublication;
+        $this->datepublication = $datepublication;
 
         return $this;
     }
@@ -125,12 +91,12 @@ class Services extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field priceMin
      *
-     * @param integer $priceMin
+     * @param integer $pricemin
      * @return $this
      */
-    public function setPriceMin($priceMin)
+    public function setPriceMin($pricemin)
     {
-        $this->priceMin = $priceMin;
+        $this->pricemin = $pricemin;
 
         return $this;
     }
@@ -138,12 +104,12 @@ class Services extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field priceMax
      *
-     * @param integer $priceMax
+     * @param integer $pricemax
      * @return $this
      */
-    public function setPriceMax($priceMax)
+    public function setPriceMax($pricemax)
     {
-        $this->priceMax = $priceMax;
+        $this->pricemax = $pricemax;
 
         return $this;
     }
@@ -151,12 +117,12 @@ class Services extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionId
+     * @param integer $regionid
      * @return $this
      */
-    public function setRegionId($regionId)
+    public function setRegionId($regionid)
     {
-        $this->regionId = $regionId;
+        $this->regionid = $regionid;
 
         return $this;
     }
@@ -168,7 +134,7 @@ class Services extends NotDeletedModelWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionId;
+        return $this->regionid;
     }
 
     /**
@@ -178,27 +144,7 @@ class Services extends NotDeletedModelWithCascade
      */
     public function getServiceId()
     {
-        return $this->serviceId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectType()
-    {
-        return $this->subjectType;
+        return $this->serviceid;
     }
 
     /**
@@ -218,7 +164,7 @@ class Services extends NotDeletedModelWithCascade
      */
     public function getDatePublication()
     {
-        return $this->datePublication;
+        return $this->datepublication;
     }
 
     /**
@@ -228,7 +174,7 @@ class Services extends NotDeletedModelWithCascade
      */
     public function getPriceMin()
     {
-        return $this->priceMin;
+        return $this->pricemin;
     }
 
     /**
@@ -238,7 +184,7 @@ class Services extends NotDeletedModelWithCascade
      */
     public function getPriceMax()
     {
-        return $this->priceMax;
+        return $this->pricemax;
     }
 
 
@@ -252,19 +198,7 @@ class Services extends NotDeletedModelWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($service) {
-                        return Subjects::checkSubjectExists($service->getSubjectId(), $service->getSubjectType());
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'priceMin',
+            'pricemin',
             new Callback(
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
@@ -281,7 +215,7 @@ class Services extends NotDeletedModelWithCascade
         //А так, если id уже есть, предполагается, что услуга ранее была создана
         if($this->getServiceId() != null)
         $validator->add(
-            'regionId',
+            'regionid',
             new Callback(
                 [
                     "message" => "Для услуги должна быть указана точка (точки) продаж или, хотя бы, регион",
@@ -305,7 +239,7 @@ class Services extends NotDeletedModelWithCascade
 
 
         $validator->add(
-            "datePublication",
+            "datepublication",
             new PresenceOf(
                 [
                     "message" => "Не указана дата опубликования услуги",
@@ -313,7 +247,7 @@ class Services extends NotDeletedModelWithCascade
             )
         );
 
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -323,8 +257,8 @@ class Services extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("services");
-        $this->hasMany('serviceId', 'ServicesPoints', 'serviceId', ['alias' => 'ServicesPoints']);
-        $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
+        $this->hasMany('serviceid', 'ServicesPoints', 'serviceid', ['alias' => 'ServicesPoints']);
+        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
     }
 
     /**

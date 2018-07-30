@@ -9,6 +9,11 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class CompaniesAPIController extends Controller
 {
+    /**
+     * Возвращает компании текущего пользователя
+     * @method GET
+     * @return string - json array компаний
+     */
     public function getCompaniesAction()
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
@@ -16,8 +21,7 @@ class CompaniesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $companies = Companies::find(["userId = :userId:", "bind" =>
-                ["userId" => $userId]]);
+            $companies = Companies::findByUserid($userId);
 
             return json_encode($companies);
 
@@ -27,6 +31,14 @@ class CompaniesAPIController extends Controller
         }
     }
 
+    /**
+     * Создает компанию компанию
+     * @method POST
+     * @params (Обязательные)name, fullName
+     * @params (необязательные) TIN, regionId, webSite, email
+     * @params (для модератора) isMaster - если true, то еще и userId - кому будет принадлежать
+     * @return Response
+     */
     public function addCompanyAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
@@ -42,9 +54,8 @@ class CompaniesAPIController extends Controller
             $company->setWebSite($this->request->getPost("webSite"));
             $company->setEmail($this->request->getPost("email"));
 
-            if($this->request->getPost("isMaster") && $this->request->getPost("isMaster") != 0) {
-
-                if($auth['role'] != ROLE_MODERATOR){
+            if ($this->request->getPost("isMaster") && $this->request->getPost("isMaster") != 0) {
+                if ($auth['role'] != ROLE_MODERATOR) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -56,16 +67,15 @@ class CompaniesAPIController extends Controller
 
                 $company->setIsMaster(true);
 
-                if($this->request->getPost("userId"))
+                if ($this->request->getPost("userId"))
                     $company->setUserid($this->request->getPost("userId"));
-            }
-            else {
+            } else {
                 $company->setIsMaster(0);
                 $company->setUserid($userId);
             }
 
             if (!$company->save()) {
-
+                $errors = [];
                 foreach ($company->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -92,6 +102,13 @@ class CompaniesAPIController extends Controller
         }
     }
 
+    /**
+     * Удаляет компанию
+     * @method DELETE
+     *
+     * @param $companyId
+     * @return string - json array Status
+     */
     public function deleteCompanyAction($companyId)
     {
         if ($this->request->isDelete()) {
@@ -99,23 +116,31 @@ class CompaniesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirstByCompanyId($companyId);
-
-            if ($company && ($company->getUserId() == $userId || $auth['role'] == ROLE_MODERATOR)) {
-                if (!$company->delete()) {
-                    $errors = [];
-                    foreach ($company->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
+            if (!Companies::checkUserHavePermission($userId, $companyId, 'deleteCompany')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
             }
+
+            $company = Companies::findFirstByCompanyid($companyId);
+            if (!$company->delete()) {
+                $errors = [];
+                foreach ($company->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
 
             $response->setJsonContent(
                 [
@@ -131,6 +156,13 @@ class CompaniesAPIController extends Controller
         }
     }
 
+    /**
+     * Редактирует данные компании
+     * @method PUT
+     * @params companyId, name, fullName,TIN, regionId, webSite, email
+     * @params isMaster - если true, то еще и userId - кому будет принадлежать
+     * @return Response
+     */
     public function editCompanyAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
@@ -138,9 +170,8 @@ class CompaniesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirstByCompanyId($this->request->getPut("companyId"));
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+            if (!Companies::checkUserHavePermission($userId, $this->request->getPut("companyId"),
+                'editCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -150,6 +181,8 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
+            $company = Companies::findFirstByCompanyid($this->request->getPut("companyId"));
+
             $company->setName($this->request->getPut("name"));
             $company->setFullname($this->request->getPut("fullName"));
             $company->setTin($this->request->getPut("TIN"));
@@ -157,9 +190,9 @@ class CompaniesAPIController extends Controller
             $company->setWebSite($this->request->getPut("webSite"));
             $company->setEmail($this->request->getPut("email"));
 
-            if($this->request->getPut("isMaster") && $this->request->getPut("isMaster") != 0) {
+            if ($this->request->getPut("isMaster") && $this->request->getPut("isMaster") != 0) {
 
-                if($auth['role'] != ROLE_MODERATOR){
+                if ($auth['role'] != ROLE_MODERATOR) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -171,16 +204,15 @@ class CompaniesAPIController extends Controller
 
                 $company->setIsMaster(true);
 
-                if($this->request->getPut("userId"))
+                if ($this->request->getPut("userId"))
                     $company->setUserid($this->request->getPut("userId"));
-            }
-            else {
+            } else {
                 $company->setIsMaster(0);
                 $company->setUserid($userId);
             }
 
             if (!$company->save()) {
-
+                $errors = [];
                 foreach ($company->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -216,13 +248,15 @@ class CompaniesAPIController extends Controller
      *
      * @return string - json array - объект Status
      */
-    public function setManagerAction(){
+    public function setManagerAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            if(!Companies::checkUserHavePermission($userId,$this->request->getPost('companyId'), 'addManager')){
+            if (!Companies::checkUserHavePermission($userId, $this->request->getPost('companyId'),
+                'addManager')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -275,13 +309,14 @@ class CompaniesAPIController extends Controller
      *
      * @return string - json array - объект Status
      */
-    public function deleteManagerAction($companyId,$userManagerId){
+    public function deleteManagerAction($companyId, $userManagerId)
+    {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            if(!Companies::checkUserHavePermission($userId,$companyId, 'deleteManager')){
+            if (!Companies::checkUserHavePermission($userId, $companyId, 'deleteManager')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -291,10 +326,9 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
-            $companyManager = CompaniesManagers::findFirst(['companyId = :companyId: AND userId = :userId:',
-                'bind' => ['companyId' => $companyId, 'userId' => $userManagerId]]);
+            $companyManager = CompaniesManagers::findByIds($companyId,$userManagerId);
 
-            if(!$companyManager){
+            if (!$companyManager) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -342,16 +376,17 @@ class CompaniesAPIController extends Controller
      *
      * @return string - json array - объект Status - результат операции
      */
-    public function restoreCompanyAction(){
+    public function restoreCompanyAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirst(['companyId = :companyId:',
+            $company = Companies::findFirst(['companyid = :companyId:',
                 'bind' => ['companyId' => $this->request->getPost('companyId')]], false);
 
-            if(!$company || !Companies::checkUserHavePermission($userId,$company->getCompanyId(),'restoreCompany')){
+            if (!$company || !Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'restoreCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -361,7 +396,7 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
-            if(!$company->restore()){
+            if (!$company->restore()) {
                 $errors = [];
                 foreach ($company->getMessages() as $message) {
                     $errors[] = $message->getMessage();
@@ -382,7 +417,7 @@ class CompaniesAPIController extends Controller
             );
             return $response;
 
-        }else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }

@@ -14,7 +14,7 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $deletedCascade;
+    protected $deletedcascade;
 
     /**
      * Method to set the value of field deleted
@@ -42,12 +42,12 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field deleted
      *
-     * @param string $deletedCascade
+     * @param string $deletedcascade
      * @return $this
      */
-    public function setDeletedCascade($deletedCascade)
+    public function setDeletedCascade($deletedcascade)
     {
-        $this->deletedCascade = $deletedCascade;
+        $this->deletedcascade = $deletedcascade;
 
         return $this;
     }
@@ -59,7 +59,7 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
      */
     public function getDeletedCascade()
     {
-        return $this->deletedCascade;
+        return $this->deletedcascade;
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)

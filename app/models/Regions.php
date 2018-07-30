@@ -10,24 +10,24 @@ class Regions extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $regionId;
+    protected $regionid;
 
     /**
      *
      * @var string
      * @Column(type="string", length=70, nullable=false)
      */
-    protected $regionName;
+    protected $regionname;
 
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionId
+     * @param integer $regionid
      * @return $this
      */
-    public function setRegionId($regionId)
+    public function setRegionId($regionid)
     {
-        $this->regionId = $regionId;
+        $this->regionid = $regionid;
 
         return $this;
     }
@@ -35,12 +35,12 @@ class Regions extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field regionName
      *
-     * @param string $regionName
+     * @param string $regionname
      * @return $this
      */
-    public function setRegionName($regionName)
+    public function setRegionName($regionname)
     {
-        $this->regionName = $regionName;
+        $this->regionname = $regionname;
 
         return $this;
     }
@@ -52,7 +52,7 @@ class Regions extends \Phalcon\Mvc\Model
      */
     public function getRegionId()
     {
-        return $this->regionId;
+        return $this->regionid;
     }
 
     /**
@@ -62,7 +62,7 @@ class Regions extends \Phalcon\Mvc\Model
      */
     public function getRegionName()
     {
-        return $this->regionName;
+        return $this->regionname;
     }
 
     /**
@@ -72,7 +72,7 @@ class Regions extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("job");
         $this->setSource("regions");
-        $this->hasMany('regionId', 'Companies', 'regionId', ['alias' => 'Companies']);
+        $this->hasMany('regionid', 'Companies', 'regionid', ['alias' => 'Companies']);
     }
 
     /**

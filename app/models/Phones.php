@@ -14,7 +14,7 @@ class Phones extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $phoneId;
+    protected $phoneid;
 
     /**
      *
@@ -26,12 +26,12 @@ class Phones extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneId
+     * @param integer $phoneid
      * @return $this
      */
-    public function setPhoneId($phoneId)
+    public function setPhoneId($phoneid)
     {
-        $this->phoneId = $phoneId;
+        $this->phoneid = $phoneid;
 
         return $this;
     }
@@ -56,7 +56,7 @@ class Phones extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneId;
+        return $this->phoneid;
     }
 
     /**
@@ -101,8 +101,8 @@ class Phones extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("phones");
-        $this->hasMany('phoneId', 'Phonescompanies', 'phoneId', ['alias' => 'Phonescompanies']);
-        $this->hasMany('phoneId', 'Phonespoints', 'phoneId', ['alias' => 'Phonespoints']);
+        $this->hasMany('phoneid', 'Phonescompanies', 'phoneid', ['alias' => 'Phonescompanies']);
+        $this->hasMany('phoneid', 'Phonespoints', 'phoneid', ['alias' => 'Phonespoints']);
     }
 
 
@@ -205,8 +205,8 @@ class Phones extends \Phalcon\Mvc\Model
      * @return integer - количество ссылок
      */
     public function countOfReferences(){
-        $phonesPoints = PhonesPoints::findByPhoneId($this->getPhoneId());
-        $phonesCompanies = PhonesCompanies::findByPhoneId($this->getPhoneId());
+        $phonesPoints = PhonesPoints::findByPhoneid($this->getPhoneId());
+        $phonesCompanies = PhonesCompanies::findByPhoneid($this->getPhoneId());
 
         return $phonesCompanies->count() + $phonesPoints->count();
     }

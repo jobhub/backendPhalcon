@@ -13,7 +13,7 @@ class UserinfoAPIController extends Controller
         $auth = $this->session->get("auth");
         if ($this->request->isGet()) {
             $response = new Response();
-            $userinfo = Userinfo::findFirstByuserId($auth['id']);
+            $userinfo = Userinfo::findFirstByUserid($auth['id']);
             if (!$userinfo) {
 
                 $response->setJsonContent(
@@ -23,7 +23,7 @@ class UserinfoAPIController extends Controller
 
                 return $response;
             }
-            $user = Users::findFirstByuserId($auth['id']);
+            $user = Users::findFirstByuserid($auth['id']);
             if (!$user) {
                 $response->setJsonContent(
                     [
@@ -34,7 +34,7 @@ class UserinfoAPIController extends Controller
             $user_min['email'] = $user->getEmail();
             $user_min['phone'] = $user->getPhone();
 
-            $settings = Settings::findFirstByuserId($auth['id']);
+            $settings = Settings::findFirstByuserid($auth['id']);
             if (!$settings) {
 
                 $response->setJsonContent(
@@ -53,7 +53,7 @@ class UserinfoAPIController extends Controller
             $response = new Response();
 
             $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserId($userId);
+            $userinfo = Userinfo::findFirstByuserid($userId);
 
             if (!$userinfo) {
                 $errors[] = "Пользователь не авторизован";
@@ -107,7 +107,7 @@ class UserinfoAPIController extends Controller
             $response = new Response();
 
             $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserId($userId);
+            $userinfo = Userinfo::findFirstByuserid($userId);
 
             if (!$userinfo) {
                 $errors[] = "Пользователь не авторизован";
@@ -156,7 +156,7 @@ class UserinfoAPIController extends Controller
             $response = new Response();
 
             $userId = $auth['id'];
-            $settings = Settings::findFirstByuserId($userId);
+            $settings = Settings::findFirstByuserid($userId);
 
             if (!$settings) {
                 $errors[] = "Пользователь не авторизован";
@@ -226,7 +226,7 @@ class UserinfoAPIController extends Controller
             // echo $_FILES;
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserId($userId);
+            $userinfo = Userinfo::findFirstByuserid($userId);
             if ($userinfo) {
                 $userinfo->setUserid($auth['id']);
 
@@ -312,10 +312,9 @@ class UserinfoAPIController extends Controller
             $currentUserId = $auth['id'];
             $response = new Response();
 
-            $user = Users::findFirst(['userId = :userId:',
-                'bind' => ['userId' => $userId]]);
+            $user = Users::findFirstByUserid($userId);
 
-            if(!$user || !Subjects::checkUserHavePermission($currentUserId,$userId,0,'deleteUser')){
+            if(!$user || !SubjectsWithNotDeleted::checkUserHavePermission($currentUserId,$userId,0,'deleteUser')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -366,10 +365,10 @@ class UserinfoAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $user = Users::findFirst(['userId = :userId:',
+            $user = Users::findFirst(['userid = :userId:',
                 'bind' => ['userId' => $this->request->getPost('userId')]], false);
 
-            if(!$user || !Subjects::checkUserHavePermission($userId,$user->getUserId(),0,'restoreCompany')){
+            if(!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$user->getUserId(),0,'restoreCompany')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

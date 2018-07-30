@@ -23,11 +23,10 @@ class ServicesAPIController extends Controller
     public function getServicesForSubjectAction($subjectId, $subjectType)
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
-
-            $services = Services::find(['subjectId = :subjectId: AND subjectType = :subjectType:',
-                'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType]]);
-
-            return json_encode($services);
+            $response = new Response();
+            $services = Services::findBySubject($subjectId, $subjectType);
+            $response->setJsonContent($services);
+            return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
@@ -51,7 +50,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceId($serviceId);
+            $service = Services::findFirstByServiceid($serviceId);
 
             if (!$service) {
                 $response->setJsonContent(
@@ -63,7 +62,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -116,7 +115,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceId($this->request->getPut("serviceId"));
+            $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
 
             if (!$service) {
                 $response->setJsonContent(
@@ -128,7 +127,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -325,7 +324,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceId($this->request->getPost("serviceId"));
+            $service = Services::findFirstByServiceid($this->request->getPost("serviceId"));
 
             if (!$service) {
                 $response->setJsonContent(
@@ -337,7 +336,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
                 'linkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
@@ -397,7 +396,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceId($serviceId);
+            $service = Services::findFirstByServiceid($serviceId);
 
             if (!$service) {
                 $response->setJsonContent(
@@ -409,7 +408,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
                 'unlinkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
@@ -420,8 +419,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $servicePoint = ServicesPoints::findFirst(['serviceId = :serviceId: AND pointId = :pointId:',
-                'bind' => ['serviceId' => $serviceId, 'pointId' => $pointId]]);
+            $servicePoint = ServicesPoints::findByIds($serviceId,  $pointId);
 
             if (!$servicePoint) {
                 $response->setJsonContent(
@@ -477,11 +475,11 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+            $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
             $service = $request->services;
 
-            if (!$service || !Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -547,11 +545,11 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestId($this->request->getPut("requestId"));
+            $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
             $service = $request->services;
 
-            if (!$service || !Subjects::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -594,6 +592,82 @@ class ServicesAPIController extends Controller
             );
             return $response;
 
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Заказчик отменяет заявку.
+     *
+     * @method PUT
+     *
+     * @param requestId
+     *
+     * @return string - json array в формате Status
+     */
+    public function rejectRequestAction()
+    {
+        if ($this->request->isPut() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
+
+            $service = $request->services;
+
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($request->getStatus() != STATUS_WAITING_CONFIRM &&
+                $request->getStatus() != STATUS_EXECUTING &&
+                $request->getStatus() != STATUS_EXECUTED_EXECUTOR &&
+                $request->getStatus() != STATUS_EXECUTED_CLIENT) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя отказаться от заказа на данном этапе']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($request->getStatus() == STATUS_WAITING_CONFIRM)
+                $request->setStatus(STATUS_NOT_CONFIRMED);
+            else {
+                $request->setStatus(STATUS_NOT_EXECUTED);
+            }
+
+            if (!$request->update()) {
+                $errors = [];
+                foreach ($request->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 

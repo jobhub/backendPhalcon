@@ -13,7 +13,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceId;
+    protected $serviceid;
 
     /**
      *
@@ -21,17 +21,17 @@ class ServicesPoints extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $pointId;
+    protected $pointid;
 
     /**
      * Method to set the value of field serviceId
      *
-     * @param integer $serviceId
+     * @param integer $serviceid
      * @return $this
      */
-    public function setServiceId($serviceId)
+    public function setServiceId($serviceid)
     {
-        $this->serviceId = $serviceId;
+        $this->serviceid = $serviceid;
 
         return $this;
     }
@@ -39,12 +39,12 @@ class ServicesPoints extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field pointId
      *
-     * @param integer $pointId
+     * @param integer $pointid
      * @return $this
      */
-    public function setPointId($pointId)
+    public function setPointId($pointid)
     {
-        $this->pointId = $pointId;
+        $this->pointid = $pointid;
 
         return $this;
     }
@@ -56,7 +56,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
      */
     public function getServiceId()
     {
-        return $this->serviceId;
+        return $this->serviceid;
     }
 
     /**
@@ -66,7 +66,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
      */
     public function getPointId()
     {
-        return $this->pointId;
+        return $this->pointid;
     }
 
     /**
@@ -79,7 +79,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'serviceId',
+            'serviceid',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
@@ -95,7 +95,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'pointId',
+            'pointid',
             new Callback(
                 [
                     "message" => "Такая точка оказания услуг не существует или не связана с компанией услуги",
@@ -103,7 +103,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
                         $point = TradePoints::findFirstByPointId($servicePoint->getPointId());
                         $service = Services::findFirstByServiceId($servicePoint->getServiceId());
                         if ($point && $service &&
-                            (Subjects::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
+                            (SubjectsWithNotDeleted::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
                             return true;
                         return false;
                     }
@@ -121,8 +121,8 @@ class ServicesPoints extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("servicesPoints");
-        $this->belongsTo('pointId', '\TradePoints', 'pointId', ['alias' => 'Tradepoints']);
-        $this->belongsTo('serviceId', '\Services', 'serviceId', ['alias' => 'Services']);
+        $this->belongsTo('pointid', '\TradePoints', 'pointid', ['alias' => 'Tradepoints']);
+        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
     }
 
     /**
@@ -157,15 +157,21 @@ class ServicesPoints extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findByIds($serviceId, $pointId)
+    {
+        return ServicesPoints::findFirst(['serviceid = :serviceId: AND pointid = :pointId:',
+            'bind' => ['serviceId' => $serviceId, 'pointId' => $pointId]]);;
+    }
+
     public function beforeDelete(){
         //Проверка, можно ли удалить связь с услугой (услуга обязательно должна быть связана с точкой оказания услуг или регионом)
-        $service = Services::findFirstByServiceId($this->getServiceId());
+        $service = Services::findFirstByServiceid($this->getServiceId());
 
         if($service->getRegionId() != null){
             return true;
         }
 
-        $servicesPoints = ServicesPoints::findByServiceId($this->getServiceId());
+        $servicesPoints = ServicesPoints::findByServiceid($this->getServiceId());
 
         if(count($servicesPoints) > 1){
             return true;

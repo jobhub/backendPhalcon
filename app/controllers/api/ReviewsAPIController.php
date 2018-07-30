@@ -13,31 +13,15 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 class ReviewsAPIController extends Controller
 {
-    public function indexAction($userId)
-    {
-        if ($this->request->isGet()) {
-            //$today = date("Y-m-d");
-            $query = $this->modelsManager->createQuery('SELECT * FROM reviews INNER JOIN userinfo ON reviews.userId_subject=userinfo.userId 
-                WHERE reviews.userId_object = :userId:');
-
-            $reviews = $query->execute(
-                [
-                    'userId' => "$userId"
-                ]
-            );
-            return json_encode($reviews);
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
-    }
-
     /**
      * Добавляет отзыв.
      *
+     * @method POST
      *
-     * @return Response
+     * @params binderId, binderType, executor, rating
+     * @param (Необязатальные) textReview, fake.
+     *
+     * @return Response - Status
      */
     public function addReviewAction()
     {
@@ -46,123 +30,382 @@ class ReviewsAPIController extends Controller
             $userId = $auth['id'];
 
             $response = new Response();
+            $binderId = $this->request->getPost('binderId');
+            $binderType = $this->request->getPost('binderType');
+            $executor = $this->request->getPost('executor');
 
-            $auction = Auctions::findFirstByAuctionId($this->request->getPost("tenderId"));
-            $offer = Offers::findFirst(["auctionId =:auctionId: and selected = 1",
-                'bind' => [
-                    'auctionId' => $auction->getAuctionId()
-                ]
-            ]);
-
-            if ($userId == $auction->tasks->getUserId()) {
-                $reviews = Reviews::find(["auctionId =:auctionId: and executor = :executor:",
-                        'bind' => [
-                            'auctionId' => $auction->getAuctionId(),
-                            'executor' => 1
-                        ]
-                    ]
-                );
-                if ($reviews->count() == 0) {
-                    //Значит, еще не написал
-
-                    $review = new Reviews();
-                    $review->setAuctionId($auction->getAuctionId());
-                    $review->setExecutor(1);
-                    $review->setRating($this->request->getPost("rating"));
-                    $review->setReviewDate(date('Y-m-d H:i:s'));
-                    $review->setTextReview($this->request->getPost("textReview"));
-                    $review->setUserIdSubject($userId);
-
-
-                    $review->setUserIdObject($offer->getUserId());
-
-                    if (!$review->save()) {
-                        foreach ($review->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-
-                        $response->setJsonContent(
-                            [
-                                "errors" => $errors,
-                                "status" => "WRONG_DATA"
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $response->setJsonContent(
-                        [
-                            "status" => "OK"
-                        ]
-                    );
-                    return $response;
-                } else {
-                    $response->setJsonContent(
-                        [
-                            "status" => "WRONG_DATA"
-                        ]
-                    );
-                    return $response;
-                }
-            } else if ($offer->getUserId() == $userId) {
-                //Значит он исполнитель, пишет о заказчике
-                $reviews = Reviews::find(["auctionId =:auctionId: and executor = :executor:",
-                        'bind' => [
-                            'auctionId' => $auction->getAuctionId(),
-                            'executor' => 0
-                        ]
-                    ]
-                );
-                if ($reviews->count() == 0) {
-                    $review = new Reviews();
-                    $review->setAuctionId($auction->getAuctionId());
-                    $review->setExecutor(0);
-                    $review->setRating($this->request->getPost("rating"));
-                    $review->setReviewDate(date('Y-m-d H:i:s'));
-                    $review->setTextReview($this->request->getPost("textReview"));
-                    $review->setUserIdSubject($userId);
-
-
-                    $review->setUserIdObject($auction->tasks->getUserId());
-
-                    if (!$review->save()) {
-                        foreach ($review->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-
-                        $response->setJsonContent(
-                            [
-                                "errors" => $errors,
-                                "status" => "WRONG_DATA"
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $response->setJsonContent(
-                        [
-                            "status" => "OK"
-                        ]
-                    );
-                    return $response;
-                } else {
-                    $response->setJsonContent(
-                        [
-                            "status" => "WRONG_DATA"
-                        ]
-                    );
-                    return $response;
-                }
-            } else {
+            if (!Binders::checkUserHavePermission($userId, $binderId,
+                $binderType, $executor, 'addReview')) {
                 $response->setJsonContent(
                     [
-                        "status" => "WRONG_DATA"
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
                     ]
                 );
                 return $response;
             }
+
+            $review = Reviews::findFirst(['binderid = :binderId: AND bindertype = :binderType: AND executor = :executor:',
+                'bind' => ['binderId' => $binderId, 'binderType' => $binderType, 'executor' => $executor]]);
+
+            if ($review) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Отзыв в связи с заказом уже написан']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($binderType == 0) {
+                $binder = Tasks::findFirstByTaskid($binderId);
+            } else
+                $binder = Requests::findFirstByRequestid($binderId);
+
+            if (!($binder->getStatus() == STATUS_CANCELED ||
+                $binder->getStatus() == STATUS_NOT_EXECUTED ||
+                $binder->getStatus() == STATUS_REJECTED_BY_SYSTEM ||
+                $binder->getStatus() == STATUS_PAID_EXECUTOR ||
+                $binder->getStatus() == STATUS_PAID_BY_SECURE_TRANSACTION)) {
+
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нельзя писать отзыв на данном этапе']
+                    ]
+                );
+                return $response;
+            }
+
+            $review = new Reviews();
+
+            $review->setBinderId($binderId);
+            $review->setBinderType($binderType);
+            $review->setExecutor($executor);
+            $review->setTextReview($this->request->getPost('textReview'));
+            $review->setReviewDate(date('Y-m-d H:i:s'));
+
+            if($this->request->getPost('fake'))
+                $review->setFake($this->request->getPost('fake'));
+
+            $review->setRating($this->request->getPost('rating'));
+
+            if (!$review->save()) {
+                $errors = [];
+                foreach ($review->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+}
+
+    /**
+     * Редактирует отзыв.
+     *
+     * @method PUT
+     *
+     * @params rating, reviewId
+     * @param (Необязатальные) textReview.
+     *
+     * @return Response - Status
+     */
+    public function editReviewAction()
+    {
+        if ($this->request->isPut()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $review = Reviews::findFirstByReviewid($this->request->getPut('reviewId'));
+
+            $response = new Response();
+
+            if (!$review) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Отзыв не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
+                $review->getBinderType(), $review->getExecutor(), 'editReview')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $review->setTextReview($this->request->getPut('textReview'));
+            $review->setReviewDate(date('Y-m-d H:i:s'));
+            $review->setRating($this->request->getPut('rating'));
+
+            if (!$review->update()) {
+                $errors = [];
+                foreach ($review->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет отзыв.
+     *
+     * @method DELETE
+     *
+     * @params $reviewId
+     *
+     * @return Response - Status
+     */
+    public function deleteReviewAction($reviewId)
+    {
+        if ($this->request->isDelete()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $review = Reviews::findFirstByReviewid($reviewId);
+
+            $response = new Response();
+
+            if (!$review) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Отзыв не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
+                $review->getBinderType(), $review->getExecutor(), 'editReview')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$review->delete()) {
+                $errors = [];
+                foreach ($review->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Получает отзывы.
+     *
+     * @method GET
+     *
+     * @params $subjectId, $subjectType
+     *
+     * @return string
+     */
+    public function getReviewsAction($subjectId, $subjectType)
+    {
+        if ($this->request->isGet()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+            /*
+             * $query = $this->modelsManager->createQuery("SELECT reviews.reviewId as id,
+              reviews.textReview as text 
+              FROM reviews inner join tasks 
+              ON (reviews.binderId = tasks.taskId AND reviews.binderType = 0 AND reviews.executor = true) 
+              WHERE tasks.subjectId = :subjectId: AND tasks.subjectType = :subjectType:");
+
+            $query2 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
+              reviews.textReview as text 
+              FROM reviews inner join offers 
+              ON (reviews.binderId = offers.taskId AND reviews.binderType = 0
+                  AND reviews.executor = false AND offers.selected = true) 
+              WHERE offers.subjectId = :subjectId: AND offers.subjectType = :subjectType:");
+
+            $query3 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
+              reviews.textReview as text 
+              FROM reviews inner join requests
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+                  AND reviews.executor = true)
+              WHERE requests.subjectId = :subjectId: AND requests.subjectType = :subjectType:");
+
+            $query4 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
+              reviews.textReview as text 
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+                  AND reviews.executor = false)
+              WHERE services.subjectId = :subjectId: AND services.subjectType = :subjectType:");
+
+            $reviews  = $query->execute(
+                [
+                    'subjectId' => $userId,
+                    'subjectType' => 0,
+                ]
+            );
+
+            $reviews2  = $query2->execute(
+                [
+                    'subjectId' => $userId,
+                    'subjectType' => 0,
+                ]
+            );
+
+            $reviews3  = $query3->execute(
+                [
+                    'subjectId' => $userId,
+                    'subjectType' => 0,
+                ]
+            );
+
+            $reviews4  = $query4->execute(
+                [
+                    'subjectId' => $userId,
+                    'subjectType' => 0,
+                ]
+            );
+
+            $reviews_arr = [];
+
+            foreach($reviews as $review)
+                $reviews_arr[] = $review;
+
+            foreach($reviews2 as $review)
+                $reviews_arr[] = $review;
+
+            foreach($reviews3 as $review)
+                $reviews_arr[] = $review;
+
+            foreach($reviews4 as $review)
+                $reviews_arr[] = $review;*/
+
+            //if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$subjectId,$subjectType, 'getReviews'))
+
+            $query = $this->db->prepare("Select * FROM (
+(SELECT reviews.reviewId as id,
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor
+              FROM reviews inner join tasks 
+              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 0 AND reviews.executor = true) 
+              WHERE tasks.subjectId = :subjectId AND tasks.subjectType = :subjectType)
+              UNION
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews inner join offers 
+              ON (reviews.binderId = offers.taskId AND reviews.binderType = 0
+                  AND reviews.executor = false AND offers.selected = true) 
+              WHERE offers.subjectId = :subjectId AND offers.subjectType = :subjectType) 
+              UNION
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews inner join requests
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+                  AND reviews.executor = true)
+              WHERE requests.subjectId = :subjectId AND requests.subjectType = :subjectType) 
+              UNION
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+                  AND reviews.executor = false)
+              WHERE services.subjectId = :subjectId AND services.subjectType = :subjectType)
+              ) p0
+              ORDER BY p0.date desc"
+            );
+
+            $result = $query->execute([
+                'subjectId' => $subjectId,
+                'subjectType' => $subjectType,
+            ]);
+
+            $reviews = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                    "reviews" => $reviews
+                ]
+            );
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

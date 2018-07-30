@@ -8,7 +8,7 @@ use Phalcon\Mvc\Model\Message;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
-class Offers extends NotDeletedModelWithCascade
+class Offers extends SubjectsWithNotDeleted
 {
 
     /**
@@ -18,21 +18,14 @@ class Offers extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $offerId;
+    protected $offerid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $subjectId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $taskId;
+    protected $taskid;
 
     /**
      *
@@ -71,41 +64,14 @@ class Offers extends NotDeletedModelWithCascade
 
 
     /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectType;
-
-    /**
      * Method to set the value of field offerId
      *
-     * @param integer $offerId
+     * @param integer $offerid
      * @return $this
      */
-    public function setOfferId($offerId)
+    public function setOfferId($offerid)
     {
-        $this->offerId = $offerId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    public function setSubjectType($subjectType)
-    {
-        $this->subjectType = $subjectType;
+        $this->offerid = $offerid;
 
         return $this;
     }
@@ -113,12 +79,12 @@ class Offers extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field taskId
      *
-     * @param integer $taskId
+     * @param integer $taskid
      * @return $this
      */
-    public function setTaskId($taskId)
+    public function setTaskId($taskid)
     {
-        $this->taskId = $taskId;
+        $this->taskid = $taskid;
 
         return $this;
     }
@@ -195,27 +161,7 @@ class Offers extends NotDeletedModelWithCascade
      */
     public function getOfferId()
     {
-        return $this->offerId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectType()
-    {
-        return $this->subjectType;
+        return $this->offerid;
     }
 
     /**
@@ -225,7 +171,7 @@ class Offers extends NotDeletedModelWithCascade
      */
     public function getTaskId()
     {
-        return $this->taskId;
+        return $this->taskid;
     }
 
     /**
@@ -288,35 +234,12 @@ class Offers extends NotDeletedModelWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($task) {
-                        if ($task->getSubjectType() == 0) {
-                            $user = Users::findFirstByUserId($task->getSubjectId());
-                            if ($user)
-                                return true;
-                            return false;
-                        } else if ($task->getSubjectType() == 1) {
-                            $company = Companies::findFirstByCompanyId($task->getSubjectId());
-                            if ($company)
-                                return true;
-                            return false;
-                        } else
-                            return false;
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'taskId',
+            'taskid',
             new Callback(
                 [
                     "message" => "Задание не существует",
                     "callback" => function ($offer) {
-                        $task = Tasks::findFirstByTaskId($offer->getTaskId());
+                        $task = Tasks::findFirstByTaskid($offer->getTaskId());
 
                         if ($task)
                             return true;
@@ -358,7 +281,7 @@ class Offers extends NotDeletedModelWithCascade
             )
         );
 
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -368,7 +291,7 @@ class Offers extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("offers");
-        $this->belongsTo('taskId', '\Tasks', 'taskId', ['alias' => 'Tasks']);
+        $this->belongsTo('taskid', '\Tasks', 'taskid', ['alias' => 'Tasks']);
     }
 
     /**
@@ -383,13 +306,13 @@ class Offers extends NotDeletedModelWithCascade
 
     public static function checkUserHavePermission($userId, $offerId, $right = null)
     {
-        $offer = Offers::findFirstByOfferId($offerId);
-        $user = Users::findFirstByUserId($userId);
+        $offer = Offers::findFirstByOfferid($offerId);
+        $user = Users::findFirstByUserid($userId);
 
         if (!$offer)
             return false;
 
-        return Subjects::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
+        return SubjectsWithNotDeleted::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
     }
 
     /**
@@ -397,7 +320,7 @@ class Offers extends NotDeletedModelWithCascade
      */
     public function confirm()
     {
-        $task = Tasks::findFirstByTaskId($this->getTaskId());
+        $task = Tasks::findFirstByTaskid($this->getTaskId());
 
         if ($task && $task->getStatus() == STATUS_WAITING_CONFIRM) {
             if ($this->getSelected()) {
@@ -457,7 +380,7 @@ class Offers extends NotDeletedModelWithCascade
      */
     public function reject()
     {
-        $task = Tasks::findFirstByTaskId($this->getTaskId());
+        $task = Tasks::findFirstByTaskid($this->getTaskId());
 
         if ($task && ($task->getStatus() == STATUS_WAITING_CONFIRM ||
                 $task->getStatus() == STATUS_EXECUTING || $task->getStatus() == STATUS_EXECUTED_EXECUTOR ||

@@ -5,9 +5,16 @@ use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+use Phalcon\Mvc\Dispatcher;
 
 class FavouriteUsersAPIController extends Controller
 {
+    /**
+     * Подписывает текущего пользователя на указанного
+     * @method POST
+     * @params userId
+     * @return string - json array Status
+     */
     public function setFavouriteAction()
     {
         if ($this->request->isPost()) {
@@ -16,12 +23,7 @@ class FavouriteUsersAPIController extends Controller
             $userIdSubject = $auth['id'];
             $userIdObject = $this->request->getPost('userId');
 
-            $fav = Favoriteusers::findFirst(["userObject = :userIdObject: AND userSubject = :userIdSubject:",
-                "bind" => [
-                "userIdObject" => $userIdObject,
-                "userIdSubject" => $userIdSubject,
-            ]
-            ]);
+            $fav = Favoriteusers::findByIds($userIdObject,$userIdSubject);
 
             if(!$fav){
 
@@ -30,12 +32,13 @@ class FavouriteUsersAPIController extends Controller
                 $fav->setUserSubject($userIdSubject);
 
                 if (!$fav->save()) {
+                    $errors = [];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -44,7 +47,7 @@ class FavouriteUsersAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -52,8 +55,8 @@ class FavouriteUsersAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "ALREADY_EXISTS",
-                    "errors" => ["already exists"]
+                    "status" => STATUS_ALREADY_EXISTS,
+                    "errors" => ["Пользователь уже подписан"]
                 ]
             );
             return $response;
@@ -64,29 +67,31 @@ class FavouriteUsersAPIController extends Controller
         }
     }
 
-    public function deleteFavouriteAction()
+    /**
+     * Отменяет подписку на пользователя
+     * @method
+     * @param $userIdObject
+     * @return string - json array Status
+     */
+    public function deleteFavouriteAction($userIdObject)
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isDelete()) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userSubject = $auth['id'];
-            $userObject = $this->request->getPost('userObject');
+            $userObject = $userIdObject;
 
-            $fav = FavoriteUsers::findFirst(["userObject = :userObject: AND userSubject = :userSubject:",
-                "bind" => [
-                    "userObject" => $userObject,
-                    "userSubject" => $userSubject,
-                ]
-            ]);
+            $fav = FavoriteUsers::findByIds($userObject,$userSubject);
 
             if($fav){
                 if (!$fav->delete()) {
+                    $errors = [];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -95,7 +100,7 @@ class FavouriteUsersAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -103,7 +108,7 @@ class FavouriteUsersAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "WRONG_DATA",
+                    "status" => STATUS_WRONG,
                     "errors" => ["Пользователь не подписан"]
                 ]
             );
@@ -116,17 +121,22 @@ class FavouriteUsersAPIController extends Controller
         }
     }
 
+    /**
+     * Возвращает подписки текущего пользователя
+     * @method GET
+     * @return string - json array подписок
+     */
     public function getFavouriteAction()
     {
-
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
+            $response = new Response();
 
-            /*$fav = Favoritecategories::find(["users_userId = :userId:", "bind" =>
-            ["userId" => $userId]]);
+            $fav = FavoriteCategories::findByUsersubject($userId);
 
-            return json_encode($fav);*/
+            $response->setJsonContent($fav);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

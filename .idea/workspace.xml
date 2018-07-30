@@ -2,22 +2,53 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/Binders.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/SubjectsWithNotDeleted.php" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/FavoriteCategories.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/Reviews.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/Subjects.php" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.phalcon/devtools.log" afterPath="$PROJECT_DIR$/.phalcon/devtools.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/config.php" afterPath="$PROJECT_DIR$/app/config/config.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/FavouriteCompaniesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/FavouriteCompaniesAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/FavouriteUsersAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/FavouriteUsersAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/OffersAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/OffersAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/SessionAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/SessionAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/TasksAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/TasksAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/migrations/1.0.0/favoriteCategories.php" afterPath="$PROJECT_DIR$/app/migrations/1.0.0/favoriteCategories.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Categories.php" afterPath="$PROJECT_DIR$/app/models/Categories.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Companies.php" afterPath="$PROJECT_DIR$/app/models/Companies.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/CompaniesCategories.php" afterPath="$PROJECT_DIR$/app/models/CompaniesCategories.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/CompaniesManagers.php" afterPath="$PROJECT_DIR$/app/models/CompaniesManagers.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/FavoriteCompanies.php" afterPath="$PROJECT_DIR$/app/models/FavoriteCompanies.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/FavoriteUsers.php" afterPath="$PROJECT_DIR$/app/models/FavoriteUsers.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Logs.php" afterPath="$PROJECT_DIR$/app/models/Logs.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Messages.php" afterPath="$PROJECT_DIR$/app/models/Messages.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/News.php" afterPath="$PROJECT_DIR$/app/models/News.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" afterPath="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Offers.php" afterPath="$PROJECT_DIR$/app/models/Offers.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Phones.php" afterPath="$PROJECT_DIR$/app/models/Phones.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/PhonesCompanies.php" afterPath="$PROJECT_DIR$/app/models/PhonesCompanies.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/PhonesPoints.php" afterPath="$PROJECT_DIR$/app/models/PhonesPoints.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Regions.php" afterPath="$PROJECT_DIR$/app/models/Regions.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Requests.php" afterPath="$PROJECT_DIR$/app/models/Requests.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Services.php" afterPath="$PROJECT_DIR$/app/models/Services.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ServicesPoints.php" afterPath="$PROJECT_DIR$/app/models/ServicesPoints.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Subjects.php" afterPath="$PROJECT_DIR$/app/models/Subjects.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Settings.php" afterPath="$PROJECT_DIR$/app/models/Settings.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Statuses.php" afterPath="$PROJECT_DIR$/app/models/Statuses.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Tasks.php" afterPath="$PROJECT_DIR$/app/models/Tasks.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Tokens.php" afterPath="$PROJECT_DIR$/app/models/Tokens.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/TradePoints.php" afterPath="$PROJECT_DIR$/app/models/TradePoints.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/UserInfo.php" afterPath="$PROJECT_DIR$/app/models/UserInfo.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Users.php" afterPath="$PROJECT_DIR$/app/models/Users.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,28 +71,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Companies.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/Companies.php">
+      <file leaf-file-name="RegisterAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="500" column="43" lean-forward="false" selection-start-line="500" selection-start-column="43" selection-end-line="500" selection-end-column="43" />
+            <state relative-caret-position="340">
+              <caret line="23" column="54" lean-forward="false" selection-start-line="23" selection-start-column="54" selection-end-line="23" selection-end-column="54" />
               <folding>
-                <element signature="e#7#30#0#PHP" expanded="true" />
-                <element signature="n#restore#0;n#Companies#0;n#!!top" expanded="false" />
+                <element signature="e#7#33#0#PHP" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Offers.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/Offers.php">
+      <file leaf-file-name="RequestsAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="457" column="28" lean-forward="false" selection-start-line="457" selection-start-column="28" selection-end-line="457" selection-end-column="28" />
+            <state relative-caret-position="5848">
+              <caret line="349" column="52" lean-forward="false" selection-start-line="349" selection-start-column="52" selection-end-line="349" selection-end-column="52" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReviewsAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4607">
+              <caret line="348" column="45" lean-forward="false" selection-start-line="348" selection-start-column="45" selection-end-line="348" selection-end-column="45" />
               <folding>
-                <element signature="e#7#30#0#PHP" expanded="true" />
-                <element signature="n#confirm#0;n#Offers#0;n#!!top" expanded="false" />
-                <element signature="n#reject#0;n#Offers#0;n#!!top" expanded="false" />
+                <element signature="e#8439#11220#0#PHP" expanded="false" />
+                <marker date="1532969226692" expanded="false" signature="8501:8800" ph="SELECT \'pub... reviews" />
+                <marker date="1532969226692" expanded="true" signature="8501:8813" ph="Select * FRO... reviewId" />
+                <marker date="1532969226692" expanded="false" signature="8875:9238" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="false" signature="9300:9644" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="false" signature="9706:10130" ph="SELECT revie... services" />
+                <marker date="1532969226692" expanded="false" signature="11378:13463" ph="Select * FRO... reviewId" />
+                <marker date="1532969226692" expanded="true" signature="11378:13496" ph="Select * FRO... reviewId" />
+                <marker date="1532969226692" expanded="true" signature="11378:13501" ph="Select * FRO... reviewId" />
+                <marker date="1532969226692" expanded="true" signature="11395:11656" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="true" signature="11395:11672" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="true" signature="11395:11829" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="true" signature="11866:12353" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="true" signature="12391:12859" ph="SELECT revie... reviews" />
+                <marker date="1532969226692" expanded="true" signature="12897:13445" ph="SELECT revie... services" />
               </folding>
             </state>
           </provider>
@@ -70,73 +122,18 @@
       <file leaf-file-name="ServicesAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="542" column="33" lean-forward="false" selection-start-line="542" selection-start-column="33" selection-end-line="542" selection-end-column="33" />
-              <folding>
-                <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#editServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#addServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#linkServiceWithPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#unlinkServiceAndPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RequestsAPIController.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-226">
-              <caret line="269" column="42" lean-forward="false" selection-start-line="269" selection-start-column="42" selection-end-line="269" selection-end-column="42" />
-              <folding>
-                <element signature="n#addRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#deleteRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#editRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getRequestsAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#cancelRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Requests.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/Requests.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="287" column="68" lean-forward="false" selection-start-line="287" selection-start-column="68" selection-end-line="287" selection-end-column="68" />
+            <state relative-caret-position="10387">
+              <caret line="617" column="52" lean-forward="false" selection-start-line="617" selection-start-column="52" selection-end-line="617" selection-end-column="52" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OffersAPIController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/OffersAPIController.php">
+      <file leaf-file-name="SessionAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/SessionAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="420" column="7" lean-forward="true" selection-start-line="420" selection-start-column="7" selection-end-line="420" selection-end-column="7" />
-              <folding>
-                <element signature="n#getForTaskAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#addOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getForSubjectAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#deleteOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#editOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#confirmOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#rejectOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#performTaskAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#addStatusAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="83" column="46" lean-forward="false" selection-start-line="83" selection-start-column="46" selection-end-line="83" selection-end-column="46" />
+            <state relative-caret-position="1360">
+              <caret line="83" column="33" lean-forward="false" selection-start-line="83" selection-start-column="33" selection-end-line="83" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -145,17 +142,52 @@
       <file leaf-file-name="TasksAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/TasksAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="486" column="18" lean-forward="true" selection-start-line="486" selection-start-column="18" selection-end-line="486" selection-end-column="18" />
+            <state relative-caret-position="7990">
+              <caret line="476" column="43" lean-forward="false" selection-start-line="476" selection-start-column="43" selection-end-line="476" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TradePointsAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5168">
+              <caret line="309" column="51" lean-forward="false" selection-start-line="309" selection-start-column="51" selection-end-line="309" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UserInfoAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6171">
+              <caret line="367" column="44" lean-forward="false" selection-start-line="367" selection-start-column="44" selection-end-line="367" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Users.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/Users.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="287">
+              <caret line="418" column="21" lean-forward="false" selection-start-line="418" selection-start-column="21" selection-end-line="418" selection-end-column="21" />
               <folding>
-                <element signature="n#addTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getTasksForCurrentUserAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getTasksForSubjectAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#deleteTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#editTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#selectOfferAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#cancelTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
+                <marker date="1532897097802" expanded="true" signature="12977:13238" ph="SELECT COUNT... offers" />
+                <marker date="1532897097802" expanded="true" signature="13536:13773" ph="SELECT AVG(r... reviews" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServicesPoints.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ServicesPoints.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2669">
+              <caret line="159" column="57" lean-forward="false" selection-start-line="159" selection-start-column="57" selection-end-line="159" selection-end-column="57" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -171,7 +203,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sha1</find>
       <find>save</find>
       <find>edit</find>
       <find>notice</find>
@@ -199,6 +230,9 @@
       <find>search</find>
       <find>new</find>
       <find>query</find>
+      <find>$categoryId</find>
+      <find>NewType</find>
+      <find>newType</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,57 +241,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/models/PhonesPoints.php" />
-        <option value="$PROJECT_DIR$/app/models/PhonesCompanies.php" />
-        <option value="$PROJECT_DIR$/app/config/loader.php" />
-        <option value="$PROJECT_DIR$/app/models/Messages.php" />
-        <option value="$PROJECT_DIR$/app/models/Auctions.php" />
-        <option value="$PROJECT_DIR$/app/migrations/1.0.1/companies.php" />
-        <option value="$PROJECT_DIR$/app/migrations/1.0.0/companies.php" />
-        <option value="$PROJECT_DIR$/app/controllers/IndexController.php" />
-        <option value="$PROJECT_DIR$/app/models/Logs.php" />
-        <option value="$PROJECT_DIR$/app/plugins/NotFoundPlugin.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/MessagesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Phones.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/FavoriteUsers.php" />
-        <option value="$PROJECT_DIR$/app/models/FavouriteCompanies.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/FavoriteCompanies.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/FavouriteUsersAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/FavouriteCompaniesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Statuses.php" />
-        <option value="$PROJECT_DIR$/app/models/CompaniesManagers.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Settings.php" />
-        <option value="$PROJECT_DIR$/app/models/UserInfo.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/SessionAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Categories.php" />
         <option value="$PROJECT_DIR$/app/models/NotDeletedModel.php" />
         <option value="$PROJECT_DIR$/app/models/CompaniesWithCascade.php" />
-        <option value="$PROJECT_DIR$/app/models/News.php" />
-        <option value="$PROJECT_DIR$/app/models/Reviews.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Users.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
         <option value="$PROJECT_DIR$/app/models/Subjects.php" />
-        <option value="$PROJECT_DIR$/app/models/Services.php" />
-        <option value="$PROJECT_DIR$/app/models/ServicesPoints.php" />
-        <option value="$PROJECT_DIR$/app/models/TradePoints.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Companies.php" />
-        <option value="$PROJECT_DIR$/app/models/Tasks.php" />
-        <option value="$PROJECT_DIR$/app/models/Offers.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/OffersAPIController.php" />
         <option value="$PROJECT_DIR$/app/config/config.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Requests.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TasksAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/Binder.php" />
+        <option value="$PROJECT_DIR$/app/models/Binders.php" />
+        <option value="$PROJECT_DIR$/app/models/Reviews.php" />
+        <option value="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" />
         <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
+        <option value="$PROJECT_DIR$/app/models/Categories.php" />
+        <option value="$PROJECT_DIR$/app/models/Companies.php" />
+        <option value="$PROJECT_DIR$/app/models/CompaniesCategories.php" />
+        <option value="$PROJECT_DIR$/app/models/SubjectsWithDelete.php" />
+        <option value="$PROJECT_DIR$/app/models/Logs.php" />
+        <option value="$PROJECT_DIR$/app/models/Messages.php" />
+        <option value="$PROJECT_DIR$/app/models/News.php" />
+        <option value="$PROJECT_DIR$/app/models/Offers.php" />
+        <option value="$PROJECT_DIR$/app/models/Phones.php" />
+        <option value="$PROJECT_DIR$/app/models/Regions.php" />
+        <option value="$PROJECT_DIR$/app/models/Requests.php" />
+        <option value="$PROJECT_DIR$/app/models/Services.php" />
+        <option value="$PROJECT_DIR$/app/models/Settings.php" />
+        <option value="$PROJECT_DIR$/app/models/Statuses.php" />
+        <option value="$PROJECT_DIR$/app/models/Tokens.php" />
+        <option value="$PROJECT_DIR$/app/models/UserInfo.php" />
+        <option value="$PROJECT_DIR$/app/models/Users.php" />
+        <option value="$PROJECT_DIR$/app/models/FavoriteCategories.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/CompaniesManagers.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/FavoriteCompanies.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/FavouriteCompaniesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/FavoriteUsers.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/FavouriteUsersAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/SessionAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/SubjectsWithNotDeleted.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/Tasks.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/OffersAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/PhonesCompanies.php" />
+        <option value="$PROJECT_DIR$/app/models/PhonesPoints.php" />
+        <option value="$PROJECT_DIR$/app/models/TradePoints.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/ServicesPoints.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/TasksAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
       </list>
     </option>
   </component>
@@ -330,7 +364,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -378,6 +411,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -613,7 +647,16 @@
       <workItem from="1532349577403" duration="70000" />
       <workItem from="1532426457560" duration="1090000" />
       <workItem from="1532501192778" duration="14276000" />
-      <workItem from="1532517773090" duration="4248000" />
+      <workItem from="1532517773090" duration="6247000" />
+      <workItem from="1532601007929" duration="4231000" />
+      <workItem from="1532687956235" duration="723000" />
+      <workItem from="1532788680078" duration="5269000" />
+      <workItem from="1532850877070" duration="3403000" />
+      <workItem from="1532867124256" duration="3471000" />
+      <workItem from="1532892396139" duration="4426000" />
+      <workItem from="1532935648454" duration="12210000" />
+      <workItem from="1532968917946" duration="881000" />
+      <workItem from="1532969844056" duration="54000" />
     </task>
     <task id="LOCAL-00001" summary="Просто небольшие изменения для пула">
       <created>1513616550426</created>
@@ -930,16 +973,23 @@
       <option name="project" value="LOCAL" />
       <updated>1532501318611</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи">
+      <created>1532523931983</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1532523931983</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="644889000" />
+    <option name="totallyTimeSpent" value="681556000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29198185" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33509833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20634921" sideWeight="0.52122986" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -956,7 +1006,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32857144" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32784185" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -988,7 +1038,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Непонятки" />
     <MESSAGE value="В задания добавил статус в модерации" />
     <MESSAGE value="Доделал смену статуса" />
     <MESSAGE value="Таски делал" />
@@ -1013,7 +1062,8 @@
     <MESSAGE value="Начал работать над модулем заданий от пользователей. Добавил пока только несколько моделей" />
     <MESSAGE value="Что поменял, что-то добавил" />
     <MESSAGE value="Добавил каскадное восстановление объектов и немного поменял каскадное удаление" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавил каскадное восстановление объектов и немного поменял каскадное удаление" />
+    <MESSAGE value="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи" />
+    <option name="LAST_COMMIT_MESSAGE" value="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1039,14 +1089,9 @@
           <option name="timeStamp" value="736" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/controllers/api/SessionAPIController.php</url>
-          <line>47</line>
-          <option name="timeStamp" value="782" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/models/Phones.php</url>
-          <line>86</line>
-          <option name="timeStamp" value="796" />
+          <url>file://$PROJECT_DIR$/app/plugins/NotFoundPlugin.php</url>
+          <line>26</line>
+          <option name="timeStamp" value="857" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/public/js/ajaxupload.js</url>
@@ -1059,13 +1104,17 @@
           <option name="timeStamp" value="193" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="828" />
+      <option name="time" value="861" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="index.php">
         <watch expression="$this-&gt;getPhone()" language="PHP" />
+        <watch expression="$reviews2" language="PHP" />
         <watch expression="RequestsAPIController.php:276, RequestsAPIController-&gt;cancelRequestAction()" language="PHP" />
+        <watch expression="strtotime($request-&gt;getDateEnd())" language="PHP" />
         <watch expression="$this-&gt;request-&gt;getPost(&quot;name&quot;)" language="PHP" />
+        <watch expression="date('Y-m-d H:i:s')" language="PHP" />
+        <watch expression="date(&quot;&quot;)" language="PHP" />
         <watch expression="$this-&gt;request-&gt;getPut(&quot;requestId&quot;)" language="PHP" />
         <watch expression="$this-&gt;request-&gt;getPost('companyId')" language="PHP" />
         <watch expression="$categories" language="PHP" />
@@ -1082,10 +1131,174 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/TenderAPIController.php">
+    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1377">
-          <caret line="85" column="0" lean-forward="false" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
+        <state relative-caret-position="208">
+          <caret line="133" column="47" lean-forward="false" selection-start-line="133" selection-start-column="47" selection-end-line="133" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Binders.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-611">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Categories.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2741">
+          <caret line="172" column="70" lean-forward="false" selection-start-line="172" selection-start-column="70" selection-end-line="172" selection-end-column="70" />
+          <folding>
+            <element signature="e#6#29#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Companies.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9758">
+          <caret line="640" column="0" lean-forward="false" selection-start-line="640" selection-start-column="0" selection-end-line="640" selection-end-column="0" />
+          <folding>
+            <element signature="e#7#30#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/CompaniesCategories.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="19" column="24" lean-forward="false" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Lefttable.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Messages.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-170">
+          <caret line="213" column="5" lean-forward="true" selection-start-line="213" selection-start-column="5" selection-end-line="213" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Regions.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-155">
+          <caret line="74" column="56" lean-forward="false" selection-start-line="74" selection-start-column="56" selection-end-line="74" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Requests.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="219" column="66" lean-forward="false" selection-start-line="219" selection-start-column="66" selection-end-line="219" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Reviews.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3436">
+          <caret line="56" column="7" lean-forward="true" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Services.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="249" column="66" lean-forward="false" selection-start-line="249" selection-start-column="66" selection-end-line="249" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Settings.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2210">
+          <caret line="130" column="5" lean-forward="false" selection-start-line="130" selection-start-column="5" selection-end-line="130" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Statuses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1224">
+          <caret line="72" column="37" lean-forward="false" selection-start-line="72" selection-start-column="37" selection-end-line="72" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Tender.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Tokens.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1768">
+          <caret line="104" column="54" lean-forward="false" selection-start-line="104" selection-start-column="54" selection-end-line="104" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/UserInfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5882">
+          <caret line="348" column="5" lean-forward="false" selection-start-line="348" selection-start-column="5" selection-end-line="348" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/FavoriteCategories.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="179" column="42" lean-forward="true" selection-start-line="179" selection-start-column="42" selection-end-line="179" selection-end-column="42" />
+          <folding>
+            <element signature="n#findByIds#0;n#FavoriteCategories#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1326">
+          <caret line="188" column="40" lean-forward="false" selection-start-line="188" selection-start-column="40" selection-end-line="188" selection-end-column="40" />
+          <folding>
+            <element signature="e#7#34#0#PHP" expanded="false" />
+            <element signature="n#setFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#editCategoryAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addCategoryAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/CompaniesManagers.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="153" column="46" lean-forward="true" selection-start-line="153" selection-start-column="46" selection-end-line="153" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="378" column="42" lean-forward="false" selection-start-line="378" selection-start-column="42" selection-end-line="378" selection-end-column="42" />
+          <folding>
+            <element signature="n#getCompaniesAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#editCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#setManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#restoreCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1093,448 +1306,287 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.phalcon/devtools.log">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/FavouriteCompaniesAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.phalcon/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/tasks/new.phtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="816">
-          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/TasksController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4080">
-          <caret line="242" column="42" lean-forward="false" selection-start-line="242" selection-start-column="42" selection-end-line="242" selection-end-column="42" />
+        <state relative-caret-position="423">
+          <caret line="134" column="41" lean-forward="false" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="41" />
           <folding>
-            <marker date="1526127189636" expanded="true" signature="13345:13591" ph="SELECT * FRO... Users" />
-            <marker date="1526127189636" expanded="true" signature="15924:16065" ph="SELECT * FRO... Tasks" />
+            <element signature="n#setFavouriteAction#0;n#FavouriteCompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteFavouriteAction#0;n#FavouriteCompaniesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getFavouritesAction#0;n#FavouriteCompaniesAPIController#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/messages/edit.phtml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/CoordinationAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/coordination/index.phtml">
+    <entry file="file://$PROJECT_DIR$/app/models/FavoriteUsers.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3274">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="423">
+          <caret line="158" column="5" lean-forward="true" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/messages/index.phtml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/FavouriteUsersAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-183">
-          <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/PhonesPoints.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="78" column="7" lean-forward="true" selection-start-line="78" selection-start-column="7" selection-end-line="78" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Statuses.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="71" column="10" lean-forward="false" selection-start-line="71" selection-start-column="10" selection-end-line="71" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Regions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/CompaniesManagers.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1513">
-          <caret line="91" column="13" lean-forward="false" selection-start-line="91" selection-start-column="13" selection-end-line="91" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="38" column="6" lean-forward="false" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+        <state relative-caret-position="372">
+          <caret line="124" column="48" lean-forward="true" selection-start-line="124" selection-start-column="48" selection-end-line="124" selection-end-column="48" />
           <folding>
-            <marker date="1532174468567" expanded="true" signature="459:598" ph="SELECT * FRO... reviews" />
+            <element signature="n#setFavouriteAction#0;n#FavouriteUsersAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteFavouriteAction#0;n#FavouriteUsersAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getFavouriteAction#0;n#FavouriteUsersAPIController#0;n#!!top" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/PhonesCompanies.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="88" column="37" lean-forward="true" selection-start-line="88" selection-start-column="37" selection-end-line="88" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/RegisterController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="13" lean-forward="true" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/UserInfo.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1092">
-          <caret line="139" column="111" lean-forward="false" selection-start-line="139" selection-start-column="111" selection-end-line="139" selection-end-column="111" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Settings.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2125">
-          <caret line="125" column="0" lean-forward="false" selection-start-line="125" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/SessionAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Categories.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2754">
-          <caret line="162" column="10" lean-forward="false" selection-start-line="162" selection-start-column="10" selection-end-line="162" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/CompaniesCategories.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/Logs.php">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="20" lean-forward="false" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/MessagesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Messages.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5202">
-          <caret line="307" column="41" lean-forward="false" selection-start-line="307" selection-start-column="41" selection-end-line="307" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Phones.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/News.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3145">
-          <caret line="186" column="0" lean-forward="false" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="109" column="52" lean-forward="false" selection-start-line="109" selection-start-column="52" selection-end-line="109" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2601">
-          <caret line="388" column="5" lean-forward="false" selection-start-line="388" selection-start-column="5" selection-end-line="388" selection-end-column="5" />
-          <folding>
-            <element signature="n#getCompaniesAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#setManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Users.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5559">
-          <caret line="432" column="69" lean-forward="false" selection-start-line="432" selection-start-column="69" selection-end-line="432" selection-end-column="69" />
-          <folding>
-            <element signature="e#7#30#0#PHP" expanded="false" />
-            <element signature="n#delete#0;n#Users#0;n#!!top" expanded="false" />
-            <element signature="n#getFinishedTasks#0;n#Users#0;n#!!top" expanded="false" />
-            <element signature="n#getRatingForCategory#0;n#Users#0;n#!!top" expanded="false" />
-            <marker date="1532349233829" expanded="true" signature="12968:13229" ph="SELECT COUNT... offers" />
-            <marker date="1532349233829" expanded="true" signature="13527:13764" ph="SELECT AVG(r... reviews" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="362" column="40" lean-forward="false" selection-start-line="362" selection-start-column="40" selection-end-line="362" selection-end-column="40" />
-          <folding>
-            <element signature="n#aboutAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#settingsAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#handlerAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#restoreUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1394">
-          <caret line="152" column="52" lean-forward="false" selection-start-line="152" selection-start-column="52" selection-end-line="152" selection-end-column="52" />
-          <folding>
-            <element signature="e#7#34#0#PHP" expanded="false" />
-            <element signature="n#setFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getCategoriesForSiteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Subjects.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="53" column="18" lean-forward="false" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Services.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="262" column="13" lean-forward="true" selection-start-line="262" selection-start-column="13" selection-end-line="262" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="331" column="0" lean-forward="true" selection-start-line="331" selection-start-column="0" selection-end-line="331" selection-end-column="0" />
-          <folding>
-            <element signature="n#getPointsForCompanyAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getPointsForUserManagerAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ServicesPoints.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="162" column="0" lean-forward="true" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/TradePoints.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="416" column="63" lean-forward="false" selection-start-line="416" selection-start-column="63" selection-end-line="416" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Companies.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="500" column="43" lean-forward="false" selection-start-line="500" selection-start-column="43" selection-end-line="500" selection-end-column="43" />
-          <folding>
-            <element signature="e#7#30#0#PHP" expanded="true" />
-            <element signature="n#restore#0;n#Companies#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/composer/ClassLoader.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="320" column="0" lean-forward="false" selection-start-line="320" selection-start-column="0" selection-end-line="320" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Offers.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="457" column="28" lean-forward="false" selection-start-line="457" selection-start-column="28" selection-end-line="457" selection-end-column="28" />
-          <folding>
-            <element signature="e#7#30#0#PHP" expanded="true" />
-            <element signature="n#confirm#0;n#Offers#0;n#!!top" expanded="false" />
-            <element signature="n#reject#0;n#Offers#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Reviews.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="308" column="5" lean-forward="false" selection-start-line="308" selection-start-column="5" selection-end-line="308" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/config/config.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="157">
-          <caret line="13" column="23" lean-forward="false" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/plugins/NotFoundPlugin.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
+        <state relative-caret-position="170">
           <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/OffersAPIController.php">
+    <entry file="file://$PROJECT_DIR$/app/models/News.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="420" column="7" lean-forward="true" selection-start-line="420" selection-start-column="7" selection-end-line="420" selection-end-column="7" />
-          <folding>
-            <element signature="n#getForTaskAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getForSubjectAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#confirmOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#rejectOfferAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#performTaskAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addStatusAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/Requests.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="287" column="68" lean-forward="false" selection-start-line="287" selection-start-column="68" selection-end-line="287" selection-end-column="68" />
+        <state relative-caret-position="850">
+          <caret line="111" column="66" lean-forward="false" selection-start-line="111" selection-start-column="66" selection-end-line="111" selection-end-column="66" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
+    <entry file="file://$PROJECT_DIR$/app/models/FavoriteCompanies.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="542" column="33" lean-forward="false" selection-start-line="542" selection-start-column="33" selection-end-line="542" selection-end-column="33" />
+        <state relative-caret-position="389">
+          <caret line="163" column="13" lean-forward="true" selection-start-line="163" selection-start-column="13" selection-end-line="163" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/SubjectsWithNotDeleted.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2295">
+          <caret line="136" column="10" lean-forward="false" selection-start-line="136" selection-start-column="10" selection-end-line="136" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/NewsAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5287">
+          <caret line="363" column="66" lean-forward="false" selection-start-line="363" selection-start-column="66" selection-end-line="363" selection-end-column="66" />
           <folding>
-            <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#linkServiceWithPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#unlinkServiceAndPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getNewsAction#0;n#NewsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getSubjectNewsAction#0;n#NewsAPIController#0;n#!!top" expanded="false" />
+            <marker date="1532946289112" expanded="true" signature="1502:1564" ph="SELECT * FRO... *" />
+            <marker date="1532946289112" expanded="true" signature="1502:1583" ph="SELECT * FRO... *" />
+            <marker date="1532946289112" expanded="true" signature="1502:1809" ph="SELECT * FRO... *" />
+            <marker date="1532946289112" expanded="true" signature="1502:1824" ph="SELECT * FRO... *" />
+            <marker date="1532946289112" expanded="true" signature="1502:2013" ph="SELECT * FRO... *" />
+            <marker date="1532946289112" expanded="true" signature="1518:1564" ph="SELECT * FRO... news" />
+            <marker date="1532946289112" expanded="true" signature="1763:1809" ph="SELECT * FRO... news" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="23" lean-forward="false" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Offers.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="382" column="39" lean-forward="false" selection-start-line="382" selection-start-column="39" selection-end-line="382" selection-end-column="39" />
+          <folding>
+            <element signature="e#7#30#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/Tasks.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="504" column="40" lean-forward="false" selection-start-line="504" selection-start-column="40" selection-end-line="504" selection-end-column="40" />
+        <state relative-caret-position="2381">
+          <caret line="583" column="0" lean-forward="true" selection-start-line="583" selection-start-column="0" selection-end-line="583" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/PhonesCompanies.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2431">
+          <caret line="144" column="5" lean-forward="false" selection-start-line="144" selection-start-column="5" selection-end-line="144" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/PhonesPoints.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2720">
+          <caret line="160" column="20" lean-forward="false" selection-start-line="160" selection-start-column="20" selection-end-line="160" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Phones.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3502">
+          <caret line="208" column="56" lean-forward="false" selection-start-line="208" selection-start-column="56" selection-end-line="208" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/OffersAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6868">
+          <caret line="435" column="46" lean-forward="false" selection-start-line="435" selection-start-column="46" selection-end-line="435" selection-end-column="46" />
+          <folding>
+            <element signature="n#getForTaskAction#0;n#OffersAPIController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/TradePoints.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6188">
+          <caret line="368" column="90" lean-forward="false" selection-start-line="368" selection-start-column="90" selection-end-line="368" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="657" column="80" lean-forward="false" selection-start-line="657" selection-start-column="80" selection-end-line="657" selection-end-column="80" />
+          <folding>
+            <element signature="n#addPhoneToCompanyAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
+            <element signature="e#17743#18779#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="23" column="54" lean-forward="false" selection-start-line="23" selection-start-column="54" selection-end-line="23" selection-end-column="54" />
+          <folding>
+            <element signature="e#7#33#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5848">
+          <caret line="349" column="52" lean-forward="false" selection-start-line="349" selection-start-column="52" selection-end-line="349" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4607">
+          <caret line="348" column="45" lean-forward="false" selection-start-line="348" selection-start-column="45" selection-end-line="348" selection-end-column="45" />
+          <folding>
+            <element signature="e#8439#11220#0#PHP" expanded="false" />
+            <marker date="1532969226692" expanded="false" signature="8501:8800" ph="SELECT \'pub... reviews" />
+            <marker date="1532969226692" expanded="true" signature="8501:8813" ph="Select * FRO... reviewId" />
+            <marker date="1532969226692" expanded="false" signature="8875:9238" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="false" signature="9300:9644" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="false" signature="9706:10130" ph="SELECT revie... services" />
+            <marker date="1532969226692" expanded="false" signature="11378:13463" ph="Select * FRO... reviewId" />
+            <marker date="1532969226692" expanded="true" signature="11378:13496" ph="Select * FRO... reviewId" />
+            <marker date="1532969226692" expanded="true" signature="11378:13501" ph="Select * FRO... reviewId" />
+            <marker date="1532969226692" expanded="true" signature="11395:11656" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="true" signature="11395:11672" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="true" signature="11395:11829" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="true" signature="11866:12353" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="true" signature="12391:12859" ph="SELECT revie... reviews" />
+            <marker date="1532969226692" expanded="true" signature="12897:13445" ph="SELECT revie... services" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ServicesPoints.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2669">
+          <caret line="159" column="57" lean-forward="false" selection-start-line="159" selection-start-column="57" selection-end-line="159" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10387">
+          <caret line="617" column="52" lean-forward="false" selection-start-line="617" selection-start-column="52" selection-end-line="617" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/SessionAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="83" column="33" lean-forward="false" selection-start-line="83" selection-start-column="33" selection-end-line="83" selection-end-column="33" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/TasksAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="486" column="18" lean-forward="true" selection-start-line="486" selection-start-column="18" selection-end-line="486" selection-end-column="18" />
-          <folding>
-            <element signature="n#addTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getTasksForCurrentUserAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getTasksForSubjectAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#selectOfferAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#cancelTaskAction#0;n#TasksAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="83" column="46" lean-forward="false" selection-start-line="83" selection-start-column="46" selection-end-line="83" selection-end-column="46" />
+        <state relative-caret-position="7990">
+          <caret line="476" column="43" lean-forward="false" selection-start-line="476" selection-start-column="43" selection-end-line="476" selection-end-column="43" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php">
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-226">
-          <caret line="269" column="42" lean-forward="false" selection-start-line="269" selection-start-column="42" selection-end-line="269" selection-end-column="42" />
+        <state relative-caret-position="5168">
+          <caret line="309" column="51" lean-forward="false" selection-start-line="309" selection-start-column="51" selection-end-line="309" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6171">
+          <caret line="367" column="44" lean-forward="false" selection-start-line="367" selection-start-column="44" selection-end-line="367" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/Users.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="418" column="21" lean-forward="false" selection-start-line="418" selection-start-column="21" selection-end-line="418" selection-end-column="21" />
           <folding>
-            <element signature="n#addRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getRequestsAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#cancelRequestAction#0;n#RequestsAPIController#0;n#!!top" expanded="false" />
+            <marker date="1532897097802" expanded="true" signature="12977:13238" ph="SELECT COUNT... offers" />
+            <marker date="1532897097802" expanded="true" signature="13536:13773" ph="SELECT AVG(r... reviews" />
           </folding>
         </state>
       </provider>

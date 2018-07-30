@@ -31,26 +31,22 @@ class CategoriesAPIController extends Controller
             $userId = $auth['id'];
             $categoryId = $this->request->getPost('categoryId');
 
-            $fav = Favoritecategories::findFirst(["userId = :userId: AND categoryId = :categoryId:",
-                "bind" => [
-                    "userId" => $userId,
-                    "categoryId" => $categoryId,
-                ]
-            ]);
+            $fav = FavoriteCategories::findByIds($userId,$categoryId);
 
             if (!$fav) {
 
-                $fav = new Favoritecategories();
+                $fav = new FavoriteCategories();
                 $fav->setCategoryId($categoryId);
                 $fav->setUserId($userId);
 
                 if (!$fav->save()) {
+                    $errors = [];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -59,7 +55,7 @@ class CategoriesAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -67,8 +63,8 @@ class CategoriesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "ALREADY_EXISTS",
-                    "errors" => ["already exists"]
+                    "status" => STATUS_ALREADY_EXISTS,
+                    "errors" => ["Пользователь уже подписан"]
                 ]
             );
             return $response;
@@ -87,21 +83,17 @@ class CategoriesAPIController extends Controller
             $userId = $auth['id'];
             $categoryId = $this->request->getPost('categoryId');
 
-            $fav = Favoritecategories::findFirst(["userId = :userId: AND categoryId = :categoryId:",
-                "bind" => [
-                    "userId" => $userId,
-                    "categoryId" => $categoryId,
-                ]
-            ]);
+            $fav = FavoriteCategories::findByIds($userId,$categoryId);
 
             if ($fav) {
                 if (!$fav->delete()) {
+                    $errors = [];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -110,7 +102,7 @@ class CategoriesAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -118,8 +110,8 @@ class CategoriesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "WRONG_DATA",
-                    "errors" => ["don't exists"]
+                    "status" => STATUS_WRONG,
+                    "errors" => ["Пользователь не подписан на категорию"]
                 ]
             );
 
@@ -133,13 +125,11 @@ class CategoriesAPIController extends Controller
 
     public function getFavouriteAction()
     {
-
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $fav = Favoritecategories::find(["userId = :userId:", "bind" =>
-                ["userId" => $userId]]);
+            $fav = FavoriteCategories::findByUserid($userId);
 
             return json_encode($fav);
 
@@ -160,7 +150,7 @@ class CategoriesAPIController extends Controller
     {
         if ($this->request->isGet()) {
 
-            $categories = Categories::find(['order' => 'parentId DESC']);
+            $categories = Categories::find(['order' => 'parentid DESC']);
 
             $categories2 = [];
             foreach ($categories as $category) {
@@ -200,7 +190,7 @@ class CategoriesAPIController extends Controller
     {
         if ($this->request->isPost()) {
 
-            $category = Categories::findFirstByCategoryId($this->request->getPost('categoryId'));
+            $category = Categories::findFirstByCategoryid($this->request->getPost('categoryId'));
 
             $category->setDescription($this->request->getPost('description'));
             $category->setImg($this->request->getPost('img'));

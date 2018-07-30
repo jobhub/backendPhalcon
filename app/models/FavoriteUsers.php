@@ -12,7 +12,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userSubject;
+    protected $usersubject;
 
     /**
      *
@@ -20,17 +20,17 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userObject;
+    protected $userobject;
 
     /**
      * Method to set the value of field userSubject
      *
-     * @param integer $userSubject
+     * @param integer $usersubject
      * @return $this
      */
-    public function setUserSubject($userSubject)
+    public function setUserSubject($usersubject)
     {
-        $this->userSubject = $userSubject;
+        $this->usersubject = $usersubject;
 
         return $this;
     }
@@ -38,12 +38,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userObject
      *
-     * @param integer $userObject
+     * @param integer $userobject
      * @return $this
      */
-    public function setUserObject($userObject)
+    public function setUserObject($userobject)
     {
-        $this->userObject = $userObject;
+        $this->userobject = $userobject;
 
         return $this;
     }
@@ -55,7 +55,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function getUserSubject()
     {
-        return $this->userSubject;
+        return $this->usersubject;
     }
 
     /**
@@ -65,7 +65,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function getUserObject()
     {
-        return $this->userObject;
+        return $this->userobject;
     }
 
     /**
@@ -78,12 +78,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userObject',
+            'userobject',
             new Callback(
                 [
                     "message" => "Пользователь для подписки не существует",
                     "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserId($favCompany->getUserObject());
+                        $user = Users::findFirstByUserid($favCompany->getUserObject());
 
                         if($user)
                             return true;
@@ -94,12 +94,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'userSubject',
+            'usersubject',
             new Callback(
                 [
                     "message" => "Пользователь подписчик не существует",
                     "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserId($favCompany->getUserSubject());
+                        $user = Users::findFirstByUserid($favCompany->getUserSubject());
 
                         if($user)
                             return true;
@@ -119,8 +119,8 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("favoriteUsers");
-        $this->belongsTo('userObject', '\Users', 'userId', ['alias' => 'Users']);
-        $this->belongsTo('userSubject', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('userobject', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('usersubject', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -155,4 +155,13 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findByIds($userIdObject,$userIdSubject)
+    {
+        return Favoriteusers::findFirst(["userobject = :userIdObject: AND usersubject = :userIdSubject:",
+            "bind" => [
+                "userIdObject" => $userIdObject,
+                "userIdSubject" => $userIdSubject,
+            ]
+        ]);
+    }
 }

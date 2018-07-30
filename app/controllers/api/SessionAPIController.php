@@ -38,7 +38,7 @@ class SessionAPIController extends Controller
             if($phone){
                 $user = Users::findFirst(
                     [
-                        "phoneId = :phoneId: AND password = :password:",
+                        "phoneid = :phoneId: AND password = :password:",
                         "bind" => [
                             "phoneId" => $phone->getPhoneId(),
                             "password" => sha1($password),
@@ -64,7 +64,7 @@ class SessionAPIController extends Controller
                 $this->_registerSession($user);
 
                 $response = new Response();
-                $userinfo = Userinfo::findFirstByuserId($user->getUserId());
+                $userinfo = Userinfo::findFirstByUserid($user->getUserId());
 
                 if (!$userinfo) {
                     $response->setJsonContent(
@@ -80,7 +80,7 @@ class SessionAPIController extends Controller
                 $user_min['email'] = $user->getEmail();
                 $user_min['phone'] = $user->phones->getPhone();
 
-                $settings = Settings::findFirstByuserId($user->getUserId());
+                $settings = Settings::findFirstByUserid($user->getUserId());
                 if (!$settings) {
                     $response->setJsonContent(
                         [

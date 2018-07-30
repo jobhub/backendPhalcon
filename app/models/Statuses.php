@@ -9,7 +9,7 @@ class Statuses extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $statusId;
+    protected $statusid;
 
     /**
      *
@@ -21,12 +21,12 @@ class Statuses extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field statusId
      *
-     * @param integer $statusId
+     * @param integer $statusid
      * @return $this
      */
-    public function setStatusId($statusId)
+    public function setStatusId($statusid)
     {
-        $this->statusId = $statusId;
+        $this->statusid = $statusid;
 
         return $this;
     }
@@ -51,7 +51,7 @@ class Statuses extends \Phalcon\Mvc\Model
      */
     public function getStatusId()
     {
-        return $this->statusId;
+        return $this->statusid;
     }
 
     /**
@@ -71,8 +71,8 @@ class Statuses extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("statuses");
-        $this->hasMany('statusId', 'Requests', 'status', ['alias' => 'Requests']);
-        $this->hasMany('statusId', 'Tasks', 'status', ['alias' => 'Tasks']);
+        $this->hasMany('statusid', 'Requests', 'status', ['alias' => 'Requests']);
+        $this->hasMany('statusid', 'Tasks', 'status', ['alias' => 'Tasks']);
     }
 
     /**

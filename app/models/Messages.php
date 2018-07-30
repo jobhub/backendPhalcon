@@ -13,7 +13,7 @@ class Messages extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $messageId;
+    protected $messageid;
 
     /**
      *
@@ -34,24 +34,24 @@ class Messages extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userIdObject;
+    protected $useridobject;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userIdSubject;
+    protected $useridsubject;
 
     /**
      * Method to set the value of field messageId
      *
-     * @param integer $messageId
+     * @param integer $messageid
      * @return $this
      */
-    public function setMessageId($messageId)
+    public function setMessageId($messageid)
     {
-        $this->messageId = $messageId;
+        $this->messageid = $messageid;
 
         return $this;
     }
@@ -85,12 +85,12 @@ class Messages extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userIdObject
      *
-     * @param integer $userIdObject
+     * @param integer $useridobject
      * @return $this
      */
-    public function setUserIdObject($userIdObject)
+    public function setUserIdObject($useridobject)
     {
-        $this->userIdObject = $userIdObject;
+        $this->useridobject = $useridobject;
 
         return $this;
     }
@@ -98,12 +98,12 @@ class Messages extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userIdSubject
      *
-     * @param integer $userIdSubject
+     * @param integer $useridsubject
      * @return $this
      */
-    public function setUserIdSubject($userIdSubject)
+    public function setUserIdSubject($useridsubject)
     {
-        $this->userIdSubject = $userIdSubject;
+        $this->useridsubject = $useridsubject;
 
         return $this;
     }
@@ -115,7 +115,7 @@ class Messages extends \Phalcon\Mvc\Model
      */
     public function getMessageId()
     {
-        return $this->messageId;
+        return $this->messageid;
     }
 
     /**
@@ -145,7 +145,7 @@ class Messages extends \Phalcon\Mvc\Model
      */
     public function getUserIdObject()
     {
-        return $this->userIdObject;
+        return $this->useridobject;
     }
 
     /**
@@ -155,7 +155,7 @@ class Messages extends \Phalcon\Mvc\Model
      */
     public function getUserIdSubject()
     {
-        return $this->userIdSubject;
+        return $this->useridsubject;
     }
 
     /**
@@ -168,12 +168,12 @@ class Messages extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userIdObject',
+            'useridobject',
             new Callback(
                 [
                     "message" => "Неверно указано id отправителя",
                     "callback" => function($message) {
-                        $user = Users::findFirstByUserId($message->getUserIdObject());
+                        $user = Users::findFirstByUserid($message->getUserIdObject());
 
                         if($user)
                             return true;
@@ -189,7 +189,7 @@ class Messages extends \Phalcon\Mvc\Model
                 [
                     "message" => "Неверно указано id получателя",
                     "callback" => function($message) {
-                        $user = Users::findFirstByUserId($message->getUserIdSubject());
+                        $user = Users::findFirstByUserid($message->getUserIdSubject());
 
                         if($user)
                             return true;
@@ -209,8 +209,8 @@ class Messages extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("messages");
-        $this->belongsTo('userIdObject', '\Users', 'userId', ['alias' => 'Users']);
-        $this->belongsTo('userIdSubject', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('useridobject', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('useridsubject', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**

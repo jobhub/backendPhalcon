@@ -13,7 +13,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      *
@@ -70,18 +70,18 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="tyniint", length=4, nullable=false)
      */
-    protected $ratingExecutor;
-    protected $ratingClient;
-    protected $pathToPhoto;
+    protected $ratingexecutor;
+    protected $ratingclient;
+    protected $pathtophoto;
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -185,21 +185,21 @@ class Userinfo extends \Phalcon\Mvc\Model
     }
 
 
-    public function setRatingExecutor($ratingExecutor)
+    public function setRatingExecutor($ratingexecutor)
     {
-        $this->ratingExecutor = $ratingExecutor;
+        $this->ratingexecutor = $ratingexecutor;
 
         return $this;
     }
-    public function setRatingClient($ratingClient)
+    public function setRatingClient($ratingclient)
     {
-        $this->ratingClient = $ratingClient;
+        $this->ratingclient = $ratingclient;
 
         return $this;
     }
-    public function setPathToPhoto($pathToPhoto)
+    public function setPathToPhoto($pathtophoto)
     {
-        $this->pathToPhoto = $pathToPhoto;
+        $this->pathtophoto = $pathtophoto;
 
         return $this;
     }
@@ -211,7 +211,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -292,15 +292,15 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     public function getRatingExecutor()
     {
-        return $this->ratingExecutor;
+        return $this->ratingexecutor;
     }
     public function getRatingClient()
     {
-        return $this->ratingClient;
+        return $this->ratingclient;
     }
     public function getPathToPhoto()
     {
-        return $this->pathToPhoto;
+        return $this->pathtophoto;
     }
 
     /**
@@ -349,7 +349,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**

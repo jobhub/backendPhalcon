@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends NotDeletedModelWithCascade
+class Tasks extends SubjectsWithNotDeleted
 {
     /**
      * @var integer
@@ -12,21 +12,14 @@ class Tasks extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $taskId;
+    protected $taskid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $subjectId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $categoryId;
+    protected $categoryid;
 
     /**
      *
@@ -75,7 +68,7 @@ class Tasks extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionId;
+    protected $regionid;
 
     /**
      *
@@ -93,54 +86,27 @@ class Tasks extends NotDeletedModelWithCascade
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
+     * @var string
+     * @Column(type="string", nullable=true)
      */
-    protected $subjectType;
+    protected $datestart;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $dateStart;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $dateEnd;
+    protected $dateend;
 
     /**
      * Method to set the value of field taskId
      *
-     * @param integer $taskId
+     * @param integer $taskid
      * @return $this
      */
-    public function setTaskId($taskId)
+    public function setTaskId($taskid)
     {
-        $this->taskId = $taskId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    public function setSubjectType($subjectType)
-    {
-        $this->subjectType = $subjectType;
+        $this->taskid = $taskid;
 
         return $this;
     }
@@ -148,12 +114,12 @@ class Tasks extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryId
+     * @param integer $categoryid
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setCategoryId($categoryid)
     {
-        $this->categoryId = $categoryId;
+        $this->categoryid = $categoryid;
 
         return $this;
     }
@@ -200,12 +166,12 @@ class Tasks extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field dateStart
      *
-     * @param string $dateStart
+     * @param string $datestart
      * @return $this
      */
-    public function setDateStart($dateStart)
+    public function setDateStart($datestart)
     {
-        $this->dateStart = $dateStart;
+        $this->datestart = $datestart;
 
         return $this;
     }
@@ -213,12 +179,12 @@ class Tasks extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field dateEnd
      *
-     * @param string $dateEnd
+     * @param string $dateend
      * @return $this
      */
-    public function setDateEnd($dateEnd)
+    public function setDateEnd($dateend)
     {
-        $this->dateEnd = $dateEnd;
+        $this->dateend = $dateend;
 
         return $this;
     }
@@ -265,12 +231,12 @@ class Tasks extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionId
+     * @param integer $regionid
      * @return $this
      */
-    public function setRegionId($regionId)
+    public function setRegionId($regionid)
     {
-        $this->regionId = $regionId;
+        $this->regionid = $regionid;
 
         return $this;
     }
@@ -308,27 +274,7 @@ class Tasks extends NotDeletedModelWithCascade
      */
     public function getTaskId()
     {
-        return $this->taskId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectType()
-    {
-        return $this->subjectType;
+        return $this->taskid;
     }
 
     /**
@@ -338,7 +284,7 @@ class Tasks extends NotDeletedModelWithCascade
      */
     public function getCategoryId()
     {
-        return $this->categoryId;
+        return $this->categoryid;
     }
 
     /**
@@ -378,7 +324,7 @@ class Tasks extends NotDeletedModelWithCascade
      */
     public function getDateStart()
     {
-        return $this->dateStart;
+        return $this->datestart;
     }
 
     /**
@@ -388,7 +334,7 @@ class Tasks extends NotDeletedModelWithCascade
      */
     public function getDateEnd()
     {
-        return $this->dateEnd;
+        return $this->dateend;
     }
 
     /**
@@ -428,7 +374,7 @@ class Tasks extends NotDeletedModelWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionId;
+        return $this->regionid;
     }
 
     /**
@@ -461,35 +407,12 @@ class Tasks extends NotDeletedModelWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($task) {
-                    if($task->getSubjectType() == 0) {
-                        $user = Users::findFirstByUserId($task->getSubjectId());
-                        if ($user)
-                            return true;
-                        return false;
-                    } else if($task->getSubjectType() == 1){
-                        $company = Companies::findFirstByCompanyId($task->getSubjectId());
-                        if ($company)
-                            return true;
-                        return false;
-                    } else
-                        return false;
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'categoryId',
+            'categoryid',
             new Callback(
                 [
                     "message" => "Такая категория не существует или она не является дочерней",
                     "callback" => function ($task) {
-                        $category = Categories::findFirstByCategoryId($task->getCategoryId());
+                        $category = Categories::findFirstByCategoryid($task->getCategoryId());
 
                         if ($category && ($category->getParentId() == null || $category->getParentId() == 0))
                             return true;
@@ -504,7 +427,7 @@ class Tasks extends NotDeletedModelWithCascade
             new Callback([
                 "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($task) {
-                $status = Statuses::findFirstByStatusId($task->getStatus());
+                $status = Statuses::findFirstByStatusid($task->getStatus());
                     if (!$status)
                         return false;
                     return true;
@@ -556,14 +479,13 @@ class Tasks extends NotDeletedModelWithCascade
 
         if ($this->getRegionId() != null) {
             $validator->add(
-                'regionId',
+                'regionid',
                 new Callback(
                     [
                         "message" => "Указанный регион не существует",
                         "callback" => function ($task) {
-                            $region = Regions::findFirstByRegionId($task->getRegionId());
 
-                            if ($region)
+                            if ($task->regions != null)
                                 return true;
                             return false;
                         }
@@ -573,21 +495,21 @@ class Tasks extends NotDeletedModelWithCascade
         }
 
         $validator->add(
-            'dateStart',
+            'datestart',
             new PresenceOf([
                 "message" => "Дата начала приема заявок должна быть указана"
             ])
         );
 
         $validator->add(
-            'dateEnd',
+            'dateend',
             new PresenceOf([
                 "message" => "Дата завершения приема заявок должна быть указана"
             ])
         );
 
         $validator->add(
-            'dateEnd',
+            'dateend',
             new Callback(
                 [
                     "message" => "Дата завершения приема заявок должна быть не раньше даты начала и не позже даты завершения задания",
@@ -601,7 +523,7 @@ class Tasks extends NotDeletedModelWithCascade
             )
         );
 
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -611,10 +533,10 @@ class Tasks extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("tasks");
-        $this->belongsTo('categoryId', '\Categories', 'categoryId', ['alias' => 'Categories']);
-        $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
-        $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('categoryid', '\Categories', 'categoryid', ['alias' => 'Categories']);
+        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
+        $this->belongsTo('status', '\Statuses', 'statusid', ['alias' => 'Statuses']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -629,8 +551,8 @@ class Tasks extends NotDeletedModelWithCascade
 
     public static function checkUserHavePermission($userId, $taskId, $right = null)
     {
-        $task = Tasks::findFirstByTaskId($taskId);
-        $user = Users::findFirstByUserId($userId);
+        $task = Tasks::findFirstByTaskid($taskId);
+        $user = Users::findFirstByUserid($userId);
 
         if (!$task)
             return false;
@@ -662,7 +584,7 @@ class Tasks extends NotDeletedModelWithCascade
 
     public function beforeDelete(){
         //Проверка, можно ли удалить задание
-        $offers = Offers::fincByTaskId($this->getTaskId());
+        $offers = Offers::fincByTaskid($this->getTaskId());
         if(count($offers)!= 0)
             return false;
         return true;

@@ -22,27 +22,43 @@ class NewsAPIController extends Controller
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
+            $response = new Response();
 
-            $favCompanies = FavoriteCompanies::findByUserId($userId);
-            $favUsers = Favoriteusers::findByUserSubject($userId);
+            /*$favCompanies = FavoriteCompanies::findByUserid($userId);
+            $favUsers = Favoriteusers::findByUsersubject($userId);
 
             $query = '';
             foreach ($favCompanies as $favCompany){
                 if($query != '')
                     $query.=' OR ';
-                $query .= '(subjectId = ' . $favCompany->getCompanyId() . ' AND newType = 1)';
+                $query .= '(subjectid = ' . $favCompany->getCompanyId() . ' AND subjecttype = 1)';
             }
 
             foreach ($favUsers as $favUser){
                 if($query != '')
                     $query.=' OR ';
-                $query .= '(subjectId = ' . $favUser->getUserObject() . ' AND newType = 0)';
+                $query .= '(subjectid = ' . $favUser->getUserObject() . ' AND subjecttype = 0)';
             }
 
-            $news = News::find([$query, "order" => "News.date DESC"]);
+            $news = News::find([$query, "order" => "News.date DESC"]);*/
 
+            $query = $this->db->prepare("SELECT * FROM ((SELECT * FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
+                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
+                    WHERE favc.userid = :userId)
+                    UNION
+                    (SELECT * FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
+                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
+                    WHERE favu.usersubject = :userId)) as foo
+                    ORDER BY foo.date desc");
 
-            return json_encode($news);
+            $result = $query->execute([
+                'userId' => $userId,
+            ]);
+
+            $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+            $response->setJsonContent($news);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -51,11 +67,11 @@ class NewsAPIController extends Controller
     }
 
     /**
-     * Создает новость компании или пользователя (в зависимости от newType)
+     * Создает новость компании или пользователя (в зависимости от subjectType)
      *
      * @method POST
      *
-     * @param int newType, int subjectId (если newType = 0 можно не передавать), string newText
+     * @param int subjectType, int subjectId (если subjectType = 0 можно не передавать), string newText
      *
      * @return string - json array объекта Status
      */
@@ -68,13 +84,12 @@ class NewsAPIController extends Controller
 
             $new = new News();
             //проверки
-            if ($this->request->getPost('newType') == 0) {
+            if ($this->request->getPost('subjectType') == 0) {
                 //Значит все просто
                 $new->setSubjectId($userId);
-            } else if ($this->request->getPost('newType') == 1) {
-                $company = Companies::findFirstByCompanyId($this->request->getPost('subjectId'));
+            } else if ($this->request->getPost('subjectType') == 1) {
 
-                if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+                if (!Companies::checkUserHavePermission($userId, $this->request->getPost('subjectId'), 'addNew')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -83,15 +98,16 @@ class NewsAPIController extends Controller
                     );
                     return $response;
                 }
-
+                $company = Companies::findFirstByCompanyid($this->request->getPost('subjectId'));
                 $new->setSubjectId($company->getCompanyId());
             }
 
             $new->setDate(date('Y-m-d H:i:s'));
-            $new->setNewType($this->request->getPost('newType'));
+            $new->setSubjectType($this->request->getPost('subjectType'));
             $new->setNewText($this->request->getPost('newText'));
 
             if (!$new->save()) {
+                $errors = [];
                 foreach ($new->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -133,7 +149,7 @@ class NewsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $new = News::findFirstByNewId($newId);
+            $new = News::findFirstByNewid($newId);
             //проверки
 
             if (!$new) {
@@ -147,7 +163,7 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            if ($new->getNewType() == 0) {
+            if ($new->getSubjectType() == 0) {
 
                 if ($new->getSubjectId() != $userId && auth['role'] != ROLE_MODERATOR) {
                     $response->setJsonContent(
@@ -159,7 +175,7 @@ class NewsAPIController extends Controller
                     return $response;
                 }
 
-            } else if ($new->getNewType() == 1) {
+            } else if ($new->getSubjectType() == 1) {
 
                 $company = Companies::findFirstByCompanyId($new->getSubjectId());
 
@@ -233,7 +249,7 @@ class NewsAPIController extends Controller
             }
 
             //проверки
-            if ($new->getNewType() == 0) {
+            if ($new->getSubjectType() == 0) {
 
                 if ($new->getSubjectId() != $userId && auth['role'] != ROLE_MODERATOR) {
                     $response->setJsonContent(
@@ -245,7 +261,7 @@ class NewsAPIController extends Controller
                     return $response;
                 }
 
-            } else if ($new->getNewType() == 1) {
+            } else if ($new->getSubjectType() == 1) {
 
                 $company = Companies::findFirstByCompanyId($new->getSubjectId());
 
@@ -300,17 +316,18 @@ class NewsAPIController extends Controller
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getOwnNewsAction($companyId = null){
+    public function getOwnNewsAction($companyId = null)
+    {
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            if($companyId != null){
+            if ($companyId != null) {
                 //Возвращаем новости компании
                 $company = Companies::findFirstByCompanyId($companyId);
 
-                if (!$company || ($company->getUserId() != $userId && $auth['role']!= ROLE_MODERATOR)) {
+                if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -320,17 +337,14 @@ class NewsAPIController extends Controller
                     return $response;
                 }
 
-
-                $news = News::find(['subjectId = :companyId: AND newType = 1','bind' => ['companyId' => $companyId],
-                    'order' => 'News.date DESC']);
-            } else{
+                $news = News::findBySubject($companyId, 1, 'News.date DESC');
+            } else {
                 //Возвращаем новости текущего пользователя
 
-                $news = News::find(['subjectId = :userId: AND newType = 0','bind' => ['userId' => $userId],
-                    'order' => 'News.date DESC']);
+                $news = News::findBySubject($userId, 0, 'News.date DESC');
             }
-
-            return json_encode($news);
+            $response->setJsonContent($news);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -343,53 +357,22 @@ class NewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $subjectId, $newType
+     * @param $subjectId , $subjecttype
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectNewsAction($subjectId, $newType){
+    public function getSubjectNewsAction($subjectId, $subjecttype)
+    {
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            if($newType == 1){
-                //Возвращаем новости компании
-                $company = Companies::findFirstByCompanyId($subjectId);
+            $news = News::findBySubject($subjectId, $subjecttype, 'News.date DESC');
 
-                if (!$company) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Такая компания не существует']
-                        ]
-                    );
-                    return $response;
-                }
 
-                $news = News::find(['subjectId = :companyId: AND newType = 1','bind' => ['companyId' => $subjectId],
-                    'order' => 'News.date DESC']);
-
-            } else if($newType == 0){
-                //Возвращаем новости пользователя
-
-                $user = Users::findFirstByUserId($subjectId);
-
-                if (!$user) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Такой пользователь не существует']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $news = News::find(['subjectId = :userId: AND newType = 0','bind' => ['userId' => $subjectId],
-                    'order' => 'News.date DESC']);
-            }
-
-            return json_encode($news);
+            $response->setJsonContent($news);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

@@ -9,38 +9,38 @@ class Settings extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      *
      * @var integer
      * @Column(type="string", nullable=false)
      */
-    protected $notificationEmail;
+    protected $notificationemail;
 
     /**
      *
      * @var integer
      * @Column(type=""string", nullable=false)
      */
-    protected $notificationSms;
+    protected $notificationsms;
 
     /**
      *
      * @var integer
      * @Column(type="string", nullable=false)
      */
-    protected $notificationPush;
+    protected $notificationpush;
 
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -48,12 +48,12 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field notificationEmail
      *
-     * @param integer $notificationEmail
+     * @param integer $notificationemail
      * @return $this
      */
-    public function setNotificationEmail($notificationEmail)
+    public function setNotificationEmail($notificationemail)
     {
-        $this->notificationEmail = $notificationEmail;
+        $this->notificationemail = $notificationemail;
 
         return $this;
     }
@@ -61,12 +61,12 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field notificationSms
      *
-     * @param integer $notificationSms
+     * @param integer $notificationsms
      * @return $this
      */
-    public function setNotificationSms($notificationSms)
+    public function setNotificationSms($notificationsms)
     {
-        $this->notificationSms = $notificationSms;
+        $this->notificationsms = $notificationsms;
 
         return $this;
     }
@@ -74,12 +74,12 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field notificationPush
      *
-     * @param integer $notificationPush
+     * @param integer $notificationpush
      * @return $this
      */
-    public function setNotificationPush($notificationPush)
+    public function setNotificationPush($notificationpush)
     {
-        $this->notificationPush = $notificationPush;
+        $this->notificationpush = $notificationpush;
 
         return $this;
     }
@@ -91,7 +91,7 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -101,7 +101,7 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function getNotificationEmail()
     {
-        return $this->notificationEmail;
+        return $this->notificationemail;
     }
 
     /**
@@ -111,7 +111,7 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function getNotificationSms()
     {
-        return $this->notificationSms;
+        return $this->notificationsms;
     }
 
     /**
@@ -121,7 +121,7 @@ class Settings extends \Phalcon\Mvc\Model
      */
     public function getNotificationPush()
     {
-        return $this->notificationPush;
+        return $this->notificationpush;
     }
 
     /**
@@ -131,7 +131,7 @@ class Settings extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("settings");
-        $this->hasOne('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->hasOne('userid', '\Userinfo', 'userid', ['alias' => 'Userinfo']);
     }
 
     /**

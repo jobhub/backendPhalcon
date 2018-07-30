@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Requests extends NotDeletedModelWithCascade
+class Requests extends SubjectsWithNotDeleted
 {
     /**
      *
@@ -13,21 +13,14 @@ class Requests extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $requestId;
+    protected $requestid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $subjectId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $serviceId;
+    protected $serviceid;
 
     /**
      *
@@ -41,7 +34,7 @@ class Requests extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $dateEnd;
+    protected $dateend;
 
     /**
      *
@@ -57,43 +50,16 @@ class Requests extends NotDeletedModelWithCascade
      */
     protected $status;
 
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectType;
-
 
     /**
      * Method to set the value of field requestId
      *
-     * @param integer $requestId
+     * @param integer $requestid
      * @return $this
      */
-    public function setRequestId($requestId)
+    public function setRequestId($requestid)
     {
-        $this->requestId = $requestId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    public function setSubjectType($subjectType)
-    {
-        $this->subjectType = $subjectType;
+        $this->requestid = $requestid;
 
         return $this;
     }
@@ -101,12 +67,12 @@ class Requests extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field serviceId
      *
-     * @param integer $serviceId
+     * @param integer $serviceid
      * @return $this
      */
-    public function setServiceId($serviceId)
+    public function setServiceId($serviceid)
     {
-        $this->serviceId = $serviceId;
+        $this->serviceid = $serviceid;
 
         return $this;
     }
@@ -127,12 +93,12 @@ class Requests extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field dateEnd
      *
-     * @param string $dateEnd
+     * @param string $dateend
      * @return $this
      */
-    public function setDateEnd($dateEnd)
+    public function setDateEnd($dateend)
     {
-        $this->dateEnd = $dateEnd;
+        $this->dateend = $dateend;
 
         return $this;
     }
@@ -151,46 +117,13 @@ class Requests extends NotDeletedModelWithCascade
     }
 
     /**
-     * Method to set the value of field deleted
-     *
-     * @param string $deleted
-     * @return $this
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
      * Returns the value of field requestId
      *
      * @return integer
      */
     public function getRequestId()
     {
-        return $this->requestId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectType()
-    {
-        return $this->subjectType;
+        return $this->requestid;
     }
 
     /**
@@ -200,7 +133,7 @@ class Requests extends NotDeletedModelWithCascade
      */
     public function getServiceId()
     {
-        return $this->serviceId;
+        return $this->serviceid;
     }
 
     /**
@@ -220,17 +153,7 @@ class Requests extends NotDeletedModelWithCascade
      */
     public function getDateEnd()
     {
-        return $this->dateEnd;
-    }
-
-    /**
-     * Returns the value of field deleted
-     *
-     * @return string
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
+        return $this->dateend;
     }
 
     /**
@@ -253,19 +176,7 @@ class Requests extends NotDeletedModelWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($service) {
-                        return Subjects::checkSubjectExists($service->getSubjectId(), $service->getSubjectType());
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'serviceId',
+            'serviceid',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
@@ -293,7 +204,20 @@ class Requests extends NotDeletedModelWithCascade
             ])
         );
 
-        return $this->validate($validator);
+        if($this->getDateEnd()!= null)
+        $validator->add(
+            'dateend',
+            new Callback([
+                "message" => "Крайняя дата на получение услуги должна быть позже текущего времени",
+                'callback' => function ($request) {
+                    if (strtotime($request->getDateEnd()) > strtotime(date('Y-m-d H:i:s')))
+                        return true;
+                    return false;
+                }
+            ])
+        );
+
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -303,8 +227,8 @@ class Requests extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("requests");
-        $this->belongsTo('serviceId', '\Services', 'serviceId', ['alias' => 'Services']);
-        $this->belongsTo('status', '\Statuses', 'statusId', ['alias' => 'Statuses']);
+        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
+        $this->belongsTo('status', '\Statuses', 'statusid', ['alias' => 'Statuses']);
     }
 
     /**

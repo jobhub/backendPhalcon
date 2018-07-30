@@ -10,7 +10,7 @@ class Tokens extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $idTokens;
+    protected $idtokens;
 
     /**
      *
@@ -24,17 +24,17 @@ class Tokens extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      * Method to set the value of field idTokens
      *
-     * @param integer $idTokens
+     * @param integer $idtokens
      * @return $this
      */
-    public function setIdTokens($idTokens)
+    public function setIdTokens($idtokens)
     {
-        $this->idTokens = $idTokens;
+        $this->idtokens = $idtokens;
 
         return $this;
     }
@@ -55,12 +55,12 @@ class Tokens extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -72,7 +72,7 @@ class Tokens extends \Phalcon\Mvc\Model
      */
     public function getIdTokens()
     {
-        return $this->idTokens;
+        return $this->idtokens;
     }
 
     /**
@@ -92,7 +92,7 @@ class Tokens extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -102,7 +102,7 @@ class Tokens extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("tokens");
-        $this->belongsTo('userId', '\Userinfo', 'userId', ['alias' => 'Userinfo']);
+        $this->belongsTo('userid', '\Userinfo', 'userid', ['alias' => 'Userinfo']);
     }
 
     /**

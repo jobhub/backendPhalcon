@@ -1,10 +1,11 @@
 <?php
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+
 class Reviews extends NotDeletedModelWithCascade
 {
-
     /**
      *
      * @var integer
@@ -12,42 +13,21 @@ class Reviews extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $idReview;
+    protected $reviewid;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $textReview;
+    protected $textreview;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $reviewDate;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="string", nullable=false)
-     */
-    protected $executor;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $objectId;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectId;
+    protected $reviewdate;
 
     /**
      *
@@ -68,25 +48,31 @@ class Reviews extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $objectType;
+    protected $binderid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $subjectType;
-
+    protected $bindertype;
 
     /**
-     * Method to set the value of field idReview
      *
-     * @param integer $idReview
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $executor;
+
+    /**
+     * Method to set the value of field reviewId
+     *
+     * @param integer $reviewid
      * @return $this
      */
-    public function setIdReview($idReview)
+    public function setReviewId($reviewid)
     {
-        $this->idReview = $idReview;
+        $this->reviewid = $reviewid;
 
         return $this;
     }
@@ -94,12 +80,12 @@ class Reviews extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field textReview
      *
-     * @param string $textReview
+     * @param string $textreview
      * @return $this
      */
-    public function setTextReview($textReview)
+    public function setTextReview($textreview)
     {
-        $this->textReview = $textReview;
+        $this->textreview = $textreview;
 
         return $this;
     }
@@ -107,57 +93,18 @@ class Reviews extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field reviewDate
      *
-     * @param string $reviewDate
+     * @param string $reviewdate
      * @return $this
      */
-    public function setReviewDate($reviewDate)
+    public function setReviewDate($reviewdate)
     {
-        $this->reviewDate = $reviewDate;
+        $this->reviewdate = $reviewdate;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field executor
-     *
-     * @param integer $executor
-     * @return $this
-     */
-    public function setExecutor($executor)
-    {
-        $this->executor = $executor;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field objectId
-     *
-     * @param integer $objectId
-     * @return $this
-     */
-    public function setObjectId($objectId)
-    {
-        $this->objectId = $objectId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field raiting
+     * Method to set the value of field rating
      *
      * @param integer $rating
      * @return $this
@@ -183,27 +130,40 @@ class Reviews extends NotDeletedModelWithCascade
     }
 
     /**
-     * Method to set the value of field objectType
+     * Method to set the value of field binderId
      *
-     * @param integer $objectType
+     * @param integer $binderid
      * @return $this
      */
-    public function setObjectType($objectType)
+    public function setBinderId($binderid)
     {
-        $this->objectType = $objectType;
+        $this->binderid = $binderid;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field subjectType
+     * Method to set the value of field binderType
      *
-     * @param integer $subjectType
+     * @param integer $bindertype
      * @return $this
      */
-    public function setSubjectType($subjectType)
+    public function setBinderType($bindertype)
     {
-        $this->subjectType = $subjectType;
+        $this->bindertype = $bindertype;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field executor
+     *
+     * @param string $executor
+     * @return $this
+     */
+    public function setExecutor($executor)
+    {
+        $this->executor = $executor;
 
         return $this;
     }
@@ -213,9 +173,9 @@ class Reviews extends NotDeletedModelWithCascade
      *
      * @return integer
      */
-    public function getIdReview()
+    public function getReviewId()
     {
-        return $this->idReview;
+        return $this->reviewid;
     }
 
     /**
@@ -225,7 +185,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getTextReview()
     {
-        return $this->textReview;
+        return $this->textreview;
     }
 
     /**
@@ -235,41 +195,11 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getReviewDate()
     {
-        return $this->reviewDate;
+        return $this->reviewdate;
     }
 
     /**
-     * Returns the value of field executor
-     *
-     * @return integer
-     */
-    public function getExecutor()
-    {
-        return $this->executor;
-    }
-
-    /**
-     * Returns the value of field objectId
-     *
-     * @return integer
-     */
-    public function getObjectId()
-    {
-        return $this->objectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field raiting
+     * Returns the value of field rating
      *
      * @return integer
      */
@@ -289,23 +219,33 @@ class Reviews extends NotDeletedModelWithCascade
     }
 
     /**
-     * Returns the value of field objectType
+     * Returns the value of field binderId
      *
      * @return integer
      */
-    public function getObjectType()
+    public function getBinderId()
     {
-        return $this->objectType;
+        return $this->binderid;
     }
 
     /**
-     * Returns the value of field subjectType
+     * Returns the value of field binderType
      *
      * @return integer
      */
-    public function getSubjectType()
+    public function getBinderType()
     {
-        return $this->subjectType;
+        return $this->bindertype;
+    }
+
+    /**
+     * Returns the value of field executor
+     *
+     * @return string
+     */
+    public function getExecutor()
+    {
+        return $this->executor;
     }
 
     /**
@@ -317,25 +257,25 @@ class Reviews extends NotDeletedModelWithCascade
     {
         $validator = new Validation();
 
+        if ($this->getFake() == null || !$this->getFake())
+            $validator->add(
+                'binderid',
+                new Callback(
+                    [
+                        "message" => "Такой субъект не существует",
+                        "callback" => function ($review) {
+                            return Binders::checkBinderExists($review->getBinderId(), $review->getBinderType());
+                        }
+                    ]
+                )
+            );
         $validator->add(
-            'subjectId',
+            'rating',
             new Callback(
                 [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($service) {
-                        return Subjects::checkSubjectExists($service->getSubjectId(), $service->getSubjectType());
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'objectId',
-            new Callback(
-                [
-                    "message" => "Объект отзыва не существует",
-                    "callback" => function ($service) {
-                        return Subjects::checkSubjectExists($service->getObjectId(), $service->getObjectType());
+                    "message" => "Рейтинг должен быть от 0 до 10",
+                    "callback" => function ($review) {
+                        return $review->getRating() <= 10 && $review->getRating() >= 0;
                     }
                 ]
             )
@@ -362,4 +302,5 @@ class Reviews extends NotDeletedModelWithCascade
     {
         return 'reviews';
     }
+
 }

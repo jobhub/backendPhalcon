@@ -106,8 +106,7 @@ class TasksAPIController extends Controller
             $userId = $auth['id'];
 
             if ($companyId == null)
-                $tasks = Tasks::find(["subjectId = :userId: AND subjectType = 0", "bind" => ["userId" => $userId],
-                    "order" => "status ASC"]);
+                $tasks = Tasks::findBySubject($userId, 0,"status ASC");
             else {
                 if (!Companies::checkUserHavePermission($userId, $companyId, 'getTasks')) {
 
@@ -120,9 +119,7 @@ class TasksAPIController extends Controller
                     return $response;
                 }
 
-                $tasks = Tasks::find(["subjectId = :companyId: AND subjectType = 1",
-                    "bind" => ["companyId" => $companyId],
-                    "order" => "status ASC"]);
+                $tasks = Tasks::findBySubject($companyId,1,"status ASC");
             }
 
             $response->setJsonContent(
@@ -156,7 +153,7 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $tasks = Tasks::find(["subjectId = :subjectId: AND subjectType = 0 AND status = :status:",
+            $tasks = Tasks::find(["subjectid = :subjectId: AND subjecttype = 0 AND status = :status:",
                 "bind" => ["subjectId" => $userId, 'status' => STATUS_ACCEPTING],
                 "order" => "status ASC"]);
 
@@ -183,7 +180,7 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskId($taskId);
+            $task = Tasks::findFirstByTaskid($taskId);
 
             if (!$task) {
                 $response->setJsonContent(
@@ -246,7 +243,7 @@ class TasksAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $task = Tasks::findFirstByTaskId($this->request->getPut("taskId"));
+            $task = Tasks::findFirstByTaskid($this->request->getPut("taskId"));
 
             if (!$task) {
                 $response->setJsonContent(
@@ -321,8 +318,8 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskId($this->request->getPost('taskId'));
-            if(!Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
+            $task = Tasks::findFirstByTaskid($this->request->getPost('taskId'));
+            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -332,7 +329,7 @@ class TasksAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferId($this->request->getPost('offerId'));
+            $offer = Offers::findFirstByOfferid($this->request->getPost('offerId'));
 
             if(!$offer || $offer->getTaskId() != $this->request->getPost('taskId')){
                 $response->setJsonContent(
@@ -410,8 +407,8 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskId($this->request->getPut('taskId'));
-            if(!$task || !Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+            $task = Tasks::findFirstByTaskid($this->request->getPut('taskId'));
+            if(!$task || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -477,8 +474,8 @@ class TasksAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskId($this->request->getPut('taskId'));
-            if(!$task || !Subjects::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+            $task = Tasks::findFirstByTaskid($this->request->getPut('taskId'));
+            if(!$task || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

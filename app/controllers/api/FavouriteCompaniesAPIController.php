@@ -26,26 +26,21 @@ class FavouriteCompaniesAPIController extends Controller
             $userId = $auth['id'];
             $companyId = $this->request->getPost('companyId');
 
-            $fav = FavoriteCompanies::findFirst(["userId = :userId: AND companyId = :companyId:",
-                "bind" => [
-                "userId" => $userId,
-                "companyId" => $companyId,
-            ]
-            ]);
+            $fav = FavoriteCompanies::findByIds($userId, $companyId);
 
             if(!$fav){
-
                 $fav = new FavoriteCompanies();
                 $fav->setUserId($userId);
                 $fav->setCompanyId($companyId);
 
                 if (!$fav->save()) {
+                    $errors = [];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -54,7 +49,7 @@ class FavouriteCompaniesAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -62,7 +57,7 @@ class FavouriteCompaniesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "ALREADY_EXISTS",
+                    "status" => STATUS_ALREADY_EXISTS,
                     "errors" => ["Пользователь уже подписан на компанию"]
                 ]
             );
@@ -91,21 +86,17 @@ class FavouriteCompaniesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $fav = FavoriteCompanies::findFirst(["userId = :userId: AND companyId = :companyId:",
-                "bind" => [
-                    "userId" => $userId,
-                    "companyId" => $companyId,
-                ]
-            ]);
+            $fav = FavoriteCompanies::findByIds($userId,$companyId);
 
             if($fav){
                 if (!$fav->delete()) {
+                    $errors =[];
                     foreach ($fav->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
                     $response->setJsonContent(
                         [
-                            "status" => "WRONG_DATA",
+                            "status" => STATUS_WRONG,
                             "errors" => $errors
                         ]
                     );
@@ -114,7 +105,7 @@ class FavouriteCompaniesAPIController extends Controller
 
                 $response->setJsonContent(
                     [
-                        "status" => "OK",
+                        "status" => STATUS_OK,
                     ]
                 );
                 return $response;
@@ -122,7 +113,7 @@ class FavouriteCompaniesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => "WRONG_DATA",
+                    "status" => STATUS_WRONG,
                     "errors" => ["Пользователь не подписан на компанию"]
                 ]
             );
@@ -143,18 +134,15 @@ class FavouriteCompaniesAPIController extends Controller
      */
     public function getFavouritesAction()
     {
-
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
+            $response = new Response();
 
-            $favs = FavoriteCompanies::find(["userId = :userId: ",
-                "bind" => [
-                    "userId" => $userId,
-                ]
-            ]);
+            $favs = FavoriteCompanies::findByUserid($userId);
 
-            return json_encode($favs);
+            $response->setJsonContent($favs);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

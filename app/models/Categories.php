@@ -1,5 +1,6 @@
 <?php
-
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
 class Categories extends \Phalcon\Mvc\Model
 {
 
@@ -10,21 +11,21 @@ class Categories extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryId;
+    protected $categoryid;
 
     /**
      *
      * @var string
      * @Column(type="string", length=45, nullable=false)
      */
-    protected $categoryName;
+    protected $categoryname;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $parentId;
+    protected $parentid;
 
     /**
      *
@@ -43,12 +44,12 @@ class Categories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryId
+     * @param integer $categoryid
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setCategoryId($categoryid)
     {
-        $this->categoryId = $categoryId;
+        $this->categoryid = $categoryid;
 
         return $this;
     }
@@ -56,12 +57,12 @@ class Categories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryName
      *
-     * @param string $categoryName
+     * @param string $categoryname
      * @return $this
      */
-    public function setCategoryName($categoryName)
+    public function setCategoryName($categoryname)
     {
-        $this->categoryName = $categoryName;
+        $this->categoryname = $categoryname;
 
         return $this;
     }
@@ -69,12 +70,12 @@ class Categories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field parentId
      *
-     * @param integer $parentId
+     * @param integer $parentid
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId($parentid)
     {
-        $this->parentId = $parentId;
+        $this->parentid = $parentid;
 
         return $this;
     }
@@ -112,7 +113,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getCategoryId()
     {
-        return $this->categoryId;
+        return $this->categoryid;
     }
 
     /**
@@ -122,7 +123,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getCategoryName()
     {
-        return $this->categoryName;
+        return $this->categoryname;
     }
 
     /**
@@ -132,7 +133,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getParentId()
     {
-        return $this->parentId;
+        return $this->parentid;
     }
 
     /**
@@ -153,6 +154,36 @@ class Categories extends \Phalcon\Mvc\Model
     public function getImg()
     {
         return $this->img;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        if($this->getParentId()!= null)
+        $validator->add(
+            'parentid',
+            new Callback(
+                [
+                    "message" => "Родительская категория не существует",
+                    "callback" => function ($category) {
+                        $categoryParent = Categories::findFirstByCategoryid($category->getParentId());
+
+                        if ($categoryParent)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+
+        return $this->validate($validator);
     }
 
     /**

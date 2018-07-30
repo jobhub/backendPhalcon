@@ -6,7 +6,7 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class TradePoints extends NotDeletedModelWithCascade
+class TradePoints extends SubjectsWithNotDeleted
 {
 
     /**
@@ -15,7 +15,7 @@ class TradePoints extends NotDeletedModelWithCascade
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $pointId;
+    protected $pointid;
 
     /**
      *
@@ -47,13 +47,6 @@ class TradePoints extends NotDeletedModelWithCascade
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectId;
-
-    /**
-     *
      * @var string
      * @Column(type="string", length=100, nullable=true)
      */
@@ -71,14 +64,14 @@ class TradePoints extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $userManager;
+    protected $usermanager;
 
     /**
      *
      * @var string
      * @Column(type="string", length=90, nullable=true)
      */
-    protected $webSite;
+    protected $website;
 
     /**
      *
@@ -86,22 +79,16 @@ class TradePoints extends NotDeletedModelWithCascade
      * @Column(type="string", length=150, nullable=true)
      */
     protected $address;
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $subjectType;
 
     /**
      * Method to set the value of field pointId
      *
-     * @param integer $pointId
+     * @param integer $pointid
      * @return $this
      */
-    public function setPointId($pointId)
+    public function setPointId($pointid)
     {
-        $this->pointId = $pointId;
+        $this->pointid = $pointid;
 
         return $this;
     }
@@ -159,26 +146,6 @@ class TradePoints extends NotDeletedModelWithCascade
     }
 
     /**
-     * Method to set the value of field subjectId
-     *
-     * @param integer $subjectId
-     * @return $this
-     */
-    public function setSubjectId($subjectId)
-    {
-        $this->subjectId = $subjectId;
-
-        return $this;
-    }
-
-    public function setSubjectType($subjectType)
-    {
-        $this->subjectType = $subjectType;
-
-        return $this;
-    }
-
-    /**
      * Method to set the value of field time
      *
      * @param string $time
@@ -207,12 +174,12 @@ class TradePoints extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field userManager
      *
-     * @param integer $userManager
+     * @param integer $usermanager
      * @return $this
      */
-    public function setUserManager($userManager)
+    public function setUserManager($usermanager)
     {
-        $this->userManager = $userManager;
+        $this->usermanager = $usermanager;
 
         return $this;
     }
@@ -220,12 +187,12 @@ class TradePoints extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field webSite
      *
-     * @param string $webSite
+     * @param string $website
      * @return $this
      */
-    public function setWebSite($webSite)
+    public function setWebSite($website)
     {
-        $this->webSite = $webSite;
+        $this->website = $website;
 
         return $this;
     }
@@ -250,7 +217,7 @@ class TradePoints extends NotDeletedModelWithCascade
      */
     public function getPointId()
     {
-        return $this->pointId;
+        return $this->pointid;
     }
 
     /**
@@ -294,26 +261,6 @@ class TradePoints extends NotDeletedModelWithCascade
     }
 
     /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectId()
-    {
-        return $this->subjectId;
-    }
-
-    /**
-     * Returns the value of field subjectId
-     *
-     * @return integer
-     */
-    public function getSubjectType()
-    {
-        return $this->subjectType;
-    }
-
-    /**
      * Returns the value of field time
      *
      * @return string
@@ -340,7 +287,7 @@ class TradePoints extends NotDeletedModelWithCascade
      */
     public function getUserManager()
     {
-        return $this->userManager;
+        return $this->usermanager;
     }
 
     /**
@@ -350,7 +297,7 @@ class TradePoints extends NotDeletedModelWithCascade
      */
     public function getWebSite()
     {
-        return $this->webSite;
+        return $this->website;
     }
 
     /**
@@ -410,19 +357,7 @@ class TradePoints extends NotDeletedModelWithCascade
             );
         }
 
-        $validator->add(
-            'subjectId',
-            new Callback(
-                [
-                    "message" => "Такой субъект не существует",
-                    "callback" => function ($point) {
-                        return Subjects::checkSubjectExists($point->getSubjectId(), $point->getSubjectType());
-                    }
-                ]
-            )
-        );
-
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**
@@ -431,9 +366,8 @@ class TradePoints extends NotDeletedModelWithCascade
     public function initialize()
     {
         $this->setSource("tradePoints");
-        $this->hasMany('pointId', 'PhonesPoints', 'pointId', ['alias' => 'PhonesPoints']);
-        $this->belongsTo('companyId', '\Companies', 'companyId', ['alias' => 'Companies']);
-        $this->belongsTo('userManager', '\Users', 'userId', ['alias' => 'Users']);
+        $this->hasMany('pointid', 'PhonesPoints', 'pointid', ['alias' => 'PhonesPoints']);
+        $this->belongsTo('usermanager', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -446,17 +380,19 @@ class TradePoints extends NotDeletedModelWithCascade
         return 'tradePoints';
     }
 
-    public static function checkUserHavePermission($userId, $pointId){
-        $point = TradePoints::findFirstByPointId($pointId);
+    public static function checkUserHavePermission($userId, $pointId , $right = null){
+        $point = TradePoints::findFirstByPointid($pointId);
 
         if(!$point)
             return false;
 
-        $company = $pointId->companies;
+        $user = Users::findFirstByUserid($userId);
 
-        $user = Users::findFirstByUserId($userId);
+        if(!$user)
+            return false;
 
-        if(Companies::checkUserHavePermission($userId,$company->getCompanyId()))
+        if(SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),
+            $point->getSubjectType(),$right))
             return true;
 
         if($userId == $point->getUserManager())

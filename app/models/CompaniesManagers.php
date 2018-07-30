@@ -12,7 +12,7 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyId;
+    protected $companyid;
 
     /**
      *
@@ -20,17 +20,17 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyId
+     * @param integer $companyid
      * @return $this
      */
-    public function setCompanyId($companyId)
+    public function setCompanyId($companyid)
     {
-        $this->companyId = $companyId;
+        $this->companyid = $companyid;
 
         return $this;
     }
@@ -38,12 +38,12 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -55,7 +55,7 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
      */
     public function getCompanyId()
     {
-        return $this->companyId;
+        return $this->companyid;
     }
 
     /**
@@ -65,7 +65,7 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -78,12 +78,12 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userId',
+            'userid',
             new Callback(
                 [
                     "message" => "Пользователь не существует",
                     "callback" => function ($companyManager) {
-                        $user = Users::findFirstByUserId($companyManager->getUserId());
+                        $user = Users::findFirstByUserid($companyManager->getUserId());
                         if ($user)
                             return true;
                         return false;
@@ -93,12 +93,12 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'companyId',
+            'companyid',
             new Callback(
                 [
                     "message" => "Такая компания не существует",
                     "callback" => function ($companyManager) {
-                        $company = Companies::findFirstByCompanyId($companyManager->getCompanyId());
+                        $company = Companies::findFirstByCompanyid($companyManager->getCompanyId());
 
                         if ($company)
                             return true;
@@ -118,8 +118,8 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("companiesManagers");
-        $this->belongsTo('companyId', '\Companies', 'companyId', ['alias' => 'Companies']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
+        $this->belongsTo('companyid', '\Companies', 'companyid', ['alias' => 'Companies']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -154,4 +154,9 @@ class CompaniesManagers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findByIds($companyId, $userManagerId)
+    {
+        return CompaniesManagers::findFirst(['companyid = :companyId: AND userid = :userId:',
+            'bind' => ['companyId' => $companyId, 'userId' => $userManagerId]]);
+    }
 }

@@ -19,7 +19,7 @@ class Users extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      *
@@ -33,7 +33,7 @@ class Users extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", nullable=false)
      */
-    protected $phoneId;
+    protected $phoneid;
 
     /**
      *
@@ -52,12 +52,12 @@ class Users extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -78,12 +78,12 @@ class Users extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneId
+     * @param integer $phoneid
      * @return $this
      */
-    public function setPhoneId($phoneId)
+    public function setPhoneId($phoneid)
     {
-        $this->phoneId = $phoneId;
+        $this->phoneid = $phoneid;
 
         return $this;
     }
@@ -121,7 +121,7 @@ class Users extends NotDeletedModelWithCascade
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -141,7 +141,7 @@ class Users extends NotDeletedModelWithCascade
      */
     public function getPhoneId()
     {
-        return $this->phoneId;
+        return $this->phoneid;
     }
 
     /**
@@ -184,12 +184,12 @@ class Users extends NotDeletedModelWithCascade
         );
 
         $validator->add(
-            'phoneId',
+            'phoneid',
             new Callback(
                 [
                     "message" => "Телефон не был создан",
                     "callback" => function($user) {
-                        $phone = Phones::findFirstByPhoneId($user->getPhoneId());
+                        $phone = Phones::findFirstByPhoneid($user->getPhoneId());
 
                         if($phone)
                             return true;
@@ -233,10 +233,10 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasMany('userId', 'Favoritecategories', 'userId', ['alias' => 'Favoritecategories']);
-        $this->hasMany('userId', 'Logs', 'userId', ['alias' => 'Logs']);
-        $this->hasOne('userId', 'Userinfo', 'userId', ['alias' => 'Userinfo']);
-        $this->belongsTo('phoneId', 'Phones', 'phoneId', ['alias' => 'Phones']);
+        $this->hasMany('userid', 'FavoriteCategories', 'userid', ['alias' => 'FavoriteCategories']);
+        $this->hasMany('userid', 'Logs', 'userid', ['alias' => 'Logs']);
+        $this->hasOne('userid', 'Userinfo', 'userid', ['alias' => 'Userinfo']);
+        $this->belongsTo('phoneid', 'Phones', 'phoneid', ['alias' => 'Phones']);
     }
 
     /**
@@ -261,7 +261,7 @@ class Users extends NotDeletedModelWithCascade
             if (!$delete) {
 
                 //каскадное 'удаление' новостей
-                $news = News::find(["subjectId = :userId: ANd newType = 0",
+                $news = News::find(["subjectid = :userId: AND subjecttype = 0",
                     'bind' =>
                         ['userId' => $this->getUserId()
                         ]]);
@@ -276,7 +276,7 @@ class Users extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' услуг
-                $services = Services::find(["subjectId = :userId: AND subjectType = 0",
+                $services = Services::find(["subjectid = :userId: AND subjecttype = 0",
                     'bind' =>
                         ['userId' => $this->getUserId()
                         ]]);
@@ -291,7 +291,7 @@ class Users extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' запросов
-                $requests = Requests::find(["subjectId = :userId: AND subjectType = 0",
+                $requests = Requests::find(["subjectid = :userId: AND subjecttype = 0",
                     'bind' =>
                         ['userId' => $this->getUserId()
                         ]]);
@@ -306,7 +306,7 @@ class Users extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' заданий
-                $tasks = Tasks::find(["subjectId = :userId: AND subjectType = 0",
+                $tasks = Tasks::find(["subjectid = :userId: AND subjecttype = 0",
                     'bind' =>
                         ['userId' => $this->getUserId()
                         ]]);
@@ -321,7 +321,7 @@ class Users extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' предложений
-                $offers = Offers::find(["subjectId = :userId: AND subjectType = 0",
+                $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0",
                     'bind' =>
                         ['userId' => $this->getUserId()
                         ]]);
@@ -370,7 +370,7 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление новостей
-        $news = News::find(["subjectId = :userId: AND newType = 0 AND deleted = true AND deletedCascade = true",
+        $news = News::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
                 ]],false);
@@ -385,7 +385,7 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное 'удаление' услуг
-        $services = Services::find(["subjectId = :userId: AND subjectType = 0 AND deleted = true AND deletedCascade = true",
+        $services = Services::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
                 ]],false);
@@ -400,7 +400,7 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление запросов
-        $requests = Requests::find(["subjectId = :userId: AND subjectType = 0 AND deleted = true AND deletedCascade = true",
+        $requests = Requests::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
                 ]],false);
@@ -415,7 +415,7 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление заданий
-        $tasks = Tasks::find(["subjectId = :userId: AND subjectType = 0 AND deleted = true AND deletedCascade = true",
+        $tasks = Tasks::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
                 ]],false);
@@ -430,7 +430,7 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление предложений
-        $offers = Offers::find(["subjectId = :userId: AND subjectType = 0 AND deleted = true AND deletedCascade = true",
+        $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcsascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
                 ]],false);
@@ -460,7 +460,7 @@ class Users extends NotDeletedModelWithCascade
 
         $count = $query->execute(
             [
-                'userId' => "$this->userId",
+                'userId' => "$this->userid",
             ]
         );
         $count=$count[0]['c'];
@@ -471,7 +471,7 @@ class Users extends NotDeletedModelWithCascade
         $query=$this->getModelsManager()->createQuery('SELECT AVG(reviews.raiting) AS a FROM reviews, auctions, tasks, users WHERE tasks.categoryId=:categoryId: AND tasks.taskId=auctions.taskId AND auctions.auctionId=reviews.auctionId AND reviews.userId_object=:userId: AND reviews.executor=1');
         $avg = $query->execute(
             [
-                'userId' => "$this->userId",
+                'userId' => "$this->userid",
                 'categoryId'=>$idCategory
             ]
         );

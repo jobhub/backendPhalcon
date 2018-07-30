@@ -22,7 +22,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $company = Companies::findFirstByCompanyId($this->request->getPost("companyId"));
+            $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
 
             if ($company && ($company->getUserId() == $userId || $auth['role'] == ROLE_MODERATOR)) {
                 $this->db->begin();
@@ -47,7 +47,7 @@ class PhonesAPIController extends Controller
                         return $response;
                     }
                 } else if ($this->request->getPost("phoneId")) {
-                    $phone = Phones::findFirstByPhoneId($this->request->getPost("phoneId"));
+                    $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
 
                     if (!$phone) {
                         $response->setJsonContent(
@@ -70,11 +70,7 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-                $phoneCompany = PhonesCompanies::findFirst(["companyId = :companyId: AND phoneId = :phoneId:",
-                    'bind' =>
-                        ['companyId' => $company->getCompanyId(),
-                            'phoneId' => $phone->getPhoneId()
-                        ]]);
+                $phoneCompany = PhonesCompanies::findByIds($company->getCompanyId(),$phone->getPhoneId());
                 if ($phoneCompany) {
                     $response->setJsonContent(
                         [
@@ -142,22 +138,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $point = TradePoints::findFirstByPointId($this->request->getPost("pointId"));
-
-            if (!$point) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая точка оказания услуг не существует']
-                    ]
-                );
-                return $response;
-            }
-
-            $company = $point->companies;
-
-            if (!$company || !$point ||
-                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
+            if (!TradePoints::checkUserHavePermission($userId,$this->request->getPost("pointId"),'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -166,6 +147,9 @@ class PhonesAPIController extends Controller
                 );
                 return $response;
             }
+
+
+            $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
 
             $this->db->begin();
 
@@ -192,7 +176,7 @@ class PhonesAPIController extends Controller
                 }
 
             } else if ($this->request->getPost("phoneId")) {
-                $phone = Phones::findFirstByPhoneId($this->request->getPost("phoneId"));
+                $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
 
                 if (!$phone) {
                     $response->setJsonContent(
@@ -214,11 +198,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $phonePoint = PhonesPoints::findFirst(["pointId = :pointId: AND phoneId = :phoneId:",
-                'bind' =>
-                    ['pointId' => $point->getPointId(),
-                        'phoneId' => $phone->getPhoneId()
-                    ]]);
+            $phonePoint = PhonesPoints::findByIds($point->getPointId(),$phone->getPhoneId());
             if ($phonePoint) {
                 $response->setJsonContent(
                     [
@@ -281,10 +261,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
-                ["companyId" => $companyId,
-                    "phoneId" => $phoneId]
-            ]);
+            $phonesCompany = PhonesCompanies::findByIds($companyId,$phoneId);
 
             if (!$phonesCompany) {
                 $response->setJsonContent(
@@ -298,7 +275,7 @@ class PhonesAPIController extends Controller
 
             $company = $phonesCompany->companies;
 
-            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!$company || !Companies::checkUserHavePermission($userId,$companyId,'editCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -322,9 +299,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            //TODO удаление телефона из таблицы Phones, если нет ссылок.
-
-            $phone = Phones::findFirstByPhoneId($phoneId);
+            $phone = Phones::findFirstByPhoneid($phoneId);
 
             if($phone->countOfReferences() == 0)
                 $phone->delete();
@@ -359,10 +334,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $phonesPoint = PhonesPoints::findFirst(["pointId = :pointId: and phoneId = :phoneId:", "bind" =>
-                ["pointId" => $pointId,
-                    "phoneId" => $phoneId]
-            ]);
+            $phonesPoint = PhonesPoints::findByIds($pointId,$phoneId);
 
             if (!$phonesPoint) {
                 $response->setJsonContent(
@@ -374,12 +346,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $point = $phonesPoint->tradepoints;
-            $company = $point->companies;
-
-            if (!$company || !$point ||
-                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
-
+            if (!TradePoints::checkUserHavePermission($userId,$pointId,'editPoint')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -403,8 +370,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            //TODO удаление телефона из таблицы Phones, если нет других ссылок.
-            $phone = Phones::findFirstByPhoneId($phoneId);
+            $phone = Phones::findFirstByPhoneid($phoneId);
 
             if($phone->countOfReferences() == 0)
                 $phone->delete();
@@ -437,22 +403,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $point = TradePoints::findFirstByPointId($this->request->getPut("pointId"));
-
-            if (!$point) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая точка оказания услуг не существует']
-                    ]
-                );
-                return $response;
-            }
-
-            $company = $point->companies;
-
-            if (!$company || !$point ||
-                ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR && $point->getUserManager() != $userId)) {
+            if (!TradePoints::checkUserHavePermission($userId,$this->request->getPut("pointId"),'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -462,11 +413,13 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
+            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
+
             $this->db->begin();
 
             if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
 
-                $phone = Phones::findFirstByPhoneId($this->request->getPut("phoneId"));
+                $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
 
                 if(!$phone){
                     $response->setJsonContent(
@@ -488,10 +441,8 @@ class PhonesAPIController extends Controller
                     $phonePoint = new PhonesPoints();
                 }
 
-                $phonesPoint = PhonesPoints::findFirst(["pointId = :pointId: and phoneId = :phoneId:", "bind" =>
-                    ["pointId" => $this->request->getPut("pointId"),
-                        "phoneId" => $this->request->getPut("phoneId")]
-                ]);
+                $phonesPoint = PhonesPoints::findByIds($this->request->getPut("pointId"),
+                    $this->request->getPut("phoneId"));
 
                 if(!$phonesPoint){
                     $response->setJsonContent(
@@ -577,7 +528,7 @@ class PhonesAPIController extends Controller
         }
     }
 
-    public function testAction(){
+    /*public function testAction(){
         $response = new Response();
         $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
             ["companyId" => $this->request->getPut("companyId"),
@@ -609,7 +560,7 @@ class PhonesAPIController extends Controller
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      * Изменяет определенный номер телефона у определенной компании
@@ -624,10 +575,8 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $phonesCompany = PhonesCompanies::findFirst(["companyId = :companyId: and phoneId = :phoneId:", "bind" =>
-                ["companyId" => $this->request->getPut("companyId"),
-                    "phoneId" => $this->request->getPut("phoneId")]
-            ]);
+            $phonesCompany = PhonesCompanies::findByIds($this->request->getPut("companyId"),
+                $this->request->getPut("phoneId"));
 
             if (!$phonesCompany) {
                 $response->setJsonContent(
@@ -639,9 +588,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $company = $phonesCompany->companies;
-
-            if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+            if (!Companies::checkUserHavePermission($userId,$this->request->getPut("companyId"),'editCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -655,7 +602,7 @@ class PhonesAPIController extends Controller
 
             if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
 
-                $phone = Phones::findFirstByPhoneId($this->request->getPut("phoneId"));
+                $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
 
                 if(!$phone){
                     $response->setJsonContent(
@@ -708,7 +655,7 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-                $phonesCompany->setCompanyId($company->getCompanyId());
+                $phonesCompany->setCompanyId($this->request->getPut("companyId"));
                 $phonesCompany->setPhoneId($phone->getPhoneId());
 
                 if (!$phonesCompany->save()) {

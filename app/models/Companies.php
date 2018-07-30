@@ -19,7 +19,7 @@ class Companies extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyId;
+    protected $companyid;
 
     /**
      *
@@ -33,35 +33,35 @@ class Companies extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", length=90, nullable=false)
      */
-    protected $fullName;
+    protected $fullname;
 
     /**
      *
      * @var string
      * @Column(type="string", length=15, nullable=true)
      */
-    protected $TIN;
+    protected $tin;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionId;
+    protected $regionid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $userId;
+    protected $userid;
 
     /**
      *
      * @var string
      * @Column(type="string", length=90, nullable=true)
      */
-    protected $webSite;
+    protected $website;
 
     /**
      *
@@ -75,17 +75,17 @@ class Companies extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $isMaster;
+    protected $ismaster;
 
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyId
+     * @param integer $companyid
      * @return $this
      */
-    public function setCompanyId($companyId)
+    public function setCompanyId($companyid)
     {
-        $this->companyId = $companyId;
+        $this->companyid = $companyid;
 
         return $this;
     }
@@ -106,12 +106,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field fullName
      *
-     * @param string $fullName
+     * @param string $fullname
      * @return $this
      */
-    public function setFullName($fullName)
+    public function setFullName($fullname)
     {
-        $this->fullName = $fullName;
+        $this->fullname = $fullname;
 
         return $this;
     }
@@ -124,7 +124,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function setTIN($tIN)
     {
-        $this->TIN = $tIN;
+        $this->tin = $tIN;
 
         return $this;
     }
@@ -132,12 +132,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionId
+     * @param integer $regionid
      * @return $this
      */
-    public function setRegionId($regionId)
+    public function setRegionId($regionid)
     {
-        $this->regionId = $regionId;
+        $this->regionid = $regionid;
 
         return $this;
     }
@@ -145,12 +145,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userId
+     * @param integer $userid
      * @return $this
      */
-    public function setUserId($userId)
+    public function setUserId($userid)
     {
-        $this->userId = $userId;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -158,12 +158,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field webSite
      *
-     * @param string $webSite
+     * @param string $website
      * @return $this
      */
-    public function setWebSite($webSite)
+    public function setWebSite($website)
     {
-        $this->webSite = $webSite;
+        $this->website = $website;
 
         return $this;
     }
@@ -184,12 +184,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field isMaster
      *
-     * @param string $isMaster
+     * @param string $ismaster
      * @return $this
      */
-    public function setIsMaster($isMaster)
+    public function setIsMaster($ismaster)
     {
-        $this->isMaster = $isMaster;
+        $this->ismaster = $ismaster;
 
         return $this;
     }
@@ -214,7 +214,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getCompanyId()
     {
-        return $this->companyId;
+        return $this->companyid;
     }
 
     /**
@@ -234,7 +234,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getFullName()
     {
-        return $this->fullName;
+        return $this->fullname;
     }
 
     /**
@@ -244,7 +244,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getTIN()
     {
-        return $this->TIN;
+        return $this->tin;
     }
 
     /**
@@ -254,7 +254,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionId;
+        return $this->regionid;
     }
 
     /**
@@ -264,7 +264,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getUserId()
     {
-        return $this->userId;
+        return $this->userid;
     }
 
     /**
@@ -274,7 +274,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getWebSite()
     {
-        return $this->webSite;
+        return $this->website;
     }
 
     /**
@@ -285,6 +285,16 @@ class Companies extends NotDeletedModelWithCascade
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Returns the value of field ismaster
+     *
+     * @return string
+     */
+    public function getIsMaster()
+    {
+        return $this->ismaster;
     }
 
     /**
@@ -309,7 +319,7 @@ class Companies extends NotDeletedModelWithCascade
 
         if ($this->getWebSite() != null)
             $validator->add(
-                'webSite',
+                'website',
                 new UrlValidator(
                     [
                         'model' => $this,
@@ -320,7 +330,7 @@ class Companies extends NotDeletedModelWithCascade
 
         if ($this->getTIN() != null)
             $validator->add(
-                'TIN',
+                'tin',
                 new Regex(
                     [
                         "pattern" => "/^(\d{10}|\d{12})$/",
@@ -331,7 +341,7 @@ class Companies extends NotDeletedModelWithCascade
 
         if ($this->getRegionId() != null) {
             $validator->add(
-                'regionId',
+                'regionid',
                 new Callback(
                     [
                         "message" => "Такой регион не существует",
@@ -348,7 +358,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         $validator->add(
-            'userId',
+            'userid',
             new Callback(
                 [
                     "message" => "Такого пользователя не существует",
@@ -374,10 +384,11 @@ class Companies extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("companies");
-        $this->hasMany('companyId', '\CompaniesCategories', 'companyId', ['alias' => 'CompaniesCategories']);
-        $this->hasMany('companyId', '\PhonesCompanies', 'companyId', ['alias' => 'PhonesCompanies']);
-        $this->belongsTo('userId', '\Users', 'userId', ['alias' => 'Users']);
-        $this->belongsTo('regionId', '\Regions', 'regionId', ['alias' => 'Regions']);
+        $this->hasMany('companyid', '\CompaniesCategories', 'companyid', ['alias' => 'CompaniesCategories']);
+        $this->hasMany('companyid', '\PhonesCompanies', 'companyid', ['alias' => 'PhonesCompanies']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
+        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
     }
 
     public function delete($delete = false, $data = null, $whiteList = null)
@@ -403,7 +414,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' новостей
-                $news = News::find(["subjectId = :companyId: ANd newType = 1",
+                $news = News::find(["subjectid = :companyId: AND newtype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -418,7 +429,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' услуг
-                $services = Services::find(["subjectId = :companyId: AND subjectType = 1",
+                $services = Services::find(["subjectid = :companyId: AND subjecttype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -433,7 +444,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' запросов
-                $requests = Requests::find(["subjectId = :companyId: AND subjectType = 1",
+                $requests = Requests::find(["subjectid = :companyId: AND subjecttype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -448,7 +459,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' заданий
-                $tasks = Tasks::find(["subjectId = :companyId: AND subjectType = 1",
+                $tasks = Tasks::find(["subjectid = :companyId: AND subjecttype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -463,7 +474,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' предложений
-                $offers = Offers::find(["subjectId = :companyId: ANd subjectType = 1",
+                $offers = Offers::find(["subjectid = :companyId: AND subjecttype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -517,7 +528,7 @@ class Companies extends NotDeletedModelWithCascade
             return false;
         }
         //Каскадное восстановление точек оказания услуг
-        $tradePoints = TradePoints::find(["subjectId = :companyId: AND newType = 1 AND deleted = true AND deletedCascade = true",
+        $tradePoints = TradePoints::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -532,7 +543,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление новостей
-        $news = News::find(["subjectId = :companyId: AND newType = 1 AND deleted = true AND deletedCascade = true",
+        $news = News::find(["subjectid = :companyId: AND newtype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -547,7 +558,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное 'удаление' услуг
-        $services = Services::find(["subjectId = :companyId: AND subjectType = 1 AND deleted = true AND deletedCascade = true",
+        $services = Services::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -562,7 +573,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление запросов
-        $requests = Requests::find(["subjectId = :companyId: AND subjectType = 1 AND deleted = true AND deletedCascade = true",
+        $requests = Requests::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -577,7 +588,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление заданий
-        $tasks = Tasks::find(["subjectId = :companyId: AND subjectType = 1 AND deleted = true AND deletedCascade = true",
+        $tasks = Tasks::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -592,7 +603,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление предложений
-        $offers = Offers::find(["subjectId = :companyId: AND subjectType = 1 AND deleted = true AND deletedCascade = true",
+        $offers = Offers::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -624,7 +635,7 @@ class Companies extends NotDeletedModelWithCascade
     {
         $managerRights = ['edit', 'addService', 'editService'];
 
-        $company = Companies::findFirst(['companyId = :companyId:',
+        $company = Companies::findFirst(['companyid = :companyId:',
             'bind' => ['companyId' => $companyId]], false);
         $user = Users::findFirstByUserId($userId);
 
@@ -636,7 +647,7 @@ class Companies extends NotDeletedModelWithCascade
             return true;
         } else {
             $companiesManagers = CompaniesManagers::findFirst(
-                ['companyId = :companyId: AND userId = :userId:',
+                ['companyid = :companyId: AND userid = :userId:',
                     'bind' => ['companyId' => $companyId, 'userId' => $userId]]);
 
             if (!$companiesManagers)

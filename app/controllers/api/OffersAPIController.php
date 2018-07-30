@@ -23,8 +23,6 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskId($taskId);
-
             if (!Tasks::checkUserHavePermission($userId, $taskId, 'getOffers')) {
                 $response->setJsonContent(
                     [
@@ -35,9 +33,9 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offers = Offers::findByTaskId($taskId);
-
-            return json_encode($offers);
+            $offers = Offers::findByTaskid($taskId);
+            $response->setJsonContent($offers);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -75,7 +73,7 @@ class OffersAPIController extends Controller
                 }
             }
 
-            $task = Tasks::findFirstByTaskId($this->request->getPost("taskId"));
+            $task = Tasks::findFirstByTaskid($this->request->getPost("taskId"));
 
             /*$offer = Offers::findFirst(['taskId = :taskId: AND selected = true',
                 'bind' => ['taskId' => $this->request->getPost("taskId")]]);*/
@@ -90,12 +88,12 @@ class OffersAPIController extends Controller
                 return $response;
             }
             if ($this->request->getPost("companyId")) {
-                $offer = Offers::findFirst(['taskId = :taskId: AND subjectId = :companyId: AND subjectType = 1',
+                $offer = Offers::findFirst(['taskid = :taskId: AND subjectid = :companyId: AND subjecttype = 1',
                     'bind' =>
                         ['taskId' => $this->request->getPost("taskId"),
                             'companyId' => $this->request->getPost("companyId")]]);
             } else {
-                $offer = Offers::findFirst(['taskId = :taskId: AND subjectId = :userId: AND subjectType = 0',
+                $offer = Offers::findFirst(['taskid = :taskId: AND subjectid = :userId: AND subjecttype = 0',
                     'bind' =>
                         ['taskId' => $this->request->getPost("taskId"),
                             'userId' => $userId]]);
@@ -171,7 +169,7 @@ class OffersAPIController extends Controller
             $userId = $auth['id'];
 
             if($companyId == null){
-                $offers = Offers::find(['subjectId = :userId: AND subjectType = 0',
+                $offers = Offers::find(['subjectid = :userId: AND subjecttype = 0',
                     'bind' => ['userId' => $userId]]);
             } else{
                 if(!Companies::checkUserHavePermission($userId,$companyId,'getOffers'))
@@ -184,7 +182,7 @@ class OffersAPIController extends Controller
                     );
                     return $response;
                 }
-                $offers = Offers::find(['subjectId = :companyId: AND subjectType = 1',
+                $offers = Offers::find(['subjectid = :companyId: AND subjecttype = 1',
                     'bind' => ['companyId' => $companyId]]);
             }
 
@@ -213,7 +211,7 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $offer = Offers::findFirstByOfferId($offerId);
+            $offer = Offers::findFirstByOfferid($offerId);
 
             if (!$offer) {
                 $response->setJsonContent(
@@ -300,7 +298,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
             $task = $offer->tasks;
 
             if(!$task->getStatus() == STATUS_ACCEPTING){
@@ -379,7 +377,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
 
             if (!$offer->confirm()) {
                 $errors = [];
@@ -435,7 +433,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
 
             if (!$offer->reject()) {
                 $errors = [];
@@ -483,7 +481,7 @@ class OffersAPIController extends Controller
 
             $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
 
-            if(!$offer || !Subjects::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'performTask')){
+            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'performTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

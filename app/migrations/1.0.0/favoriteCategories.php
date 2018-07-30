@@ -17,7 +17,7 @@ class FavoritecategoriesMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('favoriteCategories', [
+        $this->morphTable('FavoriteCategories', [
                 'columns' => [
                     new Column(
                         'categoryId',
