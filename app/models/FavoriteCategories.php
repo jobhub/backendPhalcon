@@ -1,4 +1,6 @@
 <?php
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
 
 class FavoriteCategories extends \Phalcon\Mvc\Model
 {
@@ -155,7 +157,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'FavoriteCategories';
+        return 'favoriteCategories';
     }
 
     /**

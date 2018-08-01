@@ -262,7 +262,7 @@ class RequestsAPIController extends Controller
      *
      * @method PUT
      *
-     * @param requestId
+     * @params requestId
      *
      * @return string - json array в формате Status
      */
@@ -336,7 +336,7 @@ class RequestsAPIController extends Controller
      *
      * @method PUT
      *
-     * @param requestId
+     * @params requestId
      *
      * @return string - json array в формате Status
      */

@@ -13,7 +13,7 @@ class MessagesAPIController extends Controller
      *
      * @method POST
      *
-     * @param int userIdObject, string message,
+     * @params int userIdObject, string message,
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function addMessageAction()
@@ -62,7 +62,7 @@ class MessagesAPIController extends Controller
     /**
      * Возвращает все сообщения данного пользователя
      *
-     * @method POST
+     * @method GET
      *
      * @return string с json массивом объектов Message
      */

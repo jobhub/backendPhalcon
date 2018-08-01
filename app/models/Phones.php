@@ -160,7 +160,7 @@ class Phones extends \Phalcon\Mvc\Model
      * @param $phone - неотформатированный номер
      * @return string - отформатированный номер, если сумел
      */
-    public function formatPhone($phone){
+    public static function formatPhone($phone){
 
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
 

@@ -7,6 +7,9 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Контроллер для работы с компаниями
+ */
 class CompaniesAPIController extends Controller
 {
     /**
@@ -20,10 +23,10 @@ class CompaniesAPIController extends Controller
 
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-
+            $response = new Response();
             $companies = Companies::findByUserid($userId);
-
-            return json_encode($companies);
+            $response->setJsonContent($companies);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -372,7 +375,7 @@ class CompaniesAPIController extends Controller
      *
      * @method POST
      *
-     * @param companyId
+     * @params companyId
      *
      * @return string - json array - объект Status - результат операции
      */

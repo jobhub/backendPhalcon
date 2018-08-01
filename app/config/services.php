@@ -10,7 +10,7 @@ use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
-
+use ULogin\Auth;
 
 /**
  * Shared configuration service
@@ -180,6 +180,15 @@ $di->set(
         $phonesAPI = new PhonesAPIController();
 
         return $phonesAPI;
+    }
+);
+
+$di->set(
+    "SessionAPI",
+    function () {
+        $sessionAPI = new SessionAPIController();
+
+        return $sessionAPI;
     }
 );
 

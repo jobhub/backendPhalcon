@@ -1,5 +1,7 @@
 <?php
-
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Regex;
+use Phalcon\Validation\Validator\Callback;
 class PhonesPoints extends \Phalcon\Mvc\Model
 {
 
@@ -94,9 +96,9 @@ class PhonesPoints extends \Phalcon\Mvc\Model
             'pointid',
             new Callback(
                 [
-                    "message" => "Такая компания не существует",
+                    "message" => "Такая точка оказания услуг не существует",
                     "callback" => function($phonePoint) {
-                        $point = TradePoints::findFirstByPointid($phonePoint->getPhoneId());
+                        $point = TradePoints::findFirstByPointid($phonePoint->getPointId());
 
                         if($point)
                             return true;

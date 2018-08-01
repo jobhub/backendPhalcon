@@ -7,6 +7,9 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Контроллер для работы с новостями
+ */
 class NewsAPIController extends Controller
 {
     /**
@@ -71,7 +74,7 @@ class NewsAPIController extends Controller
      *
      * @method POST
      *
-     * @param int subjectType, int subjectId (если subjectType = 0 можно не передавать), string newText
+     * @params int subjectType, int subjectId (если subjectType = 0 можно не передавать), string newText
      *
      * @return string - json array объекта Status
      */
@@ -84,9 +87,10 @@ class NewsAPIController extends Controller
 
             $new = new News();
             //проверки
-            if ($this->request->getPost('subjectType') == 0) {
+            if ($this->request->getPost('subjectType') == 0 || $this->request->getPost('subjectType') == null) {
                 //Значит все просто
                 $new->setSubjectId($userId);
+                $new->setSubjectType(0);
             } else if ($this->request->getPost('subjectType') == 1) {
 
                 if (!Companies::checkUserHavePermission($userId, $this->request->getPost('subjectId'), 'addNew')) {
@@ -100,10 +104,11 @@ class NewsAPIController extends Controller
                 }
                 $company = Companies::findFirstByCompanyid($this->request->getPost('subjectId'));
                 $new->setSubjectId($company->getCompanyId());
+                $new->setSubjectType($this->request->getPost('subjectType'));
             }
 
             $new->setDate(date('Y-m-d H:i:s'));
-            $new->setSubjectType($this->request->getPost('subjectType'));
+
             $new->setNewText($this->request->getPost('newText'));
 
             if (!$new->save()) {
@@ -162,33 +167,14 @@ class NewsAPIController extends Controller
 
                 return $response;
             }
-
-            if ($new->getSubjectType() == 0) {
-
-                if ($new->getSubjectId() != $userId && auth['role'] != ROLE_MODERATOR) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-
-            } else if ($new->getSubjectType() == 1) {
-
-                $company = Companies::findFirstByCompanyId($new->getSubjectId());
-
-                if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-
-                    return $response;
-                }
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(), 'deleteNew')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
             }
 
             if (!$new->delete()) {
@@ -223,7 +209,7 @@ class NewsAPIController extends Controller
      *
      * @method PUT
      *
-     * @param int newId, string newText
+     * @params int newId, string newText
      *
      * @return string - json array объекта Status
      */
@@ -234,7 +220,7 @@ class NewsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $new = News::findFirstByNewId($this->request->getPut('newId'));
+            $new = News::findFirstByNewid($this->request->getPut('newId'));
             //проверки
 
             if (!$new) {
@@ -263,7 +249,7 @@ class NewsAPIController extends Controller
 
             } else if ($new->getSubjectType() == 1) {
 
-                $company = Companies::findFirstByCompanyId($new->getSubjectId());
+                $company = Companies::findFirstByCompanyid($new->getSubjectId());
 
                 if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
                     $response->setJsonContent(
@@ -312,7 +298,7 @@ class NewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param (Необязательный)$companyId
+     * @param $companyId
      *
      * @return string - json array объектов news или Status, если ошибка
      */
@@ -325,7 +311,7 @@ class NewsAPIController extends Controller
 
             if ($companyId != null) {
                 //Возвращаем новости компании
-                $company = Companies::findFirstByCompanyId($companyId);
+                $company = Companies::findFirstByCompanyid($companyId);
 
                 if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
                     $response->setJsonContent(

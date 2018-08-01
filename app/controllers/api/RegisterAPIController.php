@@ -14,7 +14,7 @@ class RegisterAPIController extends Controller
      *
      * @params (user) phone, email, password, (userinfo) firstname, lastname, male
      *
-     * @return Response
+     * @return string json array Status
      */
     public function indexAction()
     {
@@ -25,12 +25,14 @@ class RegisterAPIController extends Controller
             $email = $this->request->getPost('email');
             $password = $this->request->getPost('password');
 
+            $phoneObj = Phones::findFirstByPhone(Phones::formatPhone($phone));
+
             $user = Users::findFirst(
                 [
-                    "(email = :email: OR phone = :phone:)",
+                    "(email = :email: OR phoneid = :phoneId:)",
                     "bind" => [
                         "email" => $email,
-                        "phone" => $phone,
+                        "phoneId" =>  $phoneObj?$phoneObj->getPhoneId():null
                     ]
                 ]
             );
@@ -70,6 +72,7 @@ class RegisterAPIController extends Controller
             $user->setPhoneId($phoneObject->getPhoneId());
             $user->setPassword($password);
             $user->setRole("User");
+            $user->setIsSocial(false);
 
             if ($user->save() == false) {
                 $this->db->rollback();
@@ -84,7 +87,6 @@ class RegisterAPIController extends Controller
                     ]
                 );
                 return $response;
-
             }
 
             $userInfo = new Userinfo();
@@ -129,6 +131,8 @@ class RegisterAPIController extends Controller
             }
 
             $this->db->commit();
+
+            $this->SessionAPI->_registerSession($user);
 
             $response->setJsonContent(
                 [

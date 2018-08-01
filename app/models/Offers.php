@@ -304,16 +304,15 @@ class Offers extends SubjectsWithNotDeleted
         return 'offers';
     }
 
-    public static function checkUserHavePermission($userId, $offerId, $right = null)
+    /*public static function checkUserHavePermission($userId, $offerId, $right = null)
     {
         $offer = Offers::findFirstByOfferid($offerId);
-        $user = Users::findFirstByUserid($userId);
 
         if (!$offer)
             return false;
 
         return SubjectsWithNotDeleted::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
-    }
+    }*/
 
     /**
      * Подтверждает готовность исполнителя выполнить заказ

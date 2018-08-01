@@ -36,7 +36,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            $tradePoints = TradePoints::findByCompanyid($companyId);
+            $tradePoints = TradePoints::findBySubject($companyId,1);
             $company = Companies::findFirstByCompanyid($companyId);
 
             $pointsWithPhones = [];
@@ -62,7 +62,8 @@ class TradePointsAPIController extends Controller
                 $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' =>$phones2];
             }
 
-            return json_encode($pointsWithPhones);
+            $response->setJsonContent($pointsWithPhones);
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -74,7 +75,7 @@ class TradePointsAPIController extends Controller
      * Возвращает точки предоставления услуг назначенные текущему пользователю
      *
      * @method GET
-     * @param  int $userIdManager необязательный
+     * @param  int $userIdManager
      * @return string - json array of [TradePoint, phones]
      */
     public function getPointsForUserManagerAction($userIdManager = null)
@@ -260,8 +261,6 @@ class TradePointsAPIController extends Controller
 
             if($this->request->getPut("userId") && $point->getSubjectType() != 0)
                 $point->setUserManager($this->request->getPut("userId"));
-
-
 
             if (!$point->update()) {
 

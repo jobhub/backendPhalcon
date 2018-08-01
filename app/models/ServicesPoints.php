@@ -84,7 +84,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($servicePoint) {
-                        $service = Services::findFirstByServiceId($servicePoint->getServiceId());
+                        $service = Services::findFirstByServiceid($servicePoint->getServiceId());
 
                         if ($service)
                             return true;
@@ -100,8 +100,8 @@ class ServicesPoints extends \Phalcon\Mvc\Model
                 [
                     "message" => "Такая точка оказания услуг не существует или не связана с компанией услуги",
                     "callback" => function ($servicePoint) {
-                        $point = TradePoints::findFirstByPointId($servicePoint->getPointId());
-                        $service = Services::findFirstByServiceId($servicePoint->getServiceId());
+                        $point = TradePoints::findFirstByPointid($servicePoint->getPointId());
+                        $service = Services::findFirstByServiceid($servicePoint->getServiceId());
                         if ($point && $service &&
                             (SubjectsWithNotDeleted::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
                             return true;

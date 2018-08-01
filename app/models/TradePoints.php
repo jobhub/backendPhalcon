@@ -379,25 +379,4 @@ class TradePoints extends SubjectsWithNotDeleted
     {
         return 'tradePoints';
     }
-
-    public static function checkUserHavePermission($userId, $pointId , $right = null){
-        $point = TradePoints::findFirstByPointid($pointId);
-
-        if(!$point)
-            return false;
-
-        $user = Users::findFirstByUserid($userId);
-
-        if(!$user)
-            return false;
-
-        if(SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),
-            $point->getSubjectType(),$right))
-            return true;
-
-        if($userId == $point->getUserManager())
-            return true;
-
-        return false;
-    }
 }

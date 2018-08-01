@@ -84,7 +84,7 @@ class SubjectsWithNotDeleted extends NotDeletedModelWithCascade
 
     public static function checkUserHavePermission($userId, $subjectId, $subjectType, $right = null)
     {
-        $user = Users::findFirstByUserId($userId);
+        $user = Users::findFirstByUserid($userId);
 
         if (!$user)
             return false;
@@ -112,12 +112,12 @@ class SubjectsWithNotDeleted extends NotDeletedModelWithCascade
     public static function checkSubjectExists($subjectId, $subjectType)
     {
         if ($subjectType == 0) {
-            $user = Users::findFirstByUserId($subjectId);
+            $user = Users::findFirstByUserid($subjectId);
             if ($user)
                 return true;
             return false;
         } else if ($subjectType == 1) {
-            $company = Companies::findFirstByCompanyId($subjectId);
+            $company = Companies::findFirstByCompanyid($subjectId);
             if ($company)
                 return true;
             return false;
@@ -135,7 +135,7 @@ class SubjectsWithNotDeleted extends NotDeletedModelWithCascade
     public static function findBySubject($subjectId,$subjectType, $order = null)
     {
         //if($order!= null)
-        return parent::find(['subjectId = :subjectId: AND subjecttype = :subjectType:',
+        return parent::find(['subjectid = :subjectId: AND subjecttype = :subjectType:',
             'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType],
             'order' => $order]);
     }

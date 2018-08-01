@@ -157,7 +157,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
 
     public static function findByIds($userId,$companyId)
     {
-        return FavoriteCompanies::findFirst(["userId = :userId: AND companyId = :companyId:",
+        return FavoriteCompanies::findFirst(["userid = :userId: AND companyid = :companyId:",
             "bind" => [
                 "userId" => $userId,
                 "companyId" => $companyId,

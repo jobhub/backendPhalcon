@@ -18,8 +18,8 @@ class ReviewsAPIController extends Controller
      *
      * @method POST
      *
-     * @params binderId, binderType, executor, rating
-     * @param (Необязатальные) textReview, fake.
+     * @params int binderId, int binderType, bool executor, int rating
+     * @params (Необязатальные) textReview, fake.
      *
      * @return Response - Status
      */
@@ -85,9 +85,10 @@ class ReviewsAPIController extends Controller
             $review->setExecutor($executor);
             $review->setTextReview($this->request->getPost('textReview'));
             $review->setReviewDate(date('Y-m-d H:i:s'));
+            $review->setUserId($userId);
 
-            if($this->request->getPost('fake'))
-                $review->setFake($this->request->getPost('fake'));
+            /*if($this->request->getPost('fake'))
+                $review->setFake($this->request->getPost('fake'));*/
 
             $review->setRating($this->request->getPost('rating'));
 
@@ -124,7 +125,7 @@ class ReviewsAPIController extends Controller
      *
      * @method PUT
      *
-     * @params rating, reviewId
+     * @params int rating, reviewId
      * @param (Необязатальные) textReview.
      *
      * @return Response - Status
@@ -163,6 +164,7 @@ class ReviewsAPIController extends Controller
             $review->setTextReview($this->request->getPut('textReview'));
             $review->setReviewDate(date('Y-m-d H:i:s'));
             $review->setRating($this->request->getPut('rating'));
+            $review->setUserId($userId);
 
             if (!$review->update()) {
                 $errors = [];
@@ -197,7 +199,7 @@ class ReviewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @params $reviewId
+     * @param $reviewId
      *
      * @return Response - Status
      */
@@ -265,7 +267,8 @@ class ReviewsAPIController extends Controller
      *
      * @method GET
      *
-     * @params $subjectId, $subjectType
+     * @param $subjectId
+     * @param $subjectType
      *
      * @return string
      */
@@ -349,35 +352,39 @@ class ReviewsAPIController extends Controller
             //if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$subjectId,$subjectType, 'getReviews'))
 
             $query = $this->db->prepare("Select * FROM (
-(SELECT reviews.reviewId as id,
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT reviews.reviewId as id,
               reviews.textReview as text,
               reviews.reviewdate as date,
               reviews.rating as rating,
               reviews.executor as executor
               FROM reviews inner join tasks 
-              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 0 AND reviews.executor = true) 
+              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 'task' AND reviews.executor = true)
               WHERE tasks.subjectId = :subjectId AND tasks.subjectType = :subjectType)
               UNION
+              --Отзывы оставленные на предложения данного субъекта
               (SELECT reviews.reviewId as id, 
               reviews.textReview as text,
               reviews.reviewdate as date,
               reviews.rating as rating,
               reviews.executor as executor 
               FROM reviews inner join offers 
-              ON (reviews.binderId = offers.taskId AND reviews.binderType = 0
+              ON (reviews.binderId = offers.taskId AND reviews.binderType = 'task'
                   AND reviews.executor = false AND offers.selected = true) 
               WHERE offers.subjectId = :subjectId AND offers.subjectType = :subjectType) 
               UNION
+              --Отзывы оставленные на заявки
               (SELECT reviews.reviewId as id, 
               reviews.textReview as text,
               reviews.reviewdate as date,
               reviews.rating as rating,
               reviews.executor as executor 
               FROM reviews inner join requests
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
                   AND reviews.executor = true)
               WHERE requests.subjectId = :subjectId AND requests.subjectType = :subjectType) 
               UNION
+              --Отзывы оставленные на услуги
               (SELECT reviews.reviewId as id, 
               reviews.textReview as text,
               reviews.reviewdate as date,
@@ -385,14 +392,23 @@ class ReviewsAPIController extends Controller
               reviews.executor as executor 
               FROM services inner join requests ON (requests.serviceId = services.serviceId)
               inner join reviews
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
                   AND reviews.executor = false)
               WHERE services.subjectId = :subjectId AND services.subjectType = :subjectType)
+              UNION
+              --фейковые отзывы
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews
+              WHERE reviews.objectId = :subjectId AND reviews.objectType = :subjectType)
               ) p0
               ORDER BY p0.date desc"
             );
 
-            $result = $query->execute([
+            $query->execute([
                 'subjectId' => $subjectId,
                 'subjectType' => $subjectType,
             ]);
@@ -413,4 +429,15 @@ class ReviewsAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     *
+     */
+    public function addTypeAction(){
+        $query = $this->db->prepare("CREATE TYPE bindertype AS ENUM ('task', 'request');"
+        );
+
+        return $query->execute();
+    }
+
 }

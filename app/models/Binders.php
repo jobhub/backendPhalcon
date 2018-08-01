@@ -4,21 +4,21 @@ class Binders
 {
     public static function checkUserHavePermission($userId, $binderId, $binderType, $executor, $right = null)
     {
-        $user = Users::findFirstByUserId($userId);
+        $user = Users::findFirstByUserid($userId);
 
         if (!$user)
             return false;
 
-        if ($binderType == 0) {
+        if ($binderType == 'task') {
             //связующий объект - заказ (task)
 
-            $task = Tasks::findFirstByTaskId($binderId);
+            $task = Tasks::findFirstByTaskid($binderId);
             if(!$task)
                 return false;
 
             if($executor)
             {
-                $binder = Offers::findFirst(['taskId = :taskId: AND selected = true',
+                $binder = Offers::findFirst(['taskid = :taskId: AND selected = true',
                     'bind' => ['taskId' => $task->getTaskId()]]);
                 if(!$binder){
                     return false;
@@ -27,10 +27,10 @@ class Binders
                 $binder = $task;
             }
             return SubjectsWithNotDeleted::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
-        } else if ($binderType == 1) {
+        } else if ($binderType == 'request') {
             //связующий объект - заявка
 
-            $request = Requests::findFirstByRequestId($binderId);
+            $request = Requests::findFirstByRequestid($binderId);
             if(!$request)
                 return false;
 
@@ -52,17 +52,17 @@ class Binders
 
     public static function checkBinderExists($binderId, $binderType)
     {
-        if ($binderType == 0) {
-            $task = Tasks::findFirstByTaskId($binderId);
+        if ($binderType == 'task') {
+            $task = Tasks::findFirstByTaskid($binderId);
             if (!$task)
                 return false;
-            $offer = Offers::findFirst(['taskId = :taskId: AND selected = true',
+            $offer = Offers::findFirst(['taskid = :taskId: AND selected = true',
                 'bind' => ['taskId' => $task->getTaskId()]]);
             if (!$offer)
                 return false;
             return true;
-        } else if ($binderType == 1) {
-            $request = Requests::findFirstByRequestId($binderId);
+        } else if ($binderType == 'request') {
+            $request = Requests::findFirstByRequestid($binderId);
             if ($request && $request->services)
                 return true;
             return false;

@@ -7,6 +7,9 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Контроллер для работы с подписками на пользователей
+ */
 class FavouriteUsersAPIController extends Controller
 {
     /**
@@ -126,14 +129,14 @@ class FavouriteUsersAPIController extends Controller
      * @method GET
      * @return string - json array подписок
      */
-    public function getFavouriteAction()
+    public function getFavouritesAction()
     {
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            $fav = FavoriteCategories::findByUsersubject($userId);
+            $fav = FavoriteUsers::findByUsersubject($userId);
 
             $response->setJsonContent($fav);
             return $response;

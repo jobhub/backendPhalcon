@@ -65,8 +65,8 @@ class SecurityPlugin extends Plugin
 
                 'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
 
-                'categoriesAPI' => ['getFavourite', 'setFavourite','deleteFavourite'],
-                'FavouriteUsersAPI' => ['setFavourite'],
+                'CategoriesAPI' => ['getFavourites', 'setFavourite','deleteFavourite','editRadiusInFavourite'],
+                'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite','getFavourites'],
                 'NewsAPI' => ['getNews' ,'addNew' ,'deleteNew' ,'editNew' ,'getOwnNews', 'getSubjectNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
 
@@ -106,6 +106,7 @@ class SecurityPlugin extends Plugin
                 'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'categoriesAPI' => ['addCategory' , 'editCategory'],
                 'offersAPI' => ['addStatus'],
+                'ReviewsAPI' =>['addType'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -124,8 +125,8 @@ class SecurityPlugin extends Plugin
                 'authorized'    => ['index', 'register', 'start', 'end', 'action'],
                 'auctions'      => ['index'],
                 'registerAPI'      => ['index'],
-                'sessionAPI'      => ['index'],
-                'categoriesAPI' => ['index' ,'getCategoriesForSite'],
+                'sessionAPI'      => ['index', 'authWithSocial'],
+                'CategoriesAPI' => ['index' ,'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
 
                 'CompaniesAPI' => ['getCompanies',],

@@ -12,7 +12,7 @@ class PhonesAPIController extends Controller
     /**
      * Добавляет телефон для указанной компании
      * @method POST
-     * @param integer companyId, string phone или integer phoneId
+     * @params integer companyId, string phone или integer phoneId
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function addPhoneToCompanyAction()
@@ -128,7 +128,7 @@ class PhonesAPIController extends Controller
     /**
      * Добавляет телефон для указанной точки оказания услуг
      * @method POST
-     * @param integer pointId, string phone или integer phoneId
+     * @params integer pointId, string phone или integer phoneId
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function addPhoneToTradePointAction()
@@ -138,7 +138,9 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            if (!TradePoints::checkUserHavePermission($userId,$this->request->getPost("pointId"),'editPoint')) {
+            $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
+
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -147,9 +149,6 @@ class PhonesAPIController extends Controller
                 );
                 return $response;
             }
-
-
-            $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
 
             $this->db->begin();
 
@@ -250,7 +249,7 @@ class PhonesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param (Обязательные) int $phoneId
+     * @param int $phoneId
      * @param int $companyId
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
@@ -323,7 +322,7 @@ class PhonesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param (Обязательные) int $phoneId
+     * @param int $phoneId
      * @param int $pointId
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
@@ -346,7 +345,10 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            if (!TradePoints::checkUserHavePermission($userId,$pointId,'editPoint')){
+            $point = $phonesPoint->tradepoints;
+
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),
+                'editPoint')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -393,7 +395,7 @@ class PhonesAPIController extends Controller
     /**
      * Изменяет определенный номер телефона у определенной точки услуг
      * @method PUT
-     * @param integer pointId, string phone (новый) и integer phoneId (старый)
+     * @params integer pointId, string phone (новый) и integer phoneId (старый)
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function editPhoneInTradePointAction()
@@ -402,8 +404,11 @@ class PhonesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
+            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
-            if (!TradePoints::checkUserHavePermission($userId,$this->request->getPut("pointId"),'editPoint')) {
+
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),
+                    'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -413,7 +418,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
+
 
             $this->db->begin();
 
@@ -565,7 +570,7 @@ class PhonesAPIController extends Controller
     /**
      * Изменяет определенный номер телефона у определенной компании
      * @method PUT
-     * @param integer companyId, string phone (новый) и integer phoneId (старый)
+     * @params integer companyId, string phone (новый) и integer phoneId (старый)
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function editPhoneInCompanyAction()

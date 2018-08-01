@@ -7,6 +7,9 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Контроллер для работы с предложениями.
+ */
 class OffersAPIController extends Controller
 {
     /**
@@ -186,7 +189,9 @@ class OffersAPIController extends Controller
                     'bind' => ['companyId' => $companyId]]);
             }
 
-            return json_encode($offers);
+            $response->setJsonContent($offers);
+
+            return $response;
 
 
         } else {
@@ -233,7 +238,8 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            if (!Offers::checkUserHavePermission($userId, $offerId, 'deleteOffer')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $offer->getSubjectId(),$offer->getSubjectType(),
+                'deleteOffer')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -276,7 +282,7 @@ class OffersAPIController extends Controller
      *
      * @method PUT
      *
-     * @params (Обязательные) offerId, taskId, deadline, price.
+     * @params (Обязательные) offerId, deadline, price.
      * @params (Необязательные) description, companyId.
      *
      * @return string - json array в формате Status
@@ -288,7 +294,8 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'editOffer')){
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
+            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'editOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -298,7 +305,6 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
             $task = $offer->tasks;
 
             if(!$task->getStatus() == STATUS_ACCEPTING){
@@ -312,6 +318,17 @@ class OffersAPIController extends Controller
             }
 
             if ($this->request->getPut("companyId")) {
+
+                if(!Companies::checkUserHavePermission($userId,$this->request->getPut("companyId"),'addOffer')){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
                 $offer->setSubjectId($this->request->getPut("companyId"));
                 $offer->setSubjectType(1);
             } else {
@@ -357,7 +374,7 @@ class OffersAPIController extends Controller
      *
      * @method PUT
      *
-     * @param offerId
+     * @params offerId
      *
      * @return string - json array в формате Status
      */
@@ -366,8 +383,8 @@ class OffersAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-
-            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'confirmOffer')){
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
+            if(!$offer ||!SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'confirmOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -377,7 +394,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
+
 
             if (!$offer->confirm()) {
                 $errors = [];
@@ -413,7 +430,7 @@ class OffersAPIController extends Controller
      *
      * @method PUT
      *
-     * @param offerId
+     * @params offerId
      *
      * @return string - json array в формате Status
      */
@@ -423,7 +440,8 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if(!Offers::checkUserHavePermission($userId,$this->request->getPut("offerId"),'rejectOffer')){
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
+            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'rejectOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -433,7 +451,6 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
 
             if (!$offer->reject()) {
                 $errors = [];
@@ -469,7 +486,7 @@ class OffersAPIController extends Controller
      *
      * @method PUT
      *
-     * @param offerId
+     * @params offerId
      *
      * @return string - json array в формате Status
      */
@@ -479,9 +496,10 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $offer = Offers::findFirstByOfferId($this->request->getPut("offerId"));
+            $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
 
-            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'performTask')){
+            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),
+                    'performTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

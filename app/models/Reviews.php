@@ -53,7 +53,7 @@ class Reviews extends NotDeletedModelWithCascade
     /**
      *
      * @var integer
-     * @Column(type="integer", length=32, nullable=false)
+     * @Column(type="string", length=10, nullable=false)
      */
     protected $bindertype;
 
@@ -63,6 +63,69 @@ class Reviews extends NotDeletedModelWithCascade
      * @Column(type="string", nullable=false)
      */
     protected $executor;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $userid;
+
+    //куча костылей для того, чтобы можно было писать фейковые отзывы. Жесть
+    protected $subjectid;
+    protected $subjecttype;
+    protected $objectid;
+    protected $objecttype;
+
+    /**
+     * Методы-костыли
+    */
+
+    public function setSubjectId($subjectid)
+    {
+        $this->subjectid = $subjectid;
+
+        return $this;
+    }
+    public function setSubjectType($subjecttype)
+    {
+        $this->subjecttype = $subjecttype;
+
+        return $this;
+    }
+
+    public function setObjectId($objectid)
+    {
+        $this->objectid = $objectid;
+
+        return $this;
+    }
+    public function setObjectType($objecttype)
+    {
+        $this->objecttype = $objecttype;
+
+        return $this;
+    }
+
+    public function getSubjectId()
+    {
+        return $this->subjectid;
+    }
+
+    public function getSubjectType()
+    {
+        return $this->subjecttype;
+    }
+
+    public function getObjectId()
+    {
+        return $this->objectid;
+    }
+
+    public function getObjectType()
+    {
+        return $this->objecttype;
+    }
 
     /**
      * Method to set the value of field reviewId
@@ -150,8 +213,11 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setBinderType($bindertype)
     {
+        if($bindertype == 0)
+            $this->bindertype = 'task';
+        else if($bindertype == 1)
+            $this->bindertype = 'request';
         $this->bindertype = $bindertype;
-
         return $this;
     }
 
@@ -164,6 +230,19 @@ class Reviews extends NotDeletedModelWithCascade
     public function setExecutor($executor)
     {
         $this->executor = $executor;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field userid
+     *
+     * @param integer $userid
+     * @return $this
+     */
+    public function setUserId($userid)
+    {
+        $this->userid = $userid;
 
         return $this;
     }
@@ -249,6 +328,16 @@ class Reviews extends NotDeletedModelWithCascade
     }
 
     /**
+     * Returns the value of field userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userid;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -262,7 +351,7 @@ class Reviews extends NotDeletedModelWithCascade
                 'binderid',
                 new Callback(
                     [
-                        "message" => "Такой субъект не существует",
+                        "message" => "Такой объект не существует",
                         "callback" => function ($review) {
                             return Binders::checkBinderExists($review->getBinderId(), $review->getBinderType());
                         }
@@ -281,6 +370,21 @@ class Reviews extends NotDeletedModelWithCascade
             )
         );
 
+        if ($this->getFake() == null || !$this->getFake())
+            $validator->add(
+                'userid',
+                new Callback(
+                    [
+                        "message" => "Такой пользователь не существует",
+                        "callback" => function ($review) {
+                            if($review->users!=null)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+
         return $this->validate($validator);
     }
 
@@ -291,6 +395,7 @@ class Reviews extends NotDeletedModelWithCascade
     {
         //$this->setSchema("public");
         $this->setSource("reviews");
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**

@@ -211,25 +211,15 @@ class Services extends SubjectsWithNotDeleted
             )
         );
 
-        //под вопросом. Могут быть проблемы, если указывать id при создании
-        //А так, если id уже есть, предполагается, что услуга ранее была создана
-        if($this->getServiceId() != null)
         $validator->add(
             'regionid',
             new Callback(
                 [
-                    "message" => "Для услуги должна быть указана точка (точки) продаж или, хотя бы, регион",
+                    "message" => "Для услуги должен быть указан регион",
                     "callback" => function ($service) {
-                        if ($service->getRegionId() != null) {
-                            $region = Regions::findFirstByRegionId($service->getRegionId());
+                        $region = Regions::findFirstByRegionid($service->getRegionId());
 
-                            if ($region)
-                                return true;
-                            return false;
-                        }
-
-                        $servicesPoints = ServicesPoints::findFirstByServiceId($service->getServiceId());
-                        if ($servicesPoints)
+                        if ($region)
                             return true;
                         return false;
                     }

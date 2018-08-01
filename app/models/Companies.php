@@ -346,7 +346,7 @@ class Companies extends NotDeletedModelWithCascade
                     [
                         "message" => "Такой регион не существует",
                         "callback" => function ($company) {
-                            $region = Regions::findFirstByRegionId($company->getRegionId());
+                            $region = Regions::findFirstByRegionid($company->getRegionId());
 
                             if ($region)
                                 return true;
@@ -363,7 +363,7 @@ class Companies extends NotDeletedModelWithCascade
                 [
                     "message" => "Такого пользователя не существует",
                     "callback" => function ($company) {
-                        $user = Users::findFirstByUserId($company->getUserId());
+                        $user = Users::findFirstByUserid($company->getUserId());
 
                         if ($user)
                             return true;
@@ -402,7 +402,7 @@ class Companies extends NotDeletedModelWithCascade
 
             if (!$delete) {
                 //каскадное 'удаление' точек оказания услуг
-                $tradePoints = TradePoints::findByCompanyId($this->getCompanyId());
+                $tradePoints = TradePoints::findBySubject($this->getCompanyId(),1);
                 foreach ($tradePoints as $tradePoint) {
                     $tradePoint->setTransaction($transaction);
                     if (!$tradePoint->delete(false, true)) {
@@ -414,7 +414,7 @@ class Companies extends NotDeletedModelWithCascade
                 }
 
                 //каскадное 'удаление' новостей
-                $news = News::find(["subjectid = :companyId: AND newtype = 1",
+                $news = News::find(["subjectid = :companyId: AND subjecttype = 1",
                     'bind' =>
                         ['companyId' => $this->getCompanyId()
                         ]]);
@@ -543,7 +543,7 @@ class Companies extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление новостей
-        $news = News::find(["subjectid = :companyId: AND newtype = 1 AND deleted = true AND deletedcascade = true",
+        $news = News::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
                 ]],false);
@@ -637,7 +637,7 @@ class Companies extends NotDeletedModelWithCascade
 
         $company = Companies::findFirst(['companyid = :companyId:',
             'bind' => ['companyId' => $companyId]], false);
-        $user = Users::findFirstByUserId($userId);
+        $user = Users::findFirstByUserid($userId);
 
         if (!$company)
             return false;

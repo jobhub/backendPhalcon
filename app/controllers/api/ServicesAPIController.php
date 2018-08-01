@@ -189,9 +189,10 @@ class ServicesAPIController extends Controller
      *
      * @method POST
      *
-     * @params (обязательные) companyId
-     * @params (необязательные) description, priceMin, priceMax (или же вместо них просто price),
-     * @params regionId или массив points - массив id tradePoint-ов
+     * @params (необязательные) массив points - массив id tradePoint-ов
+     * @params (необязательные) companyId, description, priceMin, priceMax (или же вместо них просто price)
+     *
+     * @params (обязательно) regionId
      *
      * @return string - json array в формате Status - результат операции
      */

@@ -181,7 +181,7 @@ class Requests extends SubjectsWithNotDeleted
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($request) {
-                        $service = Services::findFirstByServiceId($request->getServiceId());
+                        $service = Services::findFirstByServiceid($request->getServiceId());
 
                         if ($service)
                             return true;
@@ -196,7 +196,7 @@ class Requests extends SubjectsWithNotDeleted
             new Callback([
                 "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($request) {
-                    $status = Statuses::findFirstByStatusId($request->getStatus());
+                    $status = Statuses::findFirstByStatusid($request->getStatus());
                     if (!$status)
                         return false;
                     return true;

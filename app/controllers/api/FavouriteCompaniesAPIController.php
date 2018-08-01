@@ -7,6 +7,9 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Контроллер для работы с подписками на компании
+ */
 class FavouriteCompaniesAPIController extends Controller
 {
     /**
@@ -14,7 +17,7 @@ class FavouriteCompaniesAPIController extends Controller
      *
      * @method POST
      *
-     * @param companyId
+     * @params companyId
      *
      * @return Response с json ответом в формате Status
      */

@@ -50,6 +50,13 @@ class Users extends NotDeletedModelWithCascade
     protected $role;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $issocial;
+
+    /**
      * Method to set the value of field userId
      *
      * @param integer $userid
@@ -164,6 +171,18 @@ class Users extends NotDeletedModelWithCascade
         return $this->role;
     }
 
+    public function setIsSocial($issocial)
+    {
+        $this->issocial = $issocial;
+
+        return $this;
+    }
+
+    public function getIsSocial()
+    {
+        return $this->issocial;
+    }
+
     /**
      * Validations and business logic
      *
@@ -173,40 +192,63 @@ class Users extends NotDeletedModelWithCascade
     {
         $validator = new Validation();
 
-        $validator->add(
-            'email',
-            new EmailValidator(
-                [
-                    'model'   => $this,
-                    'message' => 'Введите, пожалуйста, правильный адрес',
-                ]
-            )
-        );
 
-        $validator->add(
-            'phoneid',
+        /*$validator->add(
+            'issocial',
             new Callback(
                 [
-                    "message" => "Телефон не был создан",
-                    "callback" => function($user) {
-                        $phone = Phones::findFirstByPhoneid($user->getPhoneId());
+                    "message" => "Для пользователя не найдена привязанная социальная сеть",
+                    "callback" => function ($user) {
+                        if (!$user->getIsSocial())
+                            return true;
 
-                        if($phone)
+                        $socialuser = Userssocial::findFirstByUserid($user->getIsSocial());
+
+                        if ($socialuser)
                             return true;
                         return false;
                     }
                 ]
             )
-        );
+        );*/
 
+        if (!$this->getIsSocial())
+            $validator->add(
+                'email',
+                new EmailValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, правильный адрес',
+                    ]
+                )
+            );
+
+        if (!$this->getIsSocial())
+            $validator->add(
+                'phoneid',
+                new Callback(
+                    [
+                        "message" => "Телефон не был создан",
+                        "callback" => function ($user) {
+                            $phone = Phones::findFirstByPhoneid($user->getPhoneId());
+
+                            if ($phone)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+
+        if (!$this->getIsSocial())
         $validator->add(
             'password',
             new Callback(
                 [
                     "message" => "Пароль должен содержать не менее 6 символов",
-                    "callback" => function($user) {
+                    "callback" => function ($user) {
 
-                        if($user->getPassword()!= null && strlen($user->getPassword()) >= 6)
+                        if ($user->getPassword() != null && strlen($user->getPassword()) >= 6)
                             return true;
                         return false;
                     }
@@ -259,6 +301,18 @@ class Users extends NotDeletedModelWithCascade
             $this->setTransaction($transaction);
 
             if (!$delete) {
+
+                //каскадное 'удаление' точек оказания услуг
+                $tradePoints = TradePoints::findBySubject($this->getUserId(), 0);
+                foreach ($tradePoints as $tradePoint) {
+                    $tradePoint->setTransaction($transaction);
+                    if (!$tradePoint->delete(false, true)) {
+                        $transaction->rollback(
+                            "Невозможно удалить точки оказания услуг"
+                        );
+                        return false;
+                    }
+                }
 
                 //каскадное 'удаление' новостей
                 $news = News::find(["subjectid = :userId: AND subjecttype = 0",
@@ -335,7 +389,7 @@ class Users extends NotDeletedModelWithCascade
                     }
                 }
 
-                $result = parent::delete($delete,false, $data, $whiteList);
+                $result = parent::delete($delete, false, $data, $whiteList);
 
                 if (!$result) {
                     $transaction->rollback(
@@ -347,7 +401,7 @@ class Users extends NotDeletedModelWithCascade
                 $transaction->commit();
                 return true;
             } else {
-                $result = parent::delete($delete,false, $data, $whiteList);
+                $result = parent::delete($delete, false, $data, $whiteList);
                 $transaction->commit();
                 return $result;
             }
@@ -362,18 +416,33 @@ class Users extends NotDeletedModelWithCascade
         // Запрос транзакции
         $transaction = $manager->get();
         $this->setTransaction($transaction);
-        if(!parent::restore()){
+        if (!parent::restore()) {
             $transaction->rollback(
                 "Невозможно восстановить пользователя"
             );
             return false;
         }
 
+        //Каскадное восстановление точек оказания услуг
+        $tradePoints = TradePoints::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
+            'bind' =>
+                ['userId' => $this->getUserId()
+                ]], false);
+        foreach ($tradePoints as $tradePoint) {
+            $tradePoint->setTransaction($transaction);
+            if (!$tradePoint->restore()) {
+                $transaction->rollback(
+                    "Невозможно восстановить точки оказания услуг"
+                );
+                return false;
+            }
+        }
+
         //каскадное восстановление новостей
         $news = News::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
-                ]],false);
+                ]], false);
         foreach ($news as $new) {
             $new->setTransaction($transaction);
             if (!$new->restore()) {
@@ -388,7 +457,7 @@ class Users extends NotDeletedModelWithCascade
         $services = Services::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
-                ]],false);
+                ]], false);
         foreach ($services as $service) {
             $service->setTransaction($transaction);
             if (!$service->restore()) {
@@ -403,7 +472,7 @@ class Users extends NotDeletedModelWithCascade
         $requests = Requests::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
-                ]],false);
+                ]], false);
         foreach ($requests as $request) {
             $request->setTransaction($transaction);
             if (!$request->restore()) {
@@ -418,7 +487,7 @@ class Users extends NotDeletedModelWithCascade
         $tasks = Tasks::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
-                ]],false);
+                ]], false);
         foreach ($tasks as $task) {
             $task->setTransaction($transaction);
             if (!$task->restore()) {
@@ -430,10 +499,10 @@ class Users extends NotDeletedModelWithCascade
         }
 
         //каскадное восстановление предложений
-        $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcsascade = true",
+        $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['userId' => $this->getUserId()
-                ]],false);
+                ]], false);
         foreach ($offers as $offer) {
             $offer->setTransaction($transaction);
             if (!$offer->restore()) {
@@ -450,7 +519,7 @@ class Users extends NotDeletedModelWithCascade
 
     public function getFinishedTasks()
     {
-       // $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
+        // $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
 
 
         $query = $this->modelsManager->createQuery(
@@ -463,19 +532,20 @@ class Users extends NotDeletedModelWithCascade
                 'userId' => "$this->userid",
             ]
         );
-        $count=$count[0]['c'];
+        $count = $count[0]['c'];
         return $count;
     }
+
     public function getRatingForCategory($idCategory)
     {
-        $query=$this->getModelsManager()->createQuery('SELECT AVG(reviews.raiting) AS a FROM reviews, auctions, tasks, users WHERE tasks.categoryId=:categoryId: AND tasks.taskId=auctions.taskId AND auctions.auctionId=reviews.auctionId AND reviews.userId_object=:userId: AND reviews.executor=1');
+        $query = $this->getModelsManager()->createQuery('SELECT AVG(reviews.raiting) AS a FROM reviews, auctions, tasks, users WHERE tasks.categoryId=:categoryId: AND tasks.taskId=auctions.taskId AND auctions.auctionId=reviews.auctionId AND reviews.userId_object=:userId: AND reviews.executor=1');
         $avg = $query->execute(
             [
                 'userId' => "$this->userid",
-                'categoryId'=>$idCategory
+                'categoryId' => $idCategory
             ]
         );
-        $avg=$avg[0]['a'];
+        $avg = $avg[0]['a'];
         return $avg;
     }
 }
