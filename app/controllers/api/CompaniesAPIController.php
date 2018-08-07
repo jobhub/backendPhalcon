@@ -14,6 +14,7 @@ class CompaniesAPIController extends Controller
 {
     /**
      * Возвращает компании текущего пользователя
+     *
      * @method GET
      * @return string - json array компаний
      */
@@ -36,6 +37,7 @@ class CompaniesAPIController extends Controller
 
     /**
      * Создает компанию компанию
+     *
      * @method POST
      * @params (Обязательные)name, fullName
      * @params (необязательные) TIN, regionId, webSite, email

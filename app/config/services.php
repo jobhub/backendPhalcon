@@ -12,6 +12,8 @@ use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
 use ULogin\Auth;
 
+use Vanchelo\Mailer\MailerService;
+
 /**
  * Shared configuration service
  */
@@ -198,6 +200,15 @@ $di->set(
         $companiesAPI = new CompaniesAPIController();
 
         return $companiesAPI;
+    }
+);
+
+$di->set(
+    "mailer",
+    function () {
+        $service = new MailerService();
+
+        return $service->mailer();
     }
 );
 

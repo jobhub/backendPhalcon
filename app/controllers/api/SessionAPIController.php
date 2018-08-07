@@ -21,15 +21,75 @@ class SessionAPIController extends Controller
     }
 
     /**
+     * Разрывает сессию пользователя
+     * @method POST
+     *
+     * @return string - json array Status
+     */
+    public function endAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $tokenRecieved = getallheaders()['authorization'];/*$this->request->getHeader("authorization");*/
+            $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
+                'bind' => ['userId' => $userId,
+                    'token' => sha1($tokenRecieved)]]);
+
+            if(!$token){
+                $this->session->remove('auth');
+                $this->session->destroy();
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_OK
+                    ]
+                );
+                return $response;
+            }
+
+            if ($token->delete() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($token->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $this->session->remove('auth');
+            $this->session->destroy();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+        }else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
      * Авторизует пользователя в системе
      *
      * @method POST
-     * @params login, password
-     * @return Response
+     * @params login (это может быть его email или номер телефона), password
+     * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
      */
     public function indexAction()
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() || $this->request->isOptions()) {
             $login = $this->request->getPost("login");
             $password = $this->request->getPost("password");
 
@@ -67,40 +127,48 @@ class SessionAPIController extends Controller
                 $response = new Response();
                 $userinfo = Userinfo::findFirstByUserid($user->getUserId());
 
-                if (!$userinfo) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_UNRESOLVED_ERROR,
-                            "errors" => ['Нет userinfo при существующем user']
-                        ]);
-
-                    return $response;
-                }
-
                 $user_min['userId'] = $user->getUserId();
                 $user_min['email'] = $user->getEmail();
                 $user_min['phone'] = $user->phones->getPhone();
+                $user_min['activated'] = $user->getActivated();
 
                 $settings = Settings::findFirstByUserid($user->getUserId());
-                if (!$settings) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_UNRESOLVED_ERROR,
-                            "error" => ['Нет settings при существующем user']
-                        ]);
 
-                    return $response;
-                }
                 $info['userinfo'] = $userinfo;
                 $info['user'] = $user_min;
                 $info['settings'] = $settings;
 
+                $token = hash('sha256', $this->session->getId().$user->getUserId().
+                    ($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()));
+
+                $accToken = new Accesstokens();
+
+                $accToken->setUserid($user->getUserId());
+                $accToken->setToken($token);
+                $accToken->setLifetime();
+
+                if ($accToken->save() == false) {
+                    $this->session->destroy();
+                    $errors = [];
+                    foreach ($accToken->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
 
                 $response->setJsonContent(
                     [
 
                         "status" => STATUS_OK,
-                        "allForUser" => $info
+                        "allForUser" => $info,
+                        'token' => $token,
+                        'lifetime' => $accToken->getLifetime()
                     ]
                 );
             } else {

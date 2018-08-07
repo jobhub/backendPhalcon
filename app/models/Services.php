@@ -49,6 +49,13 @@ class Services extends SubjectsWithNotDeleted
      */
     protected $regionid;
 
+
+    /**
+     * @var string
+     * @Column(type="string", length=150, nullable=true)
+     */
+    protected $name;
+
     /**
      * Method to set the value of field serviceId
      *
@@ -58,6 +65,19 @@ class Services extends SubjectsWithNotDeleted
     public function setServiceId($serviceid)
     {
         $this->serviceid = $serviceid;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field name
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
 
         return $this;
     }
@@ -187,6 +207,15 @@ class Services extends SubjectsWithNotDeleted
         return $this->pricemax;
     }
 
+    /**
+     * Returns the value of field name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
      * Validations and business logic
@@ -227,7 +256,6 @@ class Services extends SubjectsWithNotDeleted
             )
         );
 
-
         $validator->add(
             "datepublication",
             new PresenceOf(
@@ -238,6 +266,13 @@ class Services extends SubjectsWithNotDeleted
         );
 
         return $this->validate($validator) && parent::validation();
+    }
+
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
+    {
+        $result = parent::delete($delete, $deletedCascade, $data, $whiteList);
+
+        return $result;
     }
 
     /**

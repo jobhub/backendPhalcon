@@ -10,7 +10,6 @@ use Phalcon\Mvc\Dispatcher;
 
 class ServicesAPIController extends Controller
 {
-
     /**
      * Возвращает все услуги заданной компании
      *
@@ -73,6 +72,7 @@ class ServicesAPIController extends Controller
             }
 
             if (!$service->delete()) {
+                $errors = [];
                 foreach ($service->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -104,7 +104,7 @@ class ServicesAPIController extends Controller
      *
      * @method PUT
      *
-     * @params serviceId , description, priceMin, priceMax (или же вместо них просто price), regionId
+     * @params serviceId , description, name, priceMin, priceMax (или же вместо них просто price), regionId
      * @params (необязательные) companyId или userId.
      * @return Response - с json массивом в формате Status
      */
@@ -118,6 +118,7 @@ class ServicesAPIController extends Controller
             $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
 
             if (!$service) {
+                //$response->setStatusCode('404', 'Not Found');
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -137,15 +138,17 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if ($this->request->getPost("companyId")) {
-                $service->setSubjectId($this->request->getPost("companyId"));
+            if ($this->request->getPut("companyId")) {
+                $service->setSubjectId($this->request->getPut("companyId"));
                 $service->setSubjectType(1);
-            } else if($this->request->getPost("userId")){
-                $service->setSubjectId($this->request->getPost("userId"));
+            } else if ($this->request->getPost("userId")) {
+                $service->setSubjectId($this->request->getPut("userId"));
                 $service->setSubjectType(0);
             }
 
             $service->setDescription($this->request->getPut("description"));
+            $service->setName($this->request->getPut("name"));
+
             if ($this->request->getPut("price")) {
                 $service->setPriceMin($this->request->getPut("price"));
                 $service->setPriceMax($this->request->getPut("price"));
@@ -185,16 +188,76 @@ class ServicesAPIController extends Controller
     }
 
     /**
+     *
+     */
+    public function editImageServiceAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $service = Services::findFirstByServiceid($this->request->getPost("serviceId"));
+
+            if (!$service) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Такая услуга не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $result = $this->addImageHandler($service->getServiceId());
+
+            $result = json_decode($result->getContent());
+
+            if($result->status != STATUS_OK){
+                $response->setJsonContent(
+                    [
+                        "status" => $result->status,
+                        "errors" => $result->errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
      * Добавляет новую услугу к субъекту
      *
      * @method POST
      *
      * @params (необязательные) массив points - массив id tradePoint-ов
-     * @params (необязательные) companyId, description, priceMin, priceMax (или же вместо них просто price)
+     * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
      *
-     * @params (обязательно) regionId
+     *          (обязательно) regionId
      *
-     * @return string - json array в формате Status - результат операции
+     * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
     public function addServiceAction()
     {
@@ -226,6 +289,7 @@ class ServicesAPIController extends Controller
             }
 
             $service->setDescription($this->request->getPost("description"));
+            $service->setName($this->request->getPost("name"));
 
             if ($this->request->getPost("price")) {
                 $service->setPriceMin($this->request->getPost("price"));
@@ -237,8 +301,7 @@ class ServicesAPIController extends Controller
 
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
-            if(!$this->request->getPost("regionId") && !$this->request->getPost("points"))
-            {
+            if (!$this->request->getPost("regionId") && !$this->request->getPost("points")) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -268,9 +331,9 @@ class ServicesAPIController extends Controller
             }
 
             //
-            if($this->request->getPost("points")){
+            if ($this->request->getPost("points")) {
                 $points = $this->request->getPost("points");
-                foreach($points as $point){
+                foreach ($points as $point) {
                     $servicePoint = new ServicesPoints();
                     $servicePoint->setServiceId($service->getServiceId());
                     $servicePoint->setPointId($point);
@@ -296,10 +359,61 @@ class ServicesAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => STATUS_OK
+                    "status" => STATUS_OK,
+                    'serviceId' => $service->getServiceId()
                 ]
             );
             return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет картинки к услуге
+     *
+     * @method POST
+     *
+     * @params (обязательно) serviceId
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function addImagesAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $service = new Services();
+
+            $service = Services::findFirstByServiceid($this->request->getPost('serviceId'));
+
+            if (!$service) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор услуги'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$service->getSubjectId(),
+                $service->getSubjectType(), 'editService')){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            return $this->addImagesHandler($service->getServiceId());
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -420,7 +534,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $servicePoint = ServicesPoints::findByIds($serviceId,  $pointId);
+            $servicePoint = ServicesPoints::findByIds($serviceId, $pointId);
 
             if (!$servicePoint) {
                 $response->setJsonContent(
@@ -490,7 +604,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if($request->getStatus() != STATUS_WAITING_CONFIRM){
+            if ($request->getStatus() != STATUS_WAITING_CONFIRM) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -560,7 +674,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if($request->getStatus() != STATUS_EXECUTING){
+            if ($request->getStatus() != STATUS_EXECUTING) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -674,5 +788,118 @@ class ServicesAPIController extends Controller
 
             throw $exception;
         }
+    }
+
+    /**
+     * Добавляет картинку к услуге.
+     * @param $serviceId
+     * @return Response с json массивом типа Status
+     */
+    public function addImagesHandler($serviceId)
+    {
+        $response = new Response();
+        include(APP_PATH . '/library/SimpleImage.php');
+        // Проверяем установлен ли массив файлов и массив с переданными данными
+        if ($this->request->hasFiles()) {
+            $files = $this->request->getUploadedFiles();
+
+            $service = Services::findFirstByServiceid($serviceId);
+
+            if (!$service) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор услуги'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $filenames = [];
+            //$this->db->begin();
+            foreach($files as $file) {
+               /* if (($file->getSize() > 5242880)) {
+                    $response->setJsonContent(
+                        [
+                            "errors" => ['Размер файла слишком большой'],
+                            "status" => STATUS_WRONG
+                        ]
+                    );
+                    return $response;
+                }*/
+
+                /*$image = new SimpleImage();
+                $image->load($file->getTempName());
+                $image->resizeToWidth(200);*/
+
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $format = $imageFormat;
+                if ($imageFormat == 'jpeg' || 'jpg')
+                    $imageFormat = IMAGETYPE_JPEG;
+                elseif ($imageFormat == 'png')
+                    $imageFormat = IMAGETYPE_PNG;
+                elseif ($imageFormat == 'gif')
+                    $imageFormat = IMAGETYPE_GIF;
+                else {
+                    $response->setJsonContent(
+                        [
+                            "error" => ['Данный формат не поддерживается'],
+                            "status" => STATUS_WRONG
+                        ]
+                    );
+                    return $response;
+                }
+
+                $images = Imagesservices::findByServiceid($serviceId);
+
+                $filename = BASE_PATH . '/img/services/' . hash('crc32', $service->getServiceId()) . '_'
+                    . count($images) . '.' . $format;
+
+                $imageFullName = str_replace(BASE_PATH, '', $filename);
+
+                $newimage = new Imagesservices();
+                $newimage->setServiceId($serviceId);
+                $newimage->setImagePath($imageFullName);
+
+                if (!$newimage->save()) {
+                    $errors = [];
+                   // $this->db->rollback();
+                    foreach ($newimage->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+                $filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
+            }
+
+            foreach($filenames as $filename){
+                $image = new SimpleImage();
+                $image->load($filename['tempname']);
+                $image->resizeToWidth(200);
+                $image->save($filename['name'], $filename['format']);
+            }
+
+            //$this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        }
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+        return $response;
     }
 }

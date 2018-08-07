@@ -135,9 +135,9 @@ class TradePointsAPIController extends Controller
      *
      * @method POST
      *
-     * @param (Обязательные)   string name, double latitude, double longitude,
-     *        (Необязательные) string email, string webSite, string address, string fax,
-     *         (Необязательные) (int userManagerId, int companyId) - парой
+     * @params (Обязательные)   string name, double latitude, double longitude,
+     * @params Необязательные) string email, string webSite, string address, string fax,
+     * @params (Необязательные) (int userManagerId, int companyId) - парой
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function addTradePointAction()

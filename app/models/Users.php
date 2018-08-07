@@ -57,6 +57,13 @@ class Users extends NotDeletedModelWithCascade
     protected $issocial;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $activated;
+
+    /**
      * Method to set the value of field userId
      *
      * @param integer $userid
@@ -178,9 +185,21 @@ class Users extends NotDeletedModelWithCascade
         return $this;
     }
 
+    public function setActivated($activated)
+    {
+        $this->activated = $activated;
+
+        return $this;
+    }
+
     public function getIsSocial()
     {
         return $this->issocial;
+    }
+
+    public function getActivated()
+    {
+        return $this->activated;
     }
 
     /**
@@ -223,15 +242,14 @@ class Users extends NotDeletedModelWithCascade
                 )
             );
 
-        if (!$this->getIsSocial())
+        if (!$this->getIsSocial() && !$this->getEmail())
             $validator->add(
                 'phoneid',
                 new Callback(
                     [
-                        "message" => "Телефон не был создан",
+                        "message" => "Необходимо указать либо номер телефона, либо email",
                         "callback" => function ($user) {
                             $phone = Phones::findFirstByPhoneid($user->getPhoneId());
-
                             if ($phone)
                                 return true;
                             return false;
