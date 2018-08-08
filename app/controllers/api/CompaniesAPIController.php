@@ -20,13 +20,15 @@ class CompaniesAPIController extends Controller
      */
     public function getCompaniesAction()
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
-
+        if (($this->request->isGet() && $this->session->get('auth')) || $this->request->isPost()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
             $companies = Companies::findByUserid($userId);
-            $response->setJsonContent($companies);
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'companies' => $companies
+            ]);
             return $response;
 
         } else {

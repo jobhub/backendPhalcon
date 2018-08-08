@@ -14,12 +14,12 @@ class TradePointsAPIController extends Controller
      *
      * @method GET
      * @param integer $companyId
-     * @return string - json array of [TradePoint, phones], если все успешно,
+     * @return string - json array of [status, [TradePoint, phones]], если все успешно,
      * или json array в формате Status в ином случае
      */
     public function getPointsAction($companyId = null)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
+        if ($this->request->isGet() && $this->session->get('auth') || $this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -88,7 +88,10 @@ class TradePointsAPIController extends Controller
                 }
             }
 
-            $response->setJsonContent($pointsWithPhones);
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'points' => $pointsWithPhones,
+            ]);
             return $response;
 
         } else {

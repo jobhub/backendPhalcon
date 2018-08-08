@@ -179,6 +179,20 @@ class SecurityPlugin extends Plugin
         return $tokenRecieved;
     }
 
+    public function getTokenFromResponce()
+    {
+        if($this->request->isPost() || $this->request->isGet())
+        $tokenRecieved = $this->request->getPost("authorization");
+
+        if($tokenRecieved == null){
+            $tokenRecieved = $this->request->getJsonRawBody();
+            if($tokenRecieved != null){
+                $tokenRecieved = $tokenRecieved['authorization'];
+            }
+        }
+        return $tokenRecieved;
+    }
+
     /**
      * This action is executed before execute any action in the application
      *
@@ -208,7 +222,7 @@ class SecurityPlugin extends Plugin
         }
 
         if ($this->session->get("auth") != null) {
-            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+            $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
             $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                 'bind' => ['userId' => $auth['id'],
                     'token' => hash('sha256',$tokenRecieved)]]);
@@ -242,6 +256,10 @@ class SecurityPlugin extends Plugin
                 'action' => 'show404'
             ]);
 
+            /*$responce = new Response();
+
+            $responce->setStatusCode('404', 'Not authorized');
+            $responce->send();*/
             return false;
         }
 
@@ -252,6 +270,9 @@ class SecurityPlugin extends Plugin
                 'controller' => 'errors',
                 'action' => 'show401'
             ]);
+            /*$responce = new Response();
+            $responce->setStatusCode('404', 'Not found');
+            $responce->send();*/
             return false;
         }
     }
@@ -266,7 +287,6 @@ class SecurityPlugin extends Plugin
                         $_POST[$key] = $param;
                     }
                 } else if ($this->request->isPut()) {
-
                 }
             }
 

@@ -145,6 +145,12 @@ class RegisterAPIController extends Controller
 
             }*/
 
+            //Временно
+            $_POST['firstname'] = 'Ехехе';
+            $_POST['lastname'] = 'Эхеххов';
+            $_POST['male'] = 1;
+            $result = $this->confirmAction();
+
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
@@ -177,7 +183,7 @@ class RegisterAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $user = Users::findFirstByUserid($user);
+            $user = Users::findFirstByUserid($userId);
 
             if (!$user){
                 $response->setJsonContent(
@@ -199,6 +205,8 @@ class RegisterAPIController extends Controller
                 );
                 return $response;
             }
+
+            $this->db->begin();
 
             $userInfo = new Userinfo();
             $userInfo->setUserId($userId);
@@ -237,9 +245,35 @@ class RegisterAPIController extends Controller
                         "errors" => $errors
                     ]
                 );
-
                 return $response;
             }
+
+            $user->setRole('User');
+
+            if ($user->update() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;

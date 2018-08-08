@@ -254,8 +254,7 @@ class ServicesAPIController extends Controller
      *
      * @params (необязательные) массив points - массив id tradePoint-ов
      * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
-     *
-     *          (обязательно) regionId
+     *           (обязательно) regionId
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
