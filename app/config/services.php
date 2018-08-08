@@ -12,6 +12,8 @@ use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
 use ULogin\Auth;
 
+use Vanchelo\Mailer\MailerService;
+
 /**
  * Shared configuration service
  */
@@ -142,8 +144,6 @@ $di->set(
         // Создаем менеджер событий
         $eventsManager = new EventsManager();
 
-
-
         // Отлавливаем исключения и not-found исключения, используя NotFoundPlugin
         $eventsManager->attach(
             "dispatch:beforeException",
@@ -155,6 +155,12 @@ $di->set(
             "dispatch:beforeExecuteRoute",
             new SecurityPlugin()
         );
+
+        //Это костыльный плагин для преобраования из body в параметры метода
+       /* $eventsManager->attach(
+            "dispatch:beforeExecuteRoute",
+            new BodyMethodConverter()
+        );*/
 
         $dispatcher = new Dispatcher();
 
@@ -198,6 +204,15 @@ $di->set(
         $companiesAPI = new CompaniesAPIController();
 
         return $companiesAPI;
+    }
+);
+
+$di->set(
+    "mailer",
+    function () {
+        $service = new MailerService();
+
+        return $service->mailer();
     }
 );
 

@@ -173,7 +173,6 @@ class Phones extends \Phalcon\Mvc\Model
                     $phone = '+' . $phone;
                 }
             }
-
             $swissNumberProto = $phoneUtil->parse($phone, '');
 
         }catch(\libphonenumber\NumberParseException $exception){
@@ -187,9 +186,9 @@ class Phones extends \Phalcon\Mvc\Model
 
     /**
      * @param $phone - неотформатированный номер
-     * @return string - отформатированный номер, если сумел
+     * @return boolean
      */
-    public function isValidPhone($phone){
+    public static function isValidPhone($phone){
 
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
         try{

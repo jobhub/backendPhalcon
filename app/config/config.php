@@ -67,5 +67,17 @@ return new \Phalcon\Config([
         // of the webpspace.  This will break if the public/index.php entry point is moved or
         // possibly if the web server rewrite rules are changed. This can also be set to a static path.
         'baseUri'        => preg_replace('/public([\/\\\\])index.php$/', '', $_SERVER["PHP_SELF"]),
-    ]
+    ],
+    'mail' => [
+        'driver' => 'smtp', // mail, sendmail, smtp
+        'port'   => 587,
+        'from'   => [
+            'address' => 'no-reply@my-domain.com',
+            'name'    => 'My Cool Company'
+        ],
+        'encryption' => 'tls',
+        'username'   => 'no-reply@my-domain.com',
+        'password'   => 'some-strong-password',
+        'sendmail'   => '/usr/sbin/sendmail -bs',
+    ],
 ]);

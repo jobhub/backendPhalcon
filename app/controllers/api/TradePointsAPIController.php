@@ -10,56 +10,82 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 class TradePointsAPIController extends Controller
 {
     /**
-     * Возвращает точки предоставления услуг для компании
+     * Возвращает точки предоставления услуг для субъекта
      *
      * @method GET
      * @param integer $companyId
      * @return string - json array of [TradePoint, phones], если все успешно,
      * или json array в формате Status в ином случае
      */
-    public function getPointsForCompanyAction($companyId)
+    public function getPointsAction($companyId = null)
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
-
             $response = new Response();
-
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if (!Companies::checkUserHavePermission($userId,$companyId,'getPoints')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if ($companyId != null) {
+                if (!Companies::checkUserHavePermission($userId, $companyId, 'getPoints')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $subjectId = $companyId;
+                $subjectType = 1;
+            } else {
+                $subjectId = $userId;
+                $subjectType = 0;
             }
 
-            $tradePoints = TradePoints::findBySubject($companyId,1);
-            $company = Companies::findFirstByCompanyid($companyId);
+            $tradePoints = TradePoints::findBySubject($subjectId, $subjectType);
+
 
             $pointsWithPhones = [];
 
-            foreach($tradePoints as $tradePoint){
-                if($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == ""){
-                    $tradePoint->setWebSite($company->getWebSite());
-                }
+            if ($companyId != null) {
+                $company = Companies::findFirstByCompanyid($companyId);
+                foreach ($tradePoints as $tradePoint) {
+                    if ($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == "") {
+                        $tradePoint->setWebSite($company->getWebSite());
+                    }
 
-                if($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == ""){
-                    $tradePoint->setEmail($company->getEmail());
-                }
+                    if ($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "") {
+                        $tradePoint->setEmail($company->getEmail());
+                    }
 
-                $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
-                if($phones->count() == 0){
-                    $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
-                }
-                $phones2 = [];
-                foreach($phones as $phone){
-                    $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
-                }
+                    $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
+                    if ($phones->count() == 0) {
+                        $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
+                    }
+                    $phones2 = [];
+                    foreach ($phones as $phone) {
+                        $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
+                    }
 
-                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' =>$phones2];
+                    $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones2];
+                }
+            } else {
+                $user = Users::findFirstByUserid($userId);
+                foreach ($tradePoints as $tradePoint) {
+                    if (($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "")
+                        && $user->getEmail() != null) {
+                        $tradePoint->setEmail($user->getEmail());
+                    }
+
+                    $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
+                    if ($phones->count() == 0 && $user->getPhoneId() != null) {
+                        $phone = $user->phones;
+                    }
+                    $phones = [];
+                    $phones[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->getPhone()];
+
+                    $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones];
+                }
             }
 
             $response->setJsonContent($pointsWithPhones);
@@ -99,27 +125,27 @@ class TradePointsAPIController extends Controller
 
             $pointsWithPhones = [];
 
-            foreach($tradePoints as $tradePoint){
+            foreach ($tradePoints as $tradePoint) {
 
                 $company = $tradePoint->companies;
-                if($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == ""){
+                if ($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == "") {
                     $tradePoint->setWebSite($company->getWebSite());
                 }
 
-                if($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == ""){
+                if ($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "") {
                     $tradePoint->setEmail($company->getEmail());
                 }
 
                 $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
-                if($phones->count() == 0){
+                if ($phones->count() == 0) {
                     $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
                 }
                 $phones2 = [];
-                foreach($phones as $phone){
+                foreach ($phones as $phone) {
                     $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
                 }
 
-                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' =>$phones2];
+                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones2];
             }
 
             return json_encode($pointsWithPhones);
@@ -135,9 +161,9 @@ class TradePointsAPIController extends Controller
      *
      * @method POST
      *
-     * @param (Обязательные)   string name, double latitude, double longitude,
-     *        (Необязательные) string email, string webSite, string address, string fax,
-     *         (Необязательные) (int userManagerId, int companyId) - парой
+     * @params (Обязательные)   string name, double latitude, double longitude,
+     * @params Необязательные) string email, string webSite, string address, string fax,
+     * @params (Необязательные) (int userManagerId, int companyId) - парой
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function addTradePointAction()
@@ -149,10 +175,10 @@ class TradePointsAPIController extends Controller
 
             $point = new TradePoints();
 
-            if($this->request->getPost("companyId")) {
+            if ($this->request->getPost("companyId")) {
                 $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
 
-                if (!Companies::checkUserHavePermission($userId,$company->getCompanyId(),'addPoint')) {
+                if (!Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'addPoint')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -164,12 +190,12 @@ class TradePointsAPIController extends Controller
 
                 $point->setSubjectId($this->request->getPost("companyId"));
                 $point->setSubjectType(1);
-                if($this->request->getPost("userManagerId"))
+                if ($this->request->getPost("userManagerId"))
                     $point->setUserManager($this->request->getPost("userManagerId"));
                 else {
                     $point->setUserManager($userId);
                 }
-            } else{
+            } else {
                 $point->setSubjectId($userId);
                 $point->setSubjectType(0);
                 $point->setUserManager($userId);
@@ -233,8 +259,8 @@ class TradePointsAPIController extends Controller
             $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
             if (!$point ||
-                !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),
-                   $point->getSubjectType(), 'editPoint')) {
+                !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(),
+                    $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -244,7 +270,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            if($this->request->getPut("subjectId") && $this->request->getPut("subjectType")){
+            if ($this->request->getPut("subjectId") && $this->request->getPut("subjectType")) {
                 //Меняем владельца. Не знаю, зачем это может понадобиться
                 $point->setSubjectId($this->request->getPut("subjectId"));
                 $point->setSubjectType($this->request->getPut("subjectType"));
@@ -259,7 +285,7 @@ class TradePointsAPIController extends Controller
             $point->setFax($this->request->getPut("fax"));
             $point->setTime($this->request->getPut("time"));
 
-            if($this->request->getPut("userId") && $point->getSubjectType() != 0)
+            if ($this->request->getPut("userId") && $point->getSubjectType() != 0)
                 $point->setUserManager($this->request->getPut("userId"));
 
             if (!$point->update()) {
@@ -318,7 +344,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

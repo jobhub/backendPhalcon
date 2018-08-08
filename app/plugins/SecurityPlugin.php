@@ -7,6 +7,7 @@ use Phalcon\Events\Event;
 use Phalcon\Mvc\User\Plugin;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Acl\Adapter\Memory as AclList;
+use Phalcon\Http\Response;
 
 /**
  * SecurityPlugin
@@ -15,232 +16,259 @@ use Phalcon\Acl\Adapter\Memory as AclList;
  */
 class SecurityPlugin extends Plugin
 {
-	/**
-	 * Returns an existing or new access control list
-	 *
-	 * @returns AclList
-	 */
-	public function getAcl()
-	{
+    /**
+     * Returns an existing or new access control list
+     *
+     * @returns AclList
+     */
+    public function getAcl()
+    {
+        //if (!isset($this->persistent->acl))
+        {
+            $acl = new AclList();
 
-		//if (!isset($this->persistent->acl))
-		{
-			$acl = new AclList();
+            $acl->setDefaultAction(Acl::DENY);
 
-			$acl->setDefaultAction(Acl::DENY);
-
-			// Register roles
+            // Register roles
             //Должно браться потом из БД
-			$roles = [
-				'user'  => new Role(
-					'User',
-					'Member privileges, granted after sign in.'
-				),
-				'guests' => new Role(
-					'Guests',
-					'Anyone browsing the site who is not signed in is considered to be a "Guest".'
-				),
+            $roles = [
+                'user' => new Role(
+                    'User',
+                    'Member privileges, granted after sign in.'
+                ),
+                'guests' => new Role(
+                    'Guests',
+                    'Anyone browsing the site who is not signed in is considered to be a "Guest".'
+                ),
                 'moderator' => new Role(
-                'Moderator',
-                'Any moderators who can role.'
-            )
-			];
+                    'Moderator',
+                    'Any moderators who can role.'
+                )
+            ];
 
-			foreach ($roles as $role) {
-				$acl->addRole($role);
-			}
+            foreach ($roles as $role) {
+                $acl->addRole($role);
+            }
 
-			//Private area resources
+            //Private area resources
             //Тоже надо бы из БД взять
-			$privateResources = [
-                'coordination'      => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasks'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','mytasks','doingtasks', 'workingtasks','editing'],
-                'auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create','delete','enter','viewing','show','choice'],
-                'offers'      => ['index',  'new', 'create', 'myoffers','editing','saving','deleting','search'],
-                'userinfo'   =>['index', 'edit', 'save','viewprofile','handler'],
+            $privateResources = [
+                'coordination' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
+                'tasks' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'mytasks', 'doingtasks', 'workingtasks', 'editing'],
+                'auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
+                'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
+                'userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser'],
 
                 'tenderAPI' => ['delete'],
-                'reviews' =>['new','create'],
+                'reviews' => ['new', 'create'],
 
                 'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
 
-                'CategoriesAPI' => ['getFavourites', 'setFavourite','deleteFavourite','editRadiusInFavourite'],
-                'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite','getFavourites'],
-                'NewsAPI' => ['getNews' ,'addNew' ,'deleteNew' ,'editNew' ,'getOwnNews', 'getSubjectNews'],
-                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens','finishTask','completeTask'],
+                'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
+                'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
+                'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews'],
+                'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
-                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager' , 'restoreCompany'],
+                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager', 'restoreCompany'],
 
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
-                    'deletePhoneFromTradePoint','editPhoneInTradePoint','editPhoneInCompany', 'test'],
-                'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPointsForCompany', 'editTradePoint', 'deleteTradePoint'],
+                    'deletePhoneFromTradePoint', 'editPhoneInTradePoint', 'editPhoneInCompany', 'test'],
+                'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPoints', 'editTradePoint', 'deleteTradePoint'],
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
                     'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest',
-                    'rejectRequest'],
-                'RequestsAPI' => ['addRequest' , 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
+                    'rejectRequest', 'editImageService', 'addImages'],
+                'RequestsAPI' => ['addRequest', 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
                     'confirmPerformanceRequest'],
 
-                'TasksAPI' => ['addTask','deleteTask','editTask','getTasksForCurrentUser','selectOffer', 'cancelTask',
+                'TasksAPI' => ['addTask', 'deleteTask', 'editTask', 'getTasksForCurrentUser', 'selectOffer', 'cancelTask',
                     'confirmPerformanceTask'],
-                'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject' , 'deleteOffer', 'editOffer', 'getForTask',
-                    'confirmOffer' , 'rejectOffer', 'performTask'],
+                'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject', 'deleteOffer', 'editOffer', 'getForTask',
+                    'confirmOffer', 'rejectOffer', 'performTask'],
 
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
+                'RegisterAPI' => ['confirm']
             ];
 
-			foreach ($privateResources as $resource => $actions) {
-				$acl->addResource(new Resource($resource), $actions);
-			}
+            foreach ($privateResources as $resource => $actions) {
+                $acl->addResource(new Resource($resource), $actions);
+            }
 
-			$moderatorsResources = [
-                'users'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasksModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'logs'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'offers'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete' , ],
-                'auctionsModer'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'admin/auctions'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete','enter','viewing','show','choice'],
-                'categories'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'messages'      => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'categoriesAPI' => ['addCategory' , 'editCategory'],
+            $moderatorsResources = [
+                'users' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'tasksModer' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'logs' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'offers' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete',],
+                'auctionsModer' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'admin/auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
+                'categories' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'messages' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'categoriesAPI' => ['addCategory', 'editCategory'],
                 'offersAPI' => ['addStatus'],
-                'ReviewsAPI' =>['addType'],
+                'ReviewsAPI' => ['addType'],
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
 
-			//Public area resources
+            //Public area resources
             //БД, все БД.
-			$publicResources = [
-             //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'userinfo'   =>['viewprofile','handler'],
-				'index'      => ['index'],
-				'register'   => ['index'],
-				'errors'     => ['show401', 'show404', 'show500'],
-				'session'    => ['index', 'register', 'start', 'end', 'action'],
-                'authorized'    => ['index', 'register', 'start', 'end', 'action'],
-                'auctions'      => ['index'],
-                'registerAPI'      => ['index'],
-                'sessionAPI'      => ['index', 'authWithSocial'],
-                'CategoriesAPI' => ['index' ,'getCategoriesForSite'],
+            $publicResources = [
+                //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
+                'userinfo' => ['viewprofile', 'handler'],
+                'index' => ['index'],
+                'register' => ['index'],
+                'errors' => ['show401', 'show404', 'show500'],
+                'session' => ['index', 'register', 'start', 'end', 'action'],
+                'authorized' => ['index', 'register', 'start', 'end', 'action'],
+                'auctions' => ['index'],
+                'registerAPI' => ['index'],
+                'sessionAPI' => ['index', 'authWithSocial', 'end'],
+                'CategoriesAPI' => ['index', 'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
 
                 'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
                 'ServicesAPI' => ['getServicesForSubject'],
                 'ReviewsAPI' => ['getReviews'],
-			];
-			foreach ($publicResources as $resource => $actions) {
-				$acl->addResource(new Resource($resource), $actions);
-			}
+            ];
+            foreach ($publicResources as $resource => $actions) {
+                $acl->addResource(new Resource($resource), $actions);
+            }
 
-			//Grant access to public areas to both users and guests
-			foreach ($roles as $role) {
-				foreach ($publicResources as $resource => $actions) {
-					foreach ($actions as $action){
-						$acl->allow($role->getName(), $resource, $action);
-					}
-				}
-			}
+            //Grant access to public areas to both users and guests
+            foreach ($roles as $role) {
+                foreach ($publicResources as $resource => $actions) {
+                    foreach ($actions as $action) {
+                        $acl->allow($role->getName(), $resource, $action);
+                    }
+                }
+            }
 
-			//Grant access to private area to role Users
-			foreach ($privateResources as $resource => $actions) {
-				foreach ($actions as $action){
-					$acl->allow('User', $resource, $action);
-                    $acl->allow('Moderator', $resource, $action);
-				}
-			}
-
-            foreach ($moderatorsResources as $resource => $actions) {
-                foreach ($actions as $action){
+            //Grant access to private area to role Users
+            foreach ($privateResources as $resource => $actions) {
+                foreach ($actions as $action) {
+                    $acl->allow('User', $resource, $action);
                     $acl->allow('Moderator', $resource, $action);
                 }
             }
-			//The acl is stored in session, APC would be useful here too
-			$this->persistent->acl = $acl;
-		}
 
-		return $this->persistent->acl;
-	}
+            foreach ($moderatorsResources as $resource => $actions) {
+                foreach ($actions as $action) {
+                    $acl->allow('Moderator', $resource, $action);
+                }
+            }
+            //The acl is stored in session, APC would be useful here too
+            $this->persistent->acl = $acl;
+        }
 
-	/**
-	 * This action is executed before execute any action in the application
-	 *
-	 * @param Event $event
-	 * @param Dispatcher $dispatcher
-	 * @return bool
-	 */
-	public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
-	{
-		$auth = $this->session->get('auth');
+        return $this->persistent->acl;
+    }
 
-		//Здесь будет логирование
+    public static function getTokenFromHeader()
+    {
+        //$tokenRecieved = $this->request->getHeader("Authorization");
+        if (isset(getallheaders()['Authorization']))
+            $tokenRecieved = getallheaders()['Authorization'];
+
+        return $tokenRecieved;
+    }
+
+    /**
+     * This action is executed before execute any action in the application
+     *
+     * @param Event $event
+     * @param Dispatcher $dispatcher
+     * @return bool
+     */
+    public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
+    {
+        $this->convertRequestBody();
+        $auth = $this->session->get('auth');
+        //Здесь будет логирование
         $log = new Logs();
         if ($this->session->get("auth") != null) {
             $auth = $this->session->get("auth");
             $log->setUserId($auth['id']);
         }
-        
+
         $log->setController($dispatcher->getControllerName());
         $log->setAction($dispatcher->getActionName());
         $log->setDate(date('Y-m-d H:i'));
 
         if ($log->save() == false) {
-
             foreach ($log->getMessages() as $message) {
                 $this->flash->error((string)$message);
             }
         }
 
-		if (!$auth){
-			$role = 'Guests';
-		} else {
-			$role = $auth['role'];
-		}
+        if ($this->session->get("auth") != null) {
+            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+            $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
+                'bind' => ['userId' => $auth['id'],
+                    'token' => hash('sha256',$tokenRecieved)]]);
 
-		//$role = $auth['role'];
-        //$role = 'Guests';
-		$controller = $dispatcher->getControllerName();
-		$action = $dispatcher->getActionName();
+            if (!$token) {
+                $this->session->remove('auth');
+                $this->session->destroy();
+            } else {
+                if (strtotime($token->getLifetime()) <= time()) {
+                    $this->session->remove('auth');
+                    $this->session->destroy();
+                    $token->delete();
+                }
+            }
+        }
 
-		$acl = $this->getAcl();
+        if (!$this->session->get('auth')) {
+            $role = 'Guests';
+        } else {
+            $role = $auth['role'];
+        }
 
-		if (!$acl->isResource($controller)) {
-			$dispatcher->forward([
-				'controller' => 'errors',
-				'action'     => 'show404'
-			]);
+        $controller = $dispatcher->getControllerName();
+        $action = $dispatcher->getActionName();
 
-			return false;
-		}
+        $acl = $this->getAcl();
 
-		$allowed = $acl->isAllowed($role, $controller, $action);
-		if (!$allowed) {
-		    $this->flash->error("Нет доступа.");
-			$dispatcher->forward([
-				'controller' => 'errors',
-				'action'     => 'show401'
-			]);
+        if (!$acl->isResource($controller)) {
+            $dispatcher->forward([
+                'controller' => 'errors',
+                'action' => 'show404'
+            ]);
+
             return false;
-		}
-
-		//Отправление push уведомлений
-		if(($controller == "Coordination" && $action == "create")){
-            if ($this->session->get('push_token_id')) {
-                $this->sendPush();
-            }
-        }
-        if(($controller == "CoordinationAPI" && $action == "addMessage")) {
-            if ($this->session->get('push_token_id')) {
-                $this->sendPush();
-            }
         }
 
-	}
+        $allowed = $acl->isAllowed($role, $controller, $action);
+        if (!$allowed) {
+            $this->flash->error("Нет доступа.");
+            $dispatcher->forward([
+                'controller' => 'errors',
+                'action' => 'show401'
+            ]);
+            return false;
+        }
+    }
 
+    private function convertRequestBody()
+    {
+        if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
+            $params = $this->request->getJsonRawBody();
+            if ($params != null) {
+                if ($this->request->isPost()) {
+                    foreach ($params as $key => $param) {
+                        $_POST[$key] = $param;
+                    }
+                } else if ($this->request->isPut()) {
+
+                }
+            }
+
+        }
+    }
 
 }

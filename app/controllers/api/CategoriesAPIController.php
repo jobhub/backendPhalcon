@@ -9,6 +9,7 @@ use Phalcon\Mvc\Dispatcher;
 
 /**
  * Контроллер для работы с категориями.
+ * Здесь action-ы для получения категорий и для работы с подписками на категории.
  */
 class CategoriesAPIController extends Controller
 {
@@ -27,7 +28,8 @@ class CategoriesAPIController extends Controller
     }
 
     /**
-     * Подписывает пользователя на указанную категорию
+     * Подписывает текущего пользователя на указанную категорию.
+     *
      * @method POST
      * @params categoryId, radius
      * @return string - json array Status
@@ -86,7 +88,7 @@ class CategoriesAPIController extends Controller
     }
 
     /**
-     * Меняет радиус для подписки на категорию
+     * Меняет радиус на получение уведомлений для подписки на категорию
      * @method PUT
      * @params radius, categoryId
      * @return string - json array Status
@@ -142,7 +144,7 @@ class CategoriesAPIController extends Controller
     }
 
     /**
-     * Отписывает пользователя от категории
+     * Отписывает текущего пользователя от категории
      * @method DELETE
      * @param $categoryId
      * @return string - json array Status
