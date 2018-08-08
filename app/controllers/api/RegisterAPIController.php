@@ -97,8 +97,8 @@ class RegisterAPIController extends Controller
 
             $this->SessionAPI->_registerSession($user);
 
-            $token = hash('sha256', $this->session->getId() . $user->getUserId() .
-                ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()));
+            $token = Accesstokens::GenerateToken($user->getUserId(),($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()),
+                $this->session->getId());
 
             $accToken = new Accesstokens();
 
@@ -123,7 +123,7 @@ class RegisterAPIController extends Controller
             }
             $this->db->commit();
 
-            if ($user->getEmail() != null) {
+            /*if ($user->getEmail() != null) {
                 //Отправляем письмо.
                 $this->mailer->send('emails/hello_world', [
 
@@ -136,14 +136,14 @@ class RegisterAPIController extends Controller
 
                     //$message->attach('/absolute/path/to/attachment'); // Добавить вложение
                 });
-                /*$this->getDI()->getMail()->send(
+                $this->getDI()->getMail()->send(
                     array($this->user->email => $this->user->username),
                     'Please confirm your email',
                     'confirmation',
                     array('confirmUrl' => '/confirm/' . $this->code . '/' . $this->user->email)
-                );*/
+                );
 
-            }
+            }*/
 
             $response->setJsonContent(
                 [

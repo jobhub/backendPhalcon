@@ -10,21 +10,23 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 class TradePointsAPIController extends Controller
 {
     /**
-     * Возвращает точки предоставления услуг для компании
+     * Возвращает точки предоставления услуг для субъекта
      *
      * @method GET
      * @param integer $companyId
      * @return string - json array of [TradePoint, phones], если все успешно,
      * или json array в формате Status в ином случае
      */
-    public function getPointsForCompanyAction($companyId)
+    public function getPointsAction($companyId = null)
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
-
             $response = new Response();
-
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
+
+            if(!$companyId){
+
+            }
 
             if (!Companies::checkUserHavePermission($userId,$companyId,'getPoints')) {
                 $response->setJsonContent(

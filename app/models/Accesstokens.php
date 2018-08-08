@@ -67,7 +67,7 @@ class Accesstokens extends \Phalcon\Mvc\Model
      */
     public function setToken($token)
     {
-        $this->token = sha1($token);
+        $this->token = hash('sha256',$token);
 
         return $this;
     }
@@ -205,4 +205,8 @@ class Accesstokens extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function GenerateToken($userId, $login, $sessionId){
+        return hash('sha256', $sessionId . $userId .
+            $login . time());
+    }
 }

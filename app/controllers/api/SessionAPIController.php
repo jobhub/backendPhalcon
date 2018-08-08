@@ -28,12 +28,12 @@ class SessionAPIController extends Controller
      */
     public function endAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $tokenRecieved = getallheaders()['authorization'];/*$this->request->getHeader("authorization");*/
+            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
             $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                 'bind' => ['userId' => $userId,
                     'token' => sha1($tokenRecieved)]]);
@@ -69,7 +69,7 @@ class SessionAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => STATUS_OK
+                    "statu`s" => STATUS_OK
                 ]
             );
 
@@ -92,7 +92,6 @@ class SessionAPIController extends Controller
         if ($this->request->isPost() || $this->request->isOptions()) {
             $login = $this->request->getPost("login");
             $password = $this->request->getPost("password");
-
             // Производим поиск в базе данных
 
             $phone = Phones::findFirstByPhone(Phones::formatPhone($login));
@@ -129,7 +128,8 @@ class SessionAPIController extends Controller
 
                 $user_min['userId'] = $user->getUserId();
                 $user_min['email'] = $user->getEmail();
-                $user_min['phone'] = $user->phones->getPhone();
+                if($user->getPhoneId()!=null)
+                    $user_min['phone'] = $user->phones->getPhone();
                 $user_min['activated'] = $user->getActivated();
 
                 $settings = Settings::findFirstByUserid($user->getUserId());
@@ -138,8 +138,8 @@ class SessionAPIController extends Controller
                 $info['user'] = $user_min;
                 $info['settings'] = $settings;
 
-                $token = hash('sha256', $this->session->getId().$user->getUserId().
-                    ($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()));
+                $token = Accesstokens::GenerateToken($user->getUserId(),($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()),
+                    $this->session->getId());
 
                 $accToken = new Accesstokens();
 

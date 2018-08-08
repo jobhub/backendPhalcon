@@ -168,6 +168,15 @@ class SecurityPlugin extends Plugin
         return $this->persistent->acl;
     }
 
+    public static function getTokenFromHeader()
+    {
+        //$tokenRecieved = $this->request->getHeader("Authorization");
+        if (isset(getallheaders()['Authorization']))
+            $tokenRecieved = getallheaders()['Authorization'];
+
+        return $tokenRecieved;
+    }
+
     /**
      * This action is executed before execute any action in the application
      *
@@ -177,6 +186,7 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
+        $this->convertRequestBody();
         $auth = $this->session->get('auth');
         //Здесь будет логирование
         $log = new Logs();
@@ -195,24 +205,17 @@ class SecurityPlugin extends Plugin
             }
         }
 
-
-        if($this->session->get("auth") != null) {
-            $tokenRecieved = $this->request->getHeader("authorization");
-
-            if(!$tokenRecieved || $tokenRecieved == "") {
-                if(isset(getallheaders()['authorization']))
-                    $tokenRecieved = getallheaders()['authorization'];
-            }
-
+        if ($this->session->get("auth") != null) {
+            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
             $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
-                'bind' =>['userId' => $auth['id'],
-                    'token' => sha1($tokenRecieved)]]);
+                'bind' => ['userId' => $auth['id'],
+                    'token' => hash('sha256',$tokenRecieved)]]);
 
             if (!$token) {
                 $this->session->remove('auth');
                 $this->session->destroy();
             } else {
-                if ($token->getLifetime() <= time()) {
+                if (strtotime($token->getLifetime()) <= time()) {
                     $this->session->remove('auth');
                     $this->session->destroy();
                     $token->delete();
@@ -251,5 +254,21 @@ class SecurityPlugin extends Plugin
         }
     }
 
+    private function convertRequestBody()
+    {
+        if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
+            $params = $this->request->getJsonRawBody();
+            if ($params != null) {
+                if ($this->request->isPost()) {
+                    foreach ($params as $key => $param) {
+                        $_POST[$key] = $param;
+                    }
+                } else if ($this->request->isPut()) {
+
+                }
+            }
+
+        }
+    }
 
 }
