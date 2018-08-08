@@ -2,6 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="Ничего стоящего">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/services/27ec95da_0.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/services/27ec95da_1.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/services/27ec95da_2.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/services/27ec95da_3.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/services/27ec95da_4.jpg" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/alert/alert.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/alert/alert2.png" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/alert/alert3.png" />
@@ -549,9 +554,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/icons/weather-icons/fonts/weathericons-regular-webfont.ttf" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/icons/weather-icons/fonts/weathericons-regular-webfont.woff" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/icons/weather-icons/fonts/weathericons-regular-webfont.woff2" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/library/Mail.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/emails/hello_world.phtml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/api/index.php" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/icon/danger.svg" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/icon/success.svg" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/images/icon/warning.svg" />
@@ -3419,82 +3421,8 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/plugins/x-editable/dist/jqueryui-editable/css/jqueryui-editable.css" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/plugins/x-editable/dist/jqueryui-editable/js/jqueryui-editable.js" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/assets/plugins/x-editable/dist/jqueryui-editable/js/jqueryui-editable.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/animate.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/codemirror.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/blue-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/blue.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/default-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/default.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/green-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/green.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/megna-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/megna.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/purple-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/purple.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/red-dark.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/colors/red.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/font-awesome.min.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/icons/font-awesome/css/font-awesome.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/icons/font-awesome/old/css/font-awesome.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/icons/simple-line-icons/css/simple-line-icons.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/icons/themify-icons/themify-icons.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/jquery-te.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/main.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/material.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/responsive.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/slick.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/spinners.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/css/style.css" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/fonts/fontawesome-webfont.svg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/bundle.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/chat.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/codemirror.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/countdown.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/counterup.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/custom.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/custom.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard1.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard2.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard3.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard4.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard5.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/dashboard6.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/flot-data.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/footable-init.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/gmaps.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/inview.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/jasny-bootstrap.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/jquery-te.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/jquery.PrintArea.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/jquery.slimscroll.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/jsgrid-init.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/main.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/mask.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/morris-data.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/perfect-scrollbar.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/prepros-6.config" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/sidebarmenu.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/slick.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/toastr.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/validation.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/validator.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/waves.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/waypoints.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/widget-charts.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/widget-data.js" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/app.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/blue-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/blue.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/default-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/default.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/green-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/green.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/megna-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/megna.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/purple-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/purple.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/red-dark.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/colors/red.scss" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/grid.scss" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/icons/flag-icon-css/flag-icon.min.css" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/icons/flag-icon-css/flags/ad.svg" />
@@ -3928,8 +3856,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/variable.scss" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/scss/widgets.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -3954,11 +3880,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4318">
-              <caret line="254" column="0" lean-forward="false" selection-start-line="254" selection-start-column="0" selection-end-line="254" selection-end-column="0" />
+            <state relative-caret-position="80">
+              <caret line="197" column="0" lean-forward="false" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
               <folding>
                 <element signature="e#7#23#0#PHP" expanded="true" />
               </folding>
@@ -3966,7 +3892,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TradePointsAPIController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TradePointsAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="131">
@@ -4612,14 +4538,7 @@
       <workItem from="1533573099778" duration="1822000" />
       <workItem from="1533638986111" duration="14694000" />
       <workItem from="1533710684019" duration="1659000" />
-      <workItem from="1533712512526" duration="125000" />
-    </task>
-    <task id="LOCAL-00002" summary="Ну что-то там делал, что-то исправлял, уже не помню">
-      <created>1513701165676</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1513701165677</updated>
+      <workItem from="1533712512526" duration="1232000" />
     </task>
     <task id="LOCAL-00003" summary="Просто небольшие изменения для пула">
       <created>1513705060698</created>
@@ -4957,11 +4876,18 @@
       <option name="project" value="LOCAL" />
       <updated>1533711092693</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Добавил public, который ранее забыл закоммитеть">
+      <created>1533713244308</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1533713244308</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="781517000" />
+    <option name="totallyTimeSpent" value="782624000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -5024,7 +4950,8 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Просто небольшие изменения для пула" />
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Админка вроде готова" />
     <MESSAGE value="Слегка поменял конфиги, чтоб он видел контроллеры из папки contoller/api. Содал отдельные контроллерры для api." />
     <MESSAGE value="Ничего не изменилось" />
@@ -5049,7 +4976,8 @@
     <MESSAGE value="Добавил авторизацию через соц. сети, еще что-то по мелочи" />
     <MESSAGE value="Добавил токены для аутентификации. Загрузку изображений для услуг" />
     <MESSAGE value="Совместили с фрронтом, что-то с токеном делал" />
-    <option name="LAST_COMMIT_MESSAGE" value="Совместили с фрронтом, что-то с токеном делал" />
+    <MESSAGE value="Добавил public, который ранее забыл закоммитеть" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил public, который ранее забыл закоммитеть" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -5217,6 +5145,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -5506,21 +5435,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4318">
-          <caret line="254" column="0" lean-forward="false" selection-start-line="254" selection-start-column="0" selection-end-line="254" selection-end-column="0" />
-          <folding>
-            <element signature="e#7#23#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="131">
           <caret line="39" column="0" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="197" column="0" lean-forward="false" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
+          <folding>
+            <element signature="e#7#23#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
