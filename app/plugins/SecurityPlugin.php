@@ -174,6 +174,8 @@ class SecurityPlugin extends Plugin
         if (isset(getallheaders()['Authorization']))
             $tokenRecieved = getallheaders()['Authorization'];
 
+        //if($_SERVER['METHOD'])
+
         return $tokenRecieved;
     }
 
