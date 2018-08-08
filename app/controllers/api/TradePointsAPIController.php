@@ -24,10 +24,6 @@ class TradePointsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            if(!$companyId){
-
-            }
-
             if (!Companies::checkUserHavePermission($userId,$companyId,'getPoints')) {
                 $response->setJsonContent(
                     [
