@@ -80,9 +80,10 @@ class TradePointsAPIController extends Controller
                     $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
                     if ($phones->count() == 0 && $user->getPhoneId() != null) {
                         $phone = $user->phones;
+                        $phones = [];
+                        $phones[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->getPhone()];
                     }
-                    $phones = [];
-                    $phones[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->getPhone()];
+
 
                     $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones];
                 }

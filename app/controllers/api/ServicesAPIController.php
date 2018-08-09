@@ -48,20 +48,25 @@ class ServicesAPIController extends Controller
                               public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
                                        WHERE comp.companyid = compcat.companyid) as \"categories\",
                array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
                                        WHERE servpoint.serviceid = serv.serviceid) as \"points\"
               FROM public.companies as comp
-              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1)) foo");
+              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1
+              AND serv.deleted = false AND comp.deleted = false)) foo");
 
                 $query2 = $this->db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
                 row_to_json(us) as \"userinfo\",
                array(SELECT row_to_json(cat.*) FROM public.categories as cat
                                        WHERE cat.categoryid = 202034) as \"categories\",
                array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
                                        WHERE servpoint.serviceid = serv.serviceid) as \"points\"
               FROM public.userinfo as us
-              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0))
+              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0
+              AND serv.deleted = false) 
+              INNER JOIN public.users ON (us.userid = public.users.userid))
               ) foo");
 
             } else{

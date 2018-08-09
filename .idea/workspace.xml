@@ -1,65 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="Отправка почты,">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/car1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/car2.jpeg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/car3.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/example-org.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/home1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/home2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/home3.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/Zend-Server-LAPTOP-ARROW-Left-16x53px.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/Zend-Server-LAPTOP-ARROW-Right-16x53px.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/arrow-left.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/arrow-right.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/arrow.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/cancel_32x32.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/categories80.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/catergories.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/chat50.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/close52.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/close64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/cloud.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/filter.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/icons8-география.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/icons8-код-региона.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/icons8-контур-африки-filled.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/icons8-облигации-50.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/info52px.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/left-row.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/let.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/leter80.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/open64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/price.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/region.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/save64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/search.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/shares.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/shop64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/icons/smail64.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/phone1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/phone2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/phone3.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/rast.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/Contract.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/Новая вкладка_files/cb=gapi.loaded_0" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=AA2YrTvP3acnRz0Jy_XnH6ofrIg5QXDdYw" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=ACT90oGzjfQ6lbB9bIc32yJA5HUBthdcuQ" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=ACT90oGzjfQ6lbB9bIc32yJA5HUBthdcuQ(1)" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/images/Новая вкладка_files/single.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/webtools.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.htaccess" afterPath="$PROJECT_DIR$/.htaccess" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/simpleMod.iml" afterPath="$PROJECT_DIR$/.idea/simpleMod.iml" />
+    <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.phalcon/devtools.log" afterPath="$PROJECT_DIR$/.phalcon/devtools.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/services.php" afterPath="$PROJECT_DIR$/app/config/services.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Users.php" afterPath="$PROJECT_DIR$/app/models/Users.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/bundle.js" afterPath="$PROJECT_DIR$/public/js/bundle.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -85,8 +30,8 @@
       <file leaf-file-name="ServicesAPIController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="196" column="24" lean-forward="true" selection-start-line="196" selection-start-column="24" selection-end-line="196" selection-end-column="24" />
+            <state relative-caret-position="17">
+              <caret line="188" column="0" lean-forward="false" selection-start-line="188" selection-start-column="0" selection-end-line="188" selection-end-column="0" />
               <folding>
                 <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -97,14 +42,15 @@
                 <element signature="n#unlinkServiceAndPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <marker date="1533825289140" expanded="true" signature="1355:2218" ph="SELECT * FRO... row_to_json" />
-                <marker date="1533825289140" expanded="true" signature="1370:2213" ph="SELECT row_t... companies" />
-                <marker date="1533825289140" expanded="true" signature="2269:3008" ph="SELECT * FRO... row_to_json" />
-                <marker date="1533825289140" expanded="true" signature="2285:2987" ph="SELECT row_t... userinfo" />
-                <marker date="1533825289140" expanded="true" signature="3078:3941" ph="SELECT * FRO... row_to_json" />
-                <marker date="1533825289140" expanded="true" signature="3093:3936" ph="SELECT row_t... companies" />
-                <marker date="1533825289140" expanded="true" signature="3992:4727" ph="SELECT * FRO... row_to_json" />
-                <marker date="1533825289140" expanded="true" signature="4008:4706" ph="SELECT row_t... userinfo" />
+                <marker date="1533840364221" expanded="true" signature="1355:2339" ph="SELECT * FRO... row_to_json" />
+                <marker date="1533840364221" expanded="true" signature="1370:2334" ph="SELECT row_t... companies" />
+                <marker date="1533840364221" expanded="true" signature="2390:3301" ph="SELECT * FRO... row_to_json" />
+                <marker date="1533840364221" expanded="true" signature="2406:3204" ph="SELECT row_t... userinfo" />
+                <marker date="1533840364221" expanded="true" signature="2406:3280" ph="SELECT row_t... userinfo" />
+                <marker date="1533840364221" expanded="true" signature="3371:4234" ph="SELECT * FRO... row_to_json" />
+                <marker date="1533840364221" expanded="true" signature="3386:4229" ph="SELECT row_t... companies" />
+                <marker date="1533840364221" expanded="true" signature="4285:5020" ph="SELECT * FRO... row_to_json" />
+                <marker date="1533840364221" expanded="true" signature="4301:4999" ph="SELECT row_t... userinfo" />
               </folding>
             </state>
           </provider>
@@ -161,12 +107,13 @@
       <file leaf-file-name="TradePointsAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="884">
-              <caret line="188" column="25" lean-forward="true" selection-start-line="188" selection-start-column="25" selection-end-line="188" selection-end-column="25" />
+            <state relative-caret-position="1326">
+              <caret line="83" column="103" lean-forward="false" selection-start-line="83" selection-start-column="103" selection-end-line="83" selection-end-column="103" />
               <folding>
-                <element signature="n#getPointsAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#getPointsForUserManagerAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#addTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#editTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#deleteTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -301,8 +248,8 @@
         <option value="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" />
         <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
         <option value="$PROJECT_DIR$/app/config/services.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
         <option value="$PROJECT_DIR$/public/js/bundle.js" />
+        <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
       </list>
     </option>
@@ -441,7 +388,6 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -464,6 +410,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -714,7 +661,10 @@
       <workItem from="1533719979812" duration="66000" />
       <workItem from="1533745545735" duration="1019000" />
       <workItem from="1533800459903" duration="18411000" />
-      <workItem from="1533827263474" duration="45000" />
+      <workItem from="1533827263474" duration="189000" />
+      <workItem from="1533834131573" duration="4916000" />
+      <workItem from="1533845434129" duration="552000" />
+      <workItem from="1533851154097" duration="188000" />
     </task>
     <task id="LOCAL-00001" summary="Просто небольшие изменения для пула">
       <created>1513616550426</created>
@@ -1045,16 +995,24 @@
       <option name="project" value="LOCAL" />
       <updated>1533715695907</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Карта, услуги">
+      <created>1533827350706</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1533827350706</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="712683000" />
+    <option name="totallyTimeSpent" value="718483000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30257186" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3161876" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20634921" sideWeight="0.52122986" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1105,7 +1063,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Доделал смену статуса" />
     <MESSAGE value="Таски делал" />
     <MESSAGE value="Юзеры и задания" />
     <MESSAGE value="Просто небольшие изменения для пула" />
@@ -1130,7 +1087,8 @@
     <MESSAGE value="Добавил каскадное восстановление объектов и немного поменял каскадное удаление" />
     <MESSAGE value="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи" />
     <MESSAGE value="Merge branch 'production'&#10;&#10;# Conflicts:&#10;#&#9;.idea/simpleMod.iml&#10;#&#9;.idea/workspace.xml" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'production'&#10;&#10;# Conflicts:&#10;#&#9;.idea/simpleMod.iml&#10;#&#9;.idea/workspace.xml" />
+    <MESSAGE value="Карта, услуги" />
+    <option name="LAST_COMMIT_MESSAGE" value="Карта, услуги" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1155,11 +1113,6 @@
           <line>240</line>
           <option name="timeStamp" value="736" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php</url>
-          <line>183</line>
-          <option name="timeStamp" value="927" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/public/js/ajaxupload.js</url>
           <line>45</line>
@@ -1171,7 +1124,7 @@
           <option name="timeStamp" value="193" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="928" />
+      <option name="time" value="935" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="index.php">
@@ -1212,10 +1165,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-714">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding>
-            <element signature="n#setManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1434,7 +1383,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1190">
           <caret line="72" column="37" lean-forward="false" selection-start-line="72" selection-start-column="37" selection-end-line="72" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1456,7 +1404,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1464,9 +1411,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="22" column="39" lean-forward="false" selection-start-line="22" selection-start-column="39" selection-end-line="22" selection-end-column="39" />
-          <folding>
-            <element signature="e#7#33#0#PHP" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1482,14 +1426,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="310">
           <caret line="415" column="59" lean-forward="true" selection-start-line="415" selection-start-column="59" selection-end-line="415" selection-end-column="59" />
-          <folding>
-            <marker date="1533120088552" expanded="true" signature="11497:14261" ph="Select * FRO... reviewId" />
-            <marker date="1533120088552" expanded="true" signature="11590:12028" ph="SELECT revie... " />
-            <marker date="1533120088552" expanded="true" signature="12132:12624" ph="SELECT revie... " />
-            <marker date="1533120088552" expanded="true" signature="12707:13183" ph="SELECT revie... " />
-            <marker date="1533120088552" expanded="true" signature="13266:13822" ph="SELECT revie... " />
-            <marker date="1533120088552" expanded="true" signature="13891:14205" ph="SELECT revie... " />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1497,12 +1433,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-318">
           <caret line="151" column="54" lean-forward="false" selection-start-line="151" selection-start-column="54" selection-end-line="151" selection-end-column="54" />
-          <folding>
-            <element signature="n#setFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editRadiusInFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getFavouritesAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1546,18 +1476,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="188" column="25" lean-forward="true" selection-start-line="188" selection-start-column="25" selection-end-line="188" selection-end-column="25" />
-          <folding>
-            <element signature="n#getPointsAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getPointsForUserManagerAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/SessionAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1309">
@@ -1583,10 +1501,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1326">
+          <caret line="83" column="103" lean-forward="false" selection-start-line="83" selection-start-column="103" selection-end-line="83" selection-end-column="103" />
+          <folding>
+            <element signature="n#getPointsForUserManagerAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#editTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="196" column="24" lean-forward="true" selection-start-line="196" selection-start-column="24" selection-end-line="196" selection-end-column="24" />
+        <state relative-caret-position="17">
+          <caret line="188" column="0" lean-forward="false" selection-start-line="188" selection-start-column="0" selection-end-line="188" selection-end-column="0" />
           <folding>
             <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -1597,14 +1528,15 @@
             <element signature="n#unlinkServiceAndPointAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <marker date="1533825289140" expanded="true" signature="1355:2218" ph="SELECT * FRO... row_to_json" />
-            <marker date="1533825289140" expanded="true" signature="1370:2213" ph="SELECT row_t... companies" />
-            <marker date="1533825289140" expanded="true" signature="2269:3008" ph="SELECT * FRO... row_to_json" />
-            <marker date="1533825289140" expanded="true" signature="2285:2987" ph="SELECT row_t... userinfo" />
-            <marker date="1533825289140" expanded="true" signature="3078:3941" ph="SELECT * FRO... row_to_json" />
-            <marker date="1533825289140" expanded="true" signature="3093:3936" ph="SELECT row_t... companies" />
-            <marker date="1533825289140" expanded="true" signature="3992:4727" ph="SELECT * FRO... row_to_json" />
-            <marker date="1533825289140" expanded="true" signature="4008:4706" ph="SELECT row_t... userinfo" />
+            <marker date="1533840364221" expanded="true" signature="1355:2339" ph="SELECT * FRO... row_to_json" />
+            <marker date="1533840364221" expanded="true" signature="1370:2334" ph="SELECT row_t... companies" />
+            <marker date="1533840364221" expanded="true" signature="2390:3301" ph="SELECT * FRO... row_to_json" />
+            <marker date="1533840364221" expanded="true" signature="2406:3204" ph="SELECT row_t... userinfo" />
+            <marker date="1533840364221" expanded="true" signature="2406:3280" ph="SELECT row_t... userinfo" />
+            <marker date="1533840364221" expanded="true" signature="3371:4234" ph="SELECT * FRO... row_to_json" />
+            <marker date="1533840364221" expanded="true" signature="3386:4229" ph="SELECT row_t... companies" />
+            <marker date="1533840364221" expanded="true" signature="4285:5020" ph="SELECT * FRO... row_to_json" />
+            <marker date="1533840364221" expanded="true" signature="4301:4999" ph="SELECT row_t... userinfo" />
           </folding>
         </state>
       </provider>
