@@ -230,6 +230,7 @@ class TradePointsAPIController extends Controller
 
             $response->setJsonContent(
                 [
+                    "pointId" =>$point->getPointId(),
                     "status" => STATUS_OK
                 ]
             );

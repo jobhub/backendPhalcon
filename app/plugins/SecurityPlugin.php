@@ -132,7 +132,7 @@ class SecurityPlugin extends Plugin
 
                 'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject'],
+                'ServicesAPI' => ['getServicesForSubject' , 'getServices'],
                 'ReviewsAPI' => ['getReviews'],
             ];
             foreach ($publicResources as $resource => $actions) {
@@ -175,6 +175,9 @@ class SecurityPlugin extends Plugin
             $tokenRecieved = getallheaders()['Authorization'];
 
         //if($_SERVER['METHOD'])
+        if($tokenRecieved == null)
+            $tokenRecieved ="";
+
 
         return $tokenRecieved;
     }

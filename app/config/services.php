@@ -11,8 +11,8 @@ use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
 use ULogin\Auth;
-
-use Vanchelo\Mailer\MailerService;
+//use SlowProg\Mailer\MailerService;
+use Phalcon\Mailer;
 
 /**
  * Shared configuration service
@@ -177,6 +177,43 @@ $di->set(
     }
 );
 
+/*$di['mailer'] = function() {
+    $service = new MailerService([
+        'driver' => 'mail', // mail, sendmail, smtp
+        'host'   => 'localhost',
+        'port'   => 587,
+        'from'   => [
+            'email' => 'no-reply@my-domain.com',
+            'name'    => 'My Cool Company'
+        ],
+        'encryption' => 'tls',
+        'username'   => 'no-reply@my-domain.com',
+        'password'   => 'some-strong-password',
+        'sendmail'   => '/usr/sbin/sendmail -bs',
+        // Путь используемый для поиска шаблонов писем
+        'viewsDir'   => BASE_PATH . '/app/views/', // optional
+    ]);
+
+    return $service->mailer();
+};*/
+$di['mailer'] = function() {
+    $config = [
+        'driver'     => 'smtp',
+        'host'       => 'smtp.yandex.ru',
+        'port'       => 465,
+        'encryption' => 'ssl',
+        'username'   => 'titow.german@yandex.ru',
+        'password'   => '<Типа мой парроль.>',
+        'from' => [
+            'email' => 'titow.german@yandex.ru',
+            'name' => 'Герман'
+        ],
+        'viewsDir' =>  APP_PATH . '/views/',
+    ];
+    $mailer = new \Phalcon\Mailer\Manager($config);
+    return $mailer;
+};
+
 //API
 
 
@@ -199,6 +236,15 @@ $di->set(
 );
 
 $di->set(
+    "TradePointsAPI",
+    function () {
+        $tradePointsAPI = new TradePointsAPIController();
+
+        return $tradePointsAPI;
+    }
+);
+
+$di->set(
     "CompaniesAPI",
     function () {
         $companiesAPI = new CompaniesAPIController();
@@ -207,14 +253,7 @@ $di->set(
     }
 );
 
-$di->set(
-    "mailer",
-    function () {
-        $service = new MailerService();
 
-        return $service->mailer();
-    }
-);
 
 $di->set(
     "ContactDetailsCompanyCompanyAPI",

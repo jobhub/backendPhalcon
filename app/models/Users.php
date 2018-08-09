@@ -231,7 +231,7 @@ class Users extends NotDeletedModelWithCascade
             )
         );*/
 
-        if (!$this->getIsSocial())
+        if (!$this->getIsSocial() && $this->getPhoneId()==null)
             $validator->add(
                 'email',
                 new EmailValidator(
@@ -242,7 +242,7 @@ class Users extends NotDeletedModelWithCascade
                 )
             );
 
-        if (!$this->getIsSocial() && !$this->getEmail())
+        if (!$this->getIsSocial() && $this->getEmail() == null)
             $validator->add(
                 'phoneid',
                 new Callback(

@@ -25,8 +25,8 @@ class RegisterAPIController extends Controller
             $phone = $this->request->getPost('login');
             $email = $this->request->getPost('login');
             $password = $this->request->getPost('password');
-
-            $phoneObj = Phones::findFirstByPhone(Phones::formatPhone($phone));
+            $formatPhone = Phones::formatPhone($phone);
+            $phoneObj = Phones::findFirstByPhone($formatPhone);
 
             $user = Users::findFirst(
                 [
@@ -52,9 +52,9 @@ class RegisterAPIController extends Controller
 
             $user = new Users();
 
-            if (Phones::isValidPhone($phone)) {
+            if (Phones::isValidPhone($formatPhone)) {
                 $phoneObject = new Phones();
-                $phoneObject->setPhone($phone);
+                $phoneObject->setPhone($formatPhone);
 
                 if ($phoneObject->save() == false) {
                     $this->db->rollback();
@@ -122,34 +122,28 @@ class RegisterAPIController extends Controller
                 return $response;
             }
             $this->db->commit();
-
-            /*if ($user->getEmail() != null) {
+            //$this->db->commit();
+            if ($user->getEmail() != null) {
                 //Отправляем письмо.
-                $this->mailer->send('emails/hello_world', [
+                /*$this->mailer->sendView('emails/hello_world', [$user->getEmail()],
+                    function($message) {
+                    $message->to();
+                    $message->subject('Test Email');
+                });*/
 
-                ], function ($message) {
+                $viewPath = 'emails/hello_world';
 
-                    // По умолчанию адрес отправителя указывается в настройках
-                    //$message->from('vanchelo@artdevue.com'); // Адрес отправителя. Эту строку можно удалить или закоментировать
-                    $message->to('titow.german@yandex.ru'); // Адрес получателя
-                    $message->subject('Привет, Мир'); // Тема письма
-
-                    //$message->attach('/absolute/path/to/attachment'); // Добавить вложение
-                });
-                $this->getDI()->getMail()->send(
-                    array($this->user->email => $this->user->username),
-                    'Please confirm your email',
-                    'confirmation',
-                    array('confirmUrl' => '/confirm/' . $this->code . '/' . $this->user->email)
-                );
-
-            }*/
+                $message = $this->mailer->createMessageFromView($viewPath,[])
+                    ->to($user->getEmail())
+                    ->subject('Здарова');
+                $message->send();
+            }
 
             //Временно
-            $_POST['firstname'] = 'Ехехе';
+           /* $_POST['firstname'] = 'Ехехе';
             $_POST['lastname'] = 'Эхеххов';
             $_POST['male'] = 1;
-            $result = $this->confirmAction();
+            $result = $this->confirmAction();*/
 
             $response->setJsonContent(
                 [

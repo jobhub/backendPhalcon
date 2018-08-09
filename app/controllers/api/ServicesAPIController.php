@@ -35,6 +35,161 @@ class ServicesAPIController extends Controller
     }
 
     /**
+     * Возвращает услуги. Если указана categoryId, то услуги в данной категории.
+     */
+    public function getServicesAction($categoryId = null){
+        if ($this->request->isGet()) {
+            $response = new Response();
+
+            if($categoryId == null) {
+                $query = $this->db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
+                row_to_json(comp) as \"company\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
+                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
+              FROM public.companies as comp
+              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1)) foo");
+
+                $query2 = $this->db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
+                row_to_json(us) as \"userinfo\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat
+                                       WHERE cat.categoryid = 202034) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
+              FROM public.userinfo as us
+              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0))
+              ) foo");
+
+            } else{
+                $query = $this->db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
+                row_to_json(comp) as \"company\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
+                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
+              FROM public.companies as comp
+              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1)) foo");
+
+                $query2 = $this->db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
+                row_to_json(us) as \"user\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat
+                                       WHERE cat.categoryid = 202034) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
+              FROM public.userinfo as us
+              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0))
+              ) foo");
+
+
+            }
+
+            $query->execute();
+            $query2->execute();
+            $services = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $servicesusers = $query2->fetchAll(\PDO::FETCH_ASSOC);
+            $reviews2 = [];
+            foreach($services as $review)
+            {
+                $review2 = [];
+                $review2['service'] = json_decode($review['service']);
+
+                $review2['company'] = json_decode($review['company']);
+
+                $review['categories'][0] = '[';
+                $review['categories'][strlen($review['categories'])-1] = ']';
+
+                $review['categories'] = str_replace('"{', '{',$review['categories']);
+                $review['categories'] = str_replace('}"', '}',$review['categories']);
+                $review['categories'] = stripslashes( $review['categories']);
+                $review2['categories'] = json_decode($review['categories']);
+
+                $review['points'][0] = '[';
+                $review['points'][strlen($review['points'])-1] = ']';
+
+                $review['points'] = str_replace('"{', '{',$review['points']);
+                $review['points'] = str_replace('}"', '}',$review['points']);
+                $review['points'] = stripslashes( $review['points']);
+
+                $review2['points'] = json_decode($review['points'], true);
+
+                for($i = 0; $i < count($review2['points']); $i++){
+                    $review2['points'][$i]['phones'] = [];
+                    $pps = PhonesPoints::findByPointid($review2['points'][$i]['pointid']);
+                    foreach($pps as $pp)
+                        $review2['points'][$i]['phones'][] = $pp->phones->getPhone();
+                }
+
+                //$review2['points'] = json_decode($review2['points']);
+
+                if($categoryId!= null)
+                {
+                    $flag = false;
+                    foreach($review2['categories'] as $category){
+                        if($category == $categoryId){
+                            $flag = true;
+                            break;
+                        }
+                    }
+                    if($flag)
+                        $reviews2[] = $review2;
+                } else{
+                    $reviews2[] = $review2;
+                }
+            }
+
+            foreach($servicesusers as $review)
+            {
+                $review2 = [];
+                $review2['service'] = json_decode($review['service']);
+
+                $review2['userinfo'] = json_decode($review['userinfo']);
+
+                $review['categories'][0] = '[';
+                $review['categories'][strlen($review['categories'])-1] = ']';
+
+                $review['categories'] = str_replace('"{', '{',$review['categories']);
+                $review['categories'] = str_replace('}"', '}',$review['categories']);
+                $review['categories'] = stripslashes( $review['categories']);
+                $review2['categories'] = json_decode($review['categories']);
+
+                $review['points'][0] = '[';
+                $review['points'][strlen($review['points'])-1] = ']';
+
+                $review['points'] = str_replace('"{', '{',$review['points']);
+                $review['points'] = str_replace('}"', '}',$review['points']);
+                $review['points'] = stripslashes( $review['points']);
+                $review2['points'] = json_decode($review['points'], true);
+
+                for($i = 0; $i < count($review2['points']); $i++){
+                    $review2['points'][$i]['phones'] = [];
+                    $pps = PhonesPoints::findByPointid($review2['points'][$i]['pointid']);
+                    foreach($pps as $pp)
+                        $review2['points'][$i]['phones'][] = $pp->phones->getPhone();
+                }
+                $reviews2[] = $review2;
+            }
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'services' => $reviews2
+            ]);
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
      * Удаляет указанную услугу
      *
      * @method DELETE
@@ -252,7 +407,8 @@ class ServicesAPIController extends Controller
      *
      * @method POST
      *
-     * @params (необязательные) массив points - массив id tradePoint-ов
+     * @params (необязательные) массив oldPoints - массив id tradePoint-ов,
+     * (необязательные) массив newPoints - массив объектов TradePoints
      * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
      *           (обязательно) regionId
      *
@@ -261,7 +417,6 @@ class ServicesAPIController extends Controller
     public function addServiceAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
-
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -287,7 +442,8 @@ class ServicesAPIController extends Controller
                 $service->setSubjectType(0);
             }
 
-            $service->setDescription($this->request->getPost("description"));
+            $service->setDescription($this->request->getPost("description") ."\n\rВидео: "
+                . $this->request->getPost("video"));
             $service->setName($this->request->getPost("name"));
 
             if ($this->request->getPost("price")) {
@@ -300,7 +456,9 @@ class ServicesAPIController extends Controller
 
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
-            if (!$this->request->getPost("regionId") && !$this->request->getPost("points")) {
+            if (!$this->request->getPost("regionId") &&
+                !($this->request->getPost("oldPoints") && count($this->request->getPost("oldPoints"))!=0)
+            && !($this->request->getPost("newPoints") && count($this->request->getPost("newPoints"))!=0)) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -310,8 +468,8 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $service->setRegionId($this->request->getPost("regionId"));
-
+            //$service->setRegionId($this->request->getPost("regionId"));
+            $service->setRegionId(1);
             $this->db->begin();
 
             if (!$service->save()) {
@@ -330,8 +488,8 @@ class ServicesAPIController extends Controller
             }
 
             //
-            if ($this->request->getPost("points")) {
-                $points = $this->request->getPost("points");
+            if ($this->request->getPost("oldPoints")) {
+                $points = $this->request->getPost("oldPoints");
                 foreach ($points as $point) {
                     $servicePoint = new ServicesPoints();
                     $servicePoint->setServiceId($service->getServiceId());
@@ -350,6 +508,39 @@ class ServicesAPIController extends Controller
                             ]
                         );
                         return $response;
+                    }
+                }
+            }
+
+            if($this->request->getPost("newPoints")){
+                $points = $this->request->getPost("newPoints");
+
+                foreach ($points as $point) {
+                    //$point2 = json_decode($point);
+                    $_POST['address'] = $point->address;
+                    $_POST['name'] = $point->name;
+                    $_POST['longitude'] = $point->longitude;
+                    $_POST['latitude'] = $point->latitude;
+
+                    $result = $this->TradePointsAPI->addTradePointAction();
+                    $result = json_decode($result->getContent());
+
+                    if($result->status!= STATUS_OK){
+                        $this->db->rollback();
+                        $response->setJsonContent($result);
+                        return $response;
+                    }
+                    foreach($point->newPhones as $phone) {
+                        $_POST['phone'] = $phone;
+                        $_POST['pointId'] = $result->pointId;
+                        $result2 = $this->PhonesAPI->addPhoneToTradePointAction();
+                        $result2 = json_decode($result2->getContent());
+
+                        if($result2->status != STATUS_OK){
+                            $this->db->rollback();
+                            $response->setJsonContent($result2);
+                            return $response;
+                        }
                     }
                 }
             }
