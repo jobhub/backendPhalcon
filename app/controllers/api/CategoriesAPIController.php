@@ -255,7 +255,9 @@ class CategoriesAPIController extends Controller
                 }
             }
             $response = new Response();
-            $response->setJsonContent($categories2);
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'categories' => $categories2]);
             return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

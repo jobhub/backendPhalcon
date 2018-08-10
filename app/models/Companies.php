@@ -78,6 +78,13 @@ class Companies extends NotDeletedModelWithCascade
     protected $ismaster;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", length=256, nullable=true)
+     */
+    protected $logotype;
+
+    /**
      * Method to set the value of field companyId
      *
      * @param integer $companyid
@@ -195,14 +202,14 @@ class Companies extends NotDeletedModelWithCascade
     }
 
     /**
-     * Method to set the value of field deleted
+     * Method to set the value of field logotype
      *
-     * @param string $deleted
+     * @param string $logotype
      * @return $this
      */
-    public function setDeleted($deleted)
+    public function setLogotype($logotype)
     {
-        $this->deleted = $deleted;
+        $this->logotype = $logotype;
 
         return $this;
     }
@@ -295,6 +302,16 @@ class Companies extends NotDeletedModelWithCascade
     public function getIsMaster()
     {
         return $this->ismaster;
+    }
+
+    /**
+     * Returns the value of field logotype
+     *
+     * @return string
+     */
+    public function getLogotype()
+    {
+        return $this->logotype;
     }
 
     /**

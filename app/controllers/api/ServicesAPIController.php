@@ -408,14 +408,15 @@ class ServicesAPIController extends Controller
     }
 
     /**
-     * Добавляет новую услугу к субъекту
+     * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
      *
      * @method POST
      *
      * @params (необязательные) массив oldPoints - массив id tradePoint-ов,
      * (необязательные) массив newPoints - массив объектов TradePoints
      * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
-     *           (обязательно) regionId
+     *           (обязательно) regionId,
+     *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
@@ -492,6 +493,10 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
+            if($this->request->getPost("companyId")){
+
+            }
+
             //
             if ($this->request->getPost("oldPoints")) {
                 $points = $this->request->getPost("oldPoints");
@@ -546,6 +551,25 @@ class ServicesAPIController extends Controller
                             $response->setJsonContent($result2);
                             return $response;
                         }
+                    }
+
+                    $servicePoint = new ServicesPoints();
+                    $servicePoint->setServiceId($service->getServiceId());
+                    $servicePoint->setPointId($result->pointId);
+
+                    if (!$servicePoint->save()) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($servicePoint->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
                     }
                 }
             }
