@@ -54,6 +54,14 @@ class ImageLoader
             $filename,200);
     }
 
+    public static function loadUserPhoto($tempname, $name, $userId)
+    {
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$userId,0);
+        return ImageLoader::load('users',$tempname,
+            $filename,750);
+    }
+
     public static function formFullImageName($subpath, $format, $id, $countImages)
     {
             return '/img/' . $subpath . '/' .$id . '_'

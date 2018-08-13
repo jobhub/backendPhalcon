@@ -217,6 +217,8 @@ class Services extends SubjectsWithNotDeleted
         return $this->name;
     }
 
+
+
     /**
      * Validations and business logic
      *
@@ -232,6 +234,9 @@ class Services extends SubjectsWithNotDeleted
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
                     "callback" => function ($service) {
+                        if(!SupportClass::checkInteger($service->getPriceMin())
+                            || !SupportClass::checkInteger($service->getPriceMax()))
+                            return false;
                         if ($service->getPriceMin() <= $service->getPriceMax())
                             return true;
                         return false;
@@ -429,8 +434,6 @@ class Services extends SubjectsWithNotDeleted
                     $review2['points'][$i]['phones'][] = $pp->phones->getPhone();
             }
             $reviews2[] = $review2;
-
-
         }
 
         return $reviews2;

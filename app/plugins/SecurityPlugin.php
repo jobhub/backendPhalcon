@@ -58,7 +58,8 @@ class SecurityPlugin extends Plugin
                 'auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
                 'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
                 'userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
-                'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser'],
+                'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
+                        'addPhoto'],
 
                 'tenderAPI' => ['delete'],
                 'reviews' => ['new', 'create'],

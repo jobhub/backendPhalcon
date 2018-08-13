@@ -79,7 +79,7 @@ class Reviews extends NotDeletedModelWithCascade
 
     /**
      * Методы-костыли
-    */
+     */
 
     public function setSubjectId($subjectid)
     {
@@ -87,6 +87,7 @@ class Reviews extends NotDeletedModelWithCascade
 
         return $this;
     }
+
     public function setSubjectType($subjecttype)
     {
         $this->subjecttype = $subjecttype;
@@ -100,6 +101,7 @@ class Reviews extends NotDeletedModelWithCascade
 
         return $this;
     }
+
     public function setObjectType($objecttype)
     {
         $this->objecttype = $objecttype;
@@ -213,9 +215,9 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setBinderType($bindertype)
     {
-        if($bindertype == 0)
+        if ($bindertype == 0)
             $this->bindertype = 'task';
-        else if($bindertype == 1)
+        else if ($bindertype == 1)
             $this->bindertype = 'request';
         $this->bindertype = $bindertype;
         return $this;
@@ -377,7 +379,7 @@ class Reviews extends NotDeletedModelWithCascade
                     [
                         "message" => "Такой пользователь не существует",
                         "callback" => function ($review) {
-                            if($review->users!=null)
+                            if ($review->users != null)
                                 return true;
                             return false;
                         }
@@ -398,6 +400,164 @@ class Reviews extends NotDeletedModelWithCascade
         $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
+    public function save($data = null, $whiteList = null)
+    {
+        $result = parent::save($data, $whiteList);
+
+        if($result) {
+            $this->updateRating();
+        }
+
+        return $result;
+    }
+
+    public function delete($delete = false,$deletedCascade=false,$data = null, $whiteList = null)
+    {
+        $result = parent::delete($delete,$deletedCascade,$data, $whiteList);
+
+        if($result) {
+            $this->updateRating();
+        }
+
+        return $result;
+    }
+
+    public function update($data = null, $whiteList = null)
+    {
+        $result = parent::update($data, $whiteList);
+
+        if($result) {
+            $this->updateRating();
+        }
+
+        return $result;
+    }
+
+    public function getReviewsForObject($subjectId, $subjectType){
+        $db = $this->getDI()->getDb();
+
+        $query = $db->prepare("Select * FROM (
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT reviews.reviewId as id,
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor
+              FROM reviews inner join tasks 
+              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 'task' AND reviews.executor = true)
+              WHERE tasks.subjectId = :subjectId AND tasks.subjectType = :subjectType)
+              UNION
+              --Отзывы оставленные на предложения данного субъекта
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews inner join offers 
+              ON (reviews.binderId = offers.taskId AND reviews.binderType = 'task'
+                  AND reviews.executor = false AND offers.selected = true) 
+              WHERE offers.subjectId = :subjectId AND offers.subjectType = :subjectType) 
+              UNION
+              --Отзывы оставленные на заявки
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews inner join requests
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+                  AND reviews.executor = true)
+              WHERE requests.subjectId = :subjectId AND requests.subjectType = :subjectType) 
+              UNION
+              --Отзывы оставленные на услуги
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+                  AND reviews.executor = false)
+              WHERE services.subjectId = :subjectId AND services.subjectType = :subjectType)
+              UNION
+              --фейковые отзывы
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM reviews
+              WHERE reviews.objectId = :subjectId AND reviews.objectType = :subjectType)
+              ) p0
+              ORDER BY p0.date desc"
+        );
+
+        $query->execute([
+            'subjectId' => $subjectId,
+            'subjectType' => $subjectType,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    private function updateRating(){
+        if (!$this->getFake()) {
+            if($this->getBinderType() == 'task'){
+                if($this->getExecutor() === true){
+                    $task = Tasks::findFirstByTaskid($this->getBinderId());
+
+                    $subjectId = $task->getSubjectId();
+                    $subjectType = $task->getSubjectType();
+                } else{
+                    $offer = Offers::findByTask($this->getBinderId());
+
+                    $subjectId = $offer->getSubjectId();
+                    $subjectType = $offer->getSubjectType();
+                }
+            } elseif($this->getBinderType() == 'request'){
+                if($this->getExecutor() === true){
+                    $request = Requests::findFirstByRequestid($this->getBinderId());
+                    $subjectId = $request->getSubjectId();
+                    $subjectType = $request->getSubjectType();
+                } else{
+                    $request = Requests::findFirstByRequestid($this->getBinderId());
+                    $subjectId = $request->services->getSubjectId();
+                    $subjectType = $request->services->getSubjectType();
+                }
+            }
+
+            $reviews = $this->getReviewsForObject($subjectId,$subjectType);
+            $sum = 5;
+            foreach($reviews as $review){
+                $sum+=$review['rating'];
+            }
+            $sum/=(count($reviews)+1);
+            if($subjectType == 0) {
+                $userinfo = Userinfo::findFirstByUserid($subjectId);
+
+                //$sum = (($this->getRating() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
+
+                if ($this->getExecutor() === false)
+                    $userinfo->setRatingExecutor($sum);
+                else
+                    $userinfo->setRatingClient($sum);
+
+                $userinfo->update();
+            } elseif($subjectType == 1){
+                $company = Companies::findFirstByCompanyid($subjectId);
+
+                //$sum = (($this->getRating() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
+
+                if ($this->getExecutor() === false)
+                    $company->setRatingExecutor($sum);
+                else
+                    $company->setRatingClient($sum);
+
+                $company->update();
+            }
+        }
+    }
     /**
      * Returns table name mapped in the model.
      *

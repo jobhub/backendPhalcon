@@ -64,8 +64,6 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $about;
 
-
-
     /**
      * @var integer
      * @Column(type="tyniint", length=4, nullable=false)
@@ -339,6 +337,29 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
+        if($this->getPathToPhoto() != null)
+            $validator->add(
+                'pathtophoto',
+                new Callback(
+                    [
+                        "message" => "Формат картинки не поддерживается",
+                        "callback" => function ($user) {
+                            $format = pathinfo($user->getPathToPhoto(), PATHINFO_EXTENSION);
+
+                            if ($format == 'jpeg' || 'jpg')
+                                return true;
+                            elseif ($format == 'png')
+                                return true;
+                            elseif ($format == 'gif')
+                                return true;
+                            else {
+                                return false;
+                            }
+                        }
+                    ]
+                )
+            );
+
         return $this->validate($validator);
     }
 
@@ -384,4 +405,11 @@ class Userinfo extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public function beforeSave()
+    {
+        if($this->getRatingClient() == null)
+            $this->setRatingClient(5);
+        if($this->getRatingExecutor() == null)
+            $this->setRatingExecutor(5);
+    }
 }

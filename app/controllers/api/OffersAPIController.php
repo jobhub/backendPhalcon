@@ -128,6 +128,7 @@ class OffersAPIController extends Controller
             $offer->setDescription($this->request->getPost("description"));
 
             if (!$offer->save()) {
+                $errors = [];
                 foreach ($offer->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -393,8 +394,6 @@ class OffersAPIController extends Controller
                 );
                 return $response;
             }
-
-
 
             if (!$offer->confirm()) {
                 $errors = [];

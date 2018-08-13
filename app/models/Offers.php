@@ -347,7 +347,6 @@ class Offers extends SubjectsWithNotDeleted
                         );
                         return false;
                     }
-
                     $transaction->commit();
                     return true;
                 } catch (TxFailed $e) {
@@ -434,4 +433,9 @@ class Offers extends SubjectsWithNotDeleted
         return false;
     }
 
+    public static function findByTask($taskId){
+        return Offers::find(['taskid = :taskId: AND selected = true AND confirmed = true',
+            'bind' =>['taskId' => $taskId]
+        ]);
+    }
 }

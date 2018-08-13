@@ -549,7 +549,7 @@ class Tasks extends SubjectsWithNotDeleted
         return 'tasks';
     }
 
-    public static function checkUserHavePermission($userId, $taskId, $right = null)
+    /*public static function checkUserHavePermission($userId, $taskId, $right = null)
     {
         $task = Tasks::findFirstByTaskid($taskId);
         $user = Users::findFirstByUserid($userId);
@@ -580,7 +580,7 @@ class Tasks extends SubjectsWithNotDeleted
             return true;
         }
         return false;
-    }
+    }*/
 
     public function beforeDelete(){
         //Проверка, можно ли удалить задание

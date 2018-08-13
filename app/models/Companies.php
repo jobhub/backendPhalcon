@@ -217,6 +217,19 @@ class Companies extends NotDeletedModelWithCascade
         return $this;
     }
 
+    public function setRatingExecutor($ratingexecutor)
+    {
+        $this->ratingexecutor = $ratingexecutor;
+
+        return $this;
+    }
+    public function setRatingClient($ratingclient)
+    {
+        $this->ratingclient = $ratingclient;
+
+        return $this;
+    }
+
     /**
      * Returns the value of field companyId
      *
@@ -315,6 +328,15 @@ class Companies extends NotDeletedModelWithCascade
     public function getLogotype()
     {
         return $this->logotype;
+    }
+
+    public function getRatingExecutor()
+    {
+        return $this->ratingexecutor;
+    }
+    public function getRatingClient()
+    {
+        return $this->ratingclient;
     }
 
     /**
@@ -713,5 +735,13 @@ class Companies extends NotDeletedModelWithCascade
             }
         }
         return false;
+    }
+
+    public function beforeSave()
+    {
+        if($this->getRatingClient() == null)
+            $this->setRatingClient(5);
+        if($this->getRatingExecutor() == null)
+            $this->setRatingExecutor(5);
     }
 }

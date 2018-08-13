@@ -74,21 +74,21 @@ class UserinfoAPIController extends Controller
             $userinfo->setMale($this->request->getPost("male"));
 
             if (!$userinfo->save()) {
-
+                $errors = [];
                 foreach ($userinfo->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
                 $response->setJsonContent(
                     [
                         "errors" => $errors,
-                        "status" => "WRONG_DATA"
+                        "status" => STATUS_WRONG
                     ]);
 
                 return $response;
             }
             $response->setJsonContent(
                 [
-                    "status" => "OK"
+                    "status" => STATUS_OK
                 ]);
 
             return $response;
@@ -295,6 +295,67 @@ class UserinfoAPIController extends Controller
             ]
         );
         return $response;
+    }
+
+    public function addPhotoAction()
+    {
+        if($this->request->isPost() && $this->session->get('auth')) {
+            $response = new Response();
+            if ($this->request->hasFiles()) {
+                $auth = $this->session->get('auth');
+                $userId = $auth['id'];
+                $userinfo = Userinfo::findFirstByUserid($userId);
+
+                $file = $this->request->getUploadedFiles();
+                $file = $file[0];
+                if ($userinfo) {
+                    $format = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                    $filename = ImageLoader::formFullImageName('users', $format, $userId, 0);
+                    $userinfo->setPathToPhoto($filename);
+
+                    if (!$userinfo->update()) {
+                        $errors = [];
+                        foreach ($userinfo->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "errors" => $errors,
+                                "status" => STATUS_WRONG
+                            ]);
+
+                        return $response;
+                    }
+
+                    ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(), $userId);
+
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_OK
+                        ]
+                    );
+                    return $response;
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователя не существует (или он не активирован)']
+                    ]
+                );
+                return $response;
+            }
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => ['Файл не отправлен']
+                ]
+            );
+            return $response;
+        } else{
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
     }
 
     /**

@@ -35,15 +35,19 @@ class ServicesAPIController extends Controller
     }
 
     /**
-     * Возвращает услуги. Если указана categoryId, то услуги в данной категории.
+     * Возвращает услуги. Если указана categories, то услуги в данной категории.
+     * @method GET
+     *
+     * @param $categories = null
+     * @return string json массив [service, company/userinfo,[categories],[tradepoints],[images]]
      */
-    public function getServicesAction($categoryId = null){
+    public function getServicesAction($categories = null){
         if ($this->request->isGet()) {
             $response = new Response();
 
             $service = new Services();
 
-            $result = $service->getServices($categoryId);
+            $result = $service->getServices($categories);
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
@@ -311,9 +315,12 @@ class ServicesAPIController extends Controller
                 $service->setSubjectId($userId);
                 $service->setSubjectType(0);
             }
+            $description = $this->request->getPost("description");
 
-            $service->setDescription($this->request->getPost("description") ."\n\rВидео: "
-                . $this->request->getPost("video"));
+            if($this->request->getPost("video"))
+                $description .= "\n\rВидео: " . $this->request->getPost("video");
+
+            $service->setDescription($description);
             $service->setName($this->request->getPost("name"));
 
             if ($this->request->getPost("price")) {
@@ -355,10 +362,6 @@ class ServicesAPIController extends Controller
                     ]
                 );
                 return $response;
-            }
-
-            if($this->request->getPost("companyId")){
-
             }
 
             //
@@ -425,6 +428,31 @@ class ServicesAPIController extends Controller
                         $this->db->rollback();
                         $errors = [];
                         foreach ($servicePoint->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                }
+            }
+
+            if(!$this->request->getPost("companyId")){
+                $categories = $this->request->getPost("categories");
+
+                foreach($categories as $categoryId){
+                    $userCategory = new UsersCategories();
+                    $userCategory->setUserId($userId);
+                    $userCategory->setCategoryId($categoryId);
+
+                    if (!$userCategory->save()) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($userCategory->getMessages() as $message) {
                             $errors[] = $message->getMessage();
                         }
                         $response->setJsonContent(

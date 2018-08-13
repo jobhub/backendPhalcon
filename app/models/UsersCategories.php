@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
 class UsersCategories extends \Phalcon\Mvc\Model
 {
 
@@ -66,6 +69,48 @@ class UsersCategories extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'userid',
+            new Callback(
+                [
+                    "message" => "Пользователь не существует",
+                    "callback" => function($userCat) {
+                        $user = Users::findFirstByUserid($userCat->getUserId());
+                        if($user)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            'categoryid',
+            new Callback(
+                [
+                    "message" => "Такая категория не существует",
+                    "callback" => function($userCat) {
+                        //$company = Categories::findFirstByCompanyId($userCat->getCategoryId());
+                        if($userCat->categories!=null)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        return $this->validate($validator);
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -83,7 +128,7 @@ class UsersCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'UsersCategories';
+        return 'userscategories';
     }
 
     /**

@@ -58,9 +58,9 @@ class ReviewsAPIController extends Controller
                 return $response;
             }
 
-            if ($binderType == 0) {
+            if ($binderType == 'task') {
                 $binder = Tasks::findFirstByTaskid($binderId);
-            } else
+            } elseif($binderType == 'request')
                 $binder = Requests::findFirstByRequestid($binderId);
 
             if (!($binder->getStatus() == STATUS_CANCELED ||
@@ -351,69 +351,9 @@ class ReviewsAPIController extends Controller
 
             //if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$subjectId,$subjectType, 'getReviews'))
 
-            $query = $this->db->prepare("Select * FROM (
-              --Отзывы оставленные на заказы данного субъекта
-              (SELECT reviews.reviewId as id,
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor
-              FROM reviews inner join tasks 
-              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 'task' AND reviews.executor = true)
-              WHERE tasks.subjectId = :subjectId AND tasks.subjectType = :subjectType)
-              UNION
-              --Отзывы оставленные на предложения данного субъекта
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor 
-              FROM reviews inner join offers 
-              ON (reviews.binderId = offers.taskId AND reviews.binderType = 'task'
-                  AND reviews.executor = false AND offers.selected = true) 
-              WHERE offers.subjectId = :subjectId AND offers.subjectType = :subjectType) 
-              UNION
-              --Отзывы оставленные на заявки
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor 
-              FROM reviews inner join requests
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
-                  AND reviews.executor = true)
-              WHERE requests.subjectId = :subjectId AND requests.subjectType = :subjectType) 
-              UNION
-              --Отзывы оставленные на услуги
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor 
-              FROM services inner join requests ON (requests.serviceId = services.serviceId)
-              inner join reviews
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
-                  AND reviews.executor = false)
-              WHERE services.subjectId = :subjectId AND services.subjectType = :subjectType)
-              UNION
-              --фейковые отзывы
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor 
-              FROM reviews
-              WHERE reviews.objectId = :subjectId AND reviews.objectType = :subjectType)
-              ) p0
-              ORDER BY p0.date desc"
-            );
+            $rev = new Reviews();
 
-            $query->execute([
-                'subjectId' => $subjectId,
-                'subjectType' => $subjectType,
-            ]);
-
-            $reviews = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $reviews = $rev->getReviewsForObject($subjectId,$subjectType);
 
             $response->setJsonContent(
                 [
