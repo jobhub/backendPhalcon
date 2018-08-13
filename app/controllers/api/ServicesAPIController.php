@@ -41,149 +41,13 @@ class ServicesAPIController extends Controller
         if ($this->request->isGet()) {
             $response = new Response();
 
-            if($categoryId == null) {
-                $query = $this->db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
-                row_to_json(comp) as \"company\",
-               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
-                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
-                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
-               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
-                              AND points.deleted = false)
-                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
-              FROM public.companies as comp
-              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1
-              AND serv.deleted = false AND comp.deleted = false)) foo");
+            $service = new Services();
 
-                $query2 = $this->db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
-                row_to_json(us) as \"userinfo\",
-               array(SELECT row_to_json(cat.*) FROM public.categories as cat
-                                       WHERE cat.categoryid = 202034) as \"categories\",
-               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
-                              AND points.deleted = false)
-                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
-              FROM public.userinfo as us
-              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0
-              AND serv.deleted = false) 
-              INNER JOIN public.users ON (us.userid = public.users.userid))
-              ) foo");
-
-            } else{
-                $query = $this->db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
-                row_to_json(comp) as \"company\",
-               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
-                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
-                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
-               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
-                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
-              FROM public.companies as comp
-              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1)) foo");
-
-                $query2 = $this->db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
-                row_to_json(us) as \"user\",
-               array(SELECT row_to_json(cat.*) FROM public.categories as cat
-                                       WHERE cat.categoryid = 202034) as \"categories\",
-               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
-                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid)
-                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\"
-              FROM public.userinfo as us
-              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0))
-              ) foo");
-
-
-            }
-
-            $query->execute();
-            $query2->execute();
-            $services = $query->fetchAll(\PDO::FETCH_ASSOC);
-            $servicesusers = $query2->fetchAll(\PDO::FETCH_ASSOC);
-            $reviews2 = [];
-            foreach($services as $review)
-            {
-                $review2 = [];
-                $review2['service'] = json_decode($review['service']);
-
-                $review2['company'] = json_decode($review['company']);
-
-                $review['categories'][0] = '[';
-                $review['categories'][strlen($review['categories'])-1] = ']';
-
-                $review['categories'] = str_replace('"{', '{',$review['categories']);
-                $review['categories'] = str_replace('}"', '}',$review['categories']);
-                $review['categories'] = stripslashes( $review['categories']);
-                $review2['categories'] = json_decode($review['categories']);
-
-                $review['points'][0] = '[';
-                $review['points'][strlen($review['points'])-1] = ']';
-
-                $review['points'] = str_replace('"{', '{',$review['points']);
-                $review['points'] = str_replace('}"', '}',$review['points']);
-                $review['points'] = stripslashes( $review['points']);
-
-                $review2['points'] = json_decode($review['points'], true);
-
-                for($i = 0; $i < count($review2['points']); $i++){
-                    $review2['points'][$i]['phones'] = [];
-                    $pps = PhonesPoints::findByPointid($review2['points'][$i]['pointid']);
-                    foreach($pps as $pp)
-                        $review2['points'][$i]['phones'][] = $pp->phones->getPhone();
-                }
-
-                //$review2['points'] = json_decode($review2['points']);
-
-                if($categoryId!= null)
-                {
-                    $flag = false;
-                    foreach($review2['categories'] as $category){
-                        if($category == $categoryId){
-                            $flag = true;
-                            break;
-                        }
-                    }
-                    if($flag)
-                        $reviews2[] = $review2;
-                } else{
-                    $reviews2[] = $review2;
-                }
-            }
-
-            foreach($servicesusers as $review)
-            {
-                $review2 = [];
-                $review2['service'] = json_decode($review['service']);
-
-                $review2['userinfo'] = json_decode($review['userinfo']);
-
-                $review['categories'][0] = '[';
-                $review['categories'][strlen($review['categories'])-1] = ']';
-
-                $review['categories'] = str_replace('"{', '{',$review['categories']);
-                $review['categories'] = str_replace('}"', '}',$review['categories']);
-                $review['categories'] = stripslashes( $review['categories']);
-                $review2['categories'] = json_decode($review['categories']);
-
-                $review['points'][0] = '[';
-                $review['points'][strlen($review['points'])-1] = ']';
-
-                $review['points'] = str_replace('"{', '{',$review['points']);
-                $review['points'] = str_replace('}"', '}',$review['points']);
-                $review['points'] = stripslashes( $review['points']);
-                $review2['points'] = json_decode($review['points'], true);
-
-                for($i = 0; $i < count($review2['points']); $i++){
-                    $review2['points'][$i]['phones'] = [];
-                    $pps = PhonesPoints::findByPointid($review2['points'][$i]['pointid']);
-                    foreach($pps as $pp)
-                        $review2['points'][$i]['phones'][] = $pp->phones->getPhone();
-                }
-                $reviews2[] = $review2;
-            }
+            $result = $service->getServices($categoryId);
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
-                'services' => $reviews2
+                'services' => $result
             ]);
 
             return $response;
@@ -632,7 +496,90 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            return $this->addImagesHandler($service->getServiceId());
+            $result = $this->addImagesHandler($service->getServiceId());
+
+            return $result;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет картинку из списка картинок услуги
+     *
+     * @method DELETE
+     *
+     * @param $imageId
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteImageAction($imageId)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $image = Imagesservices::findFirstByImageid($imageId);
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор картинки'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $service = Services::findFirstByServiceid($image->getServiceId());
+
+            if(!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$service->getSubjectId(),
+                $service->getSubjectType(), 'editService')){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $result = ImageLoader::delete($image->getImagePath());
+
+            if($result){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_OK
+                    ]
+                );
+            } else{
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Не удалось удалить файл'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+            }
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -1014,7 +961,7 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($serviceId)
+    /*public function addImagesHandler($serviceId)
     {
         $response = new Response();
         include(APP_PATH . '/library/SimpleImage.php');
@@ -1035,21 +982,14 @@ class ServicesAPIController extends Controller
             }
 
             $filenames = [];
-            //$this->db->begin();
-            foreach($files as $file) {
-               /* if (($file->getSize() > 5242880)) {
-                    $response->setJsonContent(
-                        [
-                            "errors" => ['Размер файла слишком большой'],
-                            "status" => STATUS_WRONG
-                        ]
-                    );
-                    return $response;
-                }*/
 
-                /*$image = new SimpleImage();
-                $image->load($file->getTempName());
-                $image->resizeToWidth(200);*/
+            $images = Imagesservices::findByServiceid($serviceId);
+            $countImages = count($images);
+
+            $this->db->begin();
+
+            foreach($files as $file) {
+
 
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
 
@@ -1061,6 +1001,7 @@ class ServicesAPIController extends Controller
                 elseif ($imageFormat == 'gif')
                     $imageFormat = IMAGETYPE_GIF;
                 else {
+                    $this->db->rollback();
                     $response->setJsonContent(
                         [
                             "error" => ['Данный формат не поддерживается'],
@@ -1070,10 +1011,8 @@ class ServicesAPIController extends Controller
                     return $response;
                 }
 
-                $images = Imagesservices::findByServiceid($serviceId);
-
                 $filename = BASE_PATH . '/img/services/' . hash('crc32', $service->getServiceId()) . '_'
-                    . count($images) . '.' . $format;
+                    . $countImages . '.' . $format;
 
                 $imageFullName = str_replace(BASE_PATH, '', $filename);
 
@@ -1083,7 +1022,7 @@ class ServicesAPIController extends Controller
 
                 if (!$newimage->save()) {
                     $errors = [];
-                   // $this->db->rollback();
+                    $this->db->rollback();
                     foreach ($newimage->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
@@ -1096,6 +1035,7 @@ class ServicesAPIController extends Controller
                     return $response;
                 }
                 $filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
+                $countImages+=1;
             }
 
             foreach($filenames as $filename){
@@ -1105,7 +1045,112 @@ class ServicesAPIController extends Controller
                 $image->save($filename['name'], $filename['format']);
             }
 
-            //$this->db->commit();
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        }
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+        return $response;
+    }*/
+
+    /**
+     * Добавляет картинку к услуге.
+     * @param $serviceId
+     * @return Response с json массивом типа Status
+     */
+    public function addImagesHandler($serviceId)
+    {
+        include(APP_PATH . '/library/SimpleImage.php');
+        $response = new Response();
+        if ($this->request->hasFiles()) {
+            $files = $this->request->getUploadedFiles();
+
+            $service = Services::findFirstByServiceid($serviceId);
+
+            if (!$service) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор услуги'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $filenames = [];
+
+            $images = Imagesservices::findByServiceid($serviceId);
+            $countImages = count($images);
+            $countImagesCopy = $countImages;
+            $this->db->begin();
+
+            foreach($files as $file) {
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $filename = ImageLoader::formFullImageName('services',$imageFormat,$serviceId,$countImages);
+
+                $imageFullName = $filename;
+
+                $newimage = new Imagesservices();
+                $newimage->setServiceId($serviceId);
+                $newimage->setImagePath($imageFullName);
+
+                if (!$newimage->save()) {
+                    $errors = [];
+                    $this->db->rollback();
+                    foreach ($newimage->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+                //$filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
+                $countImages+=1;
+            }
+
+            foreach($files as $file) {
+                /*$imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+                $filename = ImageLoader::formImageName($imageFormat,$serviceId,$countImagesCopy);
+                $result = ImageLoader::load('services',$file->getTempName(),$filename);*/
+
+                $result = ImageLoader::loadService($file->getTempName(),$file->getName(),$countImagesCopy,$serviceId);
+
+                if($result != ImageLoader::RESULT_ALL_OK || $result === null){
+                    if($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED){
+                        $error = 'Формат одного из изображений не поддерживается';
+                    } elseif($result == ImageLoader::RESULT_ERROR_NOT_SAVED){
+                        $error = 'Не удалось сохранить изображение';
+                    }
+                    else{
+                        $error = 'Ошибка при загрузке изображения';
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => [$error]
+                        ]
+                    );
+                    return $response;
+                }
+
+                $countImagesCopy++;
+            }
+
+            $this->db->commit();
 
             $response->setJsonContent(
                 [

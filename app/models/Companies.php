@@ -84,6 +84,9 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $logotype;
 
+    protected $ratingexecutor;
+    protected $ratingclient;
+
     /**
      * Method to set the value of field companyId
      *
@@ -390,6 +393,29 @@ class Companies extends NotDeletedModelWithCascade
             )
         );
 
+        if($this->getLogotype() != null)
+        $validator->add(
+            'logotype',
+            new Callback(
+                [
+                    "message" => "Формат логотипа не поддерживается",
+                    "callback" => function ($company) {
+                        $format = pathinfo($company->getLogotype(), PATHINFO_EXTENSION);
+
+                        if ($format == 'jpeg' || 'jpg')
+                            return true;
+                        elseif ($format == 'png')
+                            return true;
+                        elseif ($format == 'gif')
+                            return true;
+                        else {
+                            return false;
+                        }
+                    }
+                ]
+            )
+        );
+
 
         return $this->validate($validator);
     }
@@ -517,7 +543,15 @@ class Companies extends NotDeletedModelWithCascade
                 $transaction->commit();
                 return true;
             } else {
+
+                $logo = $this->getLogotype();
+
                 $result = parent::delete($delete,false, $data, $whiteList);
+
+                if($result){
+                    ImageLoader::delete($logo);
+                }
+
                 $transaction->commit();
                 return $result;
             }

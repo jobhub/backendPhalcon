@@ -70,7 +70,8 @@ class SecurityPlugin extends Plugin
                 'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
-                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager', 'restoreCompany'],
+                'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager',
+                    'restoreCompany', 'setCompanyLogotype', 'deleteCompanyTestd'],
 
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
                     'deletePhoneFromTradePoint', 'editPhoneInTradePoint', 'editPhoneInCompany', 'test'],
@@ -79,7 +80,7 @@ class SecurityPlugin extends Plugin
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
                     'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest',
-                    'rejectRequest', 'editImageService', 'addImages'],
+                    'rejectRequest', 'editImageService', 'addImages', 'deleteImage'],
                 'RequestsAPI' => ['addRequest', 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
                     'confirmPerformanceRequest'],
 
@@ -132,7 +133,7 @@ class SecurityPlugin extends Plugin
 
                 'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject' , 'getServices'],
+                'ServicesAPI' => ['getServicesForSubject', 'getServices'],
                 'ReviewsAPI' => ['getReviews'],
             ];
             foreach ($publicResources as $resource => $actions) {
@@ -171,25 +172,25 @@ class SecurityPlugin extends Plugin
     public static function getTokenFromHeader()
     {
         //$tokenRecieved = $this->request->getHeader("Authorization");
+        $tokenRecieved = null;
         if (isset(getallheaders()['Authorization']))
             $tokenRecieved = getallheaders()['Authorization'];
 
         //if($_SERVER['METHOD'])
-        if($tokenRecieved == null)
-            $tokenRecieved ="";
-
+        if ($tokenRecieved == null)
+            $tokenRecieved = "";
 
         return $tokenRecieved;
     }
 
     public function getTokenFromResponce()
     {
-        if($this->request->isPost() || $this->request->isGet())
-        $tokenRecieved = $this->request->getPost("authorization");
+        if ($this->request->isPost() || $this->request->isGet())
+            $tokenRecieved = $this->request->getPost("authorization");
 
-        if($tokenRecieved == null){
+        if ($tokenRecieved == null) {
             $tokenRecieved = $this->request->getJsonRawBody();
-            if($tokenRecieved != null){
+            if ($tokenRecieved != null) {
                 $tokenRecieved = $tokenRecieved['authorization'];
             }
         }
@@ -228,7 +229,7 @@ class SecurityPlugin extends Plugin
             $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
             $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                 'bind' => ['userId' => $auth['id'],
-                    'token' => hash('sha256',$tokenRecieved)]]);
+                    'token' => hash('sha256', $tokenRecieved)]]);
 
             if (!$token) {
                 $this->session->remove('auth');
@@ -280,7 +281,8 @@ class SecurityPlugin extends Plugin
         }
     }
 
-    private function convertRequestBody()
+    private
+    function convertRequestBody()
     {
         if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
             $params = $this->request->getJsonRawBody();

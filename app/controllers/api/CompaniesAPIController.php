@@ -38,7 +38,7 @@ class CompaniesAPIController extends Controller
     }
 
     /**
-     * Создает компанию компанию
+     * Создает компанию.
      *
      * @method POST
      * @params (Обязательные)name, fullName
@@ -110,7 +110,7 @@ class CompaniesAPIController extends Controller
     }
 
     /**
-     * Удаляет компанию
+     * Удаляет указанную компанию
      * @method DELETE
      *
      * @param $companyId
@@ -247,6 +247,103 @@ class CompaniesAPIController extends Controller
     }
 
     /**
+     * Устанавливает логотип для компании. Сам логотип должен быть передан в файлах. ($_FILES)
+     * @method POST
+     * @params companyId
+     * @return Response
+     */
+    public function setCompanyLogotypeAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
+                'editCompany')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$this->request->hasFiles()) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Логотип не был загружен']
+                    ]
+                );
+                return $response;
+            }
+            $files = $this->request->getUploadedFiles();
+
+            $file = $files[0];
+
+            $format = pathinfo($file->getName(),PATHINFO_EXTENSION);
+
+            $logotype = ImageLoader::formFullImageName('companies',$format,
+                $this->request->getPost("companyId"),0);
+
+            $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
+
+            $company->setLogotype($logotype);
+            $this->db->begin();
+            if (!$company->update()) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($company->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $result = ImageLoader::loadCompanyLogotype($file->getTempName(),$file->getName(),$company->getCompanyId());
+
+            if($result != ImageLoader::RESULT_ALL_OK || $result === null){
+                if($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED){
+                    $error = 'Формат одного из изображений не поддерживается';
+                } elseif($result == ImageLoader::RESULT_ERROR_NOT_SAVED){
+                    $error = 'Не удалось сохранить изображение';
+                }
+                else{
+                    $error = 'Ошибка при загрузке изображения';
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => [$error]
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
      * Делает указанного пользователя менеджером компании
      *
      * @method POST
@@ -333,7 +430,7 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
-            $companyManager = CompaniesManagers::findByIds($companyId,$userManagerId);
+            $companyManager = CompaniesManagers::findByIds($companyId, $userManagerId);
 
             if (!$companyManager) {
                 $response->setJsonContent(
@@ -422,6 +519,55 @@ class CompaniesAPIController extends Controller
                     "status" => STATUS_OK,
                 ]
             );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+
+
+    public function deleteCompanyTestAction($companyId)
+    {
+        if ($this->request->isDelete()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            if (!Companies::checkUserHavePermission($userId, $companyId, 'deleteCompany')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $company = Companies::findFirstByCompanyid($companyId);
+            if (!$company->delete(true)) {
+                $errors = [];
+                foreach ($company->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
             return $response;
 
         } else {

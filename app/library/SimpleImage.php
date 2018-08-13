@@ -23,7 +23,7 @@ class SimpleImage {
     function save($filename, $image_type=IMAGETYPE_JPEG, $compression=75, $permissions=null) {
         // do this or they'll all go to jpeg
         $f=false;
-        $image_type=$this->image_type;
+        $image_type = $this->image_type;
         if( $image_type == IMAGETYPE_JPEG ) {
             $f=imagejpeg($this->image,$filename,$compression);
         } elseif( $image_type == IMAGETYPE_GIF ) {
@@ -35,9 +35,11 @@ class SimpleImage {
             $f=imagepng($this->image,$filename);
         }
         if( $permissions != null) {
-            chmod($filename,$permissions);}
-            return $f;
+            chmod($filename,$permissions);
+        }
+        return $f;
     }
+
     function output($image_type=IMAGETYPE_JPEG) {
         if( $image_type == IMAGETYPE_JPEG ) {
             imagejpeg($this->image);
@@ -47,6 +49,7 @@ class SimpleImage {
             imagepng($this->image);
         }
     }
+
     function getWidth() {
         return imagesx($this->image);
     }

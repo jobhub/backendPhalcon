@@ -1,5 +1,11 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Url as UrlValidator;
+use Phalcon\Validation\Validator\Regex;
+use Phalcon\Validation\Validator\Callback;
+
 class Imagesservices extends \Phalcon\Mvc\Model
 {
 
@@ -93,6 +99,57 @@ class Imagesservices extends \Phalcon\Mvc\Model
     public function getImagePath()
     {
         return $this->imagepath;
+    }
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'serviceid',
+            new Callback(
+                [
+                    "message" => "Такая услуга не существует",
+                    "callback" => function ($image) {
+                        $service = Services::findFirstByServiceid($image->getServiceId());
+                        if ($service)
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+
+        $validator->add(
+            'imagepath',
+            new Callback(
+                [
+                    "message" => "Формат не поддерживается",
+                    "callback" => function ($image) {
+                        $format = pathinfo($image->getImagePath(), PATHINFO_EXTENSION);
+
+                        if ($format == 'jpeg' || 'jpg')
+                            return true;
+                        elseif ($format == 'png')
+                            return true;
+                        elseif ($format == 'gif')
+                            return true;
+                        else {
+                            return false;
+                        }
+                    }
+                ]
+            )
+        );
+
+
+        return $this->validate($validator);
     }
 
     /**
