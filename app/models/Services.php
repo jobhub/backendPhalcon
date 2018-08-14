@@ -57,6 +57,20 @@ class Services extends SubjectsWithNotDeleted
     protected $name;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=false)
+     */
+    protected $longitude;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=false)
+     */
+    protected $latitude;
+
+    /**
      * Method to set the value of field serviceId
      *
      * @param integer $serviceid
@@ -148,6 +162,32 @@ class Services extends SubjectsWithNotDeleted
     }
 
     /**
+     * Method to set the value of field longitude
+     *
+     * @param string $longitude
+     * @return $this
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field latitude
+     *
+     * @param string $latitude
+     * @return $this
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field regionId
      *
      * @return integer
@@ -217,7 +257,25 @@ class Services extends SubjectsWithNotDeleted
         return $this->name;
     }
 
+    /**
+     * Returns the value of field longitude
+     *
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
 
+    /**
+     * Returns the value of field latitude
+     *
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
 
     /**
      * Validations and business logic
@@ -269,6 +327,38 @@ class Services extends SubjectsWithNotDeleted
                 ]
             )
         );
+
+        if($this->getLongitude()!= null){
+            $validator->add(
+                'latitude',
+                new Callback(
+                    [
+                        "message" => "Не указана широта для услуги",
+                        "callback" => function ($service) {
+                            if ($service->getLatitude()!= null && SupportClass::checkDouble($service->getLatitude()))
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        if($this->getLatitude()!= null){
+            $validator->add(
+                'longitude',
+                new Callback(
+                    [
+                        "message" => "Не указана долгота для услуги",
+                        "callback" => function ($service) {
+                            if ($service->getLongitude()!= null && SupportClass::checkDouble($service->getLongitude()))
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
 
         return $this->validate($validator) && parent::validation();
     }

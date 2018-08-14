@@ -110,6 +110,7 @@ class SecurityPlugin extends Plugin
                 'categoriesAPI' => ['addCategory', 'editCategory'],
                 'offersAPI' => ['addStatus'],
                 'ReviewsAPI' => ['addType'],
+                'RegionsAPI' => ['pullRegions']
             ];
 
             foreach ($moderatorsResources as $resource => $actions) {
@@ -213,7 +214,7 @@ class SecurityPlugin extends Plugin
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
         //Здесь будет логирование
-        /*$log = new Logs();
+        $log = new Logs();
         if ($this->session->get("auth") != null) {
             $auth = $this->session->get("auth");
             $log->setUserId($auth['id']);
@@ -227,7 +228,7 @@ class SecurityPlugin extends Plugin
             foreach ($log->getMessages() as $message) {
                 $this->flash->error((string)$message);
             }
-        }*/
+        }
 
         if ($this->session->get("auth") != null) {
             $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/

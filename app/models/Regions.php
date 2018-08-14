@@ -7,7 +7,6 @@ class Regions extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
-     * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
     protected $regionid;

@@ -284,6 +284,7 @@ class ServicesAPIController extends Controller
      * (необязательные) массив newPoints - массив объектов TradePoints
      * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
      *           (обязательно) regionId,
+     *           (необязательно) longitude, latitude
      *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
@@ -330,6 +331,9 @@ class ServicesAPIController extends Controller
                 $service->setPriceMin($this->request->getPost("priceMin"));
                 $service->setPriceMax($this->request->getPost("priceMax"));
             }
+
+            $service->setPriceMin($this->request->getPost("longitude"));
+            $service->setPriceMax($this->request->getPost("latitude"));
 
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
