@@ -20,7 +20,7 @@ class LogsMigration_100 extends Migration
         $this->morphTable('logs', [
                 'columns' => [
                     new Column(
-                        'logId',
+                        'logid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,11 +30,11 @@ class LogsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'size' => 32,
-                            'after' => 'logId'
+                            'after' => 'logid'
                         ]
                     ),
                     new Column(
@@ -42,7 +42,7 @@ class LogsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 30,
-                            'after' => 'userId'
+                            'after' => 'userid'
                         ]
                     ),
                     new Column(
@@ -63,8 +63,8 @@ class LogsMigration_100 extends Migration
                     )
                 ],
                 'indexes' => [
-                    new Index('logs_pkey', ['logId'], null),
-                    new Index('logs_userId_idx', ['userId'], null)
+                    new Index('logs_pkey', ['logid'], null),
+                    new Index('logs_userId_idx', ['userid'], null)
                 ],
             ]
         );

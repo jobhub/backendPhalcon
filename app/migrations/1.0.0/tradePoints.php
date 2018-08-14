@@ -20,7 +20,7 @@ class TradepointsMigration_100 extends Migration
         $this->morphTable('tradePoints', [
                 'columns' => [
                     new Column(
-                        'pointId',
+                        'pointid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -35,7 +35,7 @@ class TradepointsMigration_100 extends Migration
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
                             'size' => 45,
-                            'after' => 'pointId'
+                            'after' => 'pointid'
                         ]
                     ),
                     new Column(
@@ -65,7 +65,7 @@ class TradepointsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'companyId',
+                        'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -77,8 +77,8 @@ class TradepointsMigration_100 extends Migration
                         'time',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 100,
-                            'after' => 'companyId'
+                            'size' => 500,
+                            'after' => 'subjectid'
                         ]
                     ),
                     new Column(
@@ -90,7 +90,7 @@ class TradepointsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userManager',
+                        'usermanager',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'size' => 32,
@@ -98,11 +98,11 @@ class TradepointsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'webSite',
+                        'website',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 90,
-                            'after' => 'userManager'
+                            'after' => 'usermanager'
                         ]
                     ),
                     new Column(
@@ -110,33 +110,49 @@ class TradepointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 150,
-                            'after' => 'webSite'
+                            'after' => 'website'
+                        ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'address'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'deleted'
+                        ]
+                    ),
+                    new Column(
+                        'subjecttype',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'default' => "1",
+                            'notNull' => true,
+                            'size' => 32,
+                            'after' => 'deletedcascade'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('tradePoints_companyId_idx', ['companyId'], null),
-                    new Index('tradePoints_pkey', ['pointId'], null)
+                    new Index('tradePoints_companyId_idx', ['subjectid'], null),
+                    new Index('tradePoints_pkey', ['pointid'], null)
                 ],
                 'references' => [
-                    new Reference(
-                        'foreignkey_tradePoints_companies_companyId',
-                        [
-                            'referencedTable' => 'companies',
-                            'referencedSchema' => 'service_services',
-                            'columns' => ['companyId'],
-                            'referencedColumns' => ['companyId'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
-                        ]
-                    ),
                     new Reference(
                         'foreignkey_tradePoints_userManager',
                         [
                             'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['userManager'],
-                            'referencedColumns' => ['userId'],
+                            'columns' => ['usermanager'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

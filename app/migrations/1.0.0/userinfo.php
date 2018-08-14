@@ -20,7 +20,7 @@ class UserinfoMigration_100 extends Migration
         $this->morphTable('userinfo', [
                 'columns' => [
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -34,7 +34,7 @@ class UserinfoMigration_100 extends Migration
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
                             'size' => 30,
-                            'after' => 'userId'
+                            'after' => 'userid'
                         ]
                     ),
                     new Column(
@@ -66,6 +66,7 @@ class UserinfoMigration_100 extends Migration
                         'male',
                         [
                             'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
                             'size' => 16,
                             'after' => 'birthday'
                         ]
@@ -79,21 +80,23 @@ class UserinfoMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'raitingExecutor',
+                        'ratingexecutor',
                         [
                             'type' => Column::TYPE_FLOAT,
                             'default' => "5.000000",
+                            'notNull' => true,
                             'size' => 24,
                             'after' => 'about'
                         ]
                     ),
                     new Column(
-                        'raitingClient',
+                        'ratingclient',
                         [
                             'type' => Column::TYPE_FLOAT,
                             'default' => "5.000000",
+                            'notNull' => true,
                             'size' => 24,
-                            'after' => 'raitingExecutor'
+                            'after' => 'ratingexecutor'
                         ]
                     ),
                     new Column(
@@ -101,11 +104,11 @@ class UserinfoMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 200,
-                            'after' => 'raitingClient'
+                            'after' => 'ratingclient'
                         ]
                     ),
                     new Column(
-                        'pathToPhoto',
+                        'pathtophoto',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 260,
@@ -114,7 +117,20 @@ class UserinfoMigration_100 extends Migration
                     )
                 ],
                 'indexes' => [
-                    new Index('userinfo_pkey', ['userId'], null)
+                    new Index('userinfo_pkey', ['userid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_userinfo_users_userId',
+                        [
+                            'referencedTable' => 'users',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );

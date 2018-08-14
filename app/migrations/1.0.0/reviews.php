@@ -20,7 +20,7 @@ class ReviewsMigration_100 extends Migration
         $this->morphTable('reviews', [
                 'columns' => [
                     new Column(
-                        'idReview',
+                        'reviewid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,71 +30,138 @@ class ReviewsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'textReview',
+                        'textreview',
                         [
                             'type' => Column::TYPE_TEXT,
                             'size' => 1,
-                            'after' => 'idReview'
+                            'after' => 'reviewid'
                         ]
                     ),
                     new Column(
-                        'reviewDate',
+                        'reviewdate',
                         [
-                            'type' => Column::TYPE_DATE,
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
                             'size' => 1,
-                            'after' => 'textReview'
+                            'after' => 'textreview'
+                        ]
+                    ),
+                    new Column(
+                        'rating',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
+                            'size' => 32,
+                            'after' => 'reviewdate'
+                        ]
+                    ),
+                    new Column(
+                        'fake',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'rating'
+                        ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'fake'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'deleted'
+                        ]
+                    ),
+                    new Column(
+                        'binderid',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'deletedcascade'
                         ]
                     ),
                     new Column(
                         'executor',
                         [
-                            'type' => Column::TYPE_INTEGER,
-                            'size' => 16,
-                            'after' => 'reviewDate'
+                            'type' => Column::TYPE_BOOLEAN,
+                            'notNull' => true,
+                            'size' => 1,
+                            'after' => 'binderid'
                         ]
                     ),
                     new Column(
-                        'userId_object',
+                        'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'notNull' => true,
                             'size' => 32,
                             'after' => 'executor'
                         ]
                     ),
                     new Column(
-                        'userId_subject',
+                        'subjecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'notNull' => true,
                             'size' => 32,
-                            'after' => 'userId_object'
+                            'after' => 'subjectid'
                         ]
                     ),
                     new Column(
-                        'raiting',
+                        'objectid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'notNull' => true,
                             'size' => 32,
-                            'after' => 'userId_subject'
+                            'after' => 'subjecttype'
                         ]
                     ),
                     new Column(
-                        'auctionId',
+                        'objecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'notNull' => true,
                             'size' => 32,
-                            'after' => 'raiting'
+                            'after' => 'objectid'
+                        ]
+                    ),
+                    new Column(
+                        'userid',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'objecttype'
+                        ]
+                    ),
+                    new Column(
+                        'bindertype',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 1,
+                            'after' => 'userid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('reviews_auctionId_idx', ['auctionId'], null),
-                    new Index('reviews_pkey', ['idReview'], null),
-                    new Index('reviews_userId_object_idx', ['userId_object'], null),
-                    new Index('reviews_userId_subject_idx', ['userId_subject'], null)
+                    new Index('reviews_pkey', ['reviewid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_reviews_users_userid',
+                        [
+                            'referencedTable' => 'users',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );

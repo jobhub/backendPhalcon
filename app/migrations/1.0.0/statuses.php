@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class RegionsMigration_100
+ * Class StatusesMigration_100
  */
-class RegionsMigration_100 extends Migration
+class StatusesMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,30 +17,29 @@ class RegionsMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('regions', [
+        $this->morphTable('statuses', [
                 'columns' => [
                     new Column(
-                        'regionid',
+                        'statusid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'autoIncrement' => true,
                             'size' => 32,
                             'first' => true
                         ]
                     ),
                     new Column(
-                        'regionname',
+                        'status',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
-                            'size' => 70,
-                            'after' => 'regionid'
+                            'size' => 60,
+                            'after' => 'statusid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('regions_pkey', ['regionid'], null)
+                    new Index('statuses_pkey', ['statusid'], null)
                 ],
             ]
         );

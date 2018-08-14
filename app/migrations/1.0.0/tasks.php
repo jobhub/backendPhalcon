@@ -20,7 +20,7 @@ class TasksMigration_100 extends Migration
         $this->morphTable('tasks', [
                 'columns' => [
                     new Column(
-                        'taskId',
+                        'taskid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,21 +30,21 @@ class TasksMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'taskId'
+                            'after' => 'taskid'
                         ]
                     ),
                     new Column(
-                        'categoryId',
+                        'categoryid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'userId'
+                            'after' => 'subjectid'
                         ]
                     ),
                     new Column(
@@ -52,15 +52,15 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
-                            'size' => 50,
-                            'after' => 'categoryId'
+                            'size' => 100,
+                            'after' => 'categoryid'
                         ]
                     ),
                     new Column(
                         'description',
                         [
-                            'type' => Column::TYPE_VARCHAR,
-                            'size' => 1000,
+                            'type' => Column::TYPE_TEXT,
+                            'size' => 1,
                             'after' => 'name'
                         ]
                     ),
@@ -76,6 +76,7 @@ class TasksMigration_100 extends Migration
                         'price',
                         [
                             'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
                             'size' => 32,
                             'after' => 'deadline'
                         ]
@@ -83,10 +84,34 @@ class TasksMigration_100 extends Migration
                     new Column(
                         'status',
                         [
-                            'type' => Column::TYPE_VARCHAR,
-                            'default' => "Поиск",
-                            'size' => 36,
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
                             'after' => 'price'
+                        ]
+                    ),
+                    new Column(
+                        'polygon',
+                        [
+                            'type' => Column::TYPE_TEXT,
+                            'size' => 1,
+                            'after' => 'status'
+                        ]
+                    ),
+                    new Column(
+                        'regionid',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'polygon'
+                        ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'regionid'
                         ]
                     ),
                     new Column(
@@ -94,7 +119,7 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_DOUBLE,
                             'size' => 53,
-                            'after' => 'status'
+                            'after' => 'deleted'
                         ]
                     ),
                     new Column(
@@ -106,18 +131,88 @@ class TasksMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'address',
+                        'subjecttype',
                         [
-                            'type' => Column::TYPE_VARCHAR,
-                            'size' => 100,
+                            'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
+                            'size' => 32,
                             'after' => 'latitude'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'subjecttype'
+                        ]
+                    ),
+                    new Column(
+                        'datestart',
+                        [
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
+                            'size' => 1,
+                            'after' => 'deletedcascade'
+                        ]
+                    ),
+                    new Column(
+                        'dateend',
+                        [
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
+                            'size' => 1,
+                            'after' => 'datestart'
+                        ]
+                    ),
+                    new Column(
+                        'leftColumn',
+                        [
+                            'type' => Column::TYPE_BIGINTEGER,
+                            'size' => 1,
+                            'after' => 'dateend'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('tasks_categoryId_idx', ['categoryId'], null),
-                    new Index('tasks_pkey', ['taskId'], null),
-                    new Index('tasks_userId_idx', ['userId'], null)
+                    new Index('tasks_categoryId_idx', ['categoryid'], null),
+                    new Index('tasks_pkey', ['taskid'], null),
+                    new Index('tasks_userId_idx', ['subjectid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_tasks_categories_categoryId',
+                        [
+                            'referencedTable' => 'categories',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['categoryid'],
+                            'referencedColumns' => ['categoryid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    ),
+                    new Reference(
+                        'foreignkey_tasks_regions_regionId',
+                        [
+                            'referencedTable' => 'regions',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['regionid'],
+                            'referencedColumns' => ['regionid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    ),
+                    new Reference(
+                        'foreignkey_tasks_statuses_status',
+                        [
+                            'referencedTable' => 'statuses',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['status'],
+                            'referencedColumns' => ['statusid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );

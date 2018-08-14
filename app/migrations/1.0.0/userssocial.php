@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class TokensMigration_100
+ * Class UserssocialMigration_100
  */
-class TokensMigration_100 extends Migration
+class UserssocialMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,24 +17,42 @@ class TokensMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('tokens', [
+        $this->morphTable('userssocial', [
                 'columns' => [
                     new Column(
-                        'idtokens',
+                        'network',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'notNull' => true,
+                            'size' => 50,
+                            'first' => true
+                        ]
+                    ),
+                    new Column(
+                        'identity',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'notNull' => true,
+                            'size' => 150,
+                            'after' => 'network'
+                        ]
+                    ),
+                    new Column(
+                        'profile',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 150,
+                            'after' => 'identity'
+                        ]
+                    ),
+                    new Column(
+                        'usersocialid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
                             'size' => 32,
-                            'first' => true
-                        ]
-                    ),
-                    new Column(
-                        'token',
-                        [
-                            'type' => Column::TYPE_VARCHAR,
-                            'size' => 250,
-                            'after' => 'idtokens'
+                            'after' => 'profile'
                         ]
                     ),
                     new Column(
@@ -43,17 +61,16 @@ class TokensMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'token'
+                            'after' => 'usersocialid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('tokens_pkey', ['idtokens'], null),
-                    new Index('tokens_userId_idx', ['userid'], null)
+                    new Index('usersocial_pkey', ['usersocialid'], null)
                 ],
                 'references' => [
                     new Reference(
-                        'foreignkey_tokens_users_userId',
+                        'foreignkey_userssocial_users_userid',
                         [
                             'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',

@@ -20,7 +20,7 @@ class PhonescompaniesMigration_100 extends Migration
         $this->morphTable('phonesCompanies', [
                 'columns' => [
                     new Column(
-                        'phoneId',
+                        'phoneid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,18 +29,18 @@ class PhonescompaniesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'companyId',
+                        'companyid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'phoneId'
+                            'after' => 'phoneid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('phonesCompanies_companyId_idx', ['companyId'], null),
-                    new Index('phonesCompanies_pkey', ['phoneId', 'companyId'], null)
+                    new Index('phonesCompanies_companyId_idx', ['companyid'], null),
+                    new Index('phonesCompanies_pkey', ['phoneid', 'companyid'], null)
                 ],
                 'references' => [
                     new Reference(
@@ -48,8 +48,8 @@ class PhonescompaniesMigration_100 extends Migration
                         [
                             'referencedTable' => 'companies',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['companyId'],
-                            'referencedColumns' => ['companyId'],
+                            'columns' => ['companyid'],
+                            'referencedColumns' => ['companyid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]
@@ -59,8 +59,8 @@ class PhonescompaniesMigration_100 extends Migration
                         [
                             'referencedTable' => 'phones',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['phoneId'],
-                            'referencedColumns' => ['phoneId'],
+                            'columns' => ['phoneid'],
+                            'referencedColumns' => ['phoneid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

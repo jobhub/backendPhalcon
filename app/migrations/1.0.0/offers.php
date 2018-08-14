@@ -20,7 +20,7 @@ class OffersMigration_100 extends Migration
         $this->morphTable('offers', [
                 'columns' => [
                     new Column(
-                        'offerId',
+                        'offerid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,29 +30,30 @@ class OffersMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'offerId'
+                            'after' => 'offerid'
                         ]
                     ),
                     new Column(
-                        'auctionId',
+                        'taskid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'userId'
+                            'after' => 'subjectid'
                         ]
                     ),
                     new Column(
                         'deadline',
                         [
                             'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
                             'size' => 1,
-                            'after' => 'auctionId'
+                            'after' => 'taskid'
                         ]
                     ),
                     new Column(
@@ -67,6 +68,7 @@ class OffersMigration_100 extends Migration
                         'price',
                         [
                             'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
                             'size' => 32,
                             'after' => 'description'
                         ]
@@ -74,17 +76,64 @@ class OffersMigration_100 extends Migration
                     new Column(
                         'selected',
                         [
-                            'type' => Column::TYPE_INTEGER,
-                            'default' => "0",
-                            'size' => 16,
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
                             'after' => 'price'
+                        ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'selected'
+                        ]
+                    ),
+                    new Column(
+                        'subjecttype',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
+                            'size' => 32,
+                            'after' => 'deleted'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'subjecttype'
+                        ]
+                    ),
+                    new Column(
+                        'confirmed',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'deletedcascade'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('offers_auctionId_idx', ['auctionId'], null),
-                    new Index('offers_pkey', ['offerId'], null),
-                    new Index('offers_userId_idx', ['userId'], null)
+                    new Index('offers_auctionId_idx', ['taskid'], null),
+                    new Index('offers_pkey', ['offerid'], null),
+                    new Index('offers_userId_idx', ['subjectid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_offers_tasks_taskId',
+                        [
+                            'referencedTable' => 'tasks',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['taskid'],
+                            'referencedColumns' => ['taskid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );

@@ -20,7 +20,7 @@ class PlacesMigration_100 extends Migration
         $this->morphTable('places', [
                 'columns' => [
                     new Column(
-                        'placeId',
+                        'placeid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -33,7 +33,7 @@ class PlacesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 45,
-                            'after' => 'placeId'
+                            'after' => 'placeid'
                         ]
                     ),
                     new Column(
@@ -53,7 +53,7 @@ class PlacesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'radiusForTender',
+                        'radiusfortender',
                         [
                             'type' => Column::TYPE_DOUBLE,
                             'size' => 53,
@@ -61,18 +61,18 @@ class PlacesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'radiusForTender'
+                            'after' => 'radiusfortender'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('places_pkey', ['placeId'], null),
-                    new Index('places_userId_idx', ['userId'], null)
+                    new Index('places_pkey', ['placeid'], null),
+                    new Index('places_userId_idx', ['userid'], null)
                 ],
             ]
         );

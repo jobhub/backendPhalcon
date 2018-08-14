@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class PhonespointsMigration_100
+ * Class ServicespointsMigration_100
  */
-class PhonespointsMigration_100 extends Migration
+class ServicespointsMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,10 +17,10 @@ class PhonespointsMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('phonesPoints', [
+        $this->morphTable('servicesPoints', [
                 'columns' => [
                     new Column(
-                        'phoneid',
+                        'serviceid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -34,33 +34,32 @@ class PhonespointsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'phoneid'
+                            'after' => 'serviceid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('phonesPoints_pkey', ['phoneid', 'pointid'], null),
-                    new Index('phonesPoints_pointId_idx', ['pointid'], null)
+                    new Index('servicesPoints_pkey', ['serviceid', 'pointid'], null)
                 ],
                 'references' => [
                     new Reference(
-                        'foreignkey_phonesPoints_phones_phoneId',
-                        [
-                            'referencedTable' => 'phones',
-                            'referencedSchema' => 'service_services',
-                            'columns' => ['phoneid'],
-                            'referencedColumns' => ['phoneid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
-                        ]
-                    ),
-                    new Reference(
-                        'foreignkey_phonesPoints_tradePoints_pointId',
+                        'foreignkey_servicesPoints_tradePoints_pointId',
                         [
                             'referencedTable' => 'tradePoints',
                             'referencedSchema' => 'service_services',
                             'columns' => ['pointid'],
                             'referencedColumns' => ['pointid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    ),
+                    new Reference(
+                        'foreignkey_servicesPoints_services_serviceId',
+                        [
+                            'referencedTable' => 'services',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['serviceid'],
+                            'referencedColumns' => ['serviceid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

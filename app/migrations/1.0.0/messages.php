@@ -20,7 +20,7 @@ class MessagesMigration_100 extends Migration
         $this->morphTable('messages', [
                 'columns' => [
                     new Column(
-                        'messageId',
+                        'messageid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -35,7 +35,7 @@ class MessagesMigration_100 extends Migration
                             'type' => Column::TYPE_TEXT,
                             'notNull' => true,
                             'size' => 1,
-                            'after' => 'messageId'
+                            'after' => 'messageid'
                         ]
                     ),
                     new Column(
@@ -47,7 +47,7 @@ class MessagesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userIdObject',
+                        'useridobject',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -56,17 +56,17 @@ class MessagesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userIdSubject',
+                        'useridsubject',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'userIdObject'
+                            'after' => 'useridobject'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('messages_pkey', ['messageId'], null)
+                    new Index('messages_pkey', ['messageid'], null)
                 ],
                 'references' => [
                     new Reference(
@@ -74,8 +74,8 @@ class MessagesMigration_100 extends Migration
                         [
                             'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['userIdObject'],
-                            'referencedColumns' => ['userId'],
+                            'columns' => ['useridobject'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]
@@ -85,8 +85,8 @@ class MessagesMigration_100 extends Migration
                         [
                             'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['userIdSubject'],
-                            'referencedColumns' => ['userId'],
+                            'columns' => ['useridsubject'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

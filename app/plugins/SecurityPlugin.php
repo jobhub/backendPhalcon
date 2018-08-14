@@ -59,7 +59,7 @@ class SecurityPlugin extends Plugin
                 'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
                 'userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
-                        'addPhoto'],
+                    'addPhoto'],
 
                 'tenderAPI' => ['delete'],
                 'reviews' => ['new', 'create'],
@@ -135,6 +135,7 @@ class SecurityPlugin extends Plugin
                 'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
                 'ServicesAPI' => ['getServicesForSubject', 'getServices'],
+                'Servicesapi' => ['getServicesForSubject', 'getServices'],
                 'ReviewsAPI' => ['getReviews'],
             ];
             foreach ($publicResources as $resource => $actions) {
@@ -207,10 +208,12 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
+        $response = new Response();
+
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
         //Здесь будет логирование
-        $log = new Logs();
+        /*$log = new Logs();
         if ($this->session->get("auth") != null) {
             $auth = $this->session->get("auth");
             $log->setUserId($auth['id']);
@@ -224,7 +227,7 @@ class SecurityPlugin extends Plugin
             foreach ($log->getMessages() as $message) {
                 $this->flash->error((string)$message);
             }
-        }
+        }*/
 
         if ($this->session->get("auth") != null) {
             $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
@@ -253,6 +256,9 @@ class SecurityPlugin extends Plugin
         $controller = $dispatcher->getControllerName();
         $action = $dispatcher->getActionName();
 
+        /*echo  $dispatcher->getControllerName()  .' ' . $dispatcher->getActionName();
+        exit;*/
+
         $acl = $this->getAcl();
 
         if (!$acl->isResource($controller)) {
@@ -269,12 +275,11 @@ class SecurityPlugin extends Plugin
         }
 
         $allowed = $acl->isAllowed($role, $controller, $action);
+
         if (!$allowed) {
             $this->flash->error("Нет доступа.");
-            $dispatcher->forward([
-                'controller' => 'errors',
-                'action' => 'show401'
-            ]);
+            $dispatcher->forward(['controller' => 'errors',
+                'action' => 'show401']);
             /*$responce = new Response();
             $responce->setStatusCode('404', 'Not found');
             $responce->send();*/
@@ -282,8 +287,7 @@ class SecurityPlugin extends Plugin
         }
     }
 
-    private
-    function convertRequestBody()
+    private function convertRequestBody()
     {
         if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
             $params = $this->request->getJsonRawBody();

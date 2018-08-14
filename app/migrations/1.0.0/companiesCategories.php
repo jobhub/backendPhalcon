@@ -20,7 +20,7 @@ class CompaniescategoriesMigration_100 extends Migration
         $this->morphTable('companiesCategories', [
                 'columns' => [
                     new Column(
-                        'companyId',
+                        'companyid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,18 +29,42 @@ class CompaniescategoriesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'categoryId',
+                        'categoryid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'companyId'
+                            'after' => 'companyid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('companiesCategories_categoryId_idx', ['categoryId'], null),
-                    new Index('companiesCategories_pkey', ['companyId', 'categoryId'], null)
+                    new Index('companiesCategories_categoryId_idx', ['categoryid'], null),
+                    new Index('companiesCategories_pkey', ['companyid', 'categoryid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_companiesCategories_categories_categoryId',
+                        [
+                            'referencedTable' => 'categories',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['categoryid'],
+                            'referencedColumns' => ['categoryid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    ),
+                    new Reference(
+                        'foreignkey_companiesCategories_companies_companyId',
+                        [
+                            'referencedTable' => 'companies',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['companyid'],
+                            'referencedColumns' => ['companyid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );

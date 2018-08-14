@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class PhonespointsMigration_100
+ * Class FavoritecompaniesMigration_100
  */
-class PhonespointsMigration_100 extends Migration
+class FavoritecompaniesMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,10 +17,10 @@ class PhonespointsMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('phonesPoints', [
+        $this->morphTable('favoriteCompanies', [
                 'columns' => [
                     new Column(
-                        'phoneid',
+                        'companyid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,38 +29,37 @@ class PhonespointsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'pointid',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'phoneid'
+                            'after' => 'companyid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('phonesPoints_pkey', ['phoneid', 'pointid'], null),
-                    new Index('phonesPoints_pointId_idx', ['pointid'], null)
+                    new Index('favouriteCompanies_pkey', ['companyid', 'userid'], null)
                 ],
                 'references' => [
                     new Reference(
-                        'foreignkey_phonesPoints_phones_phoneId',
+                        'favouriteCompanies_companies_companyId',
                         [
-                            'referencedTable' => 'phones',
+                            'referencedTable' => 'companies',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['phoneid'],
-                            'referencedColumns' => ['phoneid'],
+                            'columns' => ['companyid'],
+                            'referencedColumns' => ['companyid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]
                     ),
                     new Reference(
-                        'foreignkey_phonesPoints_tradePoints_pointId',
+                        'favouriteCompanies_users_userId',
                         [
-                            'referencedTable' => 'tradePoints',
+                            'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['pointid'],
-                            'referencedColumns' => ['pointid'],
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

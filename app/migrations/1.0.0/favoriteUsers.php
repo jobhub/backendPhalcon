@@ -20,7 +20,7 @@ class FavoriteusersMigration_100 extends Migration
         $this->morphTable('favoriteUsers', [
                 'columns' => [
                     new Column(
-                        'userSubject',
+                        'usersubject',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,18 +29,18 @@ class FavoriteusersMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userObject',
+                        'userobject',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'userSubject'
+                            'after' => 'usersubject'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('favoriteUsers_pkey', ['userSubject', 'userObject'], null),
-                    new Index('favoriteUsers_userObject_idx', ['userObject'], null)
+                    new Index('favoriteUsers_pkey', ['usersubject', 'userobject'], null),
+                    new Index('favoriteUsers_userObject_idx', ['userobject'], null)
                 ],
             ]
         );

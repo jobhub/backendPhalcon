@@ -20,7 +20,7 @@ class NewsMigration_100 extends Migration
         $this->morphTable('news', [
                 'columns' => [
                     new Column(
-                        'newId',
+                        'newid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,34 +30,60 @@ class NewsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'newType',
+                        'subjecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'newId'
+                            'after' => 'newid'
                         ]
                     ),
                     new Column(
-                        'identify',
+                        'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'newType'
+                            'after' => 'subjecttype'
                         ]
                     ),
                     new Column(
                         'date',
                         [
                             'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
                             'size' => 1,
-                            'after' => 'identify'
+                            'after' => 'subjectid'
+                        ]
+                    ),
+                    new Column(
+                        'newtext',
+                        [
+                            'type' => Column::TYPE_TEXT,
+                            'size' => 1,
+                            'after' => 'date'
+                        ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'newtext'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'deleted'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('news_pkey', ['newId'], null)
+                    new Index('news_pkey', ['newid'], null)
                 ],
             ]
         );

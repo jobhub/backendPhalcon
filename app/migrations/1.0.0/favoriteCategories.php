@@ -17,10 +17,10 @@ class FavoritecategoriesMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('FavoriteCategories', [
+        $this->morphTable('favoriteCategories', [
                 'columns' => [
                     new Column(
-                        'categoryId',
+                        'categoryid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,12 +29,12 @@ class FavoritecategoriesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'categoryId'
+                            'after' => 'categoryid'
                         ]
                     ),
                     new Column(
@@ -42,13 +42,13 @@ class FavoritecategoriesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_DOUBLE,
                             'size' => 53,
-                            'after' => 'userId'
+                            'after' => 'userid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('favoriteCategories_pkey', ['categoryId', 'userId'], null),
-                    new Index('favoriteCategories_userId_idx', ['userId'], null)
+                    new Index('favoriteCategories_pkey', ['categoryid', 'userid'], null),
+                    new Index('favoriteCategories_userId_idx', ['userid'], null)
                 ],
             ]
         );

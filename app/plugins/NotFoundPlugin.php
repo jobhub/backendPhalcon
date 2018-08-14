@@ -32,6 +32,10 @@ class NotFoundPlugin extends Plugin
             fclose($file);
         }*/
 
+		/*echo $exception->getMessage()."\n\r";
+        echo $dispatcher->getControllerName().' '.$dispatcher->getActionName()."\n\r";
+		exit;*/
+
 		if ($exception instanceof DispatcherException) {
 			switch ($exception->getCode()) {
 				case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:

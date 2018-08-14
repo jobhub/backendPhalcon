@@ -20,7 +20,7 @@ class PhonesMigration_100 extends Migration
         $this->morphTable('phones', [
                 'columns' => [
                     new Column(
-                        'phoneId',
+                        'phoneid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -35,12 +35,12 @@ class PhonesMigration_100 extends Migration
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
                             'size' => 20,
-                            'after' => 'phoneId'
+                            'after' => 'phoneid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('phones_pkey', ['phoneId'], null)
+                    new Index('phones_pkey', ['phoneid'], null)
                 ],
             ]
         );

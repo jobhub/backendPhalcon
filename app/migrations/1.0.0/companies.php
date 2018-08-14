@@ -20,7 +20,7 @@ class CompaniesMigration_100 extends Migration
         $this->morphTable('companies', [
                 'columns' => [
                     new Column(
-                        'companyId',
+                        'companyid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -35,11 +35,11 @@ class CompaniesMigration_100 extends Migration
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
                             'size' => 45,
-                            'after' => 'companyId'
+                            'after' => 'companyid'
                         ]
                     ),
                     new Column(
-                        'fullName',
+                        'fullname',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
@@ -48,35 +48,35 @@ class CompaniesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'TIN',
+                        'tin',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 15,
-                            'after' => 'fullName'
+                            'size' => 12,
+                            'after' => 'fullname'
                         ]
                     ),
                     new Column(
-                        'regionId',
+                        'regionid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'size' => 32,
-                            'after' => 'TIN'
+                            'after' => 'tin'
                         ]
                     ),
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'size' => 32,
-                            'after' => 'regionId'
+                            'after' => 'regionid'
                         ]
                     ),
                     new Column(
-                        'webSite',
+                        'website',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 90,
-                            'after' => 'userId'
+                            'after' => 'userid'
                         ]
                     ),
                     new Column(
@@ -84,22 +84,67 @@ class CompaniesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 90,
-                            'after' => 'webSite'
+                            'after' => 'website'
                         ]
                     ),
                     new Column(
-                        'isMaster',
+                        'ismaster',
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'size' => 1,
                             'after' => 'email'
                         ]
+                    ),
+                    new Column(
+                        'deleted',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
+                            'size' => 1,
+                            'after' => 'ismaster'
+                        ]
+                    ),
+                    new Column(
+                        'deletedcascade',
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 1,
+                            'after' => 'deleted'
+                        ]
+                    ),
+                    new Column(
+                        'logotype',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 256,
+                            'after' => 'deletedcascade'
+                        ]
+                    ),
+                    new Column(
+                        'ratingexecutor',
+                        [
+                            'type' => Column::TYPE_FLOAT,
+                            'default' => "5",
+                            'notNull' => true,
+                            'size' => 24,
+                            'after' => 'logotype'
+                        ]
+                    ),
+                    new Column(
+                        'ratingclient',
+                        [
+                            'type' => Column::TYPE_FLOAT,
+                            'default' => "5",
+                            'notNull' => true,
+                            'size' => 24,
+                            'after' => 'ratingexecutor'
+                        ]
                     )
                 ],
                 'indexes' => [
-                    new Index('companies_pkey', ['companyId'], null),
-                    new Index('companies_regionId_idx', ['regionId'], null),
-                    new Index('companies_userId_idx', ['userId'], null)
+                    new Index('companies_pkey', ['companyid'], null),
+                    new Index('companies_regionId_idx', ['regionid'], null),
+                    new Index('companies_userId_idx', ['userid'], null)
                 ],
                 'references' => [
                     new Reference(
@@ -107,8 +152,8 @@ class CompaniesMigration_100 extends Migration
                         [
                             'referencedTable' => 'regions',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['regionId'],
-                            'referencedColumns' => ['regionId'],
+                            'columns' => ['regionid'],
+                            'referencedColumns' => ['regionid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]
@@ -118,8 +163,8 @@ class CompaniesMigration_100 extends Migration
                         [
                             'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['userId'],
-                            'referencedColumns' => ['userId'],
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]
@@ -136,7 +181,7 @@ class CompaniesMigration_100 extends Migration
      */
     public function up()
     {
-        $this->morph();
+
     }
 
     /**

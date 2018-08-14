@@ -20,7 +20,7 @@ class CategoriesMigration_100 extends Migration
         $this->morphTable('categories', [
                 'columns' => [
                     new Column(
-                        'categoryId',
+                        'categoryid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,34 +30,42 @@ class CategoriesMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'categoryName',
+                        'categoryname',
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
                             'size' => 45,
-                            'after' => 'categoryId'
+                            'after' => 'categoryid'
                         ]
                     ),
                     new Column(
-                        'parentId',
+                        'parentid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'size' => 32,
-                            'after' => 'categoryName'
+                            'after' => 'categoryname'
                         ]
                     ),
                     new Column(
-                        'detail',
+                        'description',
                         [
                             'type' => Column::TYPE_TEXT,
                             'size' => 1,
-                            'after' => 'parentId'
+                            'after' => 'parentid'
+                        ]
+                    ),
+                    new Column(
+                        'img',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 260,
+                            'after' => 'description'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('categories_categoryName_idx', ['categoryName'], null),
-                    new Index('categories_pkey', ['categoryId'], null)
+                    new Index('categories_categoryName_idx', ['categoryname'], null),
+                    new Index('categories_pkey', ['categoryid'], null)
                 ],
             ]
         );

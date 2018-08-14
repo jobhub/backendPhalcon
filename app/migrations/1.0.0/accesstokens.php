@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class PhonespointsMigration_100
+ * Class AccesstokensMigration_100
  */
-class PhonespointsMigration_100 extends Migration
+class AccesstokensMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,50 +17,57 @@ class PhonespointsMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('phonesPoints', [
+        $this->morphTable('accesstokens', [
                 'columns' => [
                     new Column(
-                        'phoneid',
+                        'tokenid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
+                            'autoIncrement' => true,
                             'size' => 32,
                             'first' => true
                         ]
                     ),
                     new Column(
-                        'pointid',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'size' => 32,
-                            'after' => 'phoneid'
+                            'after' => 'tokenid'
+                        ]
+                    ),
+                    new Column(
+                        'token',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'notNull' => true,
+                            'size' => 164,
+                            'after' => 'userid'
+                        ]
+                    ),
+                    new Column(
+                        'lifetime',
+                        [
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'notNull' => true,
+                            'size' => 1,
+                            'after' => 'token'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('phonesPoints_pkey', ['phoneid', 'pointid'], null),
-                    new Index('phonesPoints_pointId_idx', ['pointid'], null)
+                    new Index('accesstokens_pkey', ['tokenid'], null)
                 ],
                 'references' => [
                     new Reference(
-                        'foreignkey_phonesPoints_phones_phoneId',
+                        'foreignkey_accesstokens_users_userid',
                         [
-                            'referencedTable' => 'phones',
+                            'referencedTable' => 'users',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['phoneid'],
-                            'referencedColumns' => ['phoneid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
-                        ]
-                    ),
-                    new Reference(
-                        'foreignkey_phonesPoints_tradePoints_pointId',
-                        [
-                            'referencedTable' => 'tradePoints',
-                            'referencedSchema' => 'service_services',
-                            'columns' => ['pointid'],
-                            'referencedColumns' => ['pointid'],
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

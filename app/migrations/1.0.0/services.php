@@ -6,9 +6,9 @@ use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\Migration;
 
 /**
- * Class UsersMigration_100
+ * Class ServicesMigration_100
  */
-class UsersMigration_100 extends Migration
+class ServicesMigration_100 extends Migration
 {
     /**
      * Define the table structure
@@ -17,10 +17,10 @@ class UsersMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('users', [
+        $this->morphTable('services', [
                 'columns' => [
                     new Column(
-                        'userid',
+                        'serviceid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -30,37 +30,36 @@ class UsersMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'email',
+                        'subjectid',
                         [
-                            'type' => Column::TYPE_VARCHAR,
-                            'size' => 30,
-                            'after' => 'userid'
-                        ]
-                    ),
-                    new Column(
-                        'password',
-                        [
-                            'type' => Column::TYPE_VARCHAR,
-                            'size' => 64,
-                            'after' => 'email'
-                        ]
-                    ),
-                    new Column(
-                        'role',
-                        [
-                            'type' => Column::TYPE_VARCHAR,
+                            'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 27,
-                            'after' => 'password'
+                            'size' => 32,
+                            'after' => 'serviceid'
                         ]
                     ),
                     new Column(
-                        'fake',
+                        'description',
                         [
-                            'type' => Column::TYPE_BOOLEAN,
-                            'default' => "false",
+                            'type' => Column::TYPE_TEXT,
                             'size' => 1,
-                            'after' => 'role'
+                            'after' => 'subjectid'
+                        ]
+                    ),
+                    new Column(
+                        'pricemin',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'description'
+                        ]
+                    ),
+                    new Column(
+                        'pricemax',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'pricemin'
                         ]
                     ),
                     new Column(
@@ -69,13 +68,14 @@ class UsersMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'size' => 1,
-                            'after' => 'fake'
+                            'after' => 'pricemax'
                         ]
                     ),
                     new Column(
-                        'phoneid',
+                        'subjecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
                             'size' => 32,
                             'after' => 'deleted'
                         ]
@@ -85,41 +85,46 @@ class UsersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'size' => 1,
-                            'after' => 'phoneid'
+                            'after' => 'subjecttype'
                         ]
                     ),
                     new Column(
-                        'issocial',
+                        'datepublication',
                         [
-                            'type' => Column::TYPE_BOOLEAN,
-                            'default' => "false",
+                            'type' => Column::TYPE_TIMESTAMP,
                             'notNull' => true,
                             'size' => 1,
                             'after' => 'deletedcascade'
                         ]
                     ),
                     new Column(
-                        'activated',
+                        'regionid',
                         [
-                            'type' => Column::TYPE_BOOLEAN,
-                            'default' => "false",
-                            'notNull' => true,
-                            'size' => 1,
-                            'after' => 'issocial'
+                            'type' => Column::TYPE_INTEGER,
+                            'size' => 32,
+                            'after' => 'datepublication'
+                        ]
+                    ),
+                    new Column(
+                        'name',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 150,
+                            'after' => 'regionid'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('users_pkey', ['userid'], null)
+                    new Index('service_pkey', ['serviceid'], null)
                 ],
                 'references' => [
                     new Reference(
-                        'foreignkey_users_phones',
+                        'foreignkey_services_regions_regionId',
                         [
-                            'referencedTable' => 'phones',
+                            'referencedTable' => 'regions',
                             'referencedSchema' => 'service_services',
-                            'columns' => ['phoneid'],
-                            'referencedColumns' => ['phoneid'],
+                            'columns' => ['regionid'],
+                            'referencedColumns' => ['regionid'],
                             'onUpdate' => '',
                             'onDelete' => ''
                         ]

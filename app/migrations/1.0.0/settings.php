@@ -20,7 +20,7 @@ class SettingsMigration_100 extends Migration
         $this->morphTable('settings', [
                 'columns' => [
                     new Column(
-                        'userId',
+                        'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
@@ -29,38 +29,51 @@ class SettingsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'notificationEmail',
+                        'notificationemail',
                         [
-                            'type' => Column::TYPE_INTEGER,
-                            'default' => "0",
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
                             'notNull' => true,
-                            'size' => 16,
-                            'after' => 'userId'
+                            'size' => 1,
+                            'after' => 'userid'
                         ]
                     ),
                     new Column(
-                        'notificationSms',
+                        'notificationpush',
                         [
-                            'type' => Column::TYPE_INTEGER,
-                            'default' => "0",
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
                             'notNull' => true,
-                            'size' => 16,
-                            'after' => 'notificationEmail'
+                            'size' => 1,
+                            'after' => 'notificationemail'
                         ]
                     ),
                     new Column(
-                        'notificationPush',
+                        'notificationsms',
                         [
-                            'type' => Column::TYPE_INTEGER,
-                            'default' => "0",
+                            'type' => Column::TYPE_BOOLEAN,
+                            'default' => "false",
                             'notNull' => true,
-                            'size' => 16,
-                            'after' => 'notificationSms'
+                            'size' => 1,
+                            'after' => 'notificationpush'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('settings_pkey', ['userId'], null)
+                    new Index('settings_pkey', ['userid'], null)
+                ],
+                'references' => [
+                    new Reference(
+                        'foreignkey_settings_users_userId',
+                        [
+                            'referencedTable' => 'users',
+                            'referencedSchema' => 'service_services',
+                            'columns' => ['userid'],
+                            'referencedColumns' => ['userid'],
+                            'onUpdate' => '',
+                            'onDelete' => ''
+                        ]
+                    )
                 ],
             ]
         );
