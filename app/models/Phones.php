@@ -161,9 +161,7 @@ class Phones extends \Phalcon\Mvc\Model
      * @return string - отформатированный номер, если сумел
      */
     public static function formatPhone($phone){
-
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
-
         try {
             if($phone[0] != '+') {
                 if ($phone[0] == '8') {
@@ -174,13 +172,11 @@ class Phones extends \Phalcon\Mvc\Model
                 }
             }
             $swissNumberProto = $phoneUtil->parse($phone, '');
-
         }catch(\libphonenumber\NumberParseException $exception){
             return $phone;
         }
 
         $formatPhone = $phoneUtil->formatOutOfCountryCallingNumber($swissNumberProto, "");
-
         return $formatPhone;
     }
 

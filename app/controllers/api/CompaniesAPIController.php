@@ -18,13 +18,27 @@ class CompaniesAPIController extends Controller
      * @method GET
      * @return string - json array компаний
      */
-    public function getCompaniesAction()
+    public function getCompaniesAction($withPoints = false)
     {
-        if (($this->request->isGet() && $this->session->get('auth')) || $this->request->isPost()) {
+        if (($this->request->isGet() && $this->session->get('auth'))) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
             $companies = Companies::findByUserid($userId);
+
+            if($withPoints){
+                $companies2 = [];
+                foreach($companies as $company) {
+                    $points = TradePoints::findBySubject($company->getCompanyId(),1);
+                    $companies2[] = ['company' => $company, 'points' => $points];
+                }
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'companies' => $companies2
+                ]);
+                return $response;
+            }
+
             $response->setJsonContent([
                 'status' => STATUS_OK,
                 'companies' => $companies
@@ -42,7 +56,7 @@ class CompaniesAPIController extends Controller
      *
      * @method POST
      * @params (Обязательные)name, fullName
-     * @params (необязательные) TIN, regionId, webSite, email
+     * @params (необязательные) TIN, regionId, webSite, email, description
      * @params (для модератора) isMaster - если true, то еще и userId - кому будет принадлежать
      * @return Response
      */
@@ -60,6 +74,7 @@ class CompaniesAPIController extends Controller
             $company->setRegionId($this->request->getPost("regionId"));
             $company->setWebSite($this->request->getPost("webSite"));
             $company->setEmail($this->request->getPost("email"));
+            $company->setDescription($this->request->getPost("description"));
 
             if ($this->request->getPost("isMaster") && $this->request->getPost("isMaster") != 0) {
                 if ($auth['role'] != ROLE_MODERATOR) {
@@ -166,7 +181,7 @@ class CompaniesAPIController extends Controller
     /**
      * Редактирует данные компании
      * @method PUT
-     * @params companyId, name, fullName,TIN, regionId, webSite, email
+     * @params companyId, name, fullName,TIN, regionId, webSite, email, description
      * @params isMaster - если true, то еще и userId - кому будет принадлежать
      * @return Response
      */
@@ -196,6 +211,7 @@ class CompaniesAPIController extends Controller
             $company->setRegionId($this->request->getPut("regionId"));
             $company->setWebSite($this->request->getPut("webSite"));
             $company->setEmail($this->request->getPut("email"));
+            $company->setDescription($this->request->getPut("description"));
 
             if ($this->request->getPut("isMaster") && $this->request->getPut("isMaster") != 0) {
 

@@ -26,14 +26,7 @@ class NotFoundPlugin extends Plugin
 	{
 		error_log($exception->getMessage() . PHP_EOL . $exception->getTraceAsString());
 
-		/*$file = fopen('logs.txt','a');
-        if($file && $file!= null){
-            fwrite($file, $exception->getMessage());
-            fclose($file);
-        }*/
-
-		/*echo $exception->getMessage()."\n\r";
-        echo $dispatcher->getControllerName().' '.$dispatcher->getActionName()."\n\r";
+		/*echo $exception->getMessage();
 		exit;*/
 
 		if ($exception instanceof DispatcherException) {

@@ -59,7 +59,54 @@ class AuctionsMigration_100 extends Migration
                     new Index('auctions_pkey', ['auctionId'], null),
                     new Index('auctions_taskId_idx', ['taskId'], null)
                 ],
-            ]
+            ],
+        'withoutColumns'
+        );
+
+        $this->morphTable('auctions', [
+            'columns' => [
+                new Column(
+                    'auctionId',
+                    [
+                        'type' => Column::TYPE_INTEGER,
+                        'notNull' => true,
+                        'autoIncrement' => true,
+                        'size' => 32,
+                        'first' => true
+                    ]
+                ),
+                new Column(
+                    'taskId',
+                    [
+                        'type' => Column::TYPE_INTEGER,
+                        'notNull' => true,
+                        'size' => 32,
+                        'after' => 'auctionId'
+                    ]
+                ),
+                new Column(
+                    'dateStart',
+                    [
+                        'type' => Column::TYPE_TIMESTAMP,
+                        'size' => 1,
+                        'after' => 'taskId'
+                    ]
+                ),
+                new Column(
+                    'dateEnd',
+                    [
+                        'type' => Column::TYPE_TIMESTAMP,
+                        'size' => 1,
+                        'after' => 'dateStart'
+                    ]
+                )
+            ],
+            'indexes' => [
+                new Index('auctions_pkey', ['auctionId'], null),
+                new Index('auctions_taskId_idx', ['taskId'], null)
+            ],
+        ],
+            'columns'
         );
     }
 

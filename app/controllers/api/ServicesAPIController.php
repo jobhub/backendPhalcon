@@ -35,19 +35,41 @@ class ServicesAPIController extends Controller
     }
 
     /**
-     * Возвращает услуги. Если указана categories, то услуги в данной категории.
-     * @method GET
+     * Возвращает услуги. Во-первых, принимает тип запроса в параметре typeQuery:
+     * 0 - принимает строку userQuery, центральную точку для поиска - center => [longitude => ..., latitude =>  ...],
+     * крайнюю точку для определения радиуса - diagonal => [longitude => ..., latitude =>  ...],
+     * массив регионов (id-шников) (regionsId). возвращает
+     * список услуг и всего им соответствующего;
+     * 1 - запрос на получение элементов интеллектуального поиска. Принимает те же данные, что и в 0-вом запросе.
+     * Возвращает массив с типом элемента (строкой - 'company', 'point' и другое), id элемента и его названием для отображения в строке
+     *  ([{type : ..., id : ..., name : ...}, {...}]);
+     * 2 - еще один запрос на получение услуг. Принимает id элемента и тип строкой (type), как отдавалось в запрос 1.
+     * Возвращает массив услуг, как в 0-вом запросе.
+     * 3 - запрос на получение услуг по категориям. Принимает массив категорий categoriesId, центральную и крайнюю точку
+     * и массив регионов, как в 0-вом запросе. Возвращает массив услуг, как везде.
+     * 4 - запрос для поиска по области. Центральная точка, крайняя точка, массив регионов, которые попадут в область.
+     * Возвращает массив услуг, как везде.
+     * @method POST
      *
-     * @param $categories = null
-     * @return string json массив [service, company/userinfo,[categories],[tradepoints],[images]]
+     * @params int typeQuery (обязательно)
+     * @params array center (необязательно) [longitude, latiitude]
+     * @params array diagonal (необязательно) [longitude, latiitude]
+     * @params string type (необязательно) 'company', 'service', 'category'.
+     * @params int id (необязательно)
+     * @params string userQuery (необязательно)
+     * @params array regionsId (необязательно) массив регионов,
+     * @params array categoriesId (необязательно) массив категорий,
+     *
+     * @return string json массив [service, company/userinfo,[categories],[tradepoints],[images]] или
+     *   json массив [{type : ..., id : ..., name : ...}, {...}].
      */
-    public function getServicesAction($categories = null){
-        if ($this->request->isGet()) {
+    public function getServicesAction(){
+        if ($this->request->isPost()) {
             $response = new Response();
 
             $service = new Services();
 
-            $result = $service->getServices($categories);
+            $result = $service->getServices($this->request->getPost('categories'));
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
@@ -332,8 +354,8 @@ class ServicesAPIController extends Controller
                 $service->setPriceMax($this->request->getPost("priceMax"));
             }
 
-            $service->setPriceMin($this->request->getPost("longitude"));
-            $service->setPriceMax($this->request->getPost("latitude"));
+            $service->setLongitude($this->request->getPost("longitude"));
+            $service->setLatitude($this->request->getPost("latitude"));
 
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
@@ -349,8 +371,8 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            //$service->setRegionId($this->request->getPost("regionId"));
-            $service->setRegionId(1);
+            $service->setRegionId($this->request->getPost("regionId"));
+            //$service->setRegionId(1);
             $this->db->begin();
 
             if (!$service->save()) {
@@ -398,12 +420,13 @@ class ServicesAPIController extends Controller
 
                 foreach ($points as $point) {
                     //$point2 = json_decode($point);
-                    $_POST['address'] = $point->address;
+                    /*$_POST['address'] = $point->address;
                     $_POST['name'] = $point->name;
                     $_POST['longitude'] = $point->longitude;
                     $_POST['latitude'] = $point->latitude;
 
-                    $result = $this->TradePointsAPI->addTradePointAction();
+                    $result = $this->TradePointsAPI->addTradePointAction();*/
+                    $result = $this->TradePointsAPI->addTradePoint($point);
                     $result = json_decode($result->getContent());
 
                     if($result->status!= STATUS_OK){

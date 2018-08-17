@@ -40,7 +40,7 @@ class TenderAPIController extends Controller
                     $offer = null;
 
                 if($userId == null || $userId != $user->getUserId())
-                    $auctionAndTask[] = ['tender' => $auction, 'tasks' => $task, 'userinfo' => $user, 'offer' => $offer];
+                    $auctionAndTask[] = ['tender' => $auction, 'tasks' => $task, 'Userinfo' => $user, 'offer' => $offer];
             }
 
             /*$response = new Response();

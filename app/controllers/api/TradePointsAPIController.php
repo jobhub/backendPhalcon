@@ -166,7 +166,7 @@ class TradePointsAPIController extends Controller
      * @method POST
      *
      * @params (Обязательные)   string name, double latitude, double longitude,
-     * @params Необязательные) string email, string webSite, string address, string fax,
+     * @params (Необязательные) string email, string webSite, string address, string fax,
      * @params (Необязательные) (int userManagerId, int companyId) - парой
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
@@ -176,72 +176,154 @@ class TradePointsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
+            /*
+                        $point = new TradePoints();
 
-            $point = new TradePoints();
+                        if ($params["companyId")) {
+                            $company = Companies::findFirstByCompanyid($params["companyId"));
 
-            if ($this->request->getPost("companyId")) {
-                $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
+                            if (!Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'addPoint')) {
+                                $response->setJsonContent(
+                                    [
+                                        "status" => STATUS_WRONG,
+                                        "errors" => ['permission error']
+                                    ]
+                                );
+                                return $response;
+                            }
 
-                if (!Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'addPoint')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
+                            $point->setSubjectId($params["companyId"));
+                            $point->setSubjectType(1);
+                            if ($params["userManagerId"))
+                                $point->setUserManager($params["userManagerId"));
+                            else {
+                                $point->setUserManager($userId);
+                            }
+                        } else {
+                            $point->setSubjectId($userId);
+                            $point->setSubjectType(0);
+                            $point->setUserManager($userId);
+                        }
 
-                $point->setSubjectId($this->request->getPost("companyId"));
-                $point->setSubjectType(1);
-                if ($this->request->getPost("userManagerId"))
-                    $point->setUserManager($this->request->getPost("userManagerId"));
-                else {
-                    $point->setUserManager($userId);
-                }
-            } else {
-                $point->setSubjectId($userId);
-                $point->setSubjectType(0);
-                $point->setUserManager($userId);
-            }
+                        $point->setName($params["name"));
+                        $point->setEmail($params["email"));
+                        $point->setWebSite($params["webSite"));
+                        $point->setLatitude($params["latitude"));
+                        $point->setLongitude($params["longitude"));
+                        $point->setAddress($params["address"));
+                        $point->setFax($params["fax"));
+                        $point->setTime($params["time"));
+                        $point->setUserManager($params["userId"));
 
-            $point->setName($this->request->getPost("name"));
-            $point->setEmail($this->request->getPost("email"));
-            $point->setWebSite($this->request->getPost("webSite"));
-            $point->setLatitude($this->request->getPost("latitude"));
-            $point->setLongitude($this->request->getPost("longitude"));
-            $point->setAddress($this->request->getPost("address"));
-            $point->setFax($this->request->getPost("fax"));
-            $point->setTime($this->request->getPost("time"));
-            $point->setUserManager($this->request->getPost("userId"));
+                        if (!$point->save()) {
+                            $errors = [];
+                            foreach ($point->getMessages() as $message) {
+                                $errors[] = $message->getMessage();
+                            }
+                            $response->setJsonContent(
+                                [
+                                    "status" => STATUS_WRONG,
+                                    "errors" => $errors
+                                ]
+                            );
+                            return $response;
+                        }
 
-            if (!$point->save()) {
-                $errors = [];
-                foreach ($point->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
+                        $response->setJsonContent(
+                            [
+                                "pointId" =>$point->getPointId(),
+                                "status" => STATUS_OK
+                            ]
+                        );
+
+                        return $response;
+                        */
+            return $this->TradePointsAPI->addTradePoint($_POST);
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Вспомогательная функция для добавления точки оказания услуг. Нужна для предоставления
+     * функции добавления точек оказания услуг из других контроллеров.
+     * Принимает ассоциативный массив params со следующими параметрами:
+     * (Обязательные)   string name, double latitude, double longitude,
+     * (Необязательные) string email, string webSite, string address, string fax,
+     * (Необязательные) (int userManagerId, int companyId) - парой.
+     * Если userId равен null, то берет id и сессии
+     * Недоступна при непосредственных запросах.
+     * @param $params
+     *
+     * @return string - json array в формате Status. Если успешно, то еще и id созданной точки.
+     */
+    public function addTradePoint($params)
+    {
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $response = new Response();
+
+        $point = new TradePoints();
+
+        if ($params["companyId"]) {
+            $company = Companies::findFirstByCompanyid($params["companyId"]);
+
+            if (!Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'addPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
-                        "errors" => $errors
+                        "errors" => ['permission error']
                     ]
                 );
                 return $response;
             }
 
+            $point->setSubjectId($params["companyId"]);
+            $point->setSubjectType(1);
+            if ($params["userManagerId"])
+                $point->setUserManager($params["userManagerId"]);
+            else {
+                $point->setUserManager($userId);
+            }
+        } else {
+            $point->setSubjectId($userId);
+            $point->setSubjectType(0);
+            $point->setUserManager($userId);
+        }
+
+        $point->setName($params["name"]);
+        $point->setEmail($params["email"]);
+        $point->setWebSite($params["webSite"]);
+        $point->setLatitude($params["latitude"]);
+        $point->setLongitude($params["longitude"]);
+        $point->setAddress($params["address"]);
+        $point->setFax($params["fax"]);
+        $point->setTime($params["time"]);
+        $point->setUserManager($params["userId"]);
+
+        if (!$point->save()) {
+            $errors = [];
+            foreach ($point->getMessages() as $message) {
+                $errors[] = $message->getMessage();
+            }
             $response->setJsonContent(
                 [
-                    "pointId" =>$point->getPointId(),
-                    "status" => STATUS_OK
+                    "status" => STATUS_WRONG,
+                    "errors" => $errors
                 ]
             );
-
             return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        $response->setJsonContent(
+            [
+                "pointId" => $point->getPointId(),
+                "status" => STATUS_OK
+            ]
+        );
+
+        return $response;
     }
 
     /**

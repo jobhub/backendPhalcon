@@ -57,7 +57,7 @@ class SecurityPlugin extends Plugin
                 'tasks' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'mytasks', 'doingtasks', 'workingtasks', 'editing'],
                 'auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
                 'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
-                'userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
+                'Userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
                     'addPhoto'],
 
@@ -72,7 +72,7 @@ class SecurityPlugin extends Plugin
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
                 'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager',
-                    'restoreCompany', 'setCompanyLogotype', 'deleteCompanyTestd'],
+                    'restoreCompany', 'setCompanyLogotype', 'getCompanies', 'deleteCompanyTest'],
 
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
                     'deletePhoneFromTradePoint', 'editPhoneInTradePoint', 'editPhoneInCompany', 'test'],
@@ -93,6 +93,15 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
                 'RegisterAPI' => ['confirm']
             ];
+            $privateResources2 = [];
+            foreach ($privateResources as $resource => $actions) {
+                /*$actions2 = [];
+                foreach($actions as $action)
+                    $actions2[] = Phalcon\Text::camelize($action);*/
+                $privateResources2[SupportClass::transformControllerName($resource)] = $actions;
+            }
+
+            $privateResources = $privateResources2;
 
             foreach ($privateResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
@@ -110,8 +119,16 @@ class SecurityPlugin extends Plugin
                 'categoriesAPI' => ['addCategory', 'editCategory'],
                 'offersAPI' => ['addStatus'],
                 'ReviewsAPI' => ['addType'],
-                'RegionsAPI' => ['pullRegions']
             ];
+
+            $moderatorsResources2 = [];
+            foreach ($moderatorsResources as $resource => $actions) {
+                /*$actions2 = [];
+                foreach($actions as $action)
+                    $actions2[] = Phalcon\Text::camelize($action);*/
+                $moderatorsResources2[SupportClass::transformControllerName($resource)] = $actions;
+            }
+            $moderatorsResources = $moderatorsResources2;
 
             foreach ($moderatorsResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
@@ -121,7 +138,7 @@ class SecurityPlugin extends Plugin
             //БД, все БД.
             $publicResources = [
                 //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'userinfo' => ['viewprofile', 'handler'],
+                'Userinfo' => ['viewprofile', 'handler'],
                 'index' => ['index'],
                 'register' => ['index'],
                 'errors' => ['show401', 'show404', 'show500'],
@@ -132,13 +149,20 @@ class SecurityPlugin extends Plugin
                 'sessionAPI' => ['index', 'authWithSocial', 'end'],
                 'CategoriesAPI' => ['index', 'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
-
-                'CompaniesAPI' => ['getCompanies',],
                 'TasksAPI' => ['getTasksForSubject'],
                 'ServicesAPI' => ['getServicesForSubject', 'getServices'],
-                'Servicesapi' => ['getServicesForSubject', 'getServices'],
                 'ReviewsAPI' => ['getReviews'],
             ];
+
+            $publicResources2 = [];
+            foreach ($publicResources as $resource => $actions) {
+                /*$actions2 = [];
+                foreach($actions as $action)
+                    $actions2[] = Phalcon\Text::camelize($action);*/
+                $publicResources2[SupportClass::transformControllerName($resource)] = $actions;
+            }
+            $publicResources = $publicResources2;
+
             foreach ($publicResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
@@ -174,15 +198,47 @@ class SecurityPlugin extends Plugin
 
     public static function getTokenFromHeader()
     {
+        if (!function_exists('getallheaders')) {
+            //SupportClass::writeMessageInLogFile('Функции getallheaders не существует, пытаюсь создать другую');
+            function getallheaders()
+            {
+                if (!is_array($_SERVER)) {
+                    return array();
+                }
+
+                $headers = array();
+                foreach ($_SERVER as $name => $value) {
+                    if (substr($name, 0, 5) == 'HTTP_') {
+                        $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                    }
+                }
+                return $headers;
+            }
+
+            // SupportClass::writeMessageInLogFile('Типо инициализировал функцию getallheaders');
+        }
+
         //$tokenRecieved = $this->request->getHeader("Authorization");
         $tokenRecieved = null;
-        if (isset(getallheaders()['Authorization']))
+        // SupportClass::writeMessageInLogFile('Попытался запустить функцию getallheaders');
+        try {
+            $result = getallheaders();
+        } catch (Exception $e) {
+            // SupportClass::writeMessageInLogFile('Получил Exception: ' . $e->getMessage());
+        }
+        //SupportClass::writeMessageInLogFile('getheaders[Authorization] = ' . getallheaders()['Authorization']);
+        //SupportClass::writeMessageInLogFile('getheaders[Authorization] = ' . getallheaders()['authorization']);
+
+        if (isset(getallheaders()['Authorization'])) {
+            //SupportClass::writeMessageInLogFile('Перед вызовом getallheaders с получением токена авторизации');
             $tokenRecieved = getallheaders()['Authorization'];
+            //SupportClass::writeMessageInLogFile('После вызовом getallheaders с получением токена авторизации');
+        }
 
         //if($_SERVER['METHOD'])
         if ($tokenRecieved == null)
-            $tokenRecieved = "";
-
+            $tokenRecieved = "aaa";
+        //SupportClass::writeMessageInLogFile('Токен из заголовка = ' . $tokenRecieved);
         return $tokenRecieved;
     }
 
@@ -210,7 +266,8 @@ class SecurityPlugin extends Plugin
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
         $response = new Response();
-
+        /*SupportClass::writeMessageInLogFile('В securityPlugin при вызове ' . $dispatcher->getControllerName()
+            . '/' . $dispatcher->getActionName());*/
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
         //Здесь будет логирование
@@ -229,21 +286,27 @@ class SecurityPlugin extends Plugin
                 $this->flash->error((string)$message);
             }
         }
+        if (!$this->notAPIController($dispatcher->getControllerName())) {
+            if ($this->session->get("auth") != null) {
+                //SupportClass::writeMessageInLogFile('В security: Перед получением токена из заголовка');
+                $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
+                //SupportClass::writeMessageInLogFile('В security: Перед получением токена из БД');
+                //SupportClass::writeMessageInLogFile('В security: id юзера в сессии = ' . $auth['id']);
+                //SupportClass::writeMessageInLogFile('В security: хэш токена = ' . hash('sha256', $tokenRecieved));
+                $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
+                    'bind' => ['userId' => $auth['id'],
+                        'token' => hash('sha256', $tokenRecieved)]]);
 
-        if ($this->session->get("auth") != null) {
-            $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
-            $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
-                'bind' => ['userId' => $auth['id'],
-                    'token' => hash('sha256', $tokenRecieved)]]);
-
-            if (!$token) {
-                $this->session->remove('auth');
-                $this->session->destroy();
-            } else {
-                if (strtotime($token->getLifetime()) <= time()) {
+                //SupportClass::writeMessageInLogFile('В security: После получения токена из БД - '. $token->getToken());
+                if (!$token) {
                     $this->session->remove('auth');
                     $this->session->destroy();
-                    $token->delete();
+                } else {
+                    if (strtotime($token->getLifetime()) <= time()) {
+                        $this->session->remove('auth');
+                        $this->session->destroy();
+                        $token->delete();
+                    }
                 }
             }
         }
@@ -257,9 +320,6 @@ class SecurityPlugin extends Plugin
         $controller = $dispatcher->getControllerName();
         $action = $dispatcher->getActionName();
 
-        /*echo  $dispatcher->getControllerName()  .' ' . $dispatcher->getActionName();
-        exit;*/
-
         $acl = $this->getAcl();
 
         if (!$acl->isResource($controller)) {
@@ -267,11 +327,6 @@ class SecurityPlugin extends Plugin
                 'controller' => 'errors',
                 'action' => 'show404'
             ]);
-
-            /*$responce = new Response();
-
-            $responce->setStatusCode('404', 'Not authorized');
-            $responce->send();*/
             return false;
         }
 
@@ -281,9 +336,6 @@ class SecurityPlugin extends Plugin
             $this->flash->error("Нет доступа.");
             $dispatcher->forward(['controller' => 'errors',
                 'action' => 'show401']);
-            /*$responce = new Response();
-            $responce->setStatusCode('404', 'Not found');
-            $responce->send();*/
             return false;
         }
     }
@@ -291,7 +343,8 @@ class SecurityPlugin extends Plugin
     private function convertRequestBody()
     {
         if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
-            $params = $this->request->getJsonRawBody();
+            $params = $this->request->getRawBody();
+            $params = json_decode($params,true);
             if ($params != null) {
                 if ($this->request->isPost()) {
                     foreach ($params as $key => $param) {
@@ -304,4 +357,11 @@ class SecurityPlugin extends Plugin
         }
     }
 
+    private function notAPIController($controllerName)
+    {
+        if ($controllerName == 'index' || $controllerName == 'errors') {
+            return true;
+        }
+        return false;
+    }
 }

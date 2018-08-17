@@ -127,18 +127,15 @@ $di->setShared('session', function () {
     return $session;
 });
 
-$di->set(
+$di->setShared(
     "cookies",
     function () {
         $cookies = new Cookies();
-
-
-
         return $cookies;
     }
 );
 
-$di->set(
+$di->setShared(
     "dispatcher",
     function () {
         // Создаем менеджер событий
@@ -162,7 +159,7 @@ $di->set(
             new BodyMethodConverter()
         );*/
 
-        $dispatcher = new Dispatcher();
+        $dispatcher = new /*Dispatcher2*/Dispatcher();
 
         $dispatcher->setEventsManager($eventsManager);
 

@@ -120,7 +120,7 @@ class MessagesAPIController extends Controller
                         continue;
                     }
 
-                    $chats[$otherUserId] = ['userinfo' =>
+                    $chats[$otherUserId] = ['Userinfo' =>
                         ['firstname' => $userinfo->getFirstname(), 'lastname' => $userinfo->getLastname(),
                             'patronymic' => $userinfo->getPatronymic(), 'pathToPhoto' => $userinfo->getPathToPhoto()],
                         'message' => $message];

@@ -131,19 +131,19 @@ class RegisterAPIController extends Controller
                     $message->subject('Test Email');
                 });*/
 
-                $viewPath = 'emails/hello_world';
+                /*$viewPath = 'emails/hello_world';
 
                 $message = $this->mailer->createMessageFromView($viewPath,[])
                     ->to($user->getEmail())
                     ->subject('Здарова');
-                $message->send();
+                $message->send();*/
             }
 
             //Временно
-           /* $_POST['firstname'] = 'Ехехе';
+            $_POST['firstname'] = 'Ехехе';
             $_POST['lastname'] = 'Эхеххов';
             $_POST['male'] = 1;
-            $result = $this->confirmAction();*/
+            $result = $this->confirmAction();
 
             $response->setJsonContent(
                 [

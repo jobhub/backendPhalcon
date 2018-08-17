@@ -44,7 +44,7 @@ class UserinfoAPIController extends Controller
 
                 return $response;
             }
-            $info['userinfo'] = $userinfo;
+            $info['Userinfo'] = $userinfo;
             $info['user'] = $user_min;
             $info['settings'] = $settings;
 

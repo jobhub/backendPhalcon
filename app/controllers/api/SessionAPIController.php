@@ -28,17 +28,25 @@ class SessionAPIController extends Controller
      */
     public function endAction()
     {
+        //SupportClass::writeMessageInLogFile('Зашел в session/end');
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
+
+            //SupportClass::writeMessageInLogFile('Дошел до поиска токена');
+
             $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+           // SupportClass::writeMessageInLogFile('Получил токен из заголовка');
             $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                 'bind' => ['userId' => $userId,
                     'token' => sha1($tokenRecieved)]]);
 
+            //SupportClass::writeMessageInLogFile('Получил токен из БД');
+
             if(!$token){
+                //SupportClass::writeMessageInLogFile('Токена в БД нет');
                 $this->session->remove('auth');
                 $this->session->destroy();
                 $response->setJsonContent(
@@ -46,21 +54,26 @@ class SessionAPIController extends Controller
                         "status" => STATUS_OK
                     ]
                 );
+                //SupportClass::writeMessageInLogFile('Был отправлен ответ со статусом ОК');
                 return $response;
             }
+            //SupportClass::writeMessageInLogFile('Токен из БД - '.$token->getToken());
 
             if ($token->delete() == false) {
+                //SupportClass::writeMessageInLogFile('Не удалось удалить токен (по ряду причин)');
                 $this->db->rollback();
                 $errors = [];
                 foreach ($token->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
+
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
                         "errors" => $errors
                     ]
                 );
+                //SupportClass::writeMessageInLogFile('Был отправлен ответ со статусом WRONG_DATA');
                 return $response;
             }
 
@@ -69,10 +82,11 @@ class SessionAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "statu`s" => STATUS_OK
+                    "status" => STATUS_OK
                 ]
             );
 
+            //SupportClass::writeMessageInLogFile('Была разрушена сессия и отправлен ответ со статусом ОК');
             return $response;
         }else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -89,12 +103,13 @@ class SessionAPIController extends Controller
      */
     public function indexAction()
     {
+        //SupportClass::writeMessageInLogFile('Зашел в session/index');
         if ($this->request->isPost() || $this->request->isOptions()) {
             $login = $this->request->getPost("login");
             $password = $this->request->getPost("password");
             // Производим поиск в базе данных
-
-            $phone = Phones::findFirstByPhone(Phones::formatPhone($login));
+            $var = Phones::formatPhone($login);
+            $phone = Phones::findFirstByPhone($var);
             if ($phone) {
                 $user = Users::findFirst(
                     [
@@ -105,6 +120,7 @@ class SessionAPIController extends Controller
                         ]
                     ]
                 );
+
             } else {
                 $user = Users::findFirst(
                     [
@@ -116,13 +132,10 @@ class SessionAPIController extends Controller
                     ]
                 );
             }
-
             // Формируем ответ
             $response = new Response();
-
             if ($user) {
                 $this->_registerSession($user);
-
                 $response = new Response();
                 $userinfo = Userinfo::findFirstByUserid($user->getUserId());
 
@@ -134,7 +147,7 @@ class SessionAPIController extends Controller
 
                 $settings = Settings::findFirstByUserid($user->getUserId());
 
-                $info['userinfo'] = $userinfo;
+                $info['Userinfo'] = $userinfo;
                 $info['user'] = $user_min;
                 $info['settings'] = $settings;
 

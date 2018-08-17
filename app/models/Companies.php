@@ -88,6 +88,13 @@ class Companies extends NotDeletedModelWithCascade
     protected $ratingclient;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $description;
+
+    /**
      * Method to set the value of field companyId
      *
      * @param integer $companyid
@@ -148,6 +155,19 @@ class Companies extends NotDeletedModelWithCascade
     public function setRegionId($regionid)
     {
         $this->regionid = $regionid;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field description
+     *
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -268,6 +288,16 @@ class Companies extends NotDeletedModelWithCascade
     public function getTIN()
     {
         return $this->tin;
+    }
+
+    /**
+     * Returns the value of field description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

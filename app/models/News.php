@@ -186,7 +186,7 @@ class News extends SubjectsWithNotDeleted
             if(!$offer)
                 $offer = null;
 
-            $auctionAndTask = ['tender' => $tender, 'tasks' => $tender->tasks, 'userinfo' => $user, 'offer' => $offer];
+            $auctionAndTask = ['tender' => $tender, 'tasks' => $tender->tasks, 'Userinfo' => $user, 'offer' => $offer];
             $listNew = ["news" => $new, "tender" => $auctionAndTask];
 
         } else if ($new->getNewType() == 1) {
@@ -223,7 +223,7 @@ class News extends SubjectsWithNotDeleted
 
             $userinfo = Userinfo::findFirstByUserId($review->getUserIdSubject());
 
-            $reviewAndUserinfo = ['reviews' => $review,'userinfo' => $userinfo];
+            $reviewAndUserinfo = ['reviews' => $review, 'Userinfo' => $userinfo];
             $listNew = ["news" => $new, "review" => $reviewAndUserinfo];
         }
 

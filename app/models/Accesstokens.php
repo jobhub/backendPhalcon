@@ -202,7 +202,9 @@ class Accesstokens extends \Phalcon\Mvc\Model
      */
     public static function findFirst($parameters = null)
     {
-        return parent::findFirst($parameters);
+        //SupportClass::writeMessageInLogFile('Зашел в функцию findFirst модели accesstokens. Параметры: '.$parameters);
+        $result = parent::findFirst($parameters);
+        return $result;
     }
 
     public static function GenerateToken($userId, $login, $sessionId){

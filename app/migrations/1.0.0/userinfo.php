@@ -17,7 +17,7 @@ class UserinfoMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('userinfo', [
+        $this->morphTable('Userinfo', [
                 'columns' => [
                     new Column(
                         'userid',

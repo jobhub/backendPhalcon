@@ -12,7 +12,7 @@ class Elements extends Component
     private $_headerMenu = [
         'navbar-left' => [
 
-            'userinfo' => [
+            'Userinfo' => [
                 'caption' => 'Профиль',
                 'action' => 'index'
             ],
@@ -95,7 +95,7 @@ class Elements extends Component
             }
         } else {
             unset($this->_headerMenu['navbar-right']['users']);
-            unset($this->_headerMenu['navbar-left']['userinfo']);
+            unset($this->_headerMenu['navbar-left']['Userinfo']);
             unset($this->_headerMenu['navbar-left']['tasks']);
         }
 
@@ -168,7 +168,7 @@ class Elements extends Component
                 ],
                 ]
         ],
-        'userinfo' => [
+        'Userinfo' => [
             'caption' => 'Профиль',
             'action' => 'index'
         ],
@@ -210,7 +210,7 @@ class Elements extends Component
         else
         {
             unset($this->_leftMenu['tasks']);
-            unset($this->_leftMenu['userinfo']);
+            unset($this->_leftMenu['Userinfo']);
             unset($this->_rightMenu['users']);
         }
             $controllerName = $this->view->getControllerName();

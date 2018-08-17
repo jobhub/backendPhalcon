@@ -53,4 +53,25 @@ class SupportClass
         $db->commit();
         return ['result' => true];
     }
+
+    public static function transformControllerName($controllerName){
+        $new_controller = array();
+        for($i=0;$i<strlen($controllerName);$i++)
+        {
+            $lowercase = strtolower($controllerName[$i]);
+            if(ord($controllerName[$i])<=90 && $i>0)
+            {
+                $new_controller[]='_';
+            }
+            $new_controller[]=$lowercase;
+        }
+        return implode('',$new_controller);
+    }
+
+    public static function writeMessageInLogFile($message){
+        $file = fopen(BASE_PATH.'/public/logs.txt', 'a');
+        fwrite($file,'Дата: '.date('Y-m-d H:i:s').' - '.$message."\r\n");
+        fflush($file);
+        fclose($file);
+    }
 }

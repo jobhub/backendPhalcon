@@ -490,7 +490,7 @@ class Services extends SubjectsWithNotDeleted
         foreach ($servicesusers as $review) {
             $review2 = [];
             $review2['service'] = json_decode($review['service']);
-            $review2['userinfo'] = json_decode($review['userinfo']);
+            $review2['Userinfo'] = json_decode($review['Userinfo']);
 
             $review['categories'][0] = '[';
             $review['categories'][strlen($review['categories']) - 1] = ']';
