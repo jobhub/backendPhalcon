@@ -59,7 +59,7 @@ class SecurityPlugin extends Plugin
                 'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
                 'Userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
                 'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
-                    'addPhoto'],
+                    'setPhoto'],
 
                 'tenderAPI' => ['delete'],
                 'reviews' => ['new', 'create'],
@@ -91,7 +91,8 @@ class SecurityPlugin extends Plugin
                     'confirmOffer', 'rejectOffer', 'performTask'],
 
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
-                'RegisterAPI' => ['confirm']
+                'RegisterAPI' => ['confirm'],
+                'EventsAPI' => ['addEvent', 'setImage']
             ];
             $privateResources2 = [];
             foreach ($privateResources as $resource => $actions) {
@@ -150,8 +151,8 @@ class SecurityPlugin extends Plugin
                 'CategoriesAPI' => ['index', 'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
                 'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject', 'getServices'],
-                'ReviewsAPI' => ['getReviews'],
+                'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService'],
+                'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
             ];
 
             $publicResources2 = [];

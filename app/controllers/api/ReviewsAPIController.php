@@ -263,97 +263,23 @@ class ReviewsAPIController extends Controller
     }
 
     /**
-     * Получает отзывы.
+     * Возвращает отзывы об указанном субъекте, будь то пользователь или компания.
      *
      * @method GET
      *
-     * @param $subjectId
-     * @param $subjectType
+     * @param $subjectId - id субъекта
+     * @param $subjectType - тип субъекта
      *
-     * @return string
+     * @return string - json array [status,[reviews]]
      */
-    public function getReviewsAction($subjectId, $subjectType)
+    public function getReviewsForSubjectAction($subjectId, $subjectType)
     {
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
-            /*
-             * $query = $this->modelsManager->createQuery("SELECT reviews.reviewId as id,
-              reviews.textReview as text 
-              FROM reviews inner join tasks 
-              ON (reviews.binderId = tasks.taskId AND reviews.binderType = 0 AND reviews.executor = true) 
-              WHERE tasks.subjectId = :subjectId: AND tasks.subjectType = :subjectType:");
 
-            $query2 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
-              reviews.textReview as text 
-              FROM reviews inner join offers 
-              ON (reviews.binderId = offers.taskId AND reviews.binderType = 0
-                  AND reviews.executor = false AND offers.selected = true) 
-              WHERE offers.subjectId = :subjectId: AND offers.subjectType = :subjectType:");
-
-            $query3 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
-              reviews.textReview as text 
-              FROM reviews inner join requests
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
-                  AND reviews.executor = true)
-              WHERE requests.subjectId = :subjectId: AND requests.subjectType = :subjectType:");
-
-            $query4 = $this->modelsManager->createQuery("SELECT reviews.reviewId as id, 
-              reviews.textReview as text 
-              FROM services inner join requests ON (requests.serviceId = services.serviceId)
-              inner join reviews
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 1
-                  AND reviews.executor = false)
-              WHERE services.subjectId = :subjectId: AND services.subjectType = :subjectType:");
-
-            $reviews  = $query->execute(
-                [
-                    'subjectId' => $userId,
-                    'subjectType' => 0,
-                ]
-            );
-
-            $reviews2  = $query2->execute(
-                [
-                    'subjectId' => $userId,
-                    'subjectType' => 0,
-                ]
-            );
-
-            $reviews3  = $query3->execute(
-                [
-                    'subjectId' => $userId,
-                    'subjectType' => 0,
-                ]
-            );
-
-            $reviews4  = $query4->execute(
-                [
-                    'subjectId' => $userId,
-                    'subjectType' => 0,
-                ]
-            );
-
-            $reviews_arr = [];
-
-            foreach($reviews as $review)
-                $reviews_arr[] = $review;
-
-            foreach($reviews2 as $review)
-                $reviews_arr[] = $review;
-
-            foreach($reviews3 as $review)
-                $reviews_arr[] = $review;
-
-            foreach($reviews4 as $review)
-                $reviews_arr[] = $review;*/
-
-            //if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$subjectId,$subjectType, 'getReviews'))
-
-            $rev = new Reviews();
-
-            $reviews = $rev->getReviewsForObject($subjectId,$subjectType);
+            $reviews = Reviews::getReviewsForObject($subjectId,$subjectType);
 
             $response->setJsonContent(
                 [
@@ -366,6 +292,38 @@ class ReviewsAPIController extends Controller
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает отзывы, связанные с указанной услугой.
+     *
+     * @method GET
+     *
+     * @param $serviceId - id слуги
+     *
+     * @return string - json array [status,[reviews]]
+     */
+    public function getReviewsForServiceAction($serviceId)
+    {
+        if ($this->request->isGet()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $reviews = Reviews::getReviewsForService($serviceId);
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                    "reviews" => $reviews
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
     }

@@ -11,10 +11,26 @@ $router->add("/:controller/:action/:params",
     )
 )->convert('controller', function($controller) {
     return SupportClass::transformControllerName($controller);
-})/*->convert('action', function($action) {
-    return Phalcon\Text::camelize($action);
-})*/;
+});
+
+$router->add("/:controller/:action",
+    array(
+        "controller" => 1,
+        "action" => 2
+    )
+)->convert('controller', function($controller) {
+    return SupportClass::transformControllerName($controller);
+});
+
 $router->add("/:controller",
+    array(
+        "controller" => 1,
+        "action" => 'index',
+    )
+)->convert('controller', function($controller) {
+    return SupportClass::transformControllerName($controller);
+});
+$router->add("/:controller/",
     array(
         "controller" => 1,
         "action" => 'index',

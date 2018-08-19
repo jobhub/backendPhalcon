@@ -62,6 +62,14 @@ class ImageLoader
             $filename,750);
     }
 
+    public static function loadEventImage($tempname, $name, $eventId)
+    {
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$eventId,0);
+        return ImageLoader::load('events',$tempname,
+            $filename,750);
+    }
+
     public static function formFullImageName($subpath, $format, $id, $countImages)
     {
             return '/img/' . $subpath . '/' .$id . '_'

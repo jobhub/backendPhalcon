@@ -10,7 +10,7 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 class TradePointsAPIController extends Controller
 {
     /**
-     * Возвращает точки предоставления услуг для субъекта
+     * Возвращает точки предоставления услуг для пользователя или для указанной компании пользоваателя.
      *
      * @method GET
      * @param integer $companyId
@@ -176,68 +176,6 @@ class TradePointsAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
-            /*
-                        $point = new TradePoints();
-
-                        if ($params["companyId")) {
-                            $company = Companies::findFirstByCompanyid($params["companyId"));
-
-                            if (!Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'addPoint')) {
-                                $response->setJsonContent(
-                                    [
-                                        "status" => STATUS_WRONG,
-                                        "errors" => ['permission error']
-                                    ]
-                                );
-                                return $response;
-                            }
-
-                            $point->setSubjectId($params["companyId"));
-                            $point->setSubjectType(1);
-                            if ($params["userManagerId"))
-                                $point->setUserManager($params["userManagerId"));
-                            else {
-                                $point->setUserManager($userId);
-                            }
-                        } else {
-                            $point->setSubjectId($userId);
-                            $point->setSubjectType(0);
-                            $point->setUserManager($userId);
-                        }
-
-                        $point->setName($params["name"));
-                        $point->setEmail($params["email"));
-                        $point->setWebSite($params["webSite"));
-                        $point->setLatitude($params["latitude"));
-                        $point->setLongitude($params["longitude"));
-                        $point->setAddress($params["address"));
-                        $point->setFax($params["fax"));
-                        $point->setTime($params["time"));
-                        $point->setUserManager($params["userId"));
-
-                        if (!$point->save()) {
-                            $errors = [];
-                            foreach ($point->getMessages() as $message) {
-                                $errors[] = $message->getMessage();
-                            }
-                            $response->setJsonContent(
-                                [
-                                    "status" => STATUS_WRONG,
-                                    "errors" => $errors
-                                ]
-                            );
-                            return $response;
-                        }
-
-                        $response->setJsonContent(
-                            [
-                                "pointId" =>$point->getPointId(),
-                                "status" => STATUS_OK
-                            ]
-                        );
-
-                        return $response;
-                        */
             return $this->TradePointsAPI->addTradePoint($_POST);
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

@@ -71,6 +71,13 @@ class Services extends SubjectsWithNotDeleted
     protected $latitude;
 
     /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $numberofdisplay;
+
+    /**
      * Method to set the value of field serviceId
      *
      * @param integer $serviceid
@@ -188,6 +195,18 @@ class Services extends SubjectsWithNotDeleted
     }
 
     /**
+     * Method to set the value of field numberOfDisplay
+     *
+     * @param integer $numberOfDisplay
+     * @return $this
+     */
+    public function setNumberOfDisplay($numberOfDisplay)
+    {
+        $this->numberofdisplay = $numberOfDisplay;
+        return $this;
+    }
+
+    /**
      * Returns the value of field regionId
      *
      * @return integer
@@ -278,6 +297,16 @@ class Services extends SubjectsWithNotDeleted
     }
 
     /**
+     * Returns the value of field numberOfDisplay
+     *
+     * @return integer
+     */
+    public function getNumberOfDisplay()
+    {
+        return $this->numberofdisplay;
+    }
+
+    /**
      * Validations and business logic
      *
      * @return boolean
@@ -292,7 +321,7 @@ class Services extends SubjectsWithNotDeleted
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
                     "callback" => function ($service) {
-                        if(!SupportClass::checkPositiveInteger($service->getPriceMin())
+                        if (!SupportClass::checkPositiveInteger($service->getPriceMin())
                             || !SupportClass::checkPositiveInteger($service->getPriceMax()))
                             return false;
                         if ($service->getPriceMin() <= $service->getPriceMax())
@@ -328,14 +357,14 @@ class Services extends SubjectsWithNotDeleted
             )
         );
 
-        if($this->getLongitude()!= null){
+        if ($this->getLongitude() != null) {
             $validator->add(
                 'latitude',
                 new Callback(
                     [
                         "message" => "Не указана широта для услуги",
                         "callback" => function ($service) {
-                            if ($service->getLatitude()!= null && SupportClass::checkDouble($service->getLatitude()))
+                            if ($service->getLatitude() != null && SupportClass::checkDouble($service->getLatitude()))
                                 return true;
                             return false;
                         }
@@ -344,14 +373,14 @@ class Services extends SubjectsWithNotDeleted
             );
         }
 
-        if($this->getLatitude()!= null){
+        if ($this->getLatitude() != null) {
             $validator->add(
                 'longitude',
                 new Callback(
                     [
                         "message" => "Не указана долгота для услуги",
                         "callback" => function ($service) {
-                            if ($service->getLongitude()!= null && SupportClass::checkDouble($service->getLongitude()))
+                            if ($service->getLongitude() != null && SupportClass::checkDouble($service->getLongitude()))
                                 return true;
                             return false;
                         }
@@ -391,9 +420,9 @@ class Services extends SubjectsWithNotDeleted
         return 'services';
     }
 
-    public function getServices($categoryId = null)
+    public static function getServices($categoryId = null)
     {
-        $db = $this->getDI()->getDb();
+        $db = Phalcon\DI::getDefault()->getDb();
         $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
                 row_to_json(comp) as \"company\",
                array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
@@ -529,4 +558,9 @@ class Services extends SubjectsWithNotDeleted
         return $reviews2;
     }
 
+    public static function getTasksForService($serviceId){
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        return [];
+    }
 }

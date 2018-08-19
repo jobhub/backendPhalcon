@@ -297,7 +297,7 @@ class UserinfoAPIController extends Controller
         return $response;
     }
 
-    public function addPhotoAction()
+    public function setPhotoAction()
     {
         if($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();

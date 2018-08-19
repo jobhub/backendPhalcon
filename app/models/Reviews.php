@@ -433,8 +433,8 @@ class Reviews extends NotDeletedModelWithCascade
         return $result;
     }
 
-    public function getReviewsForObject($subjectId, $subjectType){
-        $db = $this->getDI()->getDb();
+    public static function getReviewsForObject($subjectId, $subjectType){
+        $db = Phalcon\DI::getDefault()->getDb();
 
         $query = $db->prepare("Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
@@ -496,6 +496,32 @@ class Reviews extends NotDeletedModelWithCascade
         $query->execute([
             'subjectId' => $subjectId,
             'subjectType' => $subjectType,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getReviewsForService($serviceId){
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = $db->prepare("Select * FROM (
+              --Отзывы оставленные на услуги
+              (SELECT reviews.reviewId as id, 
+              reviews.textReview as text,
+              reviews.reviewdate as date,
+              reviews.rating as rating,
+              reviews.executor as executor 
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+                  AND reviews.executor = false)
+              WHERE services.serviceId = :serviceId
+              )) p0
+              ORDER BY p0.date desc"
+        );
+
+        $query->execute([
+            'serviceId' => $serviceId,
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);

@@ -194,19 +194,7 @@ $di->set(
     return $service->mailer();
 };*/
 $di['mailer'] = function() {
-    $config = [
-        'driver'     => 'smtp',
-        'host'       => 'smtp.yandex.ru',
-        'port'       => 465,
-        'encryption' => 'ssl',
-        'username'   => 'titow.german@yandex.ru',
-        'password'   => '<Типа мой парроль.>',
-        'from' => [
-            'email' => 'titow.german@yandex.ru',
-            'name' => 'Герман'
-        ],
-        'viewsDir' =>  APP_PATH . '/views/',
-    ];
+    $config = $this->getConfig()['mail'];
     $mailer = new \Phalcon\Mailer\Manager($config);
     return $mailer;
 };

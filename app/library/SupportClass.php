@@ -22,7 +22,10 @@ class SupportClass
         return ((string)(double)$var == $var);
     }
 
-    public static function pullRegions($filename, $db){
+    public static function pullRegions($filename, $db = null){
+        if($db == null)
+            $db = Phalcon\DI::getDefault()->getDb();
+
         $content = file_get_contents($filename);
         //$content = trim($content);
         $str = str_replace("\n", '', $content);

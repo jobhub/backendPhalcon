@@ -67,9 +67,8 @@ class ServicesAPIController extends Controller
         if ($this->request->isPost()) {
             $response = new Response();
 
-            $service = new Services();
 
-            $result = $service->getServices($this->request->getPost('categories'));
+            $result = Services::getServices($this->request->getPost('categories'));
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
@@ -240,7 +239,7 @@ class ServicesAPIController extends Controller
     /**
      *
      */
-    public function editImageServiceAction()
+    /*public function editImageServiceAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();
@@ -295,7 +294,7 @@ class ServicesAPIController extends Controller
 
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
@@ -1178,10 +1177,6 @@ class ServicesAPIController extends Controller
             }
 
             foreach($files as $file) {
-                /*$imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
-                $filename = ImageLoader::formImageName($imageFormat,$serviceId,$countImagesCopy);
-                $result = ImageLoader::load('services',$file->getTempName(),$filename);*/
-
                 $result = ImageLoader::loadService($file->getTempName(),$file->getName(),$countImagesCopy,$serviceId);
 
                 if($result != ImageLoader::RESULT_ALL_OK || $result === null){
@@ -1220,5 +1215,98 @@ class ServicesAPIController extends Controller
             ]
         );
         return $response;
+    }
+
+    /**
+     * Увеличивает на 1 счетчик числа просмотров услуги.
+     * @method PUT
+     * @params $serviceId
+     * @return string - json array в формате Status
+     */
+    public function incrementNumberOfDisplayForServiceAction(){
+        if ($this->request->isPut()) {
+            $response = new Response();
+
+            $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
+
+            if (!$service) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Такая услуга не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            $service->setNumberOfDisplay($service->getNumberOfDisplay()+1);
+
+            if (!$service->update()) {
+                $errors = [];
+                foreach ($service->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает все заказы, которые могут быть связаны с данной услугой.
+     *
+     * @method GET
+     *
+     * @param $serviceId
+     * @return string - json array tasks
+     */
+    public function getTasksForService($serviceId){
+        if ($this->request->isGet() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $service = Services::findFirstByServiceid($serviceId);
+
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+                    $service->getSubjectType(), 'getTasksForSubject')) {
+
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $result = Services::getTasksForService($serviceId);
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'services' => $result
+            ]);
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
     }
 }
