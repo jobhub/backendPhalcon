@@ -291,4 +291,33 @@ class EventsAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Возвращает акции конкретной компании или пользователя.
+     *
+     * @method DELETE
+     *
+     * @param $subjectId
+     * @param $subjectType
+     *
+     * @return string - json array [status, [массив events]].
+     */
+    public function getEventsAction($subjectId, $subjectType)
+    {
+        if ($this->request->isGet()) {
+            $response = new Response();
+            $events = Events::findBySubject($subjectId,$subjectType);
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                    'events' => $events
+                ]
+            );
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }

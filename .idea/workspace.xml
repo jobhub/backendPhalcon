@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="Изменил услуги, чтоб можно было добавить еще ongitude, latitude">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/controllers/api/EventsAPIController.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/Events.php" />
+    <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.phalcon/devtools.log" afterPath="$PROJECT_DIR$/.phalcon/devtools.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/router.php" afterPath="$PROJECT_DIR$/app/config/router.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/services.php" afterPath="$PROJECT_DIR$/app/config/services.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/library/ImageLoader.php" afterPath="$PROJECT_DIR$/app/library/ImageLoader.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/library/SupportClass.php" afterPath="$PROJECT_DIR$/app/library/SupportClass.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Reviews.php" afterPath="$PROJECT_DIR$/app/models/Reviews.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Services.php" afterPath="$PROJECT_DIR$/app/models/Services.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/EventsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/EventsAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SecurityPlugin.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1479">
-              <caret line="94" column="55" lean-forward="false" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
+            <state relative-caret-position="476">
+              <caret line="94" column="83" lean-forward="false" selection-start-line="94" selection-start-column="83" selection-end-line="94" selection-end-column="83" />
               <folding />
             </state>
           </provider>
@@ -107,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EventsAPIController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="EventsAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/EventsAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="175" column="47" lean-forward="false" selection-start-line="175" selection-start-column="47" selection-end-line="175" selection-end-column="47" />
+            <state relative-caret-position="287">
+              <caret line="310" column="38" lean-forward="true" selection-start-line="310" selection-start-column="38" selection-end-line="310" selection-end-column="38" />
               <folding>
                 <element signature="n#addEventAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#setImageAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
@@ -259,9 +247,9 @@
         <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
         <option value="$PROJECT_DIR$/app/library/ImageLoader.php" />
-        <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
         <option value="$PROJECT_DIR$/app/models/Events.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/EventsAPIController.php" />
+        <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
       </list>
     </option>
   </component>
@@ -713,14 +701,7 @@
       <workItem from="1534417813512" duration="10318000" />
       <workItem from="1534446310049" duration="340000" />
       <workItem from="1534500005608" duration="14829000" />
-      <workItem from="1534672050265" duration="617000" />
-    </task>
-    <task id="LOCAL-00007" summary="проверил админку">
-      <created>1513718212177</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1513718212177</updated>
+      <workItem from="1534672050265" duration="1061000" />
     </task>
     <task id="LOCAL-00008" summary="Просто небольшие изменения для пула">
       <created>1513722861166</created>
@@ -1058,11 +1039,18 @@
       <option name="project" value="LOCAL" />
       <updated>1534507092705</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="Добавил несколько ведение статистики просмотров услуги, получение отзывов для конкретной услуги и еще по мелочи. Кроме того, добавил написал модель и контроллер для акций">
+      <created>1534672799910</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1534672799911</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="838309000" />
+    <option name="totallyTimeSpent" value="838753000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -1119,7 +1107,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Добавил несколько контроллеров и еще че-то" />
     <MESSAGE value="Функции API для получения заданий, отзывов и еще чего-то" />
     <MESSAGE value="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml" />
     <MESSAGE value="В handlere загрузки фоток мелочь одна" />
@@ -1144,7 +1131,8 @@
     <MESSAGE value="Добавил в коммит миграции" />
     <MESSAGE value="Изменил услуги, чтоб можно было добавить еще ongitude, latitude" />
     <MESSAGE value="Что-то менял, что-то делал. Что не помню уже" />
-    <option name="LAST_COMMIT_MESSAGE" value="Что-то менял, что-то делал. Что не помню уже" />
+    <MESSAGE value="Добавил несколько ведение статистики просмотров услуги, получение отзывов для конкретной услуги и еще по мелочи. Кроме того, добавил написал модель и контроллер для акций" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил несколько ведение статистики просмотров услуги, получение отзывов для конкретной услуги и еще по мелочи. Кроме того, добавил написал модель и контроллер для акций" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1345,6 +1333,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3366">
           <caret line="200" column="47" lean-forward="false" selection-start-line="200" selection-start-column="47" selection-end-line="200" selection-end-column="47" />
+          <folding>
+            <element signature="e#6#29#0#PHP" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1400,6 +1391,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="12" column="103" lean-forward="false" selection-start-line="12" selection-start-column="103" selection-end-line="12" selection-end-column="103" />
+          <folding>
+            <element signature="n#getPointsAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getPointsForUserManagerAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#editTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteTradePointAction#0;n#TradePointsAPIController#0;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1407,6 +1404,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1498,6 +1496,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="358" column="5" lean-forward="false" selection-start-line="358" selection-start-column="5" selection-end-line="358" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1505,14 +1504,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1088">
           <caret line="69" column="27" lean-forward="false" selection-start-line="69" selection-start-column="27" selection-end-line="69" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1479">
-          <caret line="94" column="55" lean-forward="false" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
           <folding />
         </state>
       </provider>
@@ -1569,14 +1560,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/EventsAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="175" column="47" lean-forward="false" selection-start-line="175" selection-start-column="47" selection-end-line="175" selection-end-column="47" />
+        <state relative-caret-position="287">
+          <caret line="310" column="38" lean-forward="true" selection-start-line="310" selection-start-column="38" selection-end-line="310" selection-end-column="38" />
           <folding>
             <element signature="n#addEventAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
             <element signature="n#setImageAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
             <element signature="n#deleteEventAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
             <element signature="n#editEventAction#0;n#EventsAPIController#0;n#!!top" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/plugins/SecurityPlugin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="94" column="83" lean-forward="false" selection-start-line="94" selection-start-column="83" selection-end-line="94" selection-end-column="83" />
+          <folding />
         </state>
       </provider>
     </entry>

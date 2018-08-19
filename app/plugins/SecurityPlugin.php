@@ -92,7 +92,7 @@ class SecurityPlugin extends Plugin
 
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
                 'RegisterAPI' => ['confirm'],
-                'EventsAPI' => ['addEvent', 'setImage']
+                'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent']
             ];
             $privateResources2 = [];
             foreach ($privateResources as $resource => $actions) {
@@ -153,6 +153,7 @@ class SecurityPlugin extends Plugin
                 'TasksAPI' => ['getTasksForSubject'],
                 'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService'],
                 'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
+                'EventsAPI' => ['getEvents']
             ];
 
             $publicResources2 = [];
