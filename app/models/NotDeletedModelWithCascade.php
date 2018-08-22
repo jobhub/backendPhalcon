@@ -115,7 +115,9 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
             else
                 $parameters[0] = $conditions;
         }
-        return parent::find($parameters);
+        $result = parent::find($parameters);
+
+        return $result;
     }
 
     /**

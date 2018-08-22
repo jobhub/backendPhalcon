@@ -96,8 +96,7 @@ class Phones extends \Phalcon\Mvc\Model
     /**
      * Initialize method for model.
      */
-    public
-    function initialize()
+    public function initialize()
     {
         //$this->setSchema("public");
         $this->setSource("phones");

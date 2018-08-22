@@ -223,15 +223,28 @@ class ReviewsAPIController extends Controller
                 return $response;
             }
 
-            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
-                $review->getBinderType(), $review->getExecutor(), 'editReview')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if($review->getFake()==false) {
+                if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
+                    $review->getBinderType(), $review->getExecutor(), 'deleteReview')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+            } else {
+                if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $review->getSubjectId(),
+                    $review->getSubjectType(), 'deleteReview')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
             }
 
             if (!$review->delete()) {

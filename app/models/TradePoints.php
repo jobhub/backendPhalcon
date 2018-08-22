@@ -379,4 +379,28 @@ class TradePoints extends SubjectsWithNotDeleted
     {
         return 'tradePoints';
     }
+
+    public static function getServicesForPoint($pointId)
+    {
+        //$db = Phalcon\DI::getDefault()->getDb();
+        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->from(["s" => "services"])
+            ->join('servicespoints','s.serviceid = sp.serviceid','sp')
+            ->join('tradepoints', 'sp.pointid = p.pointid', 'p')
+            ->where('p.pointid = :pointId:',['pointId'=>$pointId])
+            ->getQuery()
+            ->execute();
+
+        return $result;
+    }
+
+    public function clipToPublic(){
+        $point = $this;
+        $point = json_encode($point);
+        $point = json_decode($point,true);
+        unset($point['deleted']);
+        unset($point['deletedcascade']);
+        return $point;
+    }
 }

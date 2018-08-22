@@ -162,4 +162,39 @@ class PhonesPoints extends \Phalcon\Mvc\Model
                     'phoneId' => $phoneId
                 ]]);
     }
+
+    public static function getPhonesForPoint($pointId)
+    {
+        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->from(["p" => "phones"])
+            ->join('phonespoints','p.phoneid = pp.phoneid','pp')
+            ->join('tradepoints', 'pp.pointid = tp.pointid', 'tp')
+            ->where('tp.pointid = :pointId:',['pointId'=>$pointId])
+            ->getQuery()
+            ->execute();
+
+        if(count($result) == 0){
+            $point = TradePoints::findFirstByPointid($pointId);
+            if($point->getSubjectType() == 1) {
+
+                $result = $modelsManager->createBuilder()
+                    ->from(["p" => "phones"])
+                    ->join('phonesCompanies', 'p.phoneid = pc.phoneid', 'pc')
+                    ->join('companies', 'pc.companyid = c.companyid', 'c')
+                    ->where('c.companyid = :companyId:', ['companyId' => $point->getSubjectId()])
+                    ->getQuery()
+                    ->execute();
+            } else if($point->getSubjectType() == 0){
+                $result = $modelsManager->createBuilder()
+                    ->from(["p" => "phones"])
+                    ->join('users', 'p.phoneid = u.phoneid', 'u')
+                    ->where('u.userid = :userId:', ['userId' => $point->getSubjectId()])
+                    ->getQuery()
+                    ->execute();
+            }
+        }
+
+        return $result;
+    }
 }

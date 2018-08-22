@@ -405,7 +405,7 @@ class Reviews extends NotDeletedModelWithCascade
         $result = parent::save($data, $whiteList);
 
         if($result) {
-            $this->updateRating();
+            //$this->updateRating();
         }
 
         return $result;
@@ -416,7 +416,7 @@ class Reviews extends NotDeletedModelWithCascade
         $result = parent::delete($delete,$deletedCascade,$data, $whiteList);
 
         if($result) {
-            $this->updateRating();
+            //$this->updateRating();
         }
 
         return $result;
@@ -427,7 +427,7 @@ class Reviews extends NotDeletedModelWithCascade
         $result = parent::update($data, $whiteList);
 
         if($result) {
-            $this->updateRating();
+            //$this->updateRating();
         }
 
         return $result;
@@ -550,6 +550,15 @@ class Reviews extends NotDeletedModelWithCascade
                     $request = Requests::findFirstByRequestid($this->getBinderId());
                     $subjectId = $request->services->getSubjectId();
                     $subjectType = $request->services->getSubjectType();
+
+                    $reviews = Reviews::getReviewsForService($request->services->getServiceId());
+                    $sum = 5;
+                    foreach($reviews as $review){
+                        $sum+=$review['rating'];
+                    }
+                    $sum/=(count($reviews)+1);
+                    $request->services->setRating($sum);
+                    $request->services->update();
                 }
             }
 

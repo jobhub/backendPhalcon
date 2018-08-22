@@ -19,7 +19,7 @@ class TradePointsAPIController extends Controller
      */
     public function getPointsAction($companyId = null)
     {
-        if ($this->request->isGet() && $this->session->get('auth') || $this->request->isPost()) {
+        if ($this->request->isGet() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -399,6 +399,55 @@ class TradePointsAPIController extends Controller
                 ]
             );
 
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает публичную информацию об указанной точке оказания услуг.
+     * Публичный доступ.
+     *
+     * @method GET
+     *
+     * @param $pointId
+     * @return string - json array {status,point,[services],[phones]}
+     */
+    public function getPointInfoAction($pointId){
+        if ($this->request->isGet()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $point = TradePoints::findFirstByPointid($pointId);
+
+            if(!$point){
+                $response->setJsonContent([
+                    'status' => STATUS_WRONG,
+                    'errors' => ['Точка оказания услуг не существует'],
+                ]);
+                return $response;
+            }
+
+            $point2 = $point->clipToPublic();
+
+            $services = TradePoints::getServicesForPoint($point->getPointId());
+            $services2 = [];
+            foreach($services as $service){
+                $services2[] = $service->clipToPublic();
+            }
+
+            $phones = PhonesPoints::getPhonesForPoint($point->getPointId());
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'point' => $point2,
+                'services' => $services2,
+                'phones' => $phones,
+            ]);
             return $response;
 
         } else {

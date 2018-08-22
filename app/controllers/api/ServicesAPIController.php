@@ -67,8 +67,7 @@ class ServicesAPIController extends Controller
         if ($this->request->isPost()) {
             $response = new Response();
 
-
-            $result = Services::getServices($this->request->getPost('categories'));
+            $result = Services::getServices($this->request->getPost('categoriesId'));
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
@@ -1300,6 +1299,55 @@ class ServicesAPIController extends Controller
             $response->setJsonContent([
                 'status' => STATUS_OK,
                 'services' => $result
+            ]);
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает публичную информацию об услуге.
+     * Публичный доступ.
+     *
+     * @method GET
+     *
+     * @param $serviceId
+     *
+     * @return string - json array {status, service, [points => {point, [phones]}]}
+     */
+    public function getServiceInfoAction($serviceId){
+        if ($this->request->isGet()) {
+            $response = new Response();
+
+            $service = Services::findFirstByServiceid($serviceId);
+
+            if(!$service){
+                $response->setJsonContent([
+                    'status' => STATUS_WRONG,
+                    'errors' => ['Услуга не существует']
+                ]);
+
+                return $response;
+            }
+
+            $service = $service->clipToPublic();
+
+            $points = Services::getPointsForService($serviceId);
+
+            $points2 = [];
+            foreach($points as $point){
+                $points2['point'] = $point->clipToPublic();
+                $points2['phones'] = PhonesPoints::getPhonesForPoint($point->getPointId());
+            }
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'service' => $service,
+                'points' => $points2
             ]);
 
             return $response;

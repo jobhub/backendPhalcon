@@ -10,6 +10,7 @@ use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
+use Phalcon\Mvc\Model\Manager as ModelsManager;
 use ULogin\Auth;
 //use SlowProg\Mailer\MailerService;
 use Phalcon\Mailer;
@@ -173,6 +174,13 @@ $di->set(
         return new Elements();
     }
 );
+
+/*$di->set(
+    "modelsManager",
+    function() {
+        return new ModelsManager();
+    }
+);*/
 
 /*$di['mailer'] = function() {
     $service = new MailerService([

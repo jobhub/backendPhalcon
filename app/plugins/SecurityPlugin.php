@@ -151,9 +151,11 @@ class SecurityPlugin extends Plugin
                 'CategoriesAPI' => ['index', 'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
                 'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService'],
+                'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService',
+                    'getServiceInfo'],
                 'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
-                'EventsAPI' => ['getEvents']
+                'EventsAPI' => ['getEvents'],
+                'TradePointsAPI' => ['getPointInfo']
             ];
 
             $publicResources2 = [];
