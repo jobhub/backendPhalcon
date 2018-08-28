@@ -387,6 +387,20 @@ class Reviews extends NotDeletedModelWithCascade
                 )
             );
 
+        $validator->add(
+            'reviewdate',
+            new Callback(
+                [
+                    "message" => "Время написания отзыва должно быть раньше текущего",
+                    "callback" => function ($review) {
+                        if (strtotime($review->getReviewDate()) <= time())
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
         return $this->validate($validator);
     }
 
@@ -510,7 +524,12 @@ class Reviews extends NotDeletedModelWithCascade
               reviews.textReview as text,
               reviews.reviewdate as date,
               reviews.rating as rating,
-              reviews.executor as executor 
+              reviews.executor as executor,
+              reviews.fake as fake,
+              reviews.binderid as binderid,
+              reviews.bindertype as bindertype,
+              reviews.subjectid as subjectid,
+              reviews.subjecttype as subjecttype 
               FROM services inner join requests ON (requests.serviceId = services.serviceId)
               inner join reviews
               ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
@@ -518,6 +537,41 @@ class Reviews extends NotDeletedModelWithCascade
               WHERE services.serviceId = :serviceId
               )) p0
               ORDER BY p0.date desc"
+        );
+
+        $query->execute([
+            'serviceId' => $serviceId,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getReviewsForService2($serviceId){
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = $db->prepare("Select review, subject FROM (
+              --Отзывы оставленные на услуги
+              (SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+                  AND reviews.executor = false)
+              
+               INNER JOIN companies as subject ON (requests.subjectid = subject.companyid and requests.subjecttype = 1)
+              
+              WHERE services.serviceId = :serviceId
+              )
+			UNION ALL
+    		((SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
+              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              inner join reviews
+              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+                  AND reviews.executor = false)
+               INNER JOIN userinfo as subject ON (requests.subjectid = subject.userid and requests.subjecttype = 0)
+              
+              WHERE services.serviceId = :serviceId
+              ))
+) p0 ORDER BY p0.date"
         );
 
         $query->execute([
@@ -593,6 +647,7 @@ class Reviews extends NotDeletedModelWithCascade
             }
         }
     }
+
     /**
      * Returns table name mapped in the model.
      *
@@ -602,5 +657,4 @@ class Reviews extends NotDeletedModelWithCascade
     {
         return 'reviews';
     }
-
 }

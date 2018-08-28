@@ -10,6 +10,7 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+use Phalcon\Paginator\Adapter\NativeArray as Paginator;
 
 class ReviewsAPIController extends Controller
 {
@@ -314,26 +315,61 @@ class ReviewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $serviceId - id слуги
+     * @param $serviceId - id услуги
+     * @param $numPage - номер страницы
+     * @param $widthPage - размер страницы
      *
-     * @return string - json array [status,[reviews]]
+     * @return string - json array [status,reviews => [review,{userinfo or company}]]
      */
-    public function getReviewsForServiceAction($serviceId)
+    public function getReviewsForServiceAction($serviceId, $numPage, $widthPage)
     {
         if ($this->request->isGet()) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            $reviews = Reviews::getReviewsForService($serviceId);
+            $reviews = Reviews::getReviewsForService2($serviceId);
+
+            $reviews2_ar = [];
+            foreach($reviews as $review){
+                $reviews2['review'] = json_decode($review['review'], true);
+
+                unset($reviews2['review']['deleted']);
+                unset($reviews2['review']['deletedcascade']);
+                unset($reviews2['review']['fake']);
+                unset($reviews2['review']['subjectid']);
+                unset($reviews2['review']['subjecttype']);
+                unset($reviews2['review']['objectid']);
+                unset($reviews2['review']['objecttype']);
+                unset($reviews2['review']['userid']);
+                $subject = json_decode($review['subject'], true);
+                if(isset($subject['companyid']))
+                {
+                    $reviews2['company'] = $subject;
+                    unset($reviews2['company']['deleted']);
+                    unset($reviews2['company']['deletedcascade']);
+                    unset($reviews2['company']['ismaster']);
+                    unset($reviews2['company']['yandexMapPages']);
+                } else{
+                    $reviews2['userinfo'] = $subject;
+                }
+                $reviews2_ar[] = $reviews2;
+            }
+
+            $paginator = new Paginator([
+                'data' => $reviews2_ar,
+                'limit'=> $widthPage,
+                'page' => $numPage
+            ]);
 
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
-                    "reviews" => $reviews
+                    "reviews" => $paginator->getPaginate()->items
                 ]
             );
             return $response;
+
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -345,8 +381,7 @@ class ReviewsAPIController extends Controller
      *
      */
     public function addTypeAction(){
-        $query = $this->db->prepare("CREATE TYPE bindertype AS ENUM ('task', 'request');"
-        );
+        $query = $this->db->prepare("CREATE TYPE bindertype AS ENUM ('task', 'request');");
 
         return $query->execute();
     }

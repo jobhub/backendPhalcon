@@ -414,7 +414,7 @@ class Tasks extends SubjectsWithNotDeleted
                     "callback" => function ($task) {
                         $category = Categories::findFirstByCategoryid($task->getCategoryId());
 
-                        if ($category && ($category->getParentId() == null || $category->getParentId() == 0))
+                        if ($category && ($category->getParentId() != null && $category->getParentId() != 0))
                             return true;
                         return false;
                     }
@@ -472,8 +472,13 @@ class Tasks extends SubjectsWithNotDeleted
 
         $validator->add(
             'price',
-            new PresenceOf([
-                "message" => "Цена должна быть указана"
+            new Callback([
+                "message" => "Должна быть указана цена",
+                'callback' => function ($task) {
+                    if($task->getPrice() == null || !SupportClass::checkDouble($task->getPrice()))
+                        return false;
+                    return true;
+                }
             ])
         );
 

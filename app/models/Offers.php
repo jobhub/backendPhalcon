@@ -241,7 +241,9 @@ class Offers extends SubjectsWithNotDeleted
                     "callback" => function ($offer) {
                         $task = Tasks::findFirstByTaskid($offer->getTaskId());
 
-                        if ($task)
+                        if ($task && !SubjectsWithNotDeleted::equals($offer->getSubjectId(),
+                                $offer->getSubjectType(), $task->getSubjectId(),
+                                $task->getSubjectType()))
                             return true;
                         return false;
                     }
