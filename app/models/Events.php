@@ -59,6 +59,9 @@ class Events extends SubjectsWithNotDeleted
      */
     protected $datepublication;
 
+    public const publicColumns = ['eventid', 'name', 'description', 'pointid', 'longitude', 'latitude', 'pathtoimage',
+        'datepublication'];
+
     /**
      * Method to set the value of field eventid
      *

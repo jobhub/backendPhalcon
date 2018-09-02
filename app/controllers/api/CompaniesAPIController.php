@@ -543,8 +543,6 @@ class CompaniesAPIController extends Controller
         }
     }
 
-
-
     public function deleteCompanyTestAction($companyId)
     {
         if ($this->request->isDelete()) {
@@ -584,6 +582,51 @@ class CompaniesAPIController extends Controller
                 ]
             );
 
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает публичную информацию о компании.
+     * Публичный доступ
+     *
+     * @method GET
+     *
+     * @param $companyId
+     * @return string - json array компаний
+     */
+    public function getCompanyInfoAction($companyId)
+    {
+        if ($this->request->isGet()) {
+            $auth = $this->session->get('auth');
+            $response = new Response();
+
+            $company = Companies::findFirst(['companyid = :companyId:',
+                'bind'=>['companyId' => $companyId],
+            'columns' => Companies::publicColumns]);
+
+            if(!$company){
+                $response->setJsonContent([
+                    'status' => STATUS_WRONG,
+                    'errors' => ['Компания не существует']
+                ]);
+                return $response;
+            }
+
+            $company = json_encode($company);
+            $company = json_decode($company,true);
+
+            $phones = PhonesCompanies::getCompanyPhones($companyId);
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'company' => $company,
+                'phones' => $phones,
+            ]);
             return $response;
 
         } else {

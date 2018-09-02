@@ -29,6 +29,8 @@ class News extends SubjectsWithNotDeleted
      */
     protected $newtext;
 
+    public const publicColumns = ['newid', 'date', 'newtext'];
+
     /**
      * Method to set the value of field newId
      *

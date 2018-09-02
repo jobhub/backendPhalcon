@@ -94,6 +94,9 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $description;
 
+    public const publicColumns = ['companyid', 'name', 'fullname', 'tin',
+        'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient', 'description'];
+
     /**
      * Method to set the value of field companyId
      *

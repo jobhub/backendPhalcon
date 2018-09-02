@@ -23,6 +23,9 @@ class Phones extends \Phalcon\Mvc\Model
      */
     protected $phone;
 
+    public const publicColumns = ['phoneid', 'phone'];
+
+
     /**
      * Method to set the value of field phoneId
      *
@@ -201,7 +204,8 @@ class Phones extends \Phalcon\Mvc\Model
     public function countOfReferences(){
         $phonesPoints = PhonesPoints::findByPhoneid($this->getPhoneId());
         $phonesCompanies = PhonesCompanies::findByPhoneid($this->getPhoneId());
+        $phonesUsers = PhonesUsers::findByPhoneid($this->getPhoneId());
 
-        return $phonesCompanies->count() + $phonesPoints->count();
+        return $phonesCompanies->count() + $phonesPoints->count() + $phonesUsers->count();
     }
 }

@@ -32,7 +32,7 @@ class Reviews extends NotDeletedModelWithCascade
     /**
      *
      * @var integer
-     * @Column(type="integer", length=32, nullable=false)
+     * @Column(type="integer", length=32, nullable=true)
      */
     protected $rating;
 
@@ -71,11 +71,21 @@ class Reviews extends NotDeletedModelWithCascade
      */
     protected $userid;
 
+    /**
+     *
+     * @var string
+     * @Column(type="string", length = 180, nullable=true)
+     */
+    protected $fakename;
+
     //куча костылей для того, чтобы можно было писать фейковые отзывы. Жесть
     protected $subjectid;
     protected $subjecttype;
     protected $objectid;
     protected $objecttype;
+
+    public const publicColumns = ['reviewid', 'textreview', 'reviewdate', 'rating', 'binderid',
+        'bindertype', 'executor', 'fakename',];
 
     /**
      * Методы-костыли
@@ -109,6 +119,12 @@ class Reviews extends NotDeletedModelWithCascade
         return $this;
     }
 
+    public function setFakeName($fakename)
+    {
+        $this->fakename = $fakename;
+        return $this;
+    }
+
     public function getSubjectId()
     {
         return $this->subjectid;
@@ -122,6 +138,11 @@ class Reviews extends NotDeletedModelWithCascade
     public function getObjectId()
     {
         return $this->objectid;
+    }
+
+    public function getFakeName()
+    {
+        return $this->fakename;
     }
 
     public function getObjectType()
@@ -364,9 +385,9 @@ class Reviews extends NotDeletedModelWithCascade
             'rating',
             new Callback(
                 [
-                    "message" => "Рейтинг должен быть от 0 до 10",
+                    "message" => "Рейтинг должен быть от 0 до 5",
                     "callback" => function ($review) {
-                        return $review->getRating() <= 10 && $review->getRating() >= 0;
+                        return $review->getRating() <= 5 && $review->getRating() >= 0;
                     }
                 ]
             )
@@ -549,6 +570,8 @@ class Reviews extends NotDeletedModelWithCascade
     public static function getReviewsForService2($serviceId){
         $db = Phalcon\DI::getDefault()->getDb();
 
+
+
         $query = $db->prepare("Select review, subject FROM (
               --Отзывы оставленные на услуги
               (SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
@@ -562,7 +585,7 @@ class Reviews extends NotDeletedModelWithCascade
               WHERE services.serviceId = :serviceId
               )
 			UNION ALL
-    		((SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
+    		(SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
               FROM services inner join requests ON (requests.serviceId = services.serviceId)
               inner join reviews
               ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
@@ -570,8 +593,12 @@ class Reviews extends NotDeletedModelWithCascade
                INNER JOIN userinfo as subject ON (requests.subjectid = subject.userid and requests.subjecttype = 0)
               
               WHERE services.serviceId = :serviceId
-              ))
-) p0 ORDER BY p0.date"
+              )
+              UNION ALL
+              (SELECT row_to_json(reviews.*) as review, row_to_json(reviews.*) as subject, reviews.reviewdate as date
+              FROM reviews
+              WHERE reviews.binderId = :serviceId and reviews.bindertype = 'service' and reviews.fake = true)
+            ) p0 ORDER BY p0.date"
         );
 
         $query->execute([

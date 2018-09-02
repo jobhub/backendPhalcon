@@ -81,7 +81,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'CompaniesCategories';
+        return 'companiesCategories';
     }
 
     /**
@@ -106,4 +106,18 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function getCategoriesByCompany($companyId)
+    {
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = $db->prepare('SELECT c.* FROM categories c INNER JOIN "companiesCategories" c_c  
+            USING(categoryid) where c_c.companyid = :companyId'
+        );
+
+        $query->execute([
+            'companyId' => $companyId,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

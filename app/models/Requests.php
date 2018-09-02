@@ -38,18 +38,12 @@ class Requests extends SubjectsWithNotDeleted
 
     /**
      *
-     * @var string
-     * @Column(type="string", nullable=true)
-     */
-    protected $deleted;
-
-    /**
-     *
      * @var integer
      * @Column(type="integer", nullable=false)
      */
     protected $status;
 
+    public const publicColumns = ['requestid', 'serviceid', 'description', 'dateend', 'status'];
 
     /**
      * Method to set the value of field requestId

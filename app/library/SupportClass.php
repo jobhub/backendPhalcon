@@ -10,6 +10,7 @@
 
 class SupportClass
 {
+
     public static function checkInteger($var){
         return ((string)(int)$var == $var);
     }
@@ -76,5 +77,25 @@ class SupportClass
         fwrite($file,'Дата: '.date('Y-m-d H:i:s').' - '.$message."\r\n");
         fflush($file);
         fclose($file);
+    }
+
+    /**
+     * Optimized algorithm from http://www.codexworld.com
+     *
+     * @param float $latitudeFrom
+     * @param float $longitudeFrom
+     * @param float $latitudeTo
+     * @param float $longitudeTo
+     *
+     * @return float [m]
+     */
+    public static function codexworldGetDistanceOpt($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo)
+    {
+        $rad = M_PI / 180;
+        //Calculate distance from latitude and longitude
+        $theta = $longitudeFrom - $longitudeTo;
+        $dist = sin($latitudeFrom * $rad) * sin($latitudeTo * $rad) +  cos($latitudeFrom * $rad) * cos($latitudeTo * $rad) * cos($theta * $rad);
+
+        return acos($dist) / $rad * 60 *  1853;
     }
 }

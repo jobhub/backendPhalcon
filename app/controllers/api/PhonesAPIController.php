@@ -70,7 +70,7 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-                $phoneCompany = PhonesCompanies::findByIds($company->getCompanyId(),$phone->getPhoneId());
+                $phoneCompany = PhonesCompanies::findByIds($company->getCompanyId(), $phone->getPhoneId());
                 if ($phoneCompany) {
                     $response->setJsonContent(
                         [
@@ -140,7 +140,7 @@ class PhonesAPIController extends Controller
 
             $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),'editPoint')) {
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -197,7 +197,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            $phonePoint = PhonesPoints::findByIds($point->getPointId(),$phone->getPhoneId());
+            $phonePoint = PhonesPoints::findByIds($point->getPointId(), $phone->getPhoneId());
             if ($phonePoint) {
                 $response->setJsonContent(
                     [
@@ -260,7 +260,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $phonesCompany = PhonesCompanies::findByIds($companyId,$phoneId);
+            $phonesCompany = PhonesCompanies::findByIds($companyId, $phoneId);
 
             if (!$phonesCompany) {
                 $response->setJsonContent(
@@ -274,7 +274,7 @@ class PhonesAPIController extends Controller
 
             $company = $phonesCompany->companies;
 
-            if (!$company || !Companies::checkUserHavePermission($userId,$companyId,'editCompany')) {
+            if (!$company || !Companies::checkUserHavePermission($userId, $companyId, 'editCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -300,7 +300,7 @@ class PhonesAPIController extends Controller
 
             $phone = Phones::findFirstByPhoneid($phoneId);
 
-            if($phone->countOfReferences() == 0)
+            if ($phone->countOfReferences() == 0)
                 $phone->delete();
 
             $response->setJsonContent(
@@ -333,7 +333,7 @@ class PhonesAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $phonesPoint = PhonesPoints::findByIds($pointId,$phoneId);
+            $phonesPoint = PhonesPoints::findByIds($pointId, $phoneId);
 
             if (!$phonesPoint) {
                 $response->setJsonContent(
@@ -347,8 +347,8 @@ class PhonesAPIController extends Controller
 
             $point = $phonesPoint->tradepoints;
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),
-                'editPoint')){
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
+                    'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -374,7 +374,7 @@ class PhonesAPIController extends Controller
 
             $phone = Phones::findFirstByPhoneid($phoneId);
 
-            if($phone->countOfReferences() == 0)
+            if ($phone->countOfReferences() == 0)
                 $phone->delete();
 
             $response->setJsonContent(
@@ -407,7 +407,7 @@ class PhonesAPIController extends Controller
             $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$point->getSubjectId(),$point->getSubjectType(),
+            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
                     'editPoint')) {
                 $response->setJsonContent(
                     [
@@ -419,14 +419,13 @@ class PhonesAPIController extends Controller
             }
 
 
-
             $this->db->begin();
 
             if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
 
                 $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
 
-                if(!$phone){
+                if (!$phone) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -436,9 +435,9 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-                if($phone->countOfReferences() < 2){
+                if ($phone->countOfReferences() < 2) {
                     $phone->setPhone($this->request->getPut("phone"));
-                } else{
+                } else {
 
                     $phone = new Phones();
                     $phone->setPhone($this->request->getPut("phone"));
@@ -449,7 +448,7 @@ class PhonesAPIController extends Controller
                 $phonesPoint = PhonesPoints::findByIds($this->request->getPut("pointId"),
                     $this->request->getPut("phoneId"));
 
-                if(!$phonesPoint){
+                if (!$phonesPoint) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -593,7 +592,7 @@ class PhonesAPIController extends Controller
                 return $response;
             }
 
-            if (!Companies::checkUserHavePermission($userId,$this->request->getPut("companyId"),'editCompany')) {
+            if (!Companies::checkUserHavePermission($userId, $this->request->getPut("companyId"), 'editCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -609,7 +608,7 @@ class PhonesAPIController extends Controller
 
                 $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
 
-                if(!$phone){
+                if (!$phone) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -619,10 +618,10 @@ class PhonesAPIController extends Controller
                     return $response;
                 }
 
-                if($phone->countOfReferences() < 2){
+                if ($phone->countOfReferences() < 2) {
                     $phone->setPhone($this->request->getPut("phone"));
 
-                } else{
+                } else {
                     //Удаляем предыдущую связь, создаем новый телефон и связываем с ним
                     $phone = new Phones();
                     $phone->setPhone($this->request->getPut("phone"));
@@ -697,6 +696,175 @@ class PhonesAPIController extends Controller
                 ]
             );
             return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет телефон пользователю.
+     * Приватный метод.
+     *
+     * @method POST
+     *
+     * @params string phone или integer phoneId
+     * @return Phalcon\Http\Response с json ответом в формате Status;
+     */
+    public function addPhoneToUserAction()
+    {
+        if ($this->request->isPost()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $user = Users::findFirstByUserid($userId);
+
+            $this->db->begin();
+            if ($this->request->getPost("phone")) {
+                //Создаем новый
+                $phone = new Phones();
+                $phone->setPhone($this->request->getPost("phone"));
+
+                if (!$phone->save()) {
+                    $this->rollback();
+                    $errors = [];
+                    foreach ($phone->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+            } else if ($this->request->getPost("phoneId")) {
+                $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
+
+                if (!$phone) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['телефона с таким id не существует']
+                        ]
+                    );
+                    return $response;
+                }
+            } else {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Нужно указать номер телефона или id существующего в параметрах \'phone\', \'phoneId\'']
+                    ]
+                );
+                return $response;
+            }
+
+            $phoneUser = PhonesUsers::findByIds($user->getUserId(), $phone->getPhoneId());
+            if ($phoneUser) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_ALREADY_EXISTS,
+                        "errors" => ['Телефон уже привязан к пользователю']
+                    ]
+                );
+                return $response;
+            }
+
+            $phoneUser = new PhonesUsers();
+
+            $phoneUser->setUserId($user->getUserId());
+            $phoneUser->setPhoneId($phone->getPhoneId());
+
+            if (!$phoneUser->save()) {
+
+                $this->db->rollback();
+                $errors = [];
+                foreach ($phoneUser->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    'status' => STATUS_OK
+                ]
+            );
+            return $response;
+
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Убирает телефон из списка телефонов пользователя.
+     * Приватный метод.
+     *
+     * @method DELETE
+     *
+     * @param int $phoneId
+     * @return Phalcon\Http\Response с json массивом в формате Status
+     */
+    public function deletePhoneFromUserAction($phoneId)
+    {
+        if ($this->request->isDelete()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $phonesUsers = PhonesUsers::findByIds($userId, $phoneId);
+
+            if (!$phonesUsers) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Телефон не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$phonesUsers->delete()) {
+                $errors = [];
+                foreach ($phonesUsers->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $phone = Phones::findFirstByPhoneid($phoneId);
+
+            if ($phone->countOfReferences() == 0)
+                $phone->delete();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
+
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

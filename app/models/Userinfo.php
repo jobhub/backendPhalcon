@@ -65,12 +65,22 @@ class Userinfo extends \Phalcon\Mvc\Model
     protected $about;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", length=1000, nullable=true)
+     */
+    protected $status;
+
+    /**
      * @var integer
      * @Column(type="tyniint", length=4, nullable=false)
      */
     protected $ratingexecutor;
     protected $ratingclient;
     protected $pathtophoto;
+
+    public const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
+        'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto'];
     /**
      * Method to set the value of field userId
      *
@@ -182,6 +192,19 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this;
     }
 
+    /**
+     * Method to set the value of field about
+     *
+     * @param string $status
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
 
     public function setRatingExecutor($ratingexecutor)
     {
@@ -210,6 +233,16 @@ class Userinfo extends \Phalcon\Mvc\Model
     public function getUserId()
     {
         return $this->userid;
+    }
+
+    /**
+     * Returns the value of field status
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     /**

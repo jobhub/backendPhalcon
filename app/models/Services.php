@@ -79,6 +79,9 @@ class Services extends SubjectsWithNotDeleted
 
     protected $rating;
 
+    public const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
+        'regionid', 'name', 'longitude', 'latitude', 'rating'];
+
     /**
      * Method to set the value of field serviceId
      *
@@ -434,10 +437,12 @@ class Services extends SubjectsWithNotDeleted
         return 'services';
     }
 
-    public static function getServices($categoriesId = null)
+    public static function getServices($categoriesId = null, $serviceid = null, $companyid = null)
     {
         $db = Phalcon\DI::getDefault()->getDb();
-        $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
+        if ($serviceid == null) {
+            if ($companyid == null) {
+                $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
                 row_to_json(comp) as \"company\",
                array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
                               public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
@@ -450,9 +455,10 @@ class Services extends SubjectsWithNotDeleted
                                        WHERE images.serviceid = serv.serviceid) as \"images\"                        
               FROM public.companies as comp
               INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1
-              AND serv.deleted = false AND comp.deleted = false)) foo LIMIT 100");
+              AND serv.deleted = false AND comp.deleted = false))) foo
+              ");
 
-        $query2 = $db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
+                $query2 = $db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
                 row_to_json(us) as \"userinfo\",
                array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
                               public.userscategories uc ON(uc.categoryid = cat.categoryid)
@@ -468,9 +474,86 @@ class Services extends SubjectsWithNotDeleted
               AND serv.deleted = false) 
               INNER JOIN public.users ON (us.userid = public.users.userid))
               ) foo LIMIT 100");
+                $query->execute();
+                $query2->execute();
+            } else {
+                $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
+                row_to_json(comp) as \"company\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
+                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\",
+               array(SELECT row_to_json(images) FROM public.imagesservices as images 
+                                       WHERE images.serviceid = serv.serviceid) as \"images\"                        
+              FROM public.companies as comp
+              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1
+              AND serv.deleted = false AND comp.deleted = false)
+              WHERE comp.companyid = :companyId 
+              ) foo");
 
-        $query->execute();
-        $query2->execute();
+                $query2 = $db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
+                row_to_json(us) as \"userinfo\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.userscategories uc ON(uc.categoryid = cat.categoryid)
+                                       WHERE uc.userid = us.userid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\",
+              array(SELECT row_to_json(images) FROM public.imagesservices as images 
+                                       WHERE images.serviceid = serv.serviceid) as \"images\" 
+              FROM public.userinfo as us
+              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0
+              AND serv.deleted = false) 
+              INNER JOIN public.users ON (us.userid = public.users.userid) 
+              WHERE false) 
+              ) foo");
+                $query->execute(['companyId' => $companyid]);
+                $query2->execute(/*['companyId'=> $companyid]*/);
+            }
+        } else {
+            $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
+                row_to_json(comp) as \"company\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.\"companiesCategories\" compcat ON (compcat.categoryid = cat.categoryid)
+                                       WHERE comp.companyid = compcat.companyid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\",
+               array(SELECT row_to_json(images) FROM public.imagesservices as images 
+                                       WHERE images.serviceid = serv.serviceid) as \"images\"                        
+              FROM public.companies as comp
+              INNER JOIN public.services as serv ON (serv.subjectid = comp.companyid AND serv.subjecttype = 1
+              AND serv.deleted = false AND comp.deleted = false)
+              WHERE serv.serviceid = :serviceId 
+              ) foo");
+
+            $query2 = $db->prepare("SELECT * FROM ((SELECT row_to_json(serv) as \"service\",
+                row_to_json(us) as \"userinfo\",
+               array(SELECT row_to_json(cat.*) FROM public.categories as cat INNER JOIN
+                              public.userscategories uc ON(uc.categoryid = cat.categoryid)
+                                       WHERE uc.userid = us.userid) as \"categories\",
+               array(SELECT row_to_json(points) FROM public.\"tradePoints\" as points INNER JOIN
+                              public.\"servicesPoints\" servpoint ON (servpoint.pointid = points.pointid
+                              AND points.deleted = false)
+                                       WHERE servpoint.serviceid = serv.serviceid) as \"points\",
+              array(SELECT row_to_json(images) FROM public.imagesservices as images 
+                                       WHERE images.serviceid = serv.serviceid) as \"images\" 
+              FROM public.userinfo as us
+              INNER JOIN public.services as serv ON (serv.subjectid = us.userid AND serv.subjecttype = 0
+              AND serv.deleted = false) 
+              INNER JOIN public.users ON (us.userid = public.users.userid) 
+              WHERE serv.serviceid = :serviceId) 
+              ) foo");
+            $query->execute(['serviceId' => $serviceid]);
+            $query2->execute(['serviceId' => $serviceid]);
+        }
+
+
         $services = $query->fetchAll(\PDO::FETCH_ASSOC);
         $servicesusers = $query2->fetchAll(\PDO::FETCH_ASSOC);
         $reviews2 = [];
@@ -479,7 +562,7 @@ class Services extends SubjectsWithNotDeleted
             $review2['service'] = json_decode($review['service']);
 
             $review2['company'] = json_decode($review['company']);
-            $review2['images'] = json_decode($review['images']);
+
 
             $review['categories'][0] = '[';
             $review['categories'][strlen($review['categories']) - 1] = ']';
@@ -489,6 +572,7 @@ class Services extends SubjectsWithNotDeleted
             $review['categories'] = stripslashes($review['categories']);
             $review2['categories'] = json_decode($review['categories']);
 
+            $review2['images'] = json_decode($review['images']);
             $review['images'][0] = '[';
             $review['images'][strlen($review['images']) - 1] = ']';
 
@@ -503,6 +587,7 @@ class Services extends SubjectsWithNotDeleted
             $review['points'] = str_replace('"{', '{', $review['points']);
             $review['points'] = str_replace('}"', '}', $review['points']);
             $review['points'] = stripslashes($review['points']);
+            $review2['ratingcount'] = 45;
 
             $review2['points'] = json_decode($review['points'], true);
 
@@ -517,7 +602,7 @@ class Services extends SubjectsWithNotDeleted
 
             if ($categoriesId != null) {
                 $flag = false;
-                foreach($categoriesId as $categoryId) {
+                foreach ($categoriesId as $categoryId) {
                     foreach ($review2['categories'] as $category) {
                         if ($category->categoryid == $categoryId) {
                             $flag = true;
@@ -554,6 +639,7 @@ class Services extends SubjectsWithNotDeleted
             $review['images'] = str_replace('}"', '}', $review['images']);
             $review['images'] = stripslashes($review['images']);
             $review2['images'] = json_decode($review['images']);
+            $review2['ratingcount'] = 45;
 
 
             $review['points'][0] = '[';
@@ -573,7 +659,7 @@ class Services extends SubjectsWithNotDeleted
 
             if ($categoriesId != null) {
                 $flag = false;
-                foreach($categoriesId as $categoryId) {
+                foreach ($categoriesId as $categoryId) {
                     foreach ($review2['categories'] as $category) {
                         if ($category->categoryid == $categoryId) {
                             $flag = true;
@@ -593,7 +679,101 @@ class Services extends SubjectsWithNotDeleted
         return $reviews2;
     }
 
-    public static function getTasksForService($serviceId){
+    private function sortFunction($a,$b){
+        return ($a['weight'] > $b['weight']) ? -1:1;
+    }
+
+    /**
+     * @param $query
+     * @param $center
+     * @param $diagonal
+     * @param null $regions
+     * @return array
+     */
+    public static function getServicesByQuery($query, $center, $diagonal, $regions = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 10000, 500);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        if ($regions != null) {
+            $cl->setFilter('regionid', $regions, false);
+            $cl->AddQuery($query);
+            $cl->ResetFilters();
+        }
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad(51.597103495105), deg2rad(39.228809868747));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        $cl->AddQuery($query, 'bro4you_index_small');
+
+        $results = $cl->RunQueries();
+        $services = [];
+
+        foreach ($results as $result) {
+            $allmatches = [];
+            if ($result['total'] > 0) {
+                $allmatches =array_merge($allmatches,$result['matches']);
+            }
+        }
+
+        uksort($allmatches,'sortFunction');
+
+        foreach ($allmatches as $match) {
+            $service['service'] = json_decode($match['attrs']['service'], true);
+            //$service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            if (count($match['attrs']['pointid']) > 0) {
+                $str = '';
+
+                foreach ($match['attrs']['pointid'] as $pointid) {
+                    if ($str == '')
+                        $str .= 'pointid IN (' . $pointid;
+                    else {
+                        $str .= ', ' . $pointid;
+                    }
+                }
+                $str .= ')';
+
+                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
+
+                $service['points'] = $points;
+            }
+
+            if ($service['service']['subjecttype'] == 1) {
+                $service['companies'] = Companies::findFirst([
+                    'companyid = :companyId:',
+                    'bind' => ['companyId' => $service['service']['binderid']],
+                    'columns' => Companies::publicColumns
+                ]);
+
+                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['binderid']);
+            } elseif ($service['service']['subjecttype'] == 1) {
+                $service['userinfo'] = Companies::findFirst([
+                    'userid = :userId:',
+                    'bind' => ['userId' => $service['service']['binderid']],
+                    'columns' => Userinfo::publicColumns
+                ]);
+
+                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['binderid']);
+            }
+            $services[] = $service;
+        }
+
+
+        return $services;
+    }
+
+
+    public static function getTasksForService($serviceId)
+    {
         $db = Phalcon\DI::getDefault()->getDb();
 
         return [];
@@ -604,19 +784,20 @@ class Services extends SubjectsWithNotDeleted
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->from(["p" => "tradepoints"])
-            ->join('servicespoints','p.pointid = sp.pointid','sp')
+            ->join('servicespoints', 'p.pointid = sp.pointid', 'sp')
             ->join('services', 'sp.serviceid = s.serviceid', 's')
-            ->where('s.serviceid = :serviceId:',['serviceId'=>$serviceId])
+            ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
             ->getQuery()
             ->execute();
 
         return $result;
     }
 
-    public function clipToPublic(){
+    public function clipToPublic()
+    {
         $service = $this;
         $service = json_encode($service);
-        $service = json_decode($service,true);
+        $service = json_decode($service, true);
         unset($service['deleted']);
         unset($service['deletedcascade']);
         unset($service['numberofdisplay']);

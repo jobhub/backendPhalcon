@@ -61,7 +61,7 @@ class ReviewsAPIController extends Controller
 
             if ($binderType == 'task') {
                 $binder = Tasks::findFirstByTaskid($binderId);
-            } elseif($binderType == 'request')
+            } elseif ($binderType == 'request')
                 $binder = Requests::findFirstByRequestid($binderId);
 
             if (!($binder->getStatus() == STATUS_CANCELED ||
@@ -119,7 +119,7 @@ class ReviewsAPIController extends Controller
 
             throw $exception;
         }
-}
+    }
 
     /**
      * Редактирует отзыв.
@@ -224,7 +224,7 @@ class ReviewsAPIController extends Controller
                 return $response;
             }
 
-            if($review->getFake()==false) {
+            if ($review->getFake() == false) {
                 if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
                     $review->getBinderType(), $review->getExecutor(), 'deleteReview')) {
                     $response->setJsonContent(
@@ -293,7 +293,7 @@ class ReviewsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $reviews = Reviews::getReviewsForObject($subjectId,$subjectType);
+            $reviews = Reviews::getReviewsForObject($subjectId, $subjectType);
 
             $response->setJsonContent(
                 [
@@ -331,7 +331,7 @@ class ReviewsAPIController extends Controller
             $reviews = Reviews::getReviewsForService2($serviceId);
 
             $reviews2_ar = [];
-            foreach($reviews as $review){
+            foreach ($reviews as $review) {
                 $reviews2['review'] = json_decode($review['review'], true);
 
                 unset($reviews2['review']['deleted']);
@@ -341,24 +341,32 @@ class ReviewsAPIController extends Controller
                 unset($reviews2['review']['subjecttype']);
                 unset($reviews2['review']['objectid']);
                 unset($reviews2['review']['objecttype']);
+
                 unset($reviews2['review']['userid']);
                 $subject = json_decode($review['subject'], true);
-                if(isset($subject['companyid']))
-                {
+                if (isset($subject['reviewid'])) {
+                    //$reviews2['review']['username'] = $reviews2['review']['fakename'];
+                    $userinfo = new Userinfo();
+                    $userinfo->setFirstname($reviews2['review']['fakename']);
+                    $reviews2['userinfo'] = $userinfo;
+                } else if (isset($subject['companyid'])) {
                     $reviews2['company'] = $subject;
                     unset($reviews2['company']['deleted']);
                     unset($reviews2['company']['deletedcascade']);
                     unset($reviews2['company']['ismaster']);
                     unset($reviews2['company']['yandexMapPages']);
-                } else{
+
+                } else {
                     $reviews2['userinfo'] = $subject;
                 }
+                unset($reviews2['review']['fakename']);
+
                 $reviews2_ar[] = $reviews2;
             }
 
             $paginator = new Paginator([
                 'data' => $reviews2_ar,
-                'limit'=> $widthPage,
+                'limit' => $widthPage,
                 'page' => $numPage
             ]);
 
@@ -369,8 +377,6 @@ class ReviewsAPIController extends Controller
                 ]
             );
             return $response;
-
-
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
@@ -380,8 +386,9 @@ class ReviewsAPIController extends Controller
     /**
      *
      */
-    public function addTypeAction(){
-        $query = $this->db->prepare("CREATE TYPE bindertype AS ENUM ('task', 'request');");
+    public function addTypeAction()
+    {
+        $query = $this->db->prepare("ALTER TYPE bindertype AS ENUM ('task', 'request',);");
 
         return $query->execute();
     }

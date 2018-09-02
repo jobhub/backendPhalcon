@@ -41,7 +41,7 @@ class ServicesAPIController extends Controller
      * массив регионов (id-шников) (regionsId). возвращает
      * список услуг и всего им соответствующего;
      * 1 - запрос на получение элементов интеллектуального поиска. Принимает те же данные, что и в 0-вом запросе.
-     * Возвращает массив с типом элемента (строкой - 'company', 'point' и другое), id элемента и его названием для отображения в строке
+     * Возвращает массив с типом элемента (строкой - 'company', 'service' и 'category'), id элемента и его названием для отображения в строке
      *  ([{type : ..., id : ..., name : ...}, {...}]);
      * 2 - еще один запрос на получение услуг. Принимает id элемента и тип строкой (type), как отдавалось в запрос 1.
      * Возвращает массив услуг, как в 0-вом запросе.
@@ -60,18 +60,78 @@ class ServicesAPIController extends Controller
      * @params array regionsId (необязательно) массив регионов,
      * @params array categoriesId (необязательно) массив категорий,
      *
-     * @return string json массив [service, company/userinfo,[categories],[tradepoints],[images]] или
-     *   json массив [{type : ..., id : ..., name : ...}, {...}].
+     * @return string json массив [status, service, company/userinfo,[categories],[tradepoints],[images]] или
+     *   json массив [status, [{type : ..., id : ..., name : ...}, {...}]].
      */
     public function getServicesAction(){
         if ($this->request->isPost()) {
             $response = new Response();
 
-            $result = Services::getServices($this->request->getPost('categoriesId'));
+            if($this->request->getPost('typeQuery') == 0){
+
+                if(strlen($this->request->getPost('userQuery')) < 3){
+                    $response->setJsonContent([
+                        'status' => STATUS_WRONG,
+                        'errors' => ['Слишком маленькая длина запроса']
+                    ]);
+                    return $response;
+                }
+
+                $result = Services::getServicesByQuery($this->request->getPost('userQuery'),
+                    $this->request->getPost('center'),$this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
+
+            } elseif($this->request->getPost('typeQuery') == 1){
+                $array = [];
+                $array[] = ['type' => 'company', 'id' => 3,'name' => 'Цветочки'];
+                $array[] = ['type' => 'service', 'id' => 52,'name' => 'Гонки со страусами!'];
+                $array[] = ['type' => 'category', 'id' => 1,'name' => 'Кафе, пиццерии, суше-бары'];
+                $array[] = ['type' => 'service', 'id' => 105,'name' => 'Крутые картинки!'];
+                $array[] = ['type' => 'company', 'id' => 2,'name' => 'Кольцо'];
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'autocomplete' => $array,
+                ]);
+                return $response;
+            } elseif($this->request->getPost('typeQuery') == 2){
+                if($this->request->getPost('type') == 'service'){
+                    $result = Services::getServices(null,
+                        $this->request->getPost('id'));
+                    $response->setJsonContent([
+                        'status' => STATUS_OK,
+                        'services' => $result
+                    ]);
+                    return $response;
+                } else if($this->request->getPost('type') == 'category'){
+                    $result = Services::getServices([$this->request->getPost('id')]);
+                    $response->setJsonContent([
+                        'status' => STATUS_OK,
+                        'services' => $result
+                    ]);
+                    return $response;
+
+                } else if($this->request->getPost('type') == 'company'){
+                    $result = Services::getServices(null, null, $this->request->getPost('id'));
+                    $response->setJsonContent([
+                        'status' => STATUS_OK,
+                        'services' => $result
+                    ]);
+                    return $response;
+                }
+            }
+
+            //$result = Services::getServices($this->request->getPost('categoriesId'));
 
             $response->setJsonContent([
-                'status' => STATUS_OK,
-                'services' => $result
+                'status' => STATUS_WRONG,
+                'errors' => ['Неправильно указан тип запроса']
             ]);
 
             return $response;
@@ -1338,6 +1398,8 @@ class ServicesAPIController extends Controller
 
             $points = Services::getPointsForService($serviceId);
 
+            $images = Imagesservices::findByServiceid($serviceId);
+
             $points2 = [];
             foreach($points as $point){
                 $points2['point'] = $point->clipToPublic();
@@ -1347,7 +1409,88 @@ class ServicesAPIController extends Controller
             $response->setJsonContent([
                 'status' => STATUS_OK,
                 'service' => $service,
-                'points' => $points2
+                'points' => $points2,
+                'images' => $images
+            ]);
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    public function addImagesToAllServicesAction(){
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $services = Services::find();
+
+            foreach($services as $service){
+                $randnumber = rand(0,3);
+
+                if($randnumber > 0) {
+                    $imageserv = new Imagesservices();
+                    $imageserv->setServiceId($service->getServiceId());
+                    $imageserv->setImagePath('/images/services/desert.jpg');
+                    if (!$imageserv->save()) {
+                        $errors = [];
+                        foreach ($imageserv->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                    $randnumber--;
+                }
+
+                if($randnumber > 0){
+                    $imageserv = new Imagesservices();
+                    $imageserv->setServiceId($service->getServiceId());
+                    $imageserv->setImagePath('/images/services/butterfly.jpg');
+                    if (!$imageserv->save()) {
+                        $errors = [];
+                        foreach ($imageserv->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                    $randnumber--;
+                }
+                if($randnumber > 0){
+                    $imageserv = new Imagesservices();
+                    $imageserv->setServiceId($service->getServiceId());
+                    $imageserv->setImagePath('/images/services/flower.jpg');
+                    if (!$imageserv->save()) {
+                        $errors = [];
+                        foreach ($imageserv->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                }
+            }
+
+            $response->setJsonContent([
+                'status' => STATUS_OK,
             ]);
 
             return $response;

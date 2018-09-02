@@ -1,15 +1,13 @@
 <?php
 
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Callback;
-class PhonesCompanies extends \Phalcon\Mvc\Model
+class PhonesUsers extends \Phalcon\Mvc\Model
 {
 
     /**
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $phoneid;
 
@@ -17,12 +15,12 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyid;
+    protected $userid;
 
     /**
-     * Method to set the value of field phoneId
+     * Method to set the value of field phoneid
      *
      * @param integer $phoneid
      * @return $this
@@ -35,20 +33,20 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field companyId
+     * Method to set the value of field userid
      *
-     * @param integer $companyid
+     * @param integer $userid
      * @return $this
      */
-    public function setCompanyId($companyid)
+    public function setUserId($userid)
     {
-        $this->companyid = $companyid;
+        $this->userid = $userid;
 
         return $this;
     }
 
     /**
-     * Returns the value of field phoneId
+     * Returns the value of field phoneid
      *
      * @return integer
      */
@@ -58,13 +56,24 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field companyId
+     * Returns the value of field userid
      *
      * @return integer
      */
-    public function getCompanyId()
+    public function getUserId()
     {
-        return $this->companyid;
+        return $this->userid;
+    }
+
+    /**
+     * Initialize method for model.
+     */
+    public function initialize()
+    {
+        $this->setSchema("public");
+        $this->setSource("phones_users");
+        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -81,8 +90,8 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Телефон не был создан",
-                    "callback" => function($phoneCompany) {
-                        $phone = Phones::findFirstByPhoneid($phoneCompany->getPhoneId());
+                    "callback" => function($phoneUser) {
+                        $phone = Phones::findFirstByPhoneid($phoneUser->getPhoneId());
 
                         if($phone)
                             return true;
@@ -93,12 +102,12 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'companyid',
+            'userid',
             new Callback(
                 [
                     "message" => "Такая компания не существует",
-                    "callback" => function($phoneCompany) {
-                        $phone = Companies::findFirstByCompanyid($phoneCompany->getCompanyId());
+                    "callback" => function($phoneUser) {
+                        $phone = Users::findFirstByUserid($phoneUser->getUserId());
 
                         if($phone)
                             return true;
@@ -112,21 +121,20 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Initialize method for model.
+     * Returns table name mapped in the model.
+     *
+     * @return string
      */
-    public function initialize()
+    public function getSource()
     {
-        //$this->setSchema("job");
-        $this->setSource("phonesCompanies");
-        $this->belongsTo('companyid', '\Companies', 'companyid', ['alias' => 'Companies']);
-        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
+        return 'phones_users';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return PhonesCompanies[]|PhonesCompanies|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return PhonesUsers[]|PhonesUsers|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -137,45 +145,36 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return PhonesCompanies|\Phalcon\Mvc\Model\ResultInterface
+     * @return PhonesUsers|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($companyId, $phoneId)
+    public static function findByIds($userId, $phoneId)
     {
-        return PhonesCompanies::findFirst(["companyid = :companyId: AND phoneid = :phoneId:",
+        return PhonesCompanies::findFirst(["userid = :userId: AND phoneid = :phoneId:",
             'bind' =>
-                ['companyId' => $companyId,
+                [
+                    'userId' => $userId,
                     'phoneId' => $phoneId
                 ]]);
     }
 
-    public static function getCompanyPhones($companyId)
+    public static function getUserPhones($userId)
     {
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $query = $db->prepare('SELECT p.phone FROM "phonesCompanies" p_c INNER JOIN phones p ON 
-            (p_c.phoneid = p.phoneid) where p_c.companyid = :companyId'
+        $query = $db->prepare("SELECT p.phone FROM phones_users p_u INNER JOIN phones p ON 
+            (p_u.phoneid = p.phoneid) where p_u.userid = :userId"
         );
 
         $query->execute([
-            'companyId' => $companyId,
+            'userId' => $userId,
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'phonesCompanies';
     }
 
 }

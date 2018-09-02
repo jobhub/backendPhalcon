@@ -80,6 +80,9 @@ class TradePoints extends SubjectsWithNotDeleted
      */
     protected $address;
 
+    public const publicColumns = ['pointid','name', 'longitude', 'latitude', 'fax', 'time',
+        'email', 'usermanager', 'website', 'address'];
+
     /**
      * Method to set the value of field pointId
      *

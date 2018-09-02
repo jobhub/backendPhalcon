@@ -227,7 +227,7 @@ class CategoriesAPIController extends Controller
     {
         if ($this->request->isGet()) {
 
-            $categories = Categories::find(['order' => 'parentid DESC']);
+            $categories = Categories::find(['categoryid > 80','order' => 'parentid DESC']);
 
             $categories2 = [];
             foreach ($categories as $category) {
@@ -298,6 +298,96 @@ class CategoriesAPIController extends Controller
 
             $category->save();
             return $category->save();
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    public function addSomeCategoriesAction()
+    {
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $categories = [['name' => 'Питание', 'child' => ['Рестораны', 'Бары, пабы', 'Столовые','Кофейни','Кондитерские, торты на заказ',
+                'Быстрое питание', 'Доставка еды, воды', 'Кейтеринг', 'Другое'],'img' => '/images/categories/питание.jpg'],
+                ['name' => 'Развлечения и отдых', 'child' => [], 'img' => '/images/categories/развлечения-и-отдых.jpg'],
+                ['name' => 'Авто и перевозки', 'child' => [], 'img' => '/images/categories/авто-и-перевозки.jpg'],
+                ['name' => 'Красота', 'child' => [], 'img' => '/images/categories/красота.jpg'],
+                ['name' =>'Спорт','child' => [],'img' => '/images/categories/спорт.jpg'],
+                ['name' =>'Медицина','child' => [],'img' => '/images/categories/медицина.jpg'],
+                ['name' =>'Недвижимость','child' => [],'img' => '/images/categories/недвижимость.jpg'],
+                ['name' =>'Ремонт и строительство','child' => [],'img' => '/images/categories/ремонт-и-строительство.jpg'],
+                ['name' =>'IT, интернет, телеком','child' => [],'img' => '/images/categories/интернет-и-it.jpg'],
+                ['name' =>'Деловые услуги','child' => [],'img' => '/images/categories/деловые услуги.jpg'],
+                ['name' =>'Курьерские поручения','child' => ['Курьерские услуги', 'Почтовые услуги', 'Доставка цветов',
+                    'Другое'],'img' => '/images/categories/курьерские-поручения.jpg'],
+                ['name' =>'Бытовые услуги','child' => [],'img' => '/images/categories/бытовые услуги.jpg'],
+                ['name' =>'Клининг','child' => [],'img' => '/images/categories/клининг.jpg'],
+                ['name' =>'Обучение','child' => [],'img' => '/images/categories/обучение.jpg'],
+                ['name' =>'Праздники, мероприятия','child' => [],'img' => '/images/categories/праздники.jpg'],
+                ['name' =>'Животные','child' => [],'img' => '/images/categories/животные.jpg'],
+                ['name' =>'Реклама, полиграфия','child' => [],'img' => '/images/categories/реклама.jpg'],
+                ['name' =>'Сад, благоустройство','child' => [],'img' => '/images/categories/сад.jpg'],
+                ['name' =>'Охрана, безопасность','child' => [],'img' => '/images/categories/охрана.jpg'],
+                ['name' =>'Патронажн, уход','child' => [],'img' => '/images/categories/уход.jpg'],
+                ['name' =>'Друг на час','child' => [],'img' => '/images/categories/друг-на-час.jpg'],
+                ['name' =>'Благотворительность','child' => [],'img' => '/images/categories/благотвортельность.jpg'],
+                ['name' =>'Ритуальные услуги','child' => [],'img' => '/images/categories/ритуальные-услуги.jpg'],
+            ];
+
+            $this->db->begin();
+            foreach ($categories as $category){
+                $categoryObj = new Categories();
+                $categoryObj->setCategoryName($category['name']);
+                $categoryObj->setImg($category['img']);
+
+                if(!$categoryObj->save()){
+                    $this->db->rollback();
+                    $errors = [];
+                    foreach ($categoryObj->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+
+                foreach($category['child'] as $child){
+                    $categoryObj2 = new Categories();
+                    $categoryObj2->setCategoryName($child);
+                    $categoryObj2->setParentId($categoryObj->getCategoryId());
+
+                    if(!$categoryObj2->save()){
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($categoryObj2->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+                }
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);

@@ -62,6 +62,7 @@ class Offers extends SubjectsWithNotDeleted
      */
     protected $confirmed;
 
+    public const publicColumns = ['offerid', 'taskid', 'deadline', 'description', 'price', 'selected', 'confirmed'];
 
     /**
      * Method to set the value of field offerId

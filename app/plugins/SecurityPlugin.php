@@ -58,8 +58,8 @@ class SecurityPlugin extends Plugin
                 'auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
                 'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
                 'Userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
-                'userinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
-                    'setPhoto'],
+                'UserinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
+                    'setPhoto','editUserinfo'],
 
                 'tenderAPI' => ['delete'],
                 'reviews' => ['new', 'create'],
@@ -75,7 +75,8 @@ class SecurityPlugin extends Plugin
                     'restoreCompany', 'setCompanyLogotype', 'getCompanies', 'deleteCompanyTest'],
 
                 'PhonesAPI' => ['addPhoneToCompany', 'addPhoneToTradePoint', 'deletePhoneFromCompany',
-                    'deletePhoneFromTradePoint', 'editPhoneInTradePoint', 'editPhoneInCompany', 'test'],
+                    'deletePhoneFromTradePoint', 'editPhoneInTradePoint', 'editPhoneInCompany', 'test',
+                    'addPhoneToUser', 'deletePhoneFromUser'],
                 'TradePointsAPI' => ['addTradePoint', 'getPointsForUserManager', 'getPoints', 'editTradePoint', 'deleteTradePoint'],
                 'MessagesAPI' => ['addMessage', 'getMessages', 'getChats', 'getChat'],
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
@@ -92,7 +93,8 @@ class SecurityPlugin extends Plugin
 
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
                 'RegisterAPI' => ['confirm'],
-                'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent']
+                'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
+                'UserLocationAPI' => ['setLocation'],
             ];
             $privateResources2 = [];
             foreach ($privateResources as $resource => $actions) {
@@ -117,9 +119,10 @@ class SecurityPlugin extends Plugin
                 'admin/auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
                 'categories' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'messages' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'categoriesAPI' => ['addCategory', 'editCategory'],
+                'categoriesAPI' => ['addCategory', 'editCategory', 'addSomeCategories'],
                 'offersAPI' => ['addStatus'],
                 'ReviewsAPI' => ['addType'],
+                'ServicesAPI' => ['addImagesToAllServices'],
             ];
 
             $moderatorsResources2 = [];
@@ -155,7 +158,10 @@ class SecurityPlugin extends Plugin
                     'getServiceInfo'],
                 'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
                 'EventsAPI' => ['getEvents'],
-                'TradePointsAPI' => ['getPointInfo']
+                'TradePointsAPI' => ['getPointInfo'],
+                'Search' => ['index'],
+                'UserinfoAPI' => ['getUserinfo'],
+                'CompaniesAPI' => ['getCompanyInfo']
             ];
 
             $publicResources2 = [];

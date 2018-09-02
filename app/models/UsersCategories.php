@@ -153,4 +153,18 @@ class UsersCategories extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function getCategoriesByUser($userId)
+    {
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = $db->prepare('SELECT c.* FROM categories c INNER JOIN "userscategories" u_c  
+            USING(categoryid) where u_c.userid = :userId'
+        );
+
+        $query->execute([
+            'userId' => $userId,
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

@@ -30,7 +30,7 @@ class ImageLoader
         $image = new SimpleImage();
         $image->load($tempname);
         $image->resizeToWidth($width);
-        $result = $image->save(BASE_PATH.'/img/' . $subpath . '/' . $imagename, $format);
+        $result = $image->save(IMAGE_PATH . $subpath . '/' . $imagename, $format);
 
         if($result)
             return ImageLoader::RESULT_ALL_OK;
@@ -72,7 +72,7 @@ class ImageLoader
 
     public static function formFullImageName($subpath, $format, $id, $countImages)
     {
-            return '/img/' . $subpath . '/' .$id . '_'
+            return IMAGE_PATH . $subpath . '/' .$id . '_'
                 . ($countImages + 1) . '.' . $format;
     }
 
