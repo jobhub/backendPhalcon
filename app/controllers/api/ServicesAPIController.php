@@ -63,13 +63,14 @@ class ServicesAPIController extends Controller
      * @return string json массив [status, service, company/userinfo,[categories],[tradepoints],[images]] или
      *   json массив [status, [{type : ..., id : ..., name : ...}, {...}]].
      */
-    public function getServicesAction(){
+    public function getServicesAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
 
-            if($this->request->getPost('typeQuery') == 0){
+            if ($this->request->getPost('typeQuery') == 0) {
 
-                if(strlen($this->request->getPost('userQuery')) < 3){
+                if (strlen($this->request->getPost('userQuery')) < 3) {
                     $response->setJsonContent([
                         'status' => STATUS_WRONG,
                         'errors' => ['Слишком маленькая длина запроса']
@@ -78,7 +79,7 @@ class ServicesAPIController extends Controller
                 }
 
                 $result = Services::getServicesByQuery($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'),$this->request->getPost('diagonal'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
 
                 $response->setJsonContent([
@@ -87,44 +88,50 @@ class ServicesAPIController extends Controller
                 ]);
                 return $response;
 
-            } elseif($this->request->getPost('typeQuery') == 1){
-                $array = [];
-                $array[] = ['type' => 'company', 'id' => 3,'name' => 'Цветочки'];
-                $array[] = ['type' => 'service', 'id' => 52,'name' => 'Гонки со страусами!'];
-                $array[] = ['type' => 'category', 'id' => 1,'name' => 'Кафе, пиццерии, суше-бары'];
-                $array[] = ['type' => 'service', 'id' => 105,'name' => 'Крутые картинки!'];
-                $array[] = ['type' => 'company', 'id' => 2,'name' => 'Кольцо'];
+            } elseif ($this->request->getPost('typeQuery') == 1) {
+
+                $results = Services::getAutocompleteByQuery($this->request->getPost('userQuery'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
 
                 $response->setJsonContent([
                     'status' => STATUS_OK,
-                    'autocomplete' => $array,
+                    'autocomplete' => $results,
                 ]);
                 return $response;
-            } elseif($this->request->getPost('typeQuery') == 2){
-                if($this->request->getPost('type') == 'service'){
-                    $result = Services::getServices(null,
-                        $this->request->getPost('id'));
-                    $response->setJsonContent([
-                        'status' => STATUS_OK,
-                        'services' => $result
-                    ]);
-                    return $response;
-                } else if($this->request->getPost('type') == 'category'){
-                    $result = Services::getServices([$this->request->getPost('id')]);
-                    $response->setJsonContent([
-                        'status' => STATUS_OK,
-                        'services' => $result
-                    ]);
-                    return $response;
+            } elseif ($this->request->getPost('typeQuery') == 2) {
+                $result = Services::getServicesByElement($this->request->getPost('type'),
+                    array($this->request->getPost('id')),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
 
-                } else if($this->request->getPost('type') == 'company'){
-                    $result = Services::getServices(null, null, $this->request->getPost('id'));
-                    $response->setJsonContent([
-                        'status' => STATUS_OK,
-                        'services' => $result
-                    ]);
-                    return $response;
-                }
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
+
+            } elseif($this->request->getPost('typeQuery') == 3){
+                $result = Services::getServicesByElement('category',
+                    $this->request->getPost('categoriesId'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
+            } elseif($this->request->getPost('typeQuery') == 4){
+                $result = Services::getServicesByQuery('',
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
             }
 
             //$result = Services::getServices($this->request->getPost('categoriesId'));
@@ -398,7 +405,7 @@ class ServicesAPIController extends Controller
             }
             $description = $this->request->getPost("description");
 
-            if($this->request->getPost("video"))
+            if ($this->request->getPost("video"))
                 $description .= "\n\rВидео: " . $this->request->getPost("video");
 
             $service->setDescription($description);
@@ -418,8 +425,8 @@ class ServicesAPIController extends Controller
             $service->setDatePublication(date('Y-m-d H:i:s'));
 
             if (!$this->request->getPost("regionId") &&
-                !($this->request->getPost("oldPoints") && count($this->request->getPost("oldPoints"))!=0)
-            && !($this->request->getPost("newPoints") && count($this->request->getPost("newPoints"))!=0)) {
+                !($this->request->getPost("oldPoints") && count($this->request->getPost("oldPoints")) != 0)
+                && !($this->request->getPost("newPoints") && count($this->request->getPost("newPoints")) != 0)) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -473,7 +480,7 @@ class ServicesAPIController extends Controller
                 }
             }
 
-            if($this->request->getPost("newPoints")){
+            if ($this->request->getPost("newPoints")) {
                 $points = $this->request->getPost("newPoints");
 
                 foreach ($points as $point) {
@@ -487,18 +494,18 @@ class ServicesAPIController extends Controller
                     $result = $this->TradePointsAPI->addTradePoint($point);
                     $result = json_decode($result->getContent());
 
-                    if($result->status!= STATUS_OK){
+                    if ($result->status != STATUS_OK) {
                         $this->db->rollback();
                         $response->setJsonContent($result);
                         return $response;
                     }
-                    foreach($point->newPhones as $phone) {
+                    foreach ($point->newPhones as $phone) {
                         $_POST['phone'] = $phone;
                         $_POST['pointId'] = $result->pointId;
                         $result2 = $this->PhonesAPI->addPhoneToTradePointAction();
                         $result2 = json_decode($result2->getContent());
 
-                        if($result2->status != STATUS_OK){
+                        if ($result2->status != STATUS_OK) {
                             $this->db->rollback();
                             $response->setJsonContent($result2);
                             return $response;
@@ -526,10 +533,10 @@ class ServicesAPIController extends Controller
                 }
             }
 
-            if(!$this->request->getPost("companyId")){
+            if (!$this->request->getPost("companyId")) {
                 $categories = $this->request->getPost("categories");
 
-                foreach($categories as $categoryId){
+                foreach ($categories as $categoryId) {
                     $userCategory = new UsersCategories();
                     $userCategory->setUserId($userId);
                     $userCategory->setCategoryId($categoryId);
@@ -598,8 +605,8 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$service->getSubjectId(),
-                $service->getSubjectType(), 'editService')){
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+                $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -651,8 +658,8 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceid($image->getServiceId());
 
-            if(!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$service->getSubjectId(),
-                $service->getSubjectType(), 'editService')){
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+                    $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -678,13 +685,13 @@ class ServicesAPIController extends Controller
 
             $result = ImageLoader::delete($image->getImagePath());
 
-            if($result){
+            if ($result) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_OK
                     ]
                 );
-            } else{
+            } else {
                 $response->setJsonContent(
                     [
                         "errors" => ['Не удалось удалить файл'],
@@ -1206,10 +1213,10 @@ class ServicesAPIController extends Controller
             $countImagesCopy = $countImages;
             $this->db->begin();
 
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
 
-                $filename = ImageLoader::formFullImageName('services',$imageFormat,$serviceId,$countImages);
+                $filename = ImageLoader::formFullImageName('services', $imageFormat, $serviceId, $countImages);
 
                 $imageFullName = $filename;
 
@@ -1232,19 +1239,18 @@ class ServicesAPIController extends Controller
                     return $response;
                 }
                 //$filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
-                $countImages+=1;
+                $countImages += 1;
             }
 
-            foreach($files as $file) {
-                $result = ImageLoader::loadService($file->getTempName(),$file->getName(),$countImagesCopy,$serviceId);
+            foreach ($files as $file) {
+                $result = ImageLoader::loadService($file->getTempName(), $file->getName(), $countImagesCopy, $serviceId);
 
-                if($result != ImageLoader::RESULT_ALL_OK || $result === null){
-                    if($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED){
+                if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
+                    if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
                         $error = 'Формат одного из изображений не поддерживается';
-                    } elseif($result == ImageLoader::RESULT_ERROR_NOT_SAVED){
+                    } elseif ($result == ImageLoader::RESULT_ERROR_NOT_SAVED) {
                         $error = 'Не удалось сохранить изображение';
-                    }
-                    else{
+                    } else {
                         $error = 'Ошибка при загрузке изображения';
                     }
                     $response->setJsonContent(
@@ -1282,7 +1288,8 @@ class ServicesAPIController extends Controller
      * @params $serviceId
      * @return string - json array в формате Status
      */
-    public function incrementNumberOfDisplayForServiceAction(){
+    public function incrementNumberOfDisplayForServiceAction()
+    {
         if ($this->request->isPut()) {
             $response = new Response();
 
@@ -1298,7 +1305,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $service->setNumberOfDisplay($service->getNumberOfDisplay()+1);
+            $service->setNumberOfDisplay($service->getNumberOfDisplay() + 1);
 
             if (!$service->update()) {
                 $errors = [];
@@ -1335,7 +1342,8 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return string - json array tasks
      */
-    public function getTasksForService($serviceId){
+    public function getTasksForService($serviceId)
+    {
         if ($this->request->isGet() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
@@ -1379,13 +1387,14 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array {status, service, [points => {point, [phones]}]}
      */
-    public function getServiceInfoAction($serviceId){
+    public function getServiceInfoAction($serviceId)
+    {
         if ($this->request->isGet()) {
             $response = new Response();
 
             $service = Services::findFirstByServiceid($serviceId);
 
-            if(!$service){
+            if (!$service) {
                 $response->setJsonContent([
                     'status' => STATUS_WRONG,
                     'errors' => ['Услуга не существует']
@@ -1401,7 +1410,7 @@ class ServicesAPIController extends Controller
             $images = Imagesservices::findByServiceid($serviceId);
 
             $points2 = [];
-            foreach($points as $point){
+            foreach ($points as $point) {
                 $points2['point'] = $point->clipToPublic();
                 $points2['phones'] = PhonesPoints::getPhonesForPoint($point->getPointId());
             }
@@ -1421,16 +1430,17 @@ class ServicesAPIController extends Controller
         }
     }
 
-    public function addImagesToAllServicesAction(){
+    public function addImagesToAllServicesAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
 
             $services = Services::find();
 
-            foreach($services as $service){
-                $randnumber = rand(0,3);
+            foreach ($services as $service) {
+                $randnumber = rand(0, 3);
 
-                if($randnumber > 0) {
+                if ($randnumber > 0) {
                     $imageserv = new Imagesservices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/desert.jpg');
@@ -1450,7 +1460,7 @@ class ServicesAPIController extends Controller
                     $randnumber--;
                 }
 
-                if($randnumber > 0){
+                if ($randnumber > 0) {
                     $imageserv = new Imagesservices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/butterfly.jpg');
@@ -1469,7 +1479,7 @@ class ServicesAPIController extends Controller
                     }
                     $randnumber--;
                 }
-                if($randnumber > 0){
+                if ($randnumber > 0) {
                     $imageserv = new Imagesservices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/flower.jpg');

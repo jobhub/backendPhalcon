@@ -680,7 +680,15 @@ class Services extends SubjectsWithNotDeleted
     }
 
     private function sortFunction($a,$b){
-        return ($a['weight'] > $b['weight']) ? -1:1;
+        return ($a['weight'] < $b['weight']) ? -1:1;
+    }
+
+    function cmp($a, $b)
+    {
+        if ($a['weight'] == $b['weight']) {
+            return 0;
+        }
+        return ($a['weight'] < $b['weight']) ? -1 : 1;
     }
 
     /**
@@ -701,11 +709,11 @@ class Services extends SubjectsWithNotDeleted
 
         if ($regions != null) {
             $cl->setFilter('regionid', $regions, false);
-            $cl->AddQuery($query);
+            $cl->AddQuery($query,'bro4you_small_index');
             $cl->ResetFilters();
         }
         if ($center != null && $diagonal != null) {
-            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad(51.597103495105), deg2rad(39.228809868747));
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
 
             $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
                 $diagonal['latitude'], $diagonal['longitude']);
@@ -713,19 +721,23 @@ class Services extends SubjectsWithNotDeleted
             $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
         }
 
-        $cl->AddQuery($query, 'bro4you_index_small');
+        $cl->AddQuery($query, 'bro4you_small_index');
 
         $results = $cl->RunQueries();
         $services = [];
-
+        $allmatches = [];
         foreach ($results as $result) {
-            $allmatches = [];
             if ($result['total'] > 0) {
                 $allmatches =array_merge($allmatches,$result['matches']);
             }
         }
 
-        uksort($allmatches,'sortFunction');
+        $res = usort($allMatches,function($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
 
         foreach ($allmatches as $match) {
             $service['service'] = json_decode($match['attrs']['service'], true);
@@ -750,19 +762,19 @@ class Services extends SubjectsWithNotDeleted
             if ($service['service']['subjecttype'] == 1) {
                 $service['companies'] = Companies::findFirst([
                     'companyid = :companyId:',
-                    'bind' => ['companyId' => $service['service']['binderid']],
+                    'bind' => ['companyId' => $service['service']['subjectid']],
                     'columns' => Companies::publicColumns
                 ]);
 
-                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['binderid']);
-            } elseif ($service['service']['subjecttype'] == 1) {
-                $service['userinfo'] = Companies::findFirst([
+                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
+            } elseif ($service['service']['subjecttype'] == 0) {
+                $service['userinfo'] = Userinfo::findFirst([
                     'userid = :userId:',
-                    'bind' => ['userId' => $service['service']['binderid']],
+                    'bind' => ['userId' => $service['service']['subjectid']],
                     'columns' => Userinfo::publicColumns
                 ]);
 
-                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['binderid']);
+                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
             $services[] = $service;
         }
@@ -771,6 +783,183 @@ class Services extends SubjectsWithNotDeleted
         return $services;
     }
 
+    public static function getAutocompleteByQuery($query, $center, $diagonal, $regions = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 10000, 40);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        //Сначала поиск по компаниям
+        if ($regions != null) {
+            $cl->setFilter('regionid', $regions, false);
+        }
+
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        //$cl->SetGeoAnchor('latitude', 'longitude', deg2rad(39.023), deg2rad(54.032));
+        //$cl->SetFilterFloatRange("@geodist", 0, 50000000, false);
+
+        $cl->AddQuery($query, 'companies_min_index');
+        //$cl->ResetFilters();
+        $cl->AddQuery($query, 'services_min_index');
+
+        $cl->ResetFilters();
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+        $cl->AddQuery($query, 'categories_min_index');
+
+        $results = $cl->RunQueries();
+
+        $allMatches = [];
+
+        foreach($results as $result){
+            if ($result['total'] > 0) {
+                $allMatches = array_merge($allMatches, $result['matches']);
+            }
+        }
+
+        $res = usort($allMatches,function($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
+
+        $output = [];
+
+        for($i = 0;$i < 30 && $i < count($allMatches); $i++){
+            $result = $allMatches[$i];
+            $output[] = ['id' => $result['attrs']['elementid'], 'name' =>  $result['attrs']['name'],
+                'type' =>  $result['attrs']['type'],
+            ];
+        }
+
+        return $output;
+    }
+
+    public static function getServicesByElement($type, $elementIds, $center, $diagonal, $regions = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 10000, 500);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        if ($regions != null) {
+            if($type == 'service') {
+                $cl->setFilter('regionid', $regions, false);
+                $cl->setFilter('servid', $elementIds, false);
+                $cl->AddQuery('', 'bro4you_small_index');
+                $cl->ResetFilters();
+            } elseif($type == 'company'){
+                $cl->setFilter('regionid', $regions, false);
+                $cl->setFilter('companyid',$elementIds, false);
+                $cl->AddQuery('', 'services_with_company_index');
+                $cl->ResetFilters();
+            } elseif($type == 'category'){
+                $cl->setFilter('regionid', $regions, false);
+                $cl->setFilter('categoryid', $elementIds, false);
+                $cl->AddQuery('', 'services_with_category_index');
+                $cl->ResetFilters();
+            }
+        }
+
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        if($type == 'service') {
+            $cl->setFilter('servid', $elementIds, false);
+            $cl->AddQuery('', 'bro4you_small_index');
+        } elseif($type == 'company'){
+            $cl->setFilter('companyid', $elementIds, false);
+            $cl->AddQuery('', 'services_with_company_index');
+        } elseif($type == 'category'){
+            $cl->setFilter('categoryid', $elementIds, false);
+            $cl->AddQuery('', 'services_with_category_index');
+        }
+
+        $results = $cl->RunQueries();
+        $services = [];
+        $allmatches = [];
+        foreach ($results as $result) {
+            if ($result['total'] > 0) {
+                $allmatches =array_merge($allmatches,$result['matches']);
+            }
+        }
+
+        $res = usort($allMatches,function($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
+
+        foreach ($allmatches as $match) {
+            $service['service'] = json_decode($match['attrs']['service'], true);
+            //$service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            if (count($match['attrs']['pointid']) > 0) {
+                $str = '';
+
+                foreach ($match['attrs']['pointid'] as $pointid) {
+                    if ($str == '')
+                        $str .= 'pointid IN (' . $pointid;
+                    else {
+                        $str .= ', ' . $pointid;
+                    }
+                }
+                $str .= ')';
+
+                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
+
+                $service['points'] = $points;
+            }
+
+            if ($service['service']['subjecttype'] == 1) {
+                $service['companies'] = Companies::findFirst([
+                    'companyid = :companyId:',
+                    'bind' => ['companyId' => $service['service']['subjectid']],
+                    'columns' => Companies::publicColumns
+                ]);
+
+                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
+            } elseif ($service['service']['subjecttype'] == 0) {
+                $service['userinfo'] = Userinfo::findFirst([
+                    'userid = :userId:',
+                    'bind' => ['userId' => $service['service']['subjectid']],
+                    'columns' => Userinfo::publicColumns
+                ]);
+
+                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
+            }
+            $services[] = $service;
+        }
+
+
+        return $services;
+    }
 
     public static function getTasksForService($serviceId)
     {
