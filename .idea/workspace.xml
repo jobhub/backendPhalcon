@@ -2,36 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/controllers/api/UserLocationAPIController.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/PhonesUsers.php" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/Auctions.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/models/Tender.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/images/Новая вкладка_files/cb=gapi.loaded_0" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=AA2YrTvP3acnRz0Jy_XnH6ofrIg5QXDdYw" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=ACT90oGzjfQ6lbB9bIc32yJA5HUBthdcuQ" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/images/Новая вкладка_files/rs=ACT90oGzjfQ6lbB9bIc32yJA5HUBthdcuQ(1)" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/images/Новая вкладка_files/single.html" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.phalcon/devtools.log" afterPath="$PROJECT_DIR$/.phalcon/devtools.log" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/CompaniesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/PhonesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/UserInfoAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/library/ImageLoader.php" afterPath="$PROJECT_DIR$/app/library/ImageLoader.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/library/SupportClass.php" afterPath="$PROJECT_DIR$/app/library/SupportClass.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Companies.php" afterPath="$PROJECT_DIR$/app/models/Companies.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/CompaniesCategories.php" afterPath="$PROJECT_DIR$/app/models/CompaniesCategories.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Events.php" afterPath="$PROJECT_DIR$/app/models/Events.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/News.php" afterPath="$PROJECT_DIR$/app/models/News.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Offers.php" afterPath="$PROJECT_DIR$/app/models/Offers.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Phones.php" afterPath="$PROJECT_DIR$/app/models/Phones.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/PhonesCompanies.php" afterPath="$PROJECT_DIR$/app/models/PhonesCompanies.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Requests.php" afterPath="$PROJECT_DIR$/app/models/Requests.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Reviews.php" afterPath="$PROJECT_DIR$/app/models/Reviews.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Services.php" afterPath="$PROJECT_DIR$/app/models/Services.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Tasks.php" afterPath="$PROJECT_DIR$/app/models/Tasks.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/TradePoints.php" afterPath="$PROJECT_DIR$/app/models/TradePoints.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Userinfo.php" afterPath="$PROJECT_DIR$/app/models/Userinfo.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/UsersCategories.php" afterPath="$PROJECT_DIR$/app/models/UsersCategories.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" afterPath="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/index/index.phtml" afterPath="$PROJECT_DIR$/app/views/index/index.phtml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/css/main.css" afterPath="$PROJECT_DIR$/public/css/main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/bundle.js" afterPath="$PROJECT_DIR$/public/js/bundle.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sphinx.conf.in" afterPath="$PROJECT_DIR$/sphinx.conf.in" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -56,13 +40,13 @@
       <file leaf-file-name="ServicesAPIController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="43" column="85" lean-forward="false" selection-start-line="43" selection-start-column="85" selection-end-line="43" selection-end-column="85" />
+            <state relative-caret-position="0">
+              <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
               <folding>
                 <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#editServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="e#11502#13328#0#PHP" expanded="false" />
+                <element signature="e#11992#13818#0#PHP" expanded="false" />
                 <element signature="n#addServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#addImagesAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#deleteImageAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -71,7 +55,7 @@
                 <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#rejectRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-                <element signature="e#38008#41441#0#PHP" expanded="false" />
+                <element signature="e#38532#41965#0#PHP" expanded="false" />
                 <element signature="n#addImagesHandler#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#incrementNumberOfDisplayForServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
                 <element signature="n#getTasksForService#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -81,17 +65,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReviewsAPIController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
+      <file leaf-file-name="CategoriesAPIController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="26" column="37" lean-forward="false" selection-start-line="26" selection-start-column="37" selection-end-line="26" selection-end-column="37" />
-              <folding>
-                <element signature="n#editReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#deleteReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getReviewsForSubjectAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-                <element signature="n#getReviewsForServiceAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-              </folding>
+            <state relative-caret-position="136">
+              <caret line="229" column="60" lean-forward="false" selection-start-line="229" selection-start-column="60" selection-end-line="229" selection-end-column="60" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sphinx.conf.in" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../sphinx/sphinx.conf.in">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="76" column="20" lean-forward="true" selection-start-line="76" selection-start-column="20" selection-end-line="76" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -99,26 +88,28 @@
       <file leaf-file-name="Services.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/Services.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="149">
-              <caret line="702" column="54" lean-forward="true" selection-start-line="702" selection-start-column="54" selection-end-line="702" selection-end-column="54" />
+            <state relative-caret-position="217">
+              <caret line="703" column="27" lean-forward="true" selection-start-line="703" selection-start-column="27" selection-end-line="703" selection-end-column="27" />
               <folding>
-                <element signature="n#getServices#0;n#Services#0;n#!!top" expanded="false" />
-                <marker date="1535820251330" expanded="true" signature="9836:11021" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="9836:11026" ph="SELECT * FRO... " />
-                <marker date="1535820251330" expanded="true" signature="9844:11021" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="9851:11020" ph="SELECT row_t... companies" />
-                <marker date="1535820251330" expanded="true" signature="11086:12284" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="11086:12288" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="11102:12257" ph="SELECT row_t... userinfo" />
-                <marker date="1535820251330" expanded="true" signature="12423:13676" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="12438:13655" ph="SELECT row_t... companies" />
-                <marker date="1535820251330" expanded="true" signature="13721:14941" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="13737:14919" ph="SELECT row_t... userinfo" />
-                <marker date="1535820251330" expanded="true" signature="15139:16391" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="15139:16392" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="15154:16371" ph="SELECT row_t... companies" />
-                <marker date="1535820251330" expanded="true" signature="16433:17675" ph="SELECT * FRO... row_to_json" />
-                <marker date="1535820251330" expanded="true" signature="16449:17653" ph="SELECT row_t... userinfo" />
+                <element signature="n#cmp#0;n#Services#0;n#!!top" expanded="false" />
+                <element signature="n#getAutocompleteByQuery#0;n#Services#0;n#!!top" expanded="false" />
+                <element signature="n#getServicesByQuery2#0;n#Services#0;n#!!top" expanded="false" />
+                <marker date="1535975804431" expanded="true" signature="9836:11021" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="9836:11026" ph="SELECT * FRO... " />
+                <marker date="1535975804431" expanded="true" signature="9844:11021" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="9851:11020" ph="SELECT row_t... companies" />
+                <marker date="1535975804431" expanded="true" signature="11086:12284" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="11086:12288" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="11102:12257" ph="SELECT row_t... userinfo" />
+                <marker date="1535975804431" expanded="true" signature="12423:13676" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="12438:13655" ph="SELECT row_t... companies" />
+                <marker date="1535975804431" expanded="true" signature="13721:14941" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="13737:14919" ph="SELECT row_t... userinfo" />
+                <marker date="1535975804431" expanded="true" signature="15139:16391" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="15139:16392" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="15154:16371" ph="SELECT row_t... companies" />
+                <marker date="1535975804431" expanded="true" signature="16433:17675" ph="SELECT * FRO... row_to_json" />
+                <marker date="1535975804431" expanded="true" signature="16449:17653" ph="SELECT row_t... userinfo" />
               </folding>
             </state>
           </provider>
@@ -137,8 +128,8 @@
       <file leaf-file-name="SupportClass.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/library/SupportClass.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1360">
-              <caret line="85" column="34" lean-forward="false" selection-start-line="85" selection-start-column="34" selection-end-line="85" selection-end-column="34" />
+            <state relative-caret-position="343">
+              <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -151,18 +142,6 @@
               <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
               <folding>
                 <marker date="1535814280859" expanded="true" signature="2357:2487" ph="SELECT c.* F... categories" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UsersCategories.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/UsersCategories.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2720">
-              <caret line="162" column="0" lean-forward="false" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-              <folding>
-                <marker date="1535814313888" expanded="true" signature="3778:3898" ph="SELECT c.* F... categories" />
               </folding>
             </state>
           </provider>
@@ -186,16 +165,6 @@
               <folding>
                 <marker date="1535543061113" expanded="true" signature="3851:3987" ph="SELECT p.pho... phonesCompanies" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sphinx.conf.in" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../sphinx/sphinx.conf.in">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="108" column="79" lean-forward="false" selection-start-line="108" selection-start-column="79" selection-end-line="108" selection-end-column="79" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -265,7 +234,6 @@
         <option value="$PROJECT_DIR$/app/config/router.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/EventsAPIController.php" />
         <option value="$PROJECT_DIR$/app/config/services.php" />
-        <option value="$PROJECT_DIR$/app/views/index/index.phtml" />
         <option value="$PROJECT_DIR$/app/models/PhonesPoints.php" />
         <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
         <option value="$USER_HOME$/Desktop/bro4you.ru.access.log" />
@@ -291,15 +259,16 @@
         <option value="$PROJECT_DIR$/app/models/Reviews.php" />
         <option value="$PROJECT_DIR$/app/library/sphinxapi.php" />
         <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
         <option value="$PROJECT_DIR$/app/controllers/SearchController.php" />
-        <option value="$PROJECT_DIR$/app/library/SupportClass.php" />
         <option value="$PROJECT_DIR$/app/models/CompaniesCategories.php" />
         <option value="$PROJECT_DIR$/app/models/UsersCategories.php" />
         <option value="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" />
-        <option value="$PROJECT_DIR$/app/models/Services.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/views/index/index.phtml" />
         <option value="$PROJECT_DIR$/../../sphinx/sphinx.conf.in" />
+        <option value="$PROJECT_DIR$/app/library/SupportClass.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php" />
+        <option value="$PROJECT_DIR$/app/models/Services.php" />
       </list>
     </option>
   </component>
@@ -436,6 +405,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -448,12 +418,6 @@
               <item name="job" type="b2602c69:ProjectViewProjectNode" />
               <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="config" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="job" type="b2602c69:ProjectViewProjectNode" />
@@ -474,23 +438,10 @@
               <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="library" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="models" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="plugins" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -501,19 +452,19 @@
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/OpenServer/domains/simpleMod2/app/models/Users.php" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\coordination" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\forms" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\controllers" />
-      <recent name="C:\OpenServer\domains\simpleMod\app" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\OpenServer\domains\job\app\controllers\api" />
       <recent name="C:\OpenServer\domains\job\app\controllers" />
       <recent name="C:\OpenServer\domains\job\app\config" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\controllers\api" />
       <recent name="C:\OpenServer\domains\simpleMod2\app\controllers\admin" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
+      <recent name="C:\OpenServer\domains\simpleMod2\app\views\coordination" />
+      <recent name="C:\OpenServer\domains\simpleMod\app\forms" />
+      <recent name="C:\OpenServer\domains\simpleMod\app\controllers" />
+      <recent name="C:\OpenServer\domains\simpleMod\app" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -779,28 +730,11 @@
       <workItem from="1535798312439" duration="3001000" />
       <workItem from="1535801443039" duration="5128000" />
       <workItem from="1535809941783" duration="9589000" />
-      <workItem from="1535875319613" duration="1643000" />
-    </task>
-    <task id="LOCAL-00011" summary="Просто небольшие изменения для пула">
-      <created>1513766168909</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1513766168909</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Доделал смену статуса">
-      <created>1513767985786</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1513767985786</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Просто небольшие изменения для пула">
-      <created>1513768277811</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1513768277811</updated>
+      <workItem from="1535875319613" duration="16220000" />
+      <workItem from="1535892646544" duration="330000" />
+      <workItem from="1535956276554" duration="427000" />
+      <workItem from="1535967768706" duration="2531000" />
+      <workItem from="1535970442195" duration="3432000" />
     </task>
     <task id="LOCAL-00014" summary="Таски делал">
       <created>1513770924088</created>
@@ -1124,11 +1058,32 @@
       <option name="project" value="LOCAL" />
       <updated>1535455606905</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="Дофига всего поменял и начал прикручивать поиск. Пока есть только для первого типа запроса">
+      <created>1535876986767</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1535876986768</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Организовал предварительно поиск">
+      <created>1535892885959</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1535892885959</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Организовал предварительно поиск">
+      <created>1535892969779</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1535892969779</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="940633000" />
+    <option name="totallyTimeSpent" value="961930000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1143,7 +1098,7 @@
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34568834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36686838" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921174" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20593081" sideWeight="0.52122986" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1152,7 +1107,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294893" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5703246" sideWeight="0.46778917" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15919629" sideWeight="0.46778917" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32857144" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1194,7 +1149,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Много чего добавлял, но в основном CoordinationAPI и отправку push в&#10;Coordination" />
     <MESSAGE value="Переопределил метод save в модели Reviews, чтоб пересчитывал рейтинг пользователя.&#10;И еще чего-то по мелочи" />
     <MESSAGE value=" И еще в Messages тоже так сделал" />
     <MESSAGE value="Компании" />
@@ -1219,7 +1173,8 @@
     <MESSAGE value="Добавил получение инфы по услуге, точке и еще чего-то по мелочи" />
     <MESSAGE value="Поменял запрос на получение отзывов по услуге. Добавил модель для хранения текущей координаты пользователя" />
     <MESSAGE value="Дофига всего поменял и начал прикручивать поиск. Пока есть только для первого типа запроса" />
-    <option name="LAST_COMMIT_MESSAGE" value="Дофига всего поменял и начал прикручивать поиск. Пока есть только для первого типа запроса" />
+    <MESSAGE value="Организовал предварительно поиск" />
+    <option name="LAST_COMMIT_MESSAGE" value="Организовал предварительно поиск" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1255,7 +1210,7 @@
           <option name="timeStamp" value="193" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="1327" />
+      <option name="time" value="1357" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="webtools.php">
@@ -1284,13 +1239,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vendor/swiftmailer/swiftmailer/lib/classes/Swift.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/nikic/php-parser/lib/PhpParser/Autoloader.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
@@ -1309,7 +1257,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="833">
           <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1340,7 +1287,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1173">
           <caret line="75" column="13" lean-forward="false" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1442,17 +1388,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1326">
           <caret line="817" column="21" lean-forward="false" selection-start-line="817" selection-start-column="21" selection-end-line="817" selection-end-column="21" />
-          <folding>
-            <element signature="n#addPhoneToCompanyAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addPhoneToTradePointAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deletePhoneFromCompanyAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deletePhoneFromTradePointAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editPhoneInTradePointAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="e#17962#18998#0#PHP" expanded="false" />
-            <element signature="n#editPhoneInCompanyAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addPhoneToUserAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deletePhoneFromUserAction#0;n#PhonesAPIController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1460,7 +1395,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="352">
           <caret line="526" column="7" lean-forward="true" selection-start-line="526" selection-start-column="7" selection-end-line="526" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1503,24 +1437,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
           <caret line="34" column="55" lean-forward="false" selection-start-line="34" selection-start-column="55" selection-end-line="34" selection-end-column="55" />
-          <folding>
-            <marker date="1535712688710" expanded="true" signature="9770:12534" ph="Select * FRO... reviewId" />
-            <marker date="1535712688710" expanded="true" signature="9863:10301" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="10405:10897" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="10980:11456" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="11539:12095" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="12164:12478" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="12870:13742" ph="Select * FRO... reviewId" />
-            <marker date="1535712688710" expanded="true" signature="12946:13686" ph="SELECT revie... " />
-            <marker date="1535712688710" expanded="true" signature="14038:15613" ph="Select revie... row_to_json" />
-            <marker date="1535712688710" expanded="true" signature="14128:14697" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="14734:15284" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="15340:15380" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="15340:15519" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="15340:15554" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="15340:15558" ph="SELECT row_t... " />
-            <marker date="1535712688710" expanded="true" signature="15340:15578" ph="SELECT row_t... " />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1528,7 +1444,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="21641">
           <caret line="1273" column="40" lean-forward="false" selection-start-line="1273" selection-start-column="40" selection-end-line="1273" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1536,17 +1451,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
           <caret line="121" column="85" lean-forward="false" selection-start-line="121" selection-start-column="85" selection-end-line="121" selection-end-column="85" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2873">
-          <caret line="225" column="48" lean-forward="false" selection-start-line="225" selection-start-column="48" selection-end-line="225" selection-end-column="48" />
-          <folding>
-            <element signature="n#setFavouriteAction#0;n#CategoriesAPIController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1562,7 +1466,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="17" column="35" lean-forward="false" selection-start-line="17" selection-start-column="35" selection-end-line="17" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1570,18 +1473,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
           <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-          <folding>
-            <element signature="n#getCompaniesAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#addCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#editCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#setCompanyLogotypeAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#setManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteManagerAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#restoreCompanyAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteCompanyTestAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getCompanyInfoAction#0;n#CompaniesAPIController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1589,27 +1480,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="310">
           <caret line="81" column="10" lean-forward="false" selection-start-line="81" selection-start-column="10" selection-end-line="81" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="26" column="37" lean-forward="false" selection-start-line="26" selection-start-column="37" selection-end-line="26" selection-end-column="37" />
-          <folding>
-            <element signature="n#editReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#deleteReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getReviewsForSubjectAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-            <element signature="n#getReviewsForServiceAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/composer/ClassLoader.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="325" column="0" lean-forward="false" selection-start-line="325" selection-start-column="0" selection-end-line="325" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1620,24 +1490,6 @@
           <folding>
             <marker date="1535814313888" expanded="true" signature="3778:3898" ph="SELECT c.* F... categories" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/PhonesCompanies.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2618">
-          <caret line="155" column="55" lean-forward="false" selection-start-line="155" selection-start-column="55" selection-end-line="155" selection-end-column="55" />
-          <folding>
-            <marker date="1535543061113" expanded="true" signature="3851:3987" ph="SELECT p.pho... phonesCompanies" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/library/SupportClass.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1360">
-          <caret line="85" column="34" lean-forward="false" selection-start-line="85" selection-start-column="34" selection-end-line="85" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1667,15 +1519,76 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/PhonesCompanies.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2618">
+          <caret line="155" column="55" lean-forward="false" selection-start-line="155" selection-start-column="55" selection-end-line="155" selection-end-column="55" />
+          <folding>
+            <marker date="1535543061113" expanded="true" signature="3851:3987" ph="SELECT p.pho... phonesCompanies" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/composer/ClassLoader.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="320" column="0" lean-forward="false" selection-start-line="320" selection-start-column="0" selection-end-line="320" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/index/index.phtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="47" lean-forward="true" selection-start-line="24" selection-start-column="47" selection-end-line="24" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="26" column="37" lean-forward="false" selection-start-line="26" selection-start-column="37" selection-end-line="26" selection-end-column="37" />
+          <folding>
+            <element signature="n#editReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#deleteReviewAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getReviewsForSubjectAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#getReviewsForServiceAction#0;n#ReviewsAPIController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../sphinx/sphinx.conf.in">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="76" column="20" lean-forward="true" selection-start-line="76" selection-start-column="20" selection-end-line="76" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/library/SupportClass.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="343">
+          <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/CategoriesAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="229" column="60" lean-forward="false" selection-start-line="229" selection-start-column="60" selection-end-line="229" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="43" column="85" lean-forward="false" selection-start-line="43" selection-start-column="85" selection-end-line="43" selection-end-column="85" />
+        <state relative-caret-position="0">
+          <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
           <folding>
             <element signature="n#getServicesForSubjectAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#deleteServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#editServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="e#11502#13328#0#PHP" expanded="false" />
+            <element signature="e#11992#13818#0#PHP" expanded="false" />
             <element signature="n#addServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#addImagesAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#deleteImageAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -1684,7 +1597,7 @@
             <element signature="n#confirmRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#performRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#rejectRequestAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
-            <element signature="e#38008#41441#0#PHP" expanded="false" />
+            <element signature="e#38532#41965#0#PHP" expanded="false" />
             <element signature="n#addImagesHandler#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#incrementNumberOfDisplayForServiceAction#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
             <element signature="n#getTasksForService#0;n#ServicesAPIController#0;n#!!top" expanded="false" />
@@ -1693,36 +1606,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../sphinx/sphinx.conf.in">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="108" column="79" lean-forward="false" selection-start-line="108" selection-start-column="79" selection-end-line="108" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/Services.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="702" column="54" lean-forward="true" selection-start-line="702" selection-start-column="54" selection-end-line="702" selection-end-column="54" />
+        <state relative-caret-position="217">
+          <caret line="703" column="27" lean-forward="true" selection-start-line="703" selection-start-column="27" selection-end-line="703" selection-end-column="27" />
           <folding>
-            <element signature="n#getServices#0;n#Services#0;n#!!top" expanded="false" />
-            <marker date="1535820251330" expanded="true" signature="9836:11021" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="9836:11026" ph="SELECT * FRO... " />
-            <marker date="1535820251330" expanded="true" signature="9844:11021" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="9851:11020" ph="SELECT row_t... companies" />
-            <marker date="1535820251330" expanded="true" signature="11086:12284" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="11086:12288" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="11102:12257" ph="SELECT row_t... userinfo" />
-            <marker date="1535820251330" expanded="true" signature="12423:13676" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="12438:13655" ph="SELECT row_t... companies" />
-            <marker date="1535820251330" expanded="true" signature="13721:14941" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="13737:14919" ph="SELECT row_t... userinfo" />
-            <marker date="1535820251330" expanded="true" signature="15139:16391" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="15139:16392" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="15154:16371" ph="SELECT row_t... companies" />
-            <marker date="1535820251330" expanded="true" signature="16433:17675" ph="SELECT * FRO... row_to_json" />
-            <marker date="1535820251330" expanded="true" signature="16449:17653" ph="SELECT row_t... userinfo" />
+            <element signature="n#cmp#0;n#Services#0;n#!!top" expanded="false" />
+            <element signature="n#getAutocompleteByQuery#0;n#Services#0;n#!!top" expanded="false" />
+            <element signature="n#getServicesByQuery2#0;n#Services#0;n#!!top" expanded="false" />
+            <marker date="1535975804431" expanded="true" signature="9836:11021" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="9836:11026" ph="SELECT * FRO... " />
+            <marker date="1535975804431" expanded="true" signature="9844:11021" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="9851:11020" ph="SELECT row_t... companies" />
+            <marker date="1535975804431" expanded="true" signature="11086:12284" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="11086:12288" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="11102:12257" ph="SELECT row_t... userinfo" />
+            <marker date="1535975804431" expanded="true" signature="12423:13676" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="12438:13655" ph="SELECT row_t... companies" />
+            <marker date="1535975804431" expanded="true" signature="13721:14941" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="13737:14919" ph="SELECT row_t... userinfo" />
+            <marker date="1535975804431" expanded="true" signature="15139:16391" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="15139:16392" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="15154:16371" ph="SELECT row_t... companies" />
+            <marker date="1535975804431" expanded="true" signature="16433:17675" ph="SELECT * FRO... row_to_json" />
+            <marker date="1535975804431" expanded="true" signature="16449:17653" ph="SELECT row_t... userinfo" />
           </folding>
         </state>
       </provider>

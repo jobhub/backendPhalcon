@@ -98,4 +98,17 @@ class SupportClass
 
         return acos($dist) / $rad * 60 *  1853;
     }
+
+    public static function translateInPhpArrFromPostgreArr($str){
+        $str = json_decode($str);
+        $str[0] = '[';
+        $str[strlen($str) - 1] = ']';
+
+        $str = str_replace('"{', '{', $str);
+        $str = str_replace('}"', '}', $str);
+        $str = stripslashes($str);
+
+        $str = json_decode($str);
+        return $str;
+    }
 }

@@ -19,7 +19,10 @@ source bro4you
 #        LEFT JOIN "tradePoints" USING (pointid) 
 
     sql_query    = \
-        SELECT serviceid, service, points, subject, images, latitude, longitude, regionid, pointid FROM \
+        SELECT serviceid, service, service as service2, \
+        points, points as points2, subject, subject as subject2,\
+         images, latitude, longitude, regionid, pointid, \
+         categories, categories as categories2 FROM \
         ((SELECT "tradePoints".pointid,radians(latitude) as latitude, radians(longitude) as  longitude,\
                     serv.regionid,\
                     serv.serviceid, row_to_json(serv) as service, \
@@ -63,11 +66,12 @@ source bro4you
       sql_attr_uint    = regionid
       sql_attr_float    = latitude
       sql_attr_float    = longitude
-       sql_attr_multi    = uint pointid from field; pointid
-       sql_attr_string    = points
-       sql_attr_string    = subject
-       sql_attr_string    = images
-       sql_attr_string    = service
+      sql_attr_multi    = uint pointid from field; pointid
+      sql_attr_string    = points
+      sql_attr_string    = subject
+      sql_attr_string    = images
+      sql_attr_string    = service
+      sql_attr_string    = categories
 }
 
 source bro4you_small
@@ -316,15 +320,15 @@ source services_with_category
   sql_attr_multi    = uint pointid from field; pointid
 }
 
-#index bro4you_index
-#{
-#  source      = bro4you
-#  path      = C:/OpenServer/sphinx/data/bro4you
-#  docinfo = extern
-# morphology    = stem_enru
-#    mlock = 0
-#    min_word_len = 3
-#}
+index bro4you_index
+{
+  source      = bro4you
+  path      = C:/OpenServer/sphinx/data/bro4you
+  docinfo = extern
+ morphology    = stem_enru
+    mlock = 0
+    min_word_len = 3
+}
 
 index bro4you_small_index
 {

@@ -112,8 +112,18 @@ class ServicesAPIController extends Controller
                 return $response;
 
             } elseif($this->request->getPost('typeQuery') == 3){
+
+                $categoriesId = $this->request->getPost('categoriesId');
+
+                foreach($categoriesId as $categoryId){
+                    $childCategories = Categories::findByParentid($categoryId);
+                    foreach($childCategories as $childCategory){
+                        $categoriesId[] = $childCategory->getCategoryId();
+                    }
+                }
+
                 $result = Services::getServicesByElement('category',
-                    $this->request->getPost('categoriesId'),
+                    $categoriesId,
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
 

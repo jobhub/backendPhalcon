@@ -704,7 +704,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 500);
+        $cl->SetLimits(0, 10000, 30);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -843,7 +843,7 @@ class Services extends SubjectsWithNotDeleted
 
         $output = [];
 
-        for($i = 0;$i < 30 && $i < count($allMatches); $i++){
+        for($i = 0;$i < 10 && $i < count($allMatches); $i++){
             $result = $allMatches[$i];
             $output[] = ['id' => $result['attrs']['elementid'], 'name' =>  $result['attrs']['name'],
                 'type' =>  $result['attrs']['type'],
@@ -859,7 +859,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 500);
+        $cl->SetLimits(0, 10000, 30);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -958,6 +958,87 @@ class Services extends SubjectsWithNotDeleted
         }
 
 
+        return $services;
+    }
+
+    public static function getServicesByQuery2($query, $center, $diagonal, $regions = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 10000, 10000);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        if ($regions != null) {
+            $cl->setFilter('regionid', $regions, false);
+            $cl->AddQuery($query,'bro4you_index');
+            $cl->ResetFilters();
+        }
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        $cl->AddQuery($query, 'bro4you_index');
+
+        $results = $cl->RunQueries();
+        $services = [];
+        $allmatches = [];
+        foreach ($results as $result) {
+            if ($result['total'] > 0) {
+                $allmatches =array_merge($allmatches,$result['matches']);
+            }
+        }
+
+        $res = usort($allMatches,function($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
+
+        foreach ($allmatches as $match) {
+            $service['service'] = json_decode($match['attrs']['service']);
+
+            $service['company'] = json_decode($match['attrs']['company']);
+
+            $service['categories'] = json_decode($match['attrs']['categories']);
+            $service['categories'][0] = '[';
+            $service['categories'][strlen($service['categories']) - 1] = ']';
+
+            $service['categories'] = str_replace('"{', '{', $service['categories']);
+            $service['categories'] = str_replace('}"', '}', $service['categories']);
+            $service['categories'] = stripslashes($service['categories']);
+
+            $service['categories'] = json_decode($service['categories']);
+
+            $service['images'] = json_decode($match['attrs']['images']);
+            $review['images'][0] = '[';
+            $review['images'][strlen($review['images']) - 1] = ']';
+
+            $review['images'] = str_replace('"{', '{', $review['images']);
+            $review['images'] = str_replace('}"', '}', $review['images']);
+            $review['images'] = stripslashes($review['images']);
+            $review2['images'] = json_decode($review['images']);
+
+            $review['points'][0] = '[';
+            $review['points'][strlen($review['points']) - 1] = ']';
+
+            $review['points'] = str_replace('"{', '{', $review['points']);
+            $review['points'] = str_replace('}"', '}', $review['points']);
+            $review['points'] = stripslashes($review['points']);
+            $review2['ratingcount'] = 45;
+
+            $review2['points'] = json_decode($review['points'], true);
+            $services[] = $service;
+        }
+
+        //return $allmatches;
         return $services;
     }
 

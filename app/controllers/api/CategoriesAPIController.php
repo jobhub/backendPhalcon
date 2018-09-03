@@ -227,7 +227,7 @@ class CategoriesAPIController extends Controller
     {
         if ($this->request->isGet()) {
 
-            $categories = Categories::find(['categoryid > 80','order' => 'parentid DESC']);
+            $categories = Categories::find(['categoryid > 20','order' => 'parentid DESC']);
 
             $categories2 = [];
             foreach ($categories as $category) {
