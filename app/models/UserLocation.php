@@ -157,7 +157,7 @@ class UserLocation extends \Phalcon\Mvc\Model
             new Callback([
                 "message" => "Не указана долгота",
                 "callback" => function ($userlocation) {
-                    if ($userlocation->getLongitude() != null && SupportClass::checkDouble($userlocation->getLongitude()))
+                    if ($userlocation->getLongitude() != null && is_double($userlocation->getLongitude()))
                         return true;
                     return false;
                 }
@@ -169,7 +169,7 @@ class UserLocation extends \Phalcon\Mvc\Model
             new Callback([
                 "message" => "Не указана широта",
                 "callback" => function ($userlocation) {
-                    if ($userlocation->getLatitude() != null && SupportClass::checkDouble($userlocation->getLatitude()))
+                    if ($userlocation->getLatitude() != null && is_double($userlocation->getLatitude()))
                         return true;
                     return false;
                 }
@@ -183,7 +183,7 @@ class UserLocation extends \Phalcon\Mvc\Model
             ])
         );
 
-        $validator->add(
+        /*$validator->add(
             'lasttime',
             new Callback(
                 [
@@ -195,7 +195,7 @@ class UserLocation extends \Phalcon\Mvc\Model
                     }
                 ]
             )
-        );
+        );*/
 
         return $this->validate($validator);
     }
@@ -242,4 +242,95 @@ class UserLocation extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findUsersByQuery($query, $longitudeRH, $latitudeRH,
+            $longitudeLB, $latitudeLB){
+
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = str_replace('!','',$query);
+        $query = str_replace('|','',$query);
+        $query = str_replace('&','',$query);
+        $ress = explode(' ',$query);
+        $res2 = [];
+        foreach ($ress as $res){
+            if(trim($res) != "")
+                $res2[] = trim($res);
+        }
+
+        $str = implode(' ',$res2);
+
+        $query = $db->prepare("select * from get_users_for_search_like(:str,:longituderh,
+            :latituderh, :longitudelb, :latitudelb) 
+            where lasttime > :lasttime
+            LIMIT 50");
+
+        $query->execute([
+            'str' => $str,
+            'longituderh' => $longitudeRH,
+            'latituderh' => $latitudeRH,
+            'longitudelb' => $longitudeLB,
+            'latitudelb' => $latitudeLB,
+            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getAutoComplete($query, $longitudeRH, $latitudeRH,
+                                            $longitudeLB, $latitudeLB){
+
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = str_replace('!','',$query);
+        $query = str_replace('|','',$query);
+        $query = str_replace('&','',$query);
+        $ress = explode(' ',$query);
+        $res2 = [];
+        foreach ($ress as $res){
+            if(trim($res) != "")
+                $res2[] = trim($res);
+        }
+
+        $str = implode(' ',$res2);
+
+        $query = $db->prepare("select userid, firstname, lastname, patronymic from 
+            get_users_for_search_like(:str,:longituderh,
+            :latituderh, :longitudelb, :latitudelb) 
+            where lasttime > :lasttime
+            LIMIT 50");
+
+        $query->execute([
+            'str' => $str,
+            'longituderh' => $longitudeRH,
+            'latituderh' => $latitudeRH,
+            'longitudelb' => $longitudeLB,
+            'latitudelb' => $latitudeLB,
+            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getUserinfo($userid){
+
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = $db->prepare("select users.userid, users.email, phones.phone,
+    firstname,lastname, patronymic, longitude, latitude, lasttime,
+    male, birthday,pathtophoto
+            from 
+            users 
+    INNER JOIN userinfo USING(userid)
+    INNER JOIN user_location USING(userid)
+    LEFT JOIN phones USING (phoneid)
+    where userid =:userid
+            and lasttime > :lasttime");
+
+        $query->execute([
+            'userid' => $userid,
+            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

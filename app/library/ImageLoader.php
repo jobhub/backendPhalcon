@@ -54,10 +54,10 @@ class ImageLoader
             $filename,200);
     }
 
-    public static function loadUserPhoto($tempname, $name, $userId)
+    public static function loadUserPhoto($tempname, $name, $countImages, $userId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
-        $filename =  ImageLoader::formImageName($imageFormat,$userId,0);
+        $filename =  ImageLoader::formImageName($imageFormat,$userId,$countImages);
         return ImageLoader::load('users',$tempname,
             $filename,750);
     }
@@ -70,15 +70,22 @@ class ImageLoader
             $filename,750);
     }
 
-    public static function formFullImageName($subpath, $format, $id, $countImages)
+    public static function loadReviewImage($tempname, $name, $countImages, $reviewId)
     {
-            return IMAGE_PATH . $subpath . '/' .$id . '_'
-                . ($countImages + 1) . '.' . $format;
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$reviewId,$countImages);
+        return ImageLoader::load('reviews',$tempname,
+            $filename,750);
     }
 
     public static function formImageName($format, $id, $countImages)
     {
         return $id . '_' . ($countImages + 1) . '.' . $format;
+    }
+
+    public static function formFullImageName($subpath, $format, $id, $countImages)
+    {
+        return IMAGE_PATH_TRUNCATED. $subpath . '/' .ImageLoader::formImageName($format,$id,$countImages);
     }
 
     public static function delete($imageName){

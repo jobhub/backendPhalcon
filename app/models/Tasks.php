@@ -98,7 +98,7 @@ class Tasks extends SubjectsWithNotDeleted
      */
     protected $dateend;
 
-    public const publicColumns = ['taskid', 'categoryid','name', 'description', 'deadline', 'price',
+    const publicColumns = ['taskid', 'categoryid','name', 'description', 'deadline', 'price',
         'status', 'polygon', 'regionid', 'longitude', 'latitude', 'datestart', 'dateend'];
 
     /**

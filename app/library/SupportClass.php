@@ -6,7 +6,7 @@
  * Time: 15:29
  */
 
-
+use Phalcon\Http\Response;
 
 class SupportClass
 {
@@ -19,9 +19,9 @@ class SupportClass
         return ((string)(int)$var == $var);
     }
 
-    public static function checkDouble($var){
+    /*public static function checkDouble($var){
         return ((string)(double)$var == $var);
-    }
+    }*/
 
     public static function pullRegions($filename, $db = null){
         if($db == null)
@@ -100,7 +100,7 @@ class SupportClass
     }
 
     public static function translateInPhpArrFromPostgreArr($str){
-        $str = json_decode($str);
+        //$str = json_decode($str);
         $str[0] = '[';
         $str[strlen($str) - 1] = ']';
 
@@ -108,7 +108,22 @@ class SupportClass
         $str = str_replace('}"', '}', $str);
         $str = stripslashes($str);
 
-        $str = json_decode($str);
+        $str = json_decode($str, true);
         return $str;
+    }
+
+    public static function getResponseWithErrors($object){
+        $response = new Response();
+        $errors = [];
+        foreach ($object->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+        $response->setJsonContent(
+            [
+                "errors" => $errors,
+                "status" => "WRONG_DATA"
+            ]);
+
+        return $response;
     }
 }

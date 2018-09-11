@@ -79,9 +79,8 @@ class Services extends SubjectsWithNotDeleted
 
     protected $rating;
 
-    public const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
+    const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
         'regionid', 'name', 'longitude', 'latitude', 'rating'];
-
     /**
      * Method to set the value of field serviceId
      *
@@ -703,8 +702,10 @@ class Services extends SubjectsWithNotDeleted
         require(APP_PATH . '/library/sphinxapi.php');
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
-        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 30);
+        $cl->SetMatchMode(SPH_MATCH_ANY);
+        $cl->SetLimits(0, 10000, 15);
+        $cl->SetFieldWeights(['name' => 100, 'description' => 10]);
+        $cl->SetRankingMode(SPH_RANK_SPH04);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -776,6 +777,17 @@ class Services extends SubjectsWithNotDeleted
 
                 $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
+
+            $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+
+            if(count($service['images']) == 0){
+                $image = new Imagesservices();
+                $image->setImagePath('/images/no_image.jpg');
+                $image->setServiceId($service['service']['serviceid']);
+                $service['images'] = [$image];
+            }
+
+            $service['ratingcount'] = count(Reviews::getReviewsForService($service['service']['serviceid']));
             $services[] = $service;
         }
 
@@ -788,9 +800,11 @@ class Services extends SubjectsWithNotDeleted
         require(APP_PATH . '/library/sphinxapi.php');
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
-        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetMatchMode(SPH_MATCH_ANY);
+        $cl->SetRankingMode(SPH_RANK_SPH04);
         $cl->SetLimits(0, 10000, 40);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
+        $cl->SetFieldWeights(['name2' => 100, 'description2' => 10]);
 
         //Сначала поиск по компаниям
         if ($regions != null) {
@@ -822,9 +836,12 @@ class Services extends SubjectsWithNotDeleted
 
             $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
         }
-        $cl->AddQuery($query, 'categories_min_index');
+        $cl->AddQuery('@* '.$query.'*', 'categories_min_index');
 
         $results = $cl->RunQueries();
+
+        /*var_dump($results);
+        die;*/
 
         $allMatches = [];
 
@@ -954,6 +971,16 @@ class Services extends SubjectsWithNotDeleted
 
                 $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
+            $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+
+            if(count($service['images']) == 0){
+                $image = new Imagesservices();
+                $image->setImagePath('/images/no_image.jpg');
+                $image->setServiceId($service['service']['serviceid']);
+                $service['images'] = [$image];
+            }
+            $reviews = Reviews::getReviewsForService($service['service']['serviceid']);
+            $service['ratingcount'] = count($reviews);
             $services[] = $service;
         }
 
@@ -967,7 +994,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 10000);
+        $cl->SetLimits(0, 10000, 30);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -995,7 +1022,7 @@ class Services extends SubjectsWithNotDeleted
             }
         }
 
-        $res = usort($allMatches,function($a, $b) {
+        $res = usort($allmatches,function($a, $b) {
             if ($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -1003,42 +1030,34 @@ class Services extends SubjectsWithNotDeleted
         });
 
         foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service']);
+            $service['service'] = json_decode($match['attrs']['service'],true);
+            $subject = json_decode($match['attrs']['subject'],true);
+            if($service['service']['subjecttype'] == 1)
+                $service['company'] = $subject;
+            else{
+                $service['userinfo'] = $subject;
+            }
 
-            $service['company'] = json_decode($match['attrs']['company']);
+            $service['categories'] = SupportClass::translateInPhpArrFromPostgreArr($match['attrs']['categories']);
 
-            $service['categories'] = json_decode($match['attrs']['categories']);
-            $service['categories'][0] = '[';
-            $service['categories'][strlen($service['categories']) - 1] = ']';
+            $service['images'] = SupportClass::translateInPhpArrFromPostgreArr($match['attrs']['images']);
+            $points = SupportClass::translateInPhpArrFromPostgreArr($match['attrs']['points']);
 
-            $service['categories'] = str_replace('"{', '{', $service['categories']);
-            $service['categories'] = str_replace('}"', '}', $service['categories']);
-            $service['categories'] = stripslashes($service['categories']);
+            foreach($points as $point){
+                $f = false;
+                foreach($match['attrs']['pointid'] as $pointid){
+                    if($point['pointid'] == $pointid){
+                        $f = true;
+                        break;
+                    }
+                }
+                if($f)
+                   $service['points'][] = $point;
+            }
 
-            $service['categories'] = json_decode($service['categories']);
-
-            $service['images'] = json_decode($match['attrs']['images']);
-            $review['images'][0] = '[';
-            $review['images'][strlen($review['images']) - 1] = ']';
-
-            $review['images'] = str_replace('"{', '{', $review['images']);
-            $review['images'] = str_replace('}"', '}', $review['images']);
-            $review['images'] = stripslashes($review['images']);
-            $review2['images'] = json_decode($review['images']);
-
-            $review['points'][0] = '[';
-            $review['points'][strlen($review['points']) - 1] = ']';
-
-            $review['points'] = str_replace('"{', '{', $review['points']);
-            $review['points'] = str_replace('}"', '}', $review['points']);
-            $review['points'] = stripslashes($review['points']);
-            $review2['ratingcount'] = 45;
-
-            $review2['points'] = json_decode($review['points'], true);
             $services[] = $service;
         }
 
-        //return $allmatches;
         return $services;
     }
 

@@ -82,6 +82,7 @@ class ServicesAPIController extends Controller
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
 
+
                 $response->setJsonContent([
                     'status' => STATUS_OK,
                     'services' => $result
@@ -89,7 +90,6 @@ class ServicesAPIController extends Controller
                 return $response;
 
             } elseif ($this->request->getPost('typeQuery') == 1) {
-
                 $results = Services::getAutocompleteByQuery($this->request->getPost('userQuery'),
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
@@ -601,7 +601,6 @@ class ServicesAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $service = new Services();
 
             $service = Services::findFirstByServiceid($this->request->getPost('serviceId'));
 
@@ -1193,7 +1192,9 @@ class ServicesAPIController extends Controller
     }*/
 
     /**
-     * Добавляет картинку к услуге.
+     * Добавляет все отправленные файлы изображений к услуге. Общее количество
+     * фотографий для одной услуги на данный момент не более 10.
+     *
      * @param $serviceId
      * @return Response с json массивом типа Status
      */
@@ -1220,6 +1221,18 @@ class ServicesAPIController extends Controller
 
             $images = Imagesservices::findByServiceid($serviceId);
             $countImages = count($images);
+
+            if(($countImages + count($files)) > Imagesservices::MAX_IMAGES ){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Слишком много изображений для услуги. 
+                        Можно сохранить для одной услуги не более чем '.Imagesservices::MAX_IMAGES.' изображений'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
             $countImagesCopy = $countImages;
             $this->db->begin();
 

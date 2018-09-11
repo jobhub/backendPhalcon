@@ -6,7 +6,6 @@ use Phalcon\Validation\Validator\PresenceOf;
 
 class Userinfo extends \Phalcon\Mvc\Model
 {
-
     /**
      *
      * @var integer
@@ -79,7 +78,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     protected $ratingclient;
     protected $pathtophoto;
 
-    public const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
+    const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
         'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto'];
     /**
      * Method to set the value of field userId
@@ -212,12 +211,14 @@ class Userinfo extends \Phalcon\Mvc\Model
 
         return $this;
     }
+
     public function setRatingClient($ratingclient)
     {
         $this->ratingclient = $ratingclient;
 
         return $this;
     }
+
     public function setPathToPhoto($pathtophoto)
     {
         $this->pathtophoto = $pathtophoto;
@@ -435,15 +436,14 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public static function findFirst($parameters = null)
     {
-
         return parent::findFirst($parameters);
     }
 
     public function beforeSave()
     {
-        if($this->getRatingClient() == null)
+        /*if($this->getRatingClient() == null)
             $this->setRatingClient(5);
         if($this->getRatingExecutor() == null)
-            $this->setRatingExecutor(5);
+            $this->setRatingExecutor(5);*/
     }
 }

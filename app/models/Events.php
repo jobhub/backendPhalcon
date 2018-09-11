@@ -59,7 +59,7 @@ class Events extends SubjectsWithNotDeleted
      */
     protected $datepublication;
 
-    public const publicColumns = ['eventid', 'name', 'description', 'pointid', 'longitude', 'latitude', 'pathtoimage',
+     const publicColumns = ['eventid', 'name', 'description', 'pointid', 'longitude', 'latitude', 'pathtoimage',
         'datepublication'];
 
     /**

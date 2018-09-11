@@ -40,6 +40,10 @@ class SecurityPlugin extends Plugin
                     'Guests',
                     'Anyone browsing the site who is not signed in is considered to be a "Guest".'
                 ),
+                'user_defective' => new Role(
+                    'UserDefective',
+                    "Пользователь не заполнивший все поля."
+                ),
                 'moderator' => new Role(
                     'Moderator',
                     'Any moderators who can role.'
@@ -53,19 +57,6 @@ class SecurityPlugin extends Plugin
             //Private area resources
             //Тоже надо бы из БД взять
             $privateResources = [
-                'coordination' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete'],
-                'tasks' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'mytasks', 'doingtasks', 'workingtasks', 'editing'],
-                'auctions' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete', 'enter', 'viewing', 'show', 'choice'],
-                'offers' => ['index', 'new', 'create', 'myoffers', 'editing', 'saving', 'deleting', 'search'],
-                'Userinfo' => ['index', 'edit', 'save', 'viewprofile', 'handler'],
-                'UserinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
-                    'setPhoto','editUserinfo'],
-
-                'tenderAPI' => ['delete'],
-                'reviews' => ['new', 'create'],
-
-                'Companies' => ['index', 'end', 'new', 'edit', 'save', 'create', 'delete', 'search'],
-
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews'],
@@ -92,10 +83,11 @@ class SecurityPlugin extends Plugin
                     'confirmOffer', 'rejectOffer', 'performTask'],
 
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
-                'RegisterAPI' => ['confirm'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
+                'UserinfoAPI' => ['addImages'],
             ];
+
             $privateResources2 = [];
             foreach ($privateResources as $resource => $actions) {
                 /*$actions2 = [];
@@ -123,6 +115,7 @@ class SecurityPlugin extends Plugin
                 'offersAPI' => ['addStatus'],
                 'ReviewsAPI' => ['addType'],
                 'ServicesAPI' => ['addImagesToAllServices'],
+                'UserinfoAPI' => ['addUsers']
             ];
 
             $moderatorsResources2 = [];
@@ -149,8 +142,7 @@ class SecurityPlugin extends Plugin
                 'session' => ['index', 'register', 'start', 'end', 'action'],
                 'authorized' => ['index', 'register', 'start', 'end', 'action'],
                 'auctions' => ['index'],
-                'registerAPI' => ['index'],
-                'sessionAPI' => ['index', 'authWithSocial', 'end'],
+                'sessionAPI' => ['index', 'authWithSocial', 'end', 'getCurrentRole'],
                 'CategoriesAPI' => ['index', 'getCategoriesForSite'],
                 'tenderAPI' => ['index'],
                 'TasksAPI' => ['getTasksForSubject'],
@@ -161,21 +153,36 @@ class SecurityPlugin extends Plugin
                 'TradePointsAPI' => ['getPointInfo'],
                 'Search' => ['index'],
                 'UserinfoAPI' => ['getUserinfo'],
-                'CompaniesAPI' => ['getCompanyInfo']
+                'CompaniesAPI' => ['getCompanyInfo'],
+                'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById'],
+                'RegisterAPI' => ['index', 'deactivateLink'],
             ];
 
             $publicResources2 = [];
             foreach ($publicResources as $resource => $actions) {
-                /*$actions2 = [];
-                foreach($actions as $action)
-                    $actions2[] = Phalcon\Text::camelize($action);*/
                 $publicResources2[SupportClass::transformControllerName($resource)] = $actions;
             }
             $publicResources = $publicResources2;
-
             foreach ($publicResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
+
+            $defectUserResources = [
+                'UserinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
+                    'setPhoto', 'editUserinfo', 'getUserInfo'],
+                'RegisterAPI' => ['commit','sendActivationCode'],
+            ];
+
+            $defectUserResources2 = [];
+            foreach ($defectUserResources as $resource => $actions) {
+                $defectUserResources2[SupportClass::transformControllerName($resource)] = $actions;
+            }
+            $defectUserResources = $defectUserResources2;
+
+            foreach ($defectUserResources as $resource => $actions) {
+                $acl->addResource(new Resource($resource), $actions);
+            }
+
 
             //Grant access to public areas to both users and guests
             foreach ($roles as $role) {
@@ -183,6 +190,14 @@ class SecurityPlugin extends Plugin
                     foreach ($actions as $action) {
                         $acl->allow($role->getName(), $resource, $action);
                     }
+                }
+            }
+
+            foreach ($defectUserResources as $resource => $actions) {
+                foreach ($actions as $action) {
+                    $acl->allow('UserDefective', $resource, $action);
+                    $acl->allow('User', $resource, $action);
+                    $acl->allow('Moderator', $resource, $action);
                 }
             }
 
@@ -209,7 +224,6 @@ class SecurityPlugin extends Plugin
     public static function getTokenFromHeader()
     {
         if (!function_exists('getallheaders')) {
-            //SupportClass::writeMessageInLogFile('Функции getallheaders не существует, пытаюсь создать другую');
             function getallheaders()
             {
                 if (!is_array($_SERVER)) {
@@ -225,30 +239,20 @@ class SecurityPlugin extends Plugin
                 return $headers;
             }
 
-            // SupportClass::writeMessageInLogFile('Типо инициализировал функцию getallheaders');
         }
 
-        //$tokenRecieved = $this->request->getHeader("Authorization");
         $tokenRecieved = null;
-        // SupportClass::writeMessageInLogFile('Попытался запустить функцию getallheaders');
         try {
             $result = getallheaders();
         } catch (Exception $e) {
-            // SupportClass::writeMessageInLogFile('Получил Exception: ' . $e->getMessage());
         }
-        //SupportClass::writeMessageInLogFile('getheaders[Authorization] = ' . getallheaders()['Authorization']);
-        //SupportClass::writeMessageInLogFile('getheaders[Authorization] = ' . getallheaders()['authorization']);
 
         if (isset(getallheaders()['Authorization'])) {
-            //SupportClass::writeMessageInLogFile('Перед вызовом getallheaders с получением токена авторизации');
-            $tokenRecieved = getallheaders()['Authorization'];
-            //SupportClass::writeMessageInLogFile('После вызовом getallheaders с получением токена авторизации');
+             $tokenRecieved = getallheaders()['Authorization'];
         }
 
-        //if($_SERVER['METHOD'])
         if ($tokenRecieved == null)
             $tokenRecieved = "aaa";
-        //SupportClass::writeMessageInLogFile('Токен из заголовка = ' . $tokenRecieved);
         return $tokenRecieved;
     }
 
@@ -275,12 +279,8 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
-        $response = new Response();
-        /*SupportClass::writeMessageInLogFile('В securityPlugin при вызове ' . $dispatcher->getControllerName()
-            . '/' . $dispatcher->getActionName());*/
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
-        //Здесь будет логирование
         $log = new Logs();
         if ($this->session->get("auth") != null) {
             $auth = $this->session->get("auth");
@@ -298,16 +298,11 @@ class SecurityPlugin extends Plugin
         }
         if (!$this->notAPIController($dispatcher->getControllerName())) {
             if ($this->session->get("auth") != null) {
-                //SupportClass::writeMessageInLogFile('В security: Перед получением токена из заголовка');
-                $tokenRecieved = SecurityPlugin::getTokenFromHeader(); /*$this->getTokenFromResponce();*/
-                //SupportClass::writeMessageInLogFile('В security: Перед получением токена из БД');
-                //SupportClass::writeMessageInLogFile('В security: id юзера в сессии = ' . $auth['id']);
-                //SupportClass::writeMessageInLogFile('В security: хэш токена = ' . hash('sha256', $tokenRecieved));
+                $tokenRecieved = SecurityPlugin::getTokenFromHeader();
                 $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                     'bind' => ['userId' => $auth['id'],
                         'token' => hash('sha256', $tokenRecieved)]]);
 
-                //SupportClass::writeMessageInLogFile('В security: После получения токена из БД - '. $token->getToken());
                 if (!$token) {
                     $this->session->remove('auth');
                     $this->session->destroy();
@@ -322,7 +317,7 @@ class SecurityPlugin extends Plugin
         }
 
         if (!$this->session->get('auth')) {
-            $role = 'Guests';
+            $role = ROLE_GUEST;
         } else {
             $role = $auth['role'];
         }
@@ -354,7 +349,7 @@ class SecurityPlugin extends Plugin
     {
         if ($this->request->getJsonRawBody() != null && $this->request->getJsonRawBody() != "") {
             $params = $this->request->getRawBody();
-            $params = json_decode($params,true);
+            $params = json_decode($params, true);
             if ($params != null) {
                 if ($this->request->isPost()) {
                     foreach ($params as $key => $param) {

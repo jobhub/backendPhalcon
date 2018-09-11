@@ -384,6 +384,175 @@ class ReviewsAPIController extends Controller
     }
 
     /**
+     * Добавляет все прикрепленные изображения к отзыву. Но суммарно изображений для отзыва не больше 3.
+     *
+     * @access private
+     *
+     * @method POST
+     *
+     * @params (обязательно) reviewId
+     * @params (обязательно) изображения. Именование не важно.
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function addImagesAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $review = Reviews::findFirstByReviewid($this->request->getPost('reviewId'));
+
+            if (!$review) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор услуги'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),$review->getBinderType(),
+                $review->getExecutor(),'editReview')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $result = $this->addImagesHandler($review->getReviewId());
+
+            return $result;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет все отправленные файлы изображений к отзыву. Общее количество
+     * фотографий для одного отзыва на данный момент не более 3.
+     * Доступ не проверяется.
+     *
+     * @param $reviewId
+     * @return Response с json массивом типа Status
+     */
+    public function addImagesHandler($reviewId)
+    {
+        include(APP_PATH . '/library/SimpleImage.php');
+        $response = new Response();
+        if ($this->request->hasFiles()) {
+            $files = $this->request->getUploadedFiles();
+
+            $review = Reviews::findFirstByReviewid($reviewId);
+
+            if (!$review) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор отзыва'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $filenames = [];
+
+            $images = ImagesReviews::findByReviewid($reviewId);
+            $countImages = count($images);
+
+            if(($countImages + count($files)) > ImagesReviews::MAX_IMAGES ){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Слишком много изображений для отзыва. 
+                        Можно сохранить для одного отзыва не более чем '.ImagesReviews::MAX_IMAGES.' изображений'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $countImagesCopy = $countImages;
+            $this->db->begin();
+
+            foreach ($files as $file) {
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $filename = ImageLoader::formFullImageName('reviews', $imageFormat, $reviewId, $countImages);
+
+                $imageFullName = $filename;
+
+                $newimage = new ImagesReviews();
+                $newimage->setReviewId($reviewId);
+                $newimage->setImagePath($imageFullName);
+
+                if (!$newimage->save()) {
+                    $errors = [];
+                    $this->db->rollback();
+                    foreach ($newimage->getMessages() as $message) {
+                        $errors[] = $message->getMessage();
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => $errors
+                        ]
+                    );
+                    return $response;
+                }
+                //$filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
+                $countImages += 1;
+            }
+
+            foreach ($files as $file) {
+                $result = ImageLoader::loadReviewImage($file->getTempName(), $file->getName(), $countImagesCopy, $reviewId);
+
+                if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
+                    if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
+                        $error = 'Формат одного из изображений не поддерживается';
+                    } elseif ($result == ImageLoader::RESULT_ERROR_NOT_SAVED) {
+                        $error = 'Не удалось сохранить изображение';
+                    } else {
+                        $error = 'Ошибка при загрузке изображения';
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => [$error]
+                        ]
+                    );
+                    return $response;
+                }
+
+                $countImagesCopy++;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        }
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+        return $response;
+    }
+
+    /**
      *
      */
     public function addTypeAction()

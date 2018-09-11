@@ -64,6 +64,20 @@ class Users extends NotDeletedModelWithCascade
     protected $activated;
 
     /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $dateregistration;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $activationcode;
+
+    /**
      * Method to set the value of field userId
      *
      * @param integer $userid
@@ -110,7 +124,8 @@ class Users extends NotDeletedModelWithCascade
      */
     public function setPassword($password)
     {
-        $this->password = sha1($password);
+        $security = Phalcon\DI::getDefault()->getSecurity();
+        $this->password = $security->hash($password);
 
         return $this;
     }
@@ -178,6 +193,11 @@ class Users extends NotDeletedModelWithCascade
         return $this->role;
     }
 
+    public function getDateRegistration()
+    {
+        return $this->dateregistration;
+    }
+
     public function setIsSocial($issocial)
     {
         $this->issocial = $issocial;
@@ -200,6 +220,20 @@ class Users extends NotDeletedModelWithCascade
     public function getActivated()
     {
         return $this->activated;
+    }
+
+    public function generateActivation()
+    {
+        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
+            time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
+            . $this->getPassword());
+    }
+
+    public function generateDeactivation()
+    {
+        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
+            time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
+            . $this->getPassword() . '-no');
     }
 
     /**
@@ -231,7 +265,7 @@ class Users extends NotDeletedModelWithCascade
             )
         );*/
 
-        if (!$this->getIsSocial() && $this->getPhoneId()==null)
+        if (!$this->getIsSocial() && $this->getPhoneId() == null)
             $validator->add(
                 'email',
                 new EmailValidator(
@@ -259,20 +293,20 @@ class Users extends NotDeletedModelWithCascade
             );
 
         if (!$this->getIsSocial())
-        $validator->add(
-            'password',
-            new Callback(
-                [
-                    "message" => "Пароль должен содержать не менее 6 символов",
-                    "callback" => function ($user) {
+            $validator->add(
+                'password',
+                new Callback(
+                    [
+                        "message" => "Пароль должен содержать не менее 6 символов",
+                        "callback" => function ($user) {
 
-                        if ($user->getPassword() != null && strlen($user->getPassword()) >= 6)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
+                            if ($user->getPassword() != null && strlen($user->getPassword()) >= 6)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
 
         $validator->add(
             'role',
@@ -419,7 +453,17 @@ class Users extends NotDeletedModelWithCascade
                 $transaction->commit();
                 return true;
             } else {
+                $path = null;
+                if ($this->userinfo != null) {
+                    $path = $this->userinfo->getPathToPhoto();
+                }
+
                 $result = parent::delete($delete, false, $data, $whiteList);
+
+                if ($result && $path != null) {
+                    ImageLoader::delete($path);
+                }
+
                 $transaction->commit();
                 return $result;
             }

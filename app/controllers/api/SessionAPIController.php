@@ -28,67 +28,107 @@ class SessionAPIController extends Controller
      */
     public function endAction()
     {
-        //SupportClass::writeMessageInLogFile('Зашел в session/end');
+        if ($this->request->isPost()) {
+            return $this->destroySession();
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    public function destroySession()
+    {
+        $response = new Response();
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+
+        $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+        $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
+            'bind' => ['userId' => $userId,
+                'token' => sha1($tokenRecieved)]]);
+
+        if ($token) {
+            $token->delete();
+        }
+
+        $this->session->remove('auth');
+        $this->session->destroy();
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+
+        return $response;
+    }
+
+    public function createSession($user){
+        $response = new Response();
+        $token = Accesstokens::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
+            $this->session->getId());
+
+        $accToken = new Accesstokens();
+
+        $accToken->setUserid($user->getUserId());
+        $accToken->setToken($token);
+        $accToken->setLifetime();
+
+        if ($accToken->save() == false) {
+            $this->session->destroy();
+            $errors = [];
+            foreach ($accToken->getMessages() as $message) {
+                $errors[] = $message->getMessage();
+            }
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => $errors
+                ]
+            );
+            return $response;
+        }
+
+        $this->_registerSession($user);
+
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK,
+                'token' => $token,
+                'lifetime' => $accToken->getLifetime()
+            ]
+        );
+        return $response;
+    }
+
+    /**
+     * Выдает текущую роль пользователя.
+     * @access public
+     * @method POST
+     *
+     * @return string - json array - [status, role]
+     */
+    public function getCurrentRoleAction(){
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
-            $userId = $auth['id'];
 
+            if($auth == null){
+                $role = ROLE_GUEST;
+            } else{
+                $userId = $auth['id'];
 
-            //SupportClass::writeMessageInLogFile('Дошел до поиска токена');
+                $user = Users::findFirstByUserid($userId);
 
-            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
-           // SupportClass::writeMessageInLogFile('Получил токен из заголовка');
-            $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
-                'bind' => ['userId' => $userId,
-                    'token' => sha1($tokenRecieved)]]);
-
-            //SupportClass::writeMessageInLogFile('Получил токен из БД');
-
-            if(!$token){
-                //SupportClass::writeMessageInLogFile('Токена в БД нет');
-                $this->session->remove('auth');
-                $this->session->destroy();
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_OK
-                    ]
-                );
-                //SupportClass::writeMessageInLogFile('Был отправлен ответ со статусом ОК');
-                return $response;
-            }
-            //SupportClass::writeMessageInLogFile('Токен из БД - '.$token->getToken());
-
-            if ($token->delete() == false) {
-                //SupportClass::writeMessageInLogFile('Не удалось удалить токен (по ряду причин)');
-                $this->db->rollback();
-                $errors = [];
-                foreach ($token->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                //SupportClass::writeMessageInLogFile('Был отправлен ответ со статусом WRONG_DATA');
-                return $response;
+                $role = $user->getRole();
             }
 
-            $this->session->remove('auth');
-            $this->session->destroy();
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'role' => $role
+            ]);
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            //SupportClass::writeMessageInLogFile('Была разрушена сессия и отправлен ответ со статусом ОК');
             return $response;
-        }else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
@@ -103,87 +143,50 @@ class SessionAPIController extends Controller
      */
     public function indexAction()
     {
-        //SupportClass::writeMessageInLogFile('Зашел в session/index');
         if ($this->request->isPost() || $this->request->isOptions()) {
             $login = $this->request->getPost("login");
             $password = $this->request->getPost("password");
+
+            //$hash =  $this->security->hash($password);
+
             // Производим поиск в базе данных
             $var = Phones::formatPhone($login);
             $phone = Phones::findFirstByPhone($var);
+            $res = false;
             if ($phone) {
+
                 $user = Users::findFirst(
                     [
-                        "phoneid = :phoneId: AND password = :password: AND issocial=false",
+                        "phoneid = :phoneId: AND issocial=false",
                         "bind" => [
-                            "phoneId" => $phone->getPhoneId(),
-                            "password" => sha1($password),
+                            "phoneId" => $phone->getPhoneId()
                         ]
                     ]
                 );
-
+                if ($user)
+                    $res = $this->security->checkHash($password, $user->getPassword());
             } else {
                 $user = Users::findFirst(
                     [
-                        "email = :login: AND password = :password: AND issocial=false",
+                        "email = :login: AND issocial=false",
                         "bind" => [
-                            "login" => $login,
-                            "password" => sha1($password),
+                            "login" => $login
                         ]
                     ]
                 );
+                if ($user)
+                    $res = $this->security->checkHash($password, $user->getPassword());
             }
             // Формируем ответ
             $response = new Response();
-            if ($user) {
-                $this->_registerSession($user);
-                $response = new Response();
-                $userinfo = Userinfo::findFirstByUserid($user->getUserId());
+            if ($user && $res) {
 
-                $user_min['userId'] = $user->getUserId();
-                $user_min['email'] = $user->getEmail();
-                if($user->getPhoneId()!=null)
-                    $user_min['phone'] = $user->phones->getPhone();
-                $user_min['activated'] = $user->getActivated();
+                $result = $this->createSession($user);
 
-                $settings = Settings::findFirstByUserid($user->getUserId());
+                $result = json_decode($result->getContent(),true);
+                $result['role'] = $user->getRole();
+                $response->setJsonContent($result);
 
-                $info['Userinfo'] = $userinfo;
-                $info['user'] = $user_min;
-                $info['settings'] = $settings;
-
-                $token = Accesstokens::GenerateToken($user->getUserId(),($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()),
-                    $this->session->getId());
-
-                $accToken = new Accesstokens();
-
-                $accToken->setUserid($user->getUserId());
-                $accToken->setToken($token);
-                $accToken->setLifetime();
-
-                if ($accToken->save() == false) {
-                    $this->session->destroy();
-                    $errors = [];
-                    foreach ($accToken->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $response->setJsonContent(
-                    [
-
-                        "status" => STATUS_OK,
-                        "allForUser" => $info,
-                        'token' => $token,
-                        'lifetime' => $accToken->getLifetime()
-                    ]
-                );
             } else {
                 $response->setJsonContent(
                     [
@@ -238,7 +241,7 @@ class SessionAPIController extends Controller
                             "(email = :email: OR phoneid = :phoneId:)",
                             "bind" => [
                                 "email" => $email,
-                                "phoneId" =>  $phoneObj?$phoneObj->getPhoneId():null
+                                "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
                             ]
                         ]
                     );
@@ -257,7 +260,7 @@ class SessionAPIController extends Controller
 
                     $user = new Users();
 
-                    if($phone!=null) {
+                    if ($phone != null) {
                         //Добавление телефона, если есть
                         $phoneObject = new Phones();
                         $phoneObject->setPhone($phone);
@@ -290,9 +293,9 @@ class SessionAPIController extends Controller
                     $userInfo->setUserId($user->getUserId());
                     $userInfo->setFirstname($ulogin->getUser()['first_name']);
                     $userInfo->setLastname($ulogin->getUser()['last_name']);
-                    $userInfo->setMale(($ulogin->getUser()['sex']-1) >= 0 ? $ulogin->getUser()['sex']-1:1);
-                    if(isset($ulogin->getUser()['country']) && isset($ulogin->getUser()['city']))
-                        $userInfo->setAddress($ulogin->getUser()['country'] .' '. $ulogin->getUser()['city']);
+                    $userInfo->setMale(($ulogin->getUser()['sex'] - 1) >= 0 ? $ulogin->getUser()['sex'] - 1 : 1);
+                    if (isset($ulogin->getUser()['country']) && isset($ulogin->getUser()['city']))
+                        $userInfo->setAddress($ulogin->getUser()['country'] . ' ' . $ulogin->getUser()['city']);
 
                     if ($userInfo->save() == false) {
                         $this->db->rollback();
@@ -369,7 +372,7 @@ class SessionAPIController extends Controller
                     'status' => STATUS_OK
                 ]);
                 return $response;
-            }else {
+            } else {
                 $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
                 throw $exception;

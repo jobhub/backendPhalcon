@@ -76,7 +76,7 @@ class RegisterAPIController extends Controller
             }
 
             $user->setPassword($password);
-            $user->setRole("Guests");
+            $user->setRole(ROLE_GUEST);
             $user->setIsSocial(false);
             $user->setActivated(false);
 
@@ -95,64 +95,28 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            $this->SessionAPI->_registerSession($user);
+            $tokens = $this->SessionAPI->createSession();
 
-            $token = Accesstokens::GenerateToken($user->getUserId(),($user->getEmail()!= null?$user->getEmail():$user->phones->getPhone()),
-                $this->session->getId());
+            $tokens = json_decode($tokens->getContent(), true);
 
-            $accToken = new Accesstokens();
+            $res = $this->sendActivationCode();
+            $res = json_decode($res->getContent(),true);
 
-            $accToken->setUserid($user->getUserId());
-            $accToken->setToken($token);
-            $accToken->setLifetime();
+            $res2 = $res['status'] == STATUS_OK;
+            $tokens['role'] = $user->getRole();
+            if($res2 === true){
+                $this->db->commit();
 
-            if ($accToken->save() == false) {
-                $this->db->rollback();
-                $this->session->destroy();
-                $errors = [];
-                foreach ($accToken->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
                 $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
+                    $tokens
+                );
+                return $response;
+            } else {
+                $response->setJsonContent(
+                    $res
                 );
                 return $response;
             }
-            $this->db->commit();
-            //$this->db->commit();
-            if ($user->getEmail() != null) {
-                //Отправляем письмо.
-                /*$this->mailer->sendView('emails/hello_world', [$user->getEmail()],
-                    function($message) {
-                    $message->to();
-                    $message->subject('Test Email');
-                });*/
-
-                /*$viewPath = 'emails/hello_world';
-
-                $message = $this->mailer->createMessageFromView($viewPath,[])
-                    ->to($user->getEmail())
-                    ->subject('Здарова');
-                $message->send();*/
-            }
-
-            //Временно
-            $_POST['firstname'] = 'Ехехе';
-            $_POST['lastname'] = 'Эхеххов';
-            $_POST['male'] = 1;
-            $result = $this->confirmAction();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    "token" => $token,
-                    "lifetime" => $accToken->getLifetime()
-                ]
-            );
-            return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
@@ -160,13 +124,14 @@ class RegisterAPIController extends Controller
         }
     }
 
-
     /**
      * Активирует пользователя.
      *
+     * @access defective
+     *
      * @method POST
      *
-     * @params (обязательные) firstname, lastname, male
+     * @params (обязательные) firstname, lastname, male, activationCode
      * @params (Необязательные) patronymic, birthday, about (много текста о себе),
      * @return string - json array Status
      */
@@ -177,20 +142,24 @@ class RegisterAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $user = Users::findFirstByUserid($userId);
+            $user = Users::findFirst(['userid = :userId and email = :email', 'bind' =>
+                [
+                    'userId' => $userId,
+                    'email' => $this->request->getPost('email')
+                ]
+            ]);
 
-            if (!$user){
+            if (!$user) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_UNRESOLVED_ERROR,
                         "errors" => ['Пользователь не создан']
                     ]
                 );
-
                 return $response;
             }
 
-            if($user->getActivated()){
+            if ($user->getActivated()) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -200,7 +169,62 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
+            $activationCode = ActivatonCodes::findFirstByUserid($user->getUserId());
+
+            if (!$activationCode || (strtotime($activationCode->getTime()) - time() > 3600)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Неправильный активационный код']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($activationCode->getActivation() != $this->request->getPost('activationCode')) {
+                if ($activationCode->getDeactivation() != $this->request->getPost('activationCode')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Неправильный активационный код']
+                        ]
+                    );
+                    return $response;
+                } else {
+                    if ($user->delete() == false) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($user->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+
+                    if ($this->session->get('auth') != null) {
+                        $this->SessionAPI->destroySession();
+                    }
+
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_OK
+                        ]
+                    );
+                    return $response;
+                }
+            }
+
             $this->db->begin();
+
+            if(!$activationCode->delete()){
+                $this->db->rollback();
+                return SupportClass::getResponseWithErrors($activationCode);
+            }
 
             $userInfo = new Userinfo();
             $userInfo->setUserId($userId);
@@ -225,7 +249,6 @@ class RegisterAPIController extends Controller
 
             $setting = new Settings();
             $setting->setUserId($user->getUserId());
-
 
             if ($setting->save() == false) {
                 $this->db->rollback();
@@ -266,17 +289,273 @@ class RegisterAPIController extends Controller
                     "status" => STATUS_OK,
                 ]
             );
-            return $response;
 
+            return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
     }
 
-    public function testAction()
+    /**
+     * Деактивирует ссылку и частично активирует пользователя, давая ему немного прав.
+     * При необходимости авторизует пользователя.
+     *
+     * @access public
+     *
+     * @method POST
+     *
+     * @params email
+     * @params activationCode
+     * @return Response
+     */
+    public function deactivateLinkAction()
     {
+        if ($this->request->isPost()) {
+            $response = new Response();
 
+            $user = Users::findFirstByEmail($this->request->getPost('email'));
+
+            if (!$user) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_UNRESOLVED_ERROR,
+                        "errors" => ['Пользователь не создан']
+                    ]
+                );
+
+                return $response;
+            }
+
+            if ($user->getActivated()) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь уже активирован']
+                    ]
+                );
+                return $response;
+            }
+
+            $activationCode = ActivatonCodes::findFirstByUserid($user->getUserId());
+
+            if (!$activationCode || $activationCode->getUsed() ||
+                (strtotime($activationCode->getTime()) - time() > 3600)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Неправильный или просроченный активационный код']
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->begin();
+
+            if ($activationCode->getActivation() != $this->request->getPost('activationCode')) {
+                if ($activationCode->getDeactivation() != $this->request->getPost('activationCode')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Неправильный активационный код']
+                        ]
+                    );
+                    return $response;
+                } else {
+                    if ($user->delete() == false) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($user->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+
+                    if ($this->session->get('auth') != null) {
+                        $this->SessionAPI->destroySession();
+                    }
+
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_OK
+                        ]
+                    );
+                    return $response;
+                }
+            }
+            //Нормальный активационный ключ
+
+            $user->setRole(ROLE_USER_DEFECTIVE);
+            if ($user->update() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $result = ["status" => STATUS_OK];
+            if ($this->session->get('auth') == null) {
+                $result = $this->SessionAPI->createSession($user);
+            }
+
+            $activationCode->setUsed(false);
+
+            if (!$activationCode->update()) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent($result);
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Отправляет активационный код пользователю на почту.
+     * @param $user - объект типа User
+     * @return Response - json array в формате Status
+     */
+    public function sendActivationCode($user)
+    {
+        $response = new Response();
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+
+        if (!$user || $user == null) {
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => ['Пользователь не существует']
+                ]
+            );
+            return $response;
+        }
+
+        if ($user->getActivated()) {
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => ['Пользователь уже активирован']
+                ]
+            );
+            return $response;
+        }
+
+        if ($user->getEmail() != null) {
+            $activationCode = ActivatonCodes::findFirstByUserid($userId);
+
+            if (!$activationCode) {
+                $activationCode = new ActivatonCodes();
+                $activationCode->setUserId($userId);
+            }
+
+            $activationCode->setActivation($user->generateActivation());
+            $activationCode->setDeactivation($user->generateDeactivation());
+            $activationCode->setTime(time());
+
+            if (!$activationCode->save()) {
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+
+            //Отправляем письмо.
+            $mailer = new PHPMailerApp($this->config['mail']);
+
+            $res = $mailer->createMessageFromView('emails/hello_world', 'hello_world',
+                ['activation' => $activationCode->getActivation(),
+                    'deactivation' => $activationCode->getDeactivation(),
+                    'email'=>$user->getEmail()])
+                ->to($user->getEmail())
+                ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
+                ->send();
+
+            if ($res === true) {
+                $this->db->commit();
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK
+                ]);
+                return $response;
+            } else {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => [$res],
+                    ]
+                );
+                return $response;
+            }
+        }
+
+        $response->setJsonContent(
+            [
+                "status" => STATUS_WRONG,
+                "errors" => ['Для мобильных устройств активация не предусмотрена'],
+            ]
+        );
+        return $response;
+    }
+
+    /**
+     * Отправляет активационный код пользователю. Пока только на почту.
+     * @access defective
+     * @method POST
+     *
+     * @return Response - json array в формате Status
+     */
+    public function getActivationCodeAction(){
+        if ($this->request->isPost() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $user = Users::findFirstByUserid($userId);
+
+            return $this->sendActivationCode($user);
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
     }
 }
 

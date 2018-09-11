@@ -23,7 +23,7 @@ class Phones extends \Phalcon\Mvc\Model
      */
     protected $phone;
 
-    public const publicColumns = ['phoneid', 'phone'];
+    const publicColumns = ['phoneid', 'phone'];
 
 
     /**

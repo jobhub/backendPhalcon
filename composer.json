@@ -3,6 +3,6 @@
         "stanislav-web/phalcon-ulogin": "dev-master",
         "giggsey/libphonenumber-for-php": "^8.9",
         "phpdocumentor/phpdocumentor": "2.*",
-	    "phalcon/incubator": "^3.4"
+	    "phpmailer/phpmailer": "~6.0"
     }
 }

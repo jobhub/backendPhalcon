@@ -1,18 +1,14 @@
 <?php
-
 use Phalcon\Validation;
-use Phalcon\Validation\Validator\Email as EmailValidator;
-use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
-
-class Imagesservices extends \Phalcon\Mvc\Model
+class ImagesUsers extends \Phalcon\Mvc\Model
 {
+
     /**
      *
      * @var integer
      * @Primary
-     * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
     protected $imageid;
@@ -22,17 +18,16 @@ class Imagesservices extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
+    protected $userid;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=256, nullable=true)
+     * @Column(type="string", length=256, nullable=false)
      */
     protected $imagepath;
 
     const MAX_IMAGES = 10;
-
     /**
      * Method to set the value of field imageid
      *
@@ -47,14 +42,14 @@ class Imagesservices extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field serviceid
+     * Method to set the value of field userid
      *
-     * @param integer $serviceid
+     * @param integer $userid
      * @return $this
      */
-    public function setServiceId($serviceid)
+    public function setUserId($userid)
     {
-        $this->serviceid = $serviceid;
+        $this->userid = $userid;
 
         return $this;
     }
@@ -83,13 +78,13 @@ class Imagesservices extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field serviceid
+     * Returns the value of field userid
      *
      * @return integer
      */
-    public function getServiceId()
+    public function getUserId()
     {
-        return $this->serviceid;
+        return $this->userid;
     }
 
     /**
@@ -112,20 +107,19 @@ class Imagesservices extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'serviceid',
+            'userid',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $service = Services::findFirstByServiceid($image->getServiceId());
-                        if ($service)
+                        $user = Users::findFirstByUserid($image->getUserId());
+                        if ($user)
                             return true;
                         return false;
                     }
                 ]
             )
         );
-
 
         $validator->add(
             'imagepath',
@@ -148,8 +142,6 @@ class Imagesservices extends \Phalcon\Mvc\Model
                 ]
             )
         );
-
-
         return $this->validate($validator);
     }
 
@@ -158,9 +150,9 @@ class Imagesservices extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("public");
-        $this->setSource("imagesservices");
-        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
+        $this->setSchema("public");
+        $this->setSource("imagesusers");
+        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
     /**
@@ -170,14 +162,14 @@ class Imagesservices extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'imagesservices';
+        return 'imagesusers';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Imagesservices[]|Imagesservices|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ImagesUsers[]|ImagesUsers|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -188,17 +180,11 @@ class Imagesservices extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Imagesservices|\Phalcon\Mvc\Model\ResultInterface
+     * @return ImagesUsers|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
-    }
-
-    public function save($data = null, $whiteList = null)
-    {
-        $result = parent::save($data, $whiteList);
-        return $result;
     }
 
     public function delete($delete = false, $data = null, $whiteList = null)

@@ -84,7 +84,7 @@ class Reviews extends NotDeletedModelWithCascade
     protected $objectid;
     protected $objecttype;
 
-    public const publicColumns = ['reviewid', 'textreview', 'reviewdate', 'rating', 'binderid',
+    const publicColumns = ['reviewid', 'textreview', 'reviewdate', 'rating', 'binderid',
         'bindertype', 'executor', 'fakename',];
 
     /**
@@ -539,26 +539,30 @@ class Reviews extends NotDeletedModelWithCascade
     public static function getReviewsForService($serviceId){
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $query = $db->prepare("Select * FROM (
+        $str = "Select * FROM (
               --Отзывы оставленные на услуги
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
-              reviews.rating as rating,
-              reviews.executor as executor,
-              reviews.fake as fake,
-              reviews.binderid as binderid,
-              reviews.bindertype as bindertype,
-              reviews.subjectid as subjectid,
-              reviews.subjecttype as subjecttype 
-              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              (SELECT ";
+        foreach(Reviews::publicColumns as $column){
+            $str .= 'reviews.'.$column . ',';
+        }
+        $str[strlen($str)-1] = ' ';
+        $str .= "FROM services inner join requests ON (requests.serviceId = services.serviceId)
               inner join reviews
               ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
                   AND reviews.executor = false)
               WHERE services.serviceId = :serviceId
-              )) p0
-              ORDER BY p0.date desc"
-        );
+              )
+              UNION ALL
+              (SELECT ";
+        foreach(Reviews::publicColumns as $column){
+            $str .= 'reviews.'.$column . ',';
+        }
+        $str[strlen($str)-1] = ' ';
+
+        $str .= "FROM reviews where fake = true and bindertype = 'service' and binderid = :serviceId)
+        ) p0 ORDER BY p0.reviewdate desc";
+
+        $query = $db->prepare($str);
 
         $query->execute([
             'serviceId' => $serviceId,

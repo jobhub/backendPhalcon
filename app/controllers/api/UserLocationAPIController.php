@@ -77,4 +77,131 @@ class UserLocationAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Ищет пользователей по поисковой строке и внутри заданных координат.
+     * @access public
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params center - [longitude => ..., latitude => ...] - центральная точка
+     * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+     * @return string - json array - массив пользователей.
+     *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+     *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+     */
+    public function findUsersAction(){
+        if ($this->request->isPost()) {
+            $auth = $this->session->get("auth");
+            $response = new Response();
+            $userId = $auth['id'];
+
+            $center = $this->request->getPost('center');
+            $diagonal = $this->request->getPost('diagonal');
+
+            $longitudeHR = $diagonal['longitude'];
+            $latitudeHR = $diagonal['latitude'];
+
+            $diffLong = $diagonal['longitude'] - $center['longitude'];
+            $longitudeLB = $center['longitude'] - $diffLong;
+
+            $diffLat = $diagonal['latitude'] - $center['latitude'];
+            $latitudeLB = $center['latitude'] - $diffLat;
+
+            $results = UserLocation::findUsersByQuery($this->request->getPost('query'),
+                $longitudeHR,$latitudeHR,$longitudeLB,$latitudeLB);
+
+            $response->setJsonContent([
+                "status" => STATUS_OK,
+                'users' => $results
+            ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает данные для автокомплита поиска по пользователям.
+     *
+     * @access public
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params center - [longitude => ..., latitude => ...] - центральная точка
+     * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+     * @return string - json array - массив пользователей.
+     *          [status, users=>[userid, firstname, lastname, patronymic]]
+     */
+    public function getAutoCompleteForSearchAction(){
+        if ($this->request->isPost()) {
+            $auth = $this->session->get("auth");
+            $response = new Response();
+            $userId = $auth['id'];
+
+            $center = $this->request->getPost('center');
+            $diagonal = $this->request->getPost('diagonal');
+
+            $longitudeHR = $diagonal['longitude'];
+            $latitudeHR = $diagonal['latitude'];
+
+            $diffLong = $diagonal['longitude'] - $center['longitude'];
+            $longitudeLB = $center['longitude'] - $diffLong;
+
+            $diffLat = $diagonal['latitude'] - $center['latitude'];
+            $latitudeLB = $center['latitude'] - $diffLat;
+
+            $results = UserLocation::getAutoComplete($this->request->getPost('query'),
+                $longitudeHR,$latitudeHR,$longitudeLB,$latitudeLB);
+
+            $response->setJsonContent([
+                "status" => STATUS_OK,
+                'users' => $results
+            ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает данные аналогичные поиску, но без поиска по id пользователя.
+     *
+     * @access public
+     *
+     * @method POST
+     *
+     * @params int userId
+     * @return string - json array - массив пользователей.
+     *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+     *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+     */
+    public function getUserByIdAction(){
+        if ($this->request->isPost()) {
+            $auth = $this->session->get("auth");
+            $response = new Response();
+            $userId = $auth['id'];
+
+            $results = UserLocation::getUserinfo($this->request->getPost('userId'));
+
+            $response->setJsonContent([
+                "status" => STATUS_OK,
+                'users' => $results
+            ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }

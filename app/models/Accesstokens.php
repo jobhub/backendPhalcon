@@ -208,7 +208,8 @@ class Accesstokens extends \Phalcon\Mvc\Model
     }
 
     public static function GenerateToken($userId, $login, $sessionId){
-        return hash('sha256', $sessionId . $userId .
+        //$security = Phalcon\DI::getDefault()->getSecurity();
+        return  hash('sha256',$sessionId . $userId .
             $login . time());
     }
 }
