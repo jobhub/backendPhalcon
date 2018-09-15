@@ -193,9 +193,17 @@ class ImagesUsers extends \Phalcon\Mvc\Model
 
         $result = parent::delete($delete, false, $data, $whiteList);
 
-        if ($result && $path != null) {
+        if ($result && $path != null && $delete = true) {
             ImageLoader::delete($path);
+
+            $userinfo = Userinfo::findFirstByUserid($this->getUserId());
+            if($userinfo->getPathToPhoto() == $path){
+                $userinfo->setPathToPhoto(null);
+
+                $userinfo->update();
+            }
         }
+
         return $result;
     }
 }

@@ -259,7 +259,9 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $str = implode(' ',$res2);
 
-        $query = $db->prepare("select * from get_users_for_search_like(:str,:longituderh,
+        $query = $db->prepare("select userid, email, phone,
+    firstname,lastname, patronymic, longitude, latitude, lasttime,
+    male, birthday,pathtophoto,status from get_users_for_search_like(:str,:longituderh,
             :latituderh, :longitudelb, :latitudelb) 
             where lasttime > :lasttime
             LIMIT 50");
@@ -293,7 +295,7 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $str = implode(' ',$res2);
 
-        $query = $db->prepare("select userid, firstname, lastname, patronymic from 
+        $query = $db->prepare("select userid, firstname, lastname, patronymic,pathtophoto from 
             get_users_for_search_like(:str,:longituderh,
             :latituderh, :longitudelb, :latitudelb) 
             where lasttime > :lasttime
@@ -317,7 +319,7 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $query = $db->prepare("select users.userid, users.email, phones.phone,
     firstname,lastname, patronymic, longitude, latitude, lasttime,
-    male, birthday,pathtophoto
+    male, birthday,pathtophoto,status
             from 
             users 
     INNER JOIN userinfo USING(userid)

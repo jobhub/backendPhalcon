@@ -136,7 +136,7 @@ class UserLocationAPIController extends Controller
      * @params center - [longitude => ..., latitude => ...] - центральная точка
      * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
      * @return string - json array - массив пользователей.
-     *          [status, users=>[userid, firstname, lastname, patronymic]]
+     *          [status, users=>[userid, firstname, lastname, patronymic,status]]
      */
     public function getAutoCompleteForSearchAction(){
         if ($this->request->isPost()) {
@@ -182,7 +182,7 @@ class UserLocationAPIController extends Controller
      * @params int userId
      * @return string - json array - массив пользователей.
      *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
-     *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+     *          longitude, latitude, lasttime,male, birthday,pathtophoto,status]]
      */
     public function getUserByIdAction(){
         if ($this->request->isPost()) {

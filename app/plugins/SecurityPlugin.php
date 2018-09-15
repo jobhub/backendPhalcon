@@ -59,7 +59,8 @@ class SecurityPlugin extends Plugin
             $privateResources = [
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
-                'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews'],
+                'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews',
+                    'addImages'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
                 'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager',
@@ -82,7 +83,7 @@ class SecurityPlugin extends Plugin
                 'OffersAPI' => ['getForTask', 'addOffer', 'getForSubject', 'deleteOffer', 'editOffer', 'getForTask',
                     'confirmOffer', 'rejectOffer', 'performTask'],
 
-                'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview'],
+                'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview', 'addImages'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
                 'UserinfoAPI' => ['addImages'],
@@ -115,7 +116,7 @@ class SecurityPlugin extends Plugin
                 'offersAPI' => ['addStatus'],
                 'ReviewsAPI' => ['addType'],
                 'ServicesAPI' => ['addImagesToAllServices'],
-                'UserinfoAPI' => ['addUsers']
+                'UserinfoAPI' => ['addUsers'],
             ];
 
             $moderatorsResources2 = [];
@@ -156,6 +157,7 @@ class SecurityPlugin extends Plugin
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById'],
                 'RegisterAPI' => ['index', 'deactivateLink'],
+                'images' => ['categories','companies', 'users', 'reviews', 'events','services']
             ];
 
             $publicResources2 = [];
@@ -364,7 +366,8 @@ class SecurityPlugin extends Plugin
 
     private function notAPIController($controllerName)
     {
-        if ($controllerName == 'index' || $controllerName == 'errors') {
+        if ($controllerName == 'index' || $controllerName == 'errors'
+        || $controllerName == 'images') {
             return true;
         }
         return false;

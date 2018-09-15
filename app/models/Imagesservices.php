@@ -207,7 +207,7 @@ class Imagesservices extends \Phalcon\Mvc\Model
 
         $result = parent::delete($delete, false, $data, $whiteList);
 
-        if ($result && $path != null) {
+        if ($result && $path != null && $delete = true) {
             ImageLoader::delete($path);
         }
         return $result;

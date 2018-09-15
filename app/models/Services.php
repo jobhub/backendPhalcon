@@ -702,7 +702,12 @@ class Services extends SubjectsWithNotDeleted
         require(APP_PATH . '/library/sphinxapi.php');
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
-        $cl->SetMatchMode(SPH_MATCH_ANY);
+        //$cl->SetMatchMode(SPH_MATCH_ANY);
+        if(trim($query) == '')
+            $cl->SetMatchMode(SPH_MATCH_ALL);
+        else
+            $cl->SetMatchMode(SPH_MATCH_ANY);
+
         $cl->SetLimits(0, 10000, 15);
         $cl->SetFieldWeights(['name' => 100, 'description' => 10]);
         $cl->SetRankingMode(SPH_RANK_SPH04);

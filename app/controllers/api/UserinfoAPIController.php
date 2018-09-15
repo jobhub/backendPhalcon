@@ -688,8 +688,6 @@ class UserinfoAPIController extends Controller
                 return $response;
             }
 
-            $filenames = [];
-
             $images = ImagesUsers::findByUserid($userId);
             $countImages = count($images);
 
@@ -697,26 +695,21 @@ class UserinfoAPIController extends Controller
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для пользователя. 
-                        Можно сохранить для одного отзыва не более чем '.ImagesUsers::MAX_IMAGES.' изображений'],
+                        Можно сохранить для одного пользователя не более чем '.ImagesUsers::MAX_IMAGES.' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
                 return $response;
             }
 
-            $countImagesCopy = $countImages;
+            $imagesIds = [];
             $this->db->begin();
 
             foreach ($files as $file) {
-                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
-
-                $filename = ImageLoader::formFullImageName('users', $imageFormat, $userId, $countImages);
-
-                $imageFullName = $filename;
 
                 $newimage = new ImagesUsers();
                 $newimage->setUserId($userId);
-                $newimage->setImagePath($imageFullName);
+                $newimage->setImagePath("");
 
                 if (!$newimage->save()) {
                     $errors = [];
@@ -732,14 +725,24 @@ class UserinfoAPIController extends Controller
                     );
                     return $response;
                 }
-                //$filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
-                $countImages += 1;
-            }
+                $imagesIds[] = $newimage->getImageId();
 
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $filename = ImageLoader::formFullImageName('users', $imageFormat, $userId, $newimage->getImageId());
+
+                $newimage->setImagePath($filename);
+
+                if(!$newimage->update()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($newimage);
+                }
+            }
+            $i=0;
             foreach ($files as $file) {
                 $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
-                    $countImagesCopy, $userId);
-
+                    $userId,$imagesIds[$i]);
+                $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
                         $error = 'Формат одного из изображений не поддерживается';
@@ -756,8 +759,6 @@ class UserinfoAPIController extends Controller
                     );
                     return $response;
                 }
-
-                $countImagesCopy++;
             }
 
             $this->db->commit();

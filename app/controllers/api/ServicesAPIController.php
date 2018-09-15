@@ -1233,19 +1233,14 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $countImagesCopy = $countImages;
             $this->db->begin();
+            $imagesIds = [];
 
             foreach ($files as $file) {
-                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
-
-                $filename = ImageLoader::formFullImageName('services', $imageFormat, $serviceId, $countImages);
-
-                $imageFullName = $filename;
 
                 $newimage = new Imagesservices();
                 $newimage->setServiceId($serviceId);
-                $newimage->setImagePath($imageFullName);
+                $newimage->setImagePath("");
 
                 if (!$newimage->save()) {
                     $errors = [];
@@ -1261,13 +1256,24 @@ class ServicesAPIController extends Controller
                     );
                     return $response;
                 }
-                //$filenames[] = ['name' => $filename, 'format' => $imageFormat, 'tempname' => $file->getTempName()];
-                $countImages += 1;
+
+                $imagesIds[] = $newimage->getImageId();
+
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $filename = ImageLoader::formFullImageName('services', $imageFormat, $serviceId, $newimage->getImageId());
+
+                $newimage->setImagePath($filename);
+
+                if(!$newimage->update()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($newimage);
+                }
             }
-
+            $i=0;
             foreach ($files as $file) {
-                $result = ImageLoader::loadService($file->getTempName(), $file->getName(), $countImagesCopy, $serviceId);
-
+                $result = ImageLoader::loadService($file->getTempName(), $file->getName(), $serviceId,$imagesIds[$i]);
+                $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
                         $error = 'Формат одного из изображений не поддерживается';
@@ -1284,8 +1290,6 @@ class ServicesAPIController extends Controller
                     );
                     return $response;
                 }
-
-                $countImagesCopy++;
             }
 
             $this->db->commit();

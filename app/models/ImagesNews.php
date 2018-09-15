@@ -1,14 +1,13 @@
 <?php
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Regex;
-use Phalcon\Validation\Validator\Callback;
-class ImagesReviews extends \Phalcon\Mvc\Model
+
+class ImagesNews extends \Phalcon\Mvc\Model
 {
 
     /**
      *
      * @var integer
      * @Primary
+     * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
     protected $imageid;
@@ -18,12 +17,12 @@ class ImagesReviews extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $reviewid;
+    protected $newid;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=256, nullable=false)
+     * @Column(type="string", length=256, nullable=true)
      */
     protected $imagepath;
 
@@ -42,14 +41,14 @@ class ImagesReviews extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field reviewid
+     * Method to set the value of field newid
      *
-     * @param integer $reviewid
+     * @param integer $newid
      * @return $this
      */
-    public function setReviewId($reviewid)
+    public function setNewId($newid)
     {
-        $this->reviewid = $reviewid;
+        $this->newid = $newid;
 
         return $this;
     }
@@ -78,13 +77,13 @@ class ImagesReviews extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field reviewid
+     * Returns the value of field newid
      *
      * @return integer
      */
-    public function getReviewId()
+    public function getNewId()
     {
-        return $this->reviewid;
+        return $this->newid;
     }
 
     /**
@@ -107,13 +106,13 @@ class ImagesReviews extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'reviewid',
+            'newid',
             new Callback(
                 [
-                    "message" => "Такой отзыв не существует",
+                    "message" => "Такая новость не существует",
                     "callback" => function ($image) {
-                        $service = Reviews::findFirstByReviewid($image->getReviewId());
-                        if ($service)
+                        $new = News::findFirstByNewid($image->getNewId());
+                        if ($new)
                             return true;
                         return false;
                     }
@@ -153,8 +152,8 @@ class ImagesReviews extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("imagesreviews");
-        $this->belongsTo('reviewid', '\Reviews', 'reviewid', ['alias' => 'Reviews']);
+        $this->setSource("imagesnews");
+        $this->belongsTo('newid', '\News', 'newid', ['alias' => 'News']);
     }
 
     /**
@@ -164,14 +163,14 @@ class ImagesReviews extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'imagesreviews';
+        return 'imagesnews';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ImagesReviews[]|ImagesReviews|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ImagesNews[]|ImagesNews|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -182,7 +181,7 @@ class ImagesReviews extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ImagesReviews|\Phalcon\Mvc\Model\ResultInterface
+     * @return ImagesNews|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
@@ -198,6 +197,7 @@ class ImagesReviews extends \Phalcon\Mvc\Model
         if ($result && $path != null && $delete = true) {
             ImageLoader::delete($path);
         }
+
         return $result;
     }
 }

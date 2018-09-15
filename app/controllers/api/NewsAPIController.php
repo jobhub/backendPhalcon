@@ -127,7 +127,8 @@ class NewsAPIController extends Controller
 
             $response->setJsonContent(
                 [
-                    "status" => STATUS_OK
+                    "status" => STATUS_OK,
+                    'newId' => $new->getNewId()
                 ]
             );
             return $response;
@@ -364,5 +365,167 @@ class NewsAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
+    }
+
+    /**
+     * Добавляет все прикрепленные изображения к новости. Но суммарно изображений не больше некоторого количества.
+     *
+     * @access private
+     *
+     * @method POST
+     *
+     * @params newId
+     * @params (обязательно) изображения. Именование не важно.
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function addImagesAction()
+    {
+        if ($this->request->isPost() && $this->session->get('auth')) {
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $newId = $this->request->getPost('newId');
+
+            $new = News::findFirstByNewid($newId);
+
+            if (!$new) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор новости'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$new->getSubjectId(),$new->getSubjectType(),
+                'editNew')){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+            $result = $this->addImagesHandler($this->request->getPost('newId'));
+
+            return $result;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет все отправленные файлы изображений к новости. Общее количество
+     * фотографий для пользователя на данный момент не более некоторого количества.
+     * Доступ не проверяется.
+     *
+     * @param $newId
+     * @return Response с json массивом типа Status
+     */
+    public function addImagesHandler($newId)
+    {
+        include(APP_PATH . '/library/SimpleImage.php');
+        $response = new Response();
+        if ($this->request->hasFiles()) {
+            $files = $this->request->getUploadedFiles();
+
+            $new = News::findFirstByNewid($newId);
+
+            if (!$new) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор новости'],
+                        "status" => STATUS_WRONG,
+                    ]
+                );
+                return $response;
+            }
+
+            $images = ImagesNews::findByNewid($newId);
+            $countImages = count($images);
+
+            if(($countImages + count($files)) > ImagesNews::MAX_IMAGES ){
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Слишком много изображений для новости. 
+                        Можно сохранить для одной новости не более чем '.ImagesUsers::MAX_IMAGES.' изображений'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $imagesIds = [];
+            $this->db->begin();
+
+            foreach ($files as $file) {
+
+                $newimage = new ImagesNews();
+                $newimage->setNewId($newId);
+                $newimage->setImagePath("");
+
+                if (!$newimage->save()) {
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($newimage);
+                }
+
+                $imagesIds[] = $newimage->getImageId();
+
+                $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+
+                $filename = ImageLoader::formFullImageName('news', $imageFormat, $newId, $newimage->getImageId());
+
+                $newimage->setImagePath($filename);
+
+                if(!$newimage->update()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($newimage);
+                }
+            }
+            $i=0;
+            foreach ($files as $file) {
+                $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                    $newId,$imagesIds[$i]);
+                $i++;
+                if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
+                    if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
+                        $error = 'Формат одного из изображений не поддерживается';
+                    } elseif ($result == ImageLoader::RESULT_ERROR_NOT_SAVED) {
+                        $error = 'Не удалось сохранить изображение';
+                    } else {
+                        $error = 'Ошибка при загрузке изображения';
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => [$error]
+                        ]
+                    );
+                    return $response;
+                }
+            }
+
+            $this->db->commit();
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+        }
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+        return $response;
     }
 }

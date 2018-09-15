@@ -302,7 +302,7 @@ class CompaniesAPIController extends Controller
             $format = pathinfo($file->getName(),PATHINFO_EXTENSION);
 
             $logotype = ImageLoader::formFullImageName('companies',$format,
-                $this->request->getPost("companyId"),0);
+                $this->request->getPost("companyId"),$this->request->getPost("companyId"));
 
             $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
 
@@ -323,7 +323,7 @@ class CompaniesAPIController extends Controller
                 return $response;
             }
 
-            $result = ImageLoader::loadCompanyLogotype($file->getTempName(),$file->getName(),$company->getCompanyId());
+            $result = ImageLoader::loadCompanyLogotype($file->getTempName(),$file->getName(),$company->getCompanyId(),$company->getCompanyId());
 
             if($result != ImageLoader::RESULT_ALL_OK || $result === null){
                 if($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED){
