@@ -8,6 +8,12 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+
+/**
+ * Class EventsAPIController
+ * Предназначен для работы с акциями.
+ * Реализует CRUD для акций.
+ */
 class EventsAPIController extends Controller
 {
     /**

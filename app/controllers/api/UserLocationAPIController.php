@@ -6,6 +6,12 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class UserLocationAPIController
+ * Контроллер предназначенный исключительно для поиска людей на карте.
+ * Содержит методы для установления текущей позиции пользователя,
+ * поиска пользователей и получения автокомплита.
+ */
 class UserLocationAPIController extends Controller
 {
     /**

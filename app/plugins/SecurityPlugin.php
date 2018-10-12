@@ -144,7 +144,7 @@ class SecurityPlugin extends Plugin
                 'authorized' => ['index', 'register', 'start', 'end', 'action'],
                 'auctions' => ['index'],
                 'sessionAPI' => ['index', 'authWithSocial', 'end', 'getCurrentRole'],
-                'CategoriesAPI' => ['index', 'getCategoriesForSite'],
+                'CategoriesAPI' => ['index', 'getCategoriesForSite', 'getCategories'],
                 'tenderAPI' => ['index'],
                 'TasksAPI' => ['getTasksForSubject'],
                 'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService',
@@ -157,7 +157,6 @@ class SecurityPlugin extends Plugin
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById'],
                 'RegisterAPI' => ['index', 'deactivateLink'],
-                'images' => ['categories','companies', 'users', 'reviews', 'events','services']
             ];
 
             $publicResources2 = [];

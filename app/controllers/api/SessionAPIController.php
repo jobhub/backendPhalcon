@@ -6,6 +6,12 @@ use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use ULogin\Auth;
 
+/**
+ * Class SessionAPIController
+ * Контроллер, предназначеный для авторизации пользователей и содержащий методы сязанные с этим процессом
+ * А именно, методы для авторизации пользователя, разрыва сессии, получение роли текущего пользователя
+ * и авторизация через соц. сеть (которая по совместительству и регистрация).
+ */
 class SessionAPIController extends Controller
 {
     public function _registerSession($user)
@@ -205,6 +211,10 @@ class SessionAPIController extends Controller
 
     /**
      * Авторизация через соц. сеть
+     * Должен автоматически вызываться компонентом uLogin.
+     * 
+     * @method GET
+     * @return string - json array в формате Status
      */
     public function authWithSocialAction()
     {

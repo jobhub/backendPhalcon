@@ -5,6 +5,12 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class RegisterAPIController
+ * Контроллер для регистрации пользователей.
+ * Содержит методы дл регистрации пользователя и работы с активационным кодом.
+ * На данный момент это касается только активационного кода через email.
+ */
 class RegisterAPIController extends Controller
 {
     /**

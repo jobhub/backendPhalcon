@@ -5,6 +5,12 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class MessagesAPIController
+ * Контроллер для работы с сообщениями.
+ * Содержит методы для добавления сообщения, просмотра сообщений пользователя,
+ * просмотра "чатов", а также для просмотров переписки с одним человеком.
+ */
 class MessagesAPIController extends Controller
 {
 

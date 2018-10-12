@@ -5,6 +5,12 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class CoordinationAPIController
+ * Устаревший контроллер, еще с диплома, который был предназначен для всего,
+ * что касается чата и взаимодействия заказчика и исполнителя после того,
+ * как заказчик выберет себе исполнителя. Содержит потенциально полезный код.
+ */
 class CoordinationAPIController extends Controller
 {
 

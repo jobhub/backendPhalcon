@@ -9,7 +9,9 @@ use Phalcon\Mvc\Dispatcher;
 
 /**
  * Контроллер для работы с категориями.
- * Здесь action-ы для получения категорий и для работы с подписками на категории.
+ * Здесь методы для получения категорий и для работы с подписками
+ * пользователей на категории.
+ *
  */
 class CategoriesAPIController extends Controller
 {
@@ -21,6 +23,31 @@ class CategoriesAPIController extends Controller
         if ($this->request->isPost() || $this->request->isGet()) {
             $categories = Categories::find();
             return json_encode($categories);
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает категории
+     *
+     * @method GET
+     *
+     * @return string - json array с категориями
+     */
+    public function getCategoriesAction()
+    {
+        if ($this->request->isGet()) {
+
+            $categories = Categories::find(['categoryid > 20','order' => 'parentid DESC']);
+
+            $response = new Response();
+            $response->setJsonContent([
+                'status' => STATUS_OK,
+                'categories' => $categories
+            ]);
+            return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
@@ -45,7 +72,6 @@ class CategoriesAPIController extends Controller
             $fav = FavoriteCategories::findByIds($userId, $categoryId);
 
             if (!$fav) {
-
                 $fav = new FavoriteCategories();
                 $fav->setCategoryId($categoryId);
                 $fav->setUserId($userId);

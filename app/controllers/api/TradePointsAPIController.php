@@ -7,6 +7,11 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class TradePointsAPIController
+ * Контроллер для работы с точками оказания услуг.
+ * Реализует CRUD для точек оказания услуг.
+ */
 class TradePointsAPIController extends Controller
 {
     /**

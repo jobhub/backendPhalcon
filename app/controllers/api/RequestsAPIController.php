@@ -7,6 +7,14 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Class RequestsAPIController
+ * Контроллер для работы с заявками на получение услуги.
+ * Реализует CRUD для запросов и
+ * методы изменения статуса выполнения заявки с точки зрения клиента (не все статусы):
+ *      - отмена заявки;
+ *      - подтверждение выполнения заявки.
+ */
 class RequestsAPIController extends Controller
 {
     /**

@@ -201,13 +201,13 @@ class Imagesservices extends \Phalcon\Mvc\Model
         return $result;
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
+    public function delete($data = null, $whiteList = null)
     {
         $path = $this->getImagePath();
 
-        $result = parent::delete($delete, false, $data, $whiteList);
+        $result = parent::delete($data, $whiteList);
 
-        if ($result && $path != null && $delete = true) {
+        if ($result && $path != null) {
             ImageLoader::delete($path);
         }
         return $result;

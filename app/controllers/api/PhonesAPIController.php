@@ -7,6 +7,12 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class PhonesAPIController
+ * Контроллер для работы с номерами телефонов.
+ * Содержит методы для добавления, изменения и удаления номеров телефонов
+ * для пользователей, компаний и точек оказания услуг.
+ */
 class PhonesAPIController extends Controller
 {
     /**

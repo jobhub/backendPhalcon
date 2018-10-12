@@ -9,6 +9,7 @@ use Phalcon\Mvc\Dispatcher;
 
 /**
  * Контроллер для работы с подписками на компании
+ * Реализует методы для подписки пользователя на компании, отписки и получения подписок.
  */
 class FavouriteCompaniesAPIController extends Controller
 {

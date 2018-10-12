@@ -81,6 +81,7 @@ class Services extends SubjectsWithNotDeleted
 
     const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
         'regionid', 'name', 'longitude', 'latitude', 'rating'];
+
     /**
      * Method to set the value of field serviceId
      *
@@ -410,6 +411,15 @@ class Services extends SubjectsWithNotDeleted
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
+        if ($delete) {
+            $images = Imagesservices::findByServiceid($this->getServiceId());
+
+            foreach ($images as $image){
+                if(!$image->delete()){
+                    return false;
+                };
+            }
+        }
         $result = parent::delete($delete, $deletedCascade, $data, $whiteList);
 
         return $result;
@@ -678,8 +688,9 @@ class Services extends SubjectsWithNotDeleted
         return $reviews2;
     }
 
-    private function sortFunction($a,$b){
-        return ($a['weight'] < $b['weight']) ? -1:1;
+    private function sortFunction($a, $b)
+    {
+        return ($a['weight'] < $b['weight']) ? -1 : 1;
     }
 
     function cmp($a, $b)
@@ -703,7 +714,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         //$cl->SetMatchMode(SPH_MATCH_ANY);
-        if(trim($query) == '')
+        if (trim($query) == '')
             $cl->SetMatchMode(SPH_MATCH_ALL);
         else
             $cl->SetMatchMode(SPH_MATCH_ANY);
@@ -715,7 +726,7 @@ class Services extends SubjectsWithNotDeleted
 
         if ($regions != null) {
             $cl->setFilter('regionid', $regions, false);
-            $cl->AddQuery($query,'bro4you_small_index');
+            $cl->AddQuery($query, 'bro4you_small_index');
             $cl->ResetFilters();
         }
         if ($center != null && $diagonal != null) {
@@ -734,11 +745,11 @@ class Services extends SubjectsWithNotDeleted
         $allmatches = [];
         foreach ($results as $result) {
             if ($result['total'] > 0) {
-                $allmatches =array_merge($allmatches,$result['matches']);
+                $allmatches = array_merge($allmatches, $result['matches']);
             }
         }
 
-        $res = usort($allMatches,function($a, $b) {
+        $res = usort($allmatches, function ($a, $b) {
             if ($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -785,7 +796,7 @@ class Services extends SubjectsWithNotDeleted
 
             $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
 
-            if(count($service['images']) == 0){
+            if (count($service['images']) == 0) {
                 $image = new Imagesservices();
                 $image->setImagePath('/images/no_image.jpg');
                 $image->setServiceId($service['service']['serviceid']);
@@ -841,7 +852,7 @@ class Services extends SubjectsWithNotDeleted
 
             $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
         }
-        $cl->AddQuery('@* '.$query.'*', 'categories_min_index');
+        $cl->AddQuery('@* ' . $query . '*', 'categories_min_index');
 
         $results = $cl->RunQueries();
 
@@ -850,13 +861,13 @@ class Services extends SubjectsWithNotDeleted
 
         $allMatches = [];
 
-        foreach($results as $result){
+        foreach ($results as $result) {
             if ($result['total'] > 0) {
                 $allMatches = array_merge($allMatches, $result['matches']);
             }
         }
 
-        $res = usort($allMatches,function($a, $b) {
+        $res = usort($allMatches, function ($a, $b) {
             if ($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -865,10 +876,10 @@ class Services extends SubjectsWithNotDeleted
 
         $output = [];
 
-        for($i = 0;$i < 10 && $i < count($allMatches); $i++){
+        for ($i = 0; $i < 10 && $i < count($allMatches); $i++) {
             $result = $allMatches[$i];
-            $output[] = ['id' => $result['attrs']['elementid'], 'name' =>  $result['attrs']['name'],
-                'type' =>  $result['attrs']['type'],
+            $output[] = ['id' => $result['attrs']['elementid'], 'name' => $result['attrs']['name'],
+                'type' => $result['attrs']['type'],
             ];
         }
 
@@ -885,17 +896,17 @@ class Services extends SubjectsWithNotDeleted
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
-            if($type == 'service') {
+            if ($type == 'service') {
                 $cl->setFilter('regionid', $regions, false);
                 $cl->setFilter('servid', $elementIds, false);
                 $cl->AddQuery('', 'bro4you_small_index');
                 $cl->ResetFilters();
-            } elseif($type == 'company'){
+            } elseif ($type == 'company') {
                 $cl->setFilter('regionid', $regions, false);
-                $cl->setFilter('companyid',$elementIds, false);
+                $cl->setFilter('companyid', $elementIds, false);
                 $cl->AddQuery('', 'services_with_company_index');
                 $cl->ResetFilters();
-            } elseif($type == 'category'){
+            } elseif ($type == 'category') {
                 $cl->setFilter('regionid', $regions, false);
                 $cl->setFilter('categoryid', $elementIds, false);
                 $cl->AddQuery('', 'services_with_category_index');
@@ -912,13 +923,13 @@ class Services extends SubjectsWithNotDeleted
             $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
         }
 
-        if($type == 'service') {
+        if ($type == 'service') {
             $cl->setFilter('servid', $elementIds, false);
             $cl->AddQuery('', 'bro4you_small_index');
-        } elseif($type == 'company'){
+        } elseif ($type == 'company') {
             $cl->setFilter('companyid', $elementIds, false);
             $cl->AddQuery('', 'services_with_company_index');
-        } elseif($type == 'category'){
+        } elseif ($type == 'category') {
             $cl->setFilter('categoryid', $elementIds, false);
             $cl->AddQuery('', 'services_with_category_index');
         }
@@ -928,11 +939,11 @@ class Services extends SubjectsWithNotDeleted
         $allmatches = [];
         foreach ($results as $result) {
             if ($result['total'] > 0) {
-                $allmatches =array_merge($allmatches,$result['matches']);
+                $allmatches = array_merge($allmatches, $result['matches']);
             }
         }
 
-        $res = usort($allMatches,function($a, $b) {
+        $res = usort($allMatches, function ($a, $b) {
             if ($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -978,7 +989,7 @@ class Services extends SubjectsWithNotDeleted
             }
             $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
 
-            if(count($service['images']) == 0){
+            if (count($service['images']) == 0) {
                 $image = new Imagesservices();
                 $image->setImagePath('/images/no_image.jpg');
                 $image->setServiceId($service['service']['serviceid']);
@@ -1004,7 +1015,7 @@ class Services extends SubjectsWithNotDeleted
 
         if ($regions != null) {
             $cl->setFilter('regionid', $regions, false);
-            $cl->AddQuery($query,'bro4you_index');
+            $cl->AddQuery($query, 'bro4you_index');
             $cl->ResetFilters();
         }
         if ($center != null && $diagonal != null) {
@@ -1023,11 +1034,11 @@ class Services extends SubjectsWithNotDeleted
         $allmatches = [];
         foreach ($results as $result) {
             if ($result['total'] > 0) {
-                $allmatches =array_merge($allmatches,$result['matches']);
+                $allmatches = array_merge($allmatches, $result['matches']);
             }
         }
 
-        $res = usort($allmatches,function($a, $b) {
+        $res = usort($allmatches, function ($a, $b) {
             if ($a['weight'] == $b['weight']) {
                 return 0;
             }
@@ -1035,11 +1046,11 @@ class Services extends SubjectsWithNotDeleted
         });
 
         foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service'],true);
-            $subject = json_decode($match['attrs']['subject'],true);
-            if($service['service']['subjecttype'] == 1)
+            $service['service'] = json_decode($match['attrs']['service'], true);
+            $subject = json_decode($match['attrs']['subject'], true);
+            if ($service['service']['subjecttype'] == 1)
                 $service['company'] = $subject;
-            else{
+            else {
                 $service['userinfo'] = $subject;
             }
 
@@ -1048,16 +1059,16 @@ class Services extends SubjectsWithNotDeleted
             $service['images'] = SupportClass::translateInPhpArrFromPostgreArr($match['attrs']['images']);
             $points = SupportClass::translateInPhpArrFromPostgreArr($match['attrs']['points']);
 
-            foreach($points as $point){
+            foreach ($points as $point) {
                 $f = false;
-                foreach($match['attrs']['pointid'] as $pointid){
-                    if($point['pointid'] == $pointid){
+                foreach ($match['attrs']['pointid'] as $pointid) {
+                    if ($point['pointid'] == $pointid) {
                         $f = true;
                         break;
                     }
                 }
-                if($f)
-                   $service['points'][] = $point;
+                if ($f)
+                    $service['points'][] = $point;
             }
 
             $services[] = $service;

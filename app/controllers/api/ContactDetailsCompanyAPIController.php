@@ -7,6 +7,10 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class ContactDetailsCompanyAPIController
+ * Устаревший контроллер для сущности ContactDetailsCompany.
+ */
 class ContactDetailsCompanyAPIController extends Controller
 {
     public function getContactDetailsAction($companyId)

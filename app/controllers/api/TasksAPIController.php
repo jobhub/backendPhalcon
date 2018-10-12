@@ -8,6 +8,14 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Class TasksAPIController
+ * Контроллер для работы с заказами.
+ * Реализует CRUD для заказов, метод для выбора предложения для выполнения заказа,
+ * а также содержит методы для изменения статуса заказа:
+ *      - отмена заказа;
+ *      - подтверждение выполнения заказа;
+ */
 class TasksAPIController extends Controller
 {
     /**

@@ -8,7 +8,9 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
 /**
- * Контроллер для работы с новостями
+ * Контроллер для работы с новостями.
+ * Реализует CRUD для новостей, позволяет просматривать новости тех, на кого подписан текущий пользователь.
+ * Ну и методы для прикрепления изображений к новости.
  */
 class NewsAPIController extends Controller
 {

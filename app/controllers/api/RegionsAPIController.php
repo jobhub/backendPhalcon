@@ -5,6 +5,12 @@ use Phalcon\Http\Response;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+
+/**
+ * Class RegionsAPIController
+ * Контроллер для регионов.
+ * Впрочем, он ничего не делает.
+ */
 class RegionsAPIController extends \Phalcon\Mvc\Controller
 {
     public function pullRegionsAction()

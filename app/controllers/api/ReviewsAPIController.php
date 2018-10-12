@@ -12,6 +12,11 @@ use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Paginator\Adapter\NativeArray as Paginator;
 
+/**
+ * Class ReviewsAPIController
+ * Контроллер для работы с отзывами.
+ * Реализует CRUD для отывов, методы для добавления изображений к отзыву.
+ */
 class ReviewsAPIController extends Controller
 {
     /**

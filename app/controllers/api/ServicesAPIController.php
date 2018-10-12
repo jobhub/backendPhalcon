@@ -8,6 +8,12 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+/**
+ * Class ServicesAPIController
+ * Контроллер для работы с услугами.
+ * Содержит методы для поиска услуг, CRUD для услуг.
+ * Методы для связывания/отвязывания услуг и точек оказания услуг.
+ */
 class ServicesAPIController extends Controller
 {
     /**
@@ -65,11 +71,10 @@ class ServicesAPIController extends Controller
      */
     public function getServicesAction()
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isPost() || $this->request->isGet()) {
             $response = new Response();
 
             if ($this->request->getPost('typeQuery') == 0) {
-
                 if (strlen($this->request->getPost('userQuery')) < 3) {
                     $response->setJsonContent([
                         'status' => STATUS_WRONG,
@@ -142,6 +147,23 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
+            } elseif($_GET['typeQuery'] == 5){
+                $result = Services::getServicesByQuery('',
+                    null, null,
+                    null,true);
+
+                $file = fopen(BASE_PATH.'/public/json_array.txt','w');
+
+                $str = json_encode(['services' => $result, 'status'=>STATUS_OK],JSON_UNESCAPED_UNICODE);
+
+                /*fwrite($file,$str);
+                //echo json_encode($result);
+                fflush($file);
+                fclose($file);*/
+
+                echo $str;
+
+                exit;
             }
 
             //$result = Services::getServices($this->request->getPost('categoriesId'));
@@ -494,13 +516,6 @@ class ServicesAPIController extends Controller
                 $points = $this->request->getPost("newPoints");
 
                 foreach ($points as $point) {
-                    //$point2 = json_decode($point);
-                    /*$_POST['address'] = $point->address;
-                    $_POST['name'] = $point->name;
-                    $_POST['longitude'] = $point->longitude;
-                    $_POST['latitude'] = $point->latitude;
-
-                    $result = $this->TradePointsAPI->addTradePointAction();*/
                     $result = $this->TradePointsAPI->addTradePoint($point);
                     $result = json_decode($result->getContent());
 

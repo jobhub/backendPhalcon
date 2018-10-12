@@ -7,6 +7,14 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+
+/**
+ * Class UserinfoAPIController
+ * Контроллер, который содержит методы для работы в общем с пользователями.
+ * Реализует CRUD для пользователей без создания, добавление изображений с привязкой к пользователю.
+ *
+ * Методы без документации старые и неактуальные, но могут пригодиться в дальнейшем.
+ */
 class UserinfoAPIController extends Controller
 {
     public function indexAction()

@@ -6,6 +6,11 @@ use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+/**
+ * Class TenderAPIController
+ * Старый контроллер для тендеров.
+ * Так как тендеров уже нет, он неактуален. Но на всякий случай пусть будет.
+ */
 class TenderAPIController extends Controller
 {
     /**

@@ -8,7 +8,8 @@ use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
 /**
- * Контроллер для работы с компаниями
+ * Контроллер для работы с компаниями.
+ * Реализует CRUD для компаний, содержит методы для настройки менеджеров.
  */
 class CompaniesAPIController extends Controller
 {
