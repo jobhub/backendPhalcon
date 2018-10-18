@@ -167,9 +167,9 @@ class PhonesPoints extends \Phalcon\Mvc\Model
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
-            ->from(["p" => "phones"])
-            ->join('phonespoints','p.phoneid = pp.phoneid','pp')
-            ->join('tradepoints', 'pp.pointid = tp.pointid', 'tp')
+            ->from(["p" => "Phones"])
+            ->join('PhonesPoints','p.phoneid = pp.phoneid','pp')
+            ->join('TradePoints', 'pp.pointid = tp.pointid', 'tp')
             ->where('tp.pointid = :pointId:',['pointId'=>$pointId])
             ->getQuery()
             ->execute();
@@ -179,16 +179,16 @@ class PhonesPoints extends \Phalcon\Mvc\Model
             if($point->getSubjectType() == 1) {
 
                 $result = $modelsManager->createBuilder()
-                    ->from(["p" => "phones"])
-                    ->join('phonesCompanies', 'p.phoneid = pc.phoneid', 'pc')
-                    ->join('companies', 'pc.companyid = c.companyid', 'c')
+                    ->from(["p" => "Phones"])
+                    ->join('PhonesCompanies', 'p.phoneid = pc.phoneid', 'pc')
+                    ->join('Companies', 'pc.companyid = c.companyid', 'c')
                     ->where('c.companyid = :companyId:', ['companyId' => $point->getSubjectId()])
                     ->getQuery()
                     ->execute();
             } else if($point->getSubjectType() == 0){
                 $result = $modelsManager->createBuilder()
-                    ->from(["p" => "phones"])
-                    ->join('users', 'p.phoneid = u.phoneid', 'u')
+                    ->from(["p" => "Phones"])
+                    ->join('Users', 'p.phoneid = u.phoneid', 'u')
                     ->where('u.userid = :userId:', ['userId' => $point->getSubjectId()])
                     ->getQuery()
                     ->execute();

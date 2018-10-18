@@ -1427,7 +1427,7 @@ class ServicesAPIController extends Controller
      *
      * @param $serviceId
      *
-     * @return string - json array {status, service, [points => {point, [phones]}]}
+     * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
      */
     public function getServiceInfoAction($serviceId)
     {
@@ -1457,11 +1457,17 @@ class ServicesAPIController extends Controller
                 $points2['phones'] = PhonesPoints::getPhonesForPoint($point->getPointId());
             }
 
+            $reviews = Reviews::getReviewsForService($serviceId,2);
+
+            $reviews2[0] = $reviews[0];
+            $reviews2[1] = $reviews[1];
+
             $response->setJsonContent([
                 'status' => STATUS_OK,
                 'service' => $service,
                 'points' => $points2,
-                'images' => $images
+                'images' => $images,
+                'reviews' => $reviews
             ]);
 
             return $response;

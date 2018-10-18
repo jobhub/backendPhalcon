@@ -1088,9 +1088,9 @@ class Services extends SubjectsWithNotDeleted
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
-            ->from(["p" => "tradepoints"])
-            ->join('servicespoints', 'p.pointid = sp.pointid', 'sp')
-            ->join('services', 'sp.serviceid = s.serviceid', 's')
+            ->from(["p" => "TradePoints"])
+            ->join('ServicesPoints', 'p.pointid = sp.pointid', 'sp')
+            ->join('Services', 'sp.serviceid = s.serviceid', 's')
             ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
             ->getQuery()
             ->execute();

@@ -536,7 +536,7 @@ class Reviews extends NotDeletedModelWithCascade
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public static function getReviewsForService($serviceId){
+    public static function getReviewsForService($serviceId, $limit = null){
         $db = Phalcon\DI::getDefault()->getDb();
 
         $str = "Select * FROM (
@@ -561,6 +561,9 @@ class Reviews extends NotDeletedModelWithCascade
 
         $str .= "FROM reviews where fake = true and bindertype = 'service' and binderid = :serviceId)
         ) p0 ORDER BY p0.reviewdate desc";
+
+        if($limit != null && $limit > 0)
+            $str.= " LIMIT ". $limit;
 
         $query = $db->prepare($str);
 

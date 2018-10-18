@@ -155,7 +155,8 @@ class SecurityPlugin extends Plugin
                 'Search' => ['index'],
                 'UserinfoAPI' => ['getUserinfo'],
                 'CompaniesAPI' => ['getCompanyInfo'],
-                'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById'],
+                'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
+                    'getAutoCompleteForSearchServicesAndUsers'],
                 'RegisterAPI' => ['index', 'deactivateLink'],
             ];
 

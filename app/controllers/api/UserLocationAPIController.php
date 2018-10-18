@@ -210,4 +210,80 @@ class UserLocationAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Возвращает данные для автокомплита поиска по пользователям и услугам.
+     *
+     * @access public
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params center - [longitude => ..., latitude => ...] - центральная точка
+     * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+     * @return string - json array - массив пользователей и услуг.
+     *          [type, id, name]
+     */
+    public function getAutoCompleteForSearchServicesAndUsersAction(){
+        if ($this->request->isPost()) {
+            $auth = $this->session->get("auth");
+            $response = new Response();
+            $userId = $auth['id'];
+
+            $center = $this->request->getPost('center');
+            $diagonal = $this->request->getPost('diagonal');
+
+            $longitudeHR = $diagonal['longitude'];
+            $latitudeHR = $diagonal['latitude'];
+
+            $diffLong = $diagonal['longitude'] - $center['longitude'];
+            $longitudeLB = $center['longitude'] - $diffLong;
+
+            $diffLat = $diagonal['latitude'] - $center['latitude'];
+            $latitudeLB = $center['latitude'] - $diffLat;
+
+            $users = UserLocation::getAutoComplete($this->request->getPost('query'),
+                $longitudeHR,$latitudeHR,$longitudeLB,$latitudeLB);
+
+
+            if($longitudeHR == -1)
+                $services = Services::getAutocompleteByQuery($this->request->getPost('query'),
+                    null,null,
+                    $this->request->getPost('regionsId'));
+            else
+            $services = Services::getAutocompleteByQuery($this->request->getPost('userQuery'),
+                $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                $this->request->getPost('regionsId'));
+
+            $autocomplete = [];
+            $limit = 10;
+            $current = 0;
+            foreach($users as $user){
+                if($current>$limit)
+                    break;
+                $autocomplete[] = ['type' => 'user', 'id' => $user['userid'],
+                    'name' => $user['firstname'] . ' '. $user['lastname']
+                    . ($user['patronymic']==null?'':' '.$user['patronymic'])];
+                $current++;
+            }
+
+            foreach($services as $service){
+                if($current>$limit)
+                    break;
+                $autocomplete[] = $service;
+                $current++;
+            }
+
+            $response->setJsonContent([
+                "status" => STATUS_OK,
+                'autocomplete' => $autocomplete
+            ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }
