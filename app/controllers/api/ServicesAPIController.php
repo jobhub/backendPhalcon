@@ -27,7 +27,7 @@ class ServicesAPIController extends Controller
      */
     public function getServicesForSubjectAction($subjectId, $subjectType)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
+        if ($this->request->isGet()) {
             $response = new Response();
             $services = Services::findBySubject($subjectId, $subjectType);
             $response->setJsonContent($services);
