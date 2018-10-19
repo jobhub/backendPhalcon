@@ -1453,8 +1453,8 @@ class ServicesAPIController extends Controller
 
             $points2 = [];
             foreach ($points as $point) {
-                $points2['point'] = $point->clipToPublic();
-                $points2['phones'] = PhonesPoints::getPhonesForPoint($point->getPointId());
+                $points2[] = ['point' => $point->clipToPublic(),
+                    'phones' => PhonesPoints::getPhonesForPoint($point->getPointId())];
             }
 
             $reviews = Reviews::getReviewsForService($serviceId,2);
