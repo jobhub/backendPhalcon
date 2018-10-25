@@ -852,7 +852,7 @@ class Services extends SubjectsWithNotDeleted
 
             $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
         }
-        $cl->AddQuery('@* ' . $query . '*', 'categories_min_index');
+        $cl->AddQuery('@*' . $query . '*'/*$query*/, 'categories_min_index');
 
         $results = $cl->RunQueries();
 

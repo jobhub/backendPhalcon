@@ -251,7 +251,7 @@ class UserLocationAPIController extends Controller
                     null,null,
                     $this->request->getPost('regionsId'));
             else
-            $services = Services::getAutocompleteByQuery($this->request->getPost('userQuery'),
+            $services = Services::getAutocompleteByQuery($this->request->getPost('query'),
                 $this->request->getPost('center'), $this->request->getPost('diagonal'),
                 $this->request->getPost('regionsId'));
 
@@ -263,7 +263,8 @@ class UserLocationAPIController extends Controller
                     break;
                 $autocomplete[] = ['type' => 'user', 'id' => $user['userid'],
                     'name' => $user['firstname'] . ' '. $user['lastname']
-                    . ($user['patronymic']==null?'':' '.$user['patronymic'])];
+                    . ($user['patronymic']==null?'':' '.$user['patronymic']),
+                    'pathtophoto' => $user['pathtophoto']];
                 $current++;
             }
 

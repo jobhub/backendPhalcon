@@ -574,12 +574,10 @@ class Reviews extends NotDeletedModelWithCascade
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public static function getReviewsForService2($serviceId){
+    public static function getReviewsForService2($serviceId, $limit = null){
         $db = Phalcon\DI::getDefault()->getDb();
 
-
-
-        $query = $db->prepare("Select review, subject FROM (
+        $str = "Select review, subject FROM (
               --Отзывы оставленные на услуги
               (SELECT row_to_json(reviews.*) as review, row_to_json(subject.*) as subject, reviews.reviewdate as date
               FROM services inner join requests ON (requests.serviceId = services.serviceId)
@@ -605,8 +603,12 @@ class Reviews extends NotDeletedModelWithCascade
               (SELECT row_to_json(reviews.*) as review, row_to_json(reviews.*) as subject, reviews.reviewdate as date
               FROM reviews
               WHERE reviews.binderId = :serviceId and reviews.bindertype = 'service' and reviews.fake = true)
-            ) p0 ORDER BY p0.date"
-        );
+            ) p0 ORDER BY p0.date";
+
+        if($limit!= null && $limit > 0)
+            $str.=' LIMIT '.$limit;
+        $query = $db->prepare($str);
+
 
         $query->execute([
             'serviceId' => $serviceId,
@@ -614,6 +616,8 @@ class Reviews extends NotDeletedModelWithCascade
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+
 
     private function updateRating(){
         if (!$this->getFake()) {

@@ -105,10 +105,29 @@ class ServicesAPIController extends Controller
                 ]);
                 return $response;
             } elseif ($this->request->getPost('typeQuery') == 2) {
-                $result = Services::getServicesByElement($this->request->getPost('type'),
-                    array($this->request->getPost('id')),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
+
+
+                if ($this->request->getPost('type') == 'category') {
+                    $categoriesId = $this->request->getPost('categoriesId');
+
+                    foreach ($categoriesId as $categoryId) {
+                        $childCategories = Categories::findByParentid($categoryId);
+                        foreach ($childCategories as $childCategory) {
+                            $categoriesId[] = $childCategory->getCategoryId();
+                        }
+                    }
+
+                    $result = Services::getServicesByElement($this->request->getPost('type'),
+                        $categoriesId,
+                        $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                        $this->request->getPost('regionsId'));
+
+                } else {
+                    $result = Services::getServicesByElement($this->request->getPost('type'),
+                        array($this->request->getPost('id')),
+                        $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                        $this->request->getPost('regionsId'));
+                }
 
                 $response->setJsonContent([
                     'status' => STATUS_OK,
@@ -116,13 +135,13 @@ class ServicesAPIController extends Controller
                 ]);
                 return $response;
 
-            } elseif($this->request->getPost('typeQuery') == 3){
+            } elseif ($this->request->getPost('typeQuery') == 3) {
 
                 $categoriesId = $this->request->getPost('categoriesId');
 
-                foreach($categoriesId as $categoryId){
+                foreach ($categoriesId as $categoryId) {
                     $childCategories = Categories::findByParentid($categoryId);
-                    foreach($childCategories as $childCategory){
+                    foreach ($childCategories as $childCategory) {
                         $categoriesId[] = $childCategory->getCategoryId();
                     }
                 }
@@ -137,7 +156,7 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
-            } elseif($this->request->getPost('typeQuery') == 4){
+            } elseif ($this->request->getPost('typeQuery') == 4) {
                 $result = Services::getServicesByQuery('',
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
@@ -147,14 +166,14 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
-            } elseif($_GET['typeQuery'] == 5){
+            } elseif ($_GET['typeQuery'] == 5) {
                 $result = Services::getServicesByQuery('',
                     null, null,
-                    null,true);
+                    null, true);
 
-                $file = fopen(BASE_PATH.'/public/json_array.txt','w');
+                $file = fopen(BASE_PATH . '/public/json_array.txt', 'w');
 
-                $str = json_encode(['services' => $result, 'status'=>STATUS_OK],JSON_UNESCAPED_UNICODE);
+                $str = json_encode(['services' => $result, 'status' => STATUS_OK], JSON_UNESCAPED_UNICODE);
 
                 /*fwrite($file,$str);
                 //echo json_encode($result);
@@ -189,7 +208,8 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return Response - с json массивом в формате Status
      */
-    public function deleteServiceAction($serviceId)
+    public
+    function deleteServiceAction($serviceId)
     {
         if ($this->request->isDelete()) {
             $response = new Response();
@@ -255,7 +275,8 @@ class ServicesAPIController extends Controller
      * @params (необязательные) companyId или userId.
      * @return Response - с json массивом в формате Status
      */
-    public function editServiceAction()
+    public
+    function editServiceAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -408,7 +429,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
-    public function addServiceAction()
+    public
+    function addServiceAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();
@@ -609,7 +631,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function addImagesAction()
+    public
+    function addImagesAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -660,7 +683,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageAction($imageId)
+    public
+    function deleteImageAction($imageId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
 
@@ -741,7 +765,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function linkServiceWithPointAction()
+    public
+    function linkServiceWithPointAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -814,7 +839,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function unlinkServiceAndPointAction($serviceId, $pointId)
+    public
+    function unlinkServiceAndPointAction($serviceId, $pointId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
@@ -893,7 +919,8 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public function confirmRequestAction()
+    public
+    function confirmRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -963,7 +990,8 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public function performRequestAction()
+    public
+    function performRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1033,7 +1061,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status
      */
-    public function rejectRequestAction()
+    public
+    function rejectRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1213,7 +1242,8 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($serviceId)
+    public
+    function addImagesHandler($serviceId)
     {
         include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
@@ -1237,11 +1267,11 @@ class ServicesAPIController extends Controller
             $images = Imagesservices::findByServiceid($serviceId);
             $countImages = count($images);
 
-            if(($countImages + count($files)) > Imagesservices::MAX_IMAGES ){
+            if (($countImages + count($files)) > Imagesservices::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для услуги. 
-                        Можно сохранить для одной услуги не более чем '.Imagesservices::MAX_IMAGES.' изображений'],
+                        Можно сохранить для одной услуги не более чем ' . Imagesservices::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -1280,14 +1310,14 @@ class ServicesAPIController extends Controller
 
                 $newimage->setImagePath($filename);
 
-                if(!$newimage->update()){
+                if (!$newimage->update()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($newimage);
                 }
             }
-            $i=0;
+            $i = 0;
             foreach ($files as $file) {
-                $result = ImageLoader::loadService($file->getTempName(), $file->getName(), $serviceId,$imagesIds[$i]);
+                $result = ImageLoader::loadService($file->getTempName(), $file->getName(), $serviceId, $imagesIds[$i]);
                 $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
@@ -1330,7 +1360,8 @@ class ServicesAPIController extends Controller
      * @params $serviceId
      * @return string - json array в формате Status
      */
-    public function incrementNumberOfDisplayForServiceAction()
+    public
+    function incrementNumberOfDisplayForServiceAction()
     {
         if ($this->request->isPut()) {
             $response = new Response();
@@ -1384,7 +1415,8 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return string - json array tasks
      */
-    public function getTasksForService($serviceId)
+    public
+    function getTasksForService($serviceId)
     {
         if ($this->request->isGet() && $this->session->get('auth')) {
             $response = new Response();
@@ -1429,7 +1461,8 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
      */
-    public function getServiceInfoAction($serviceId)
+    public
+    function getServiceInfoAction($serviceId)
     {
         if ($this->request->isGet()) {
             $response = new Response();
@@ -1457,17 +1490,73 @@ class ServicesAPIController extends Controller
                     'phones' => PhonesPoints::getPhonesForPoint($point->getPointId())];
             }
 
-            $reviews = Reviews::getReviewsForService($serviceId,2);
+            $reviews = Reviews::getReviewsForService2($serviceId, 2);
 
-            $reviews2[0] = $reviews[0];
-            $reviews2[1] = $reviews[1];
+            //$reviews = Reviews::getReviewsForService2($serviceId);
+
+            $reviews2_ar = [];
+            foreach ($reviews as $review) {
+                $reviews2['review'] = json_decode($review['review'], true);
+
+                unset($reviews2['review']['deleted']);
+                unset($reviews2['review']['deletedcascade']);
+                unset($reviews2['review']['fake']);
+                unset($reviews2['review']['subjectid']);
+                unset($reviews2['review']['subjecttype']);
+                unset($reviews2['review']['objectid']);
+                unset($reviews2['review']['objecttype']);
+
+                unset($reviews2['review']['userid']);
+                $subject = json_decode($review['subject'], true);
+                if (isset($subject['reviewid'])) {
+                    $userinfo = new Userinfo();
+                    $userinfo->setFirstname($reviews2['review']['fakename']);
+                    //$reviews2['userinfo'] = $userinfo;
+                    $reviews2['userinfo']['firstname'] = $userinfo->getFirstname();
+                    $reviews2['userinfo']['lastname'] = $userinfo->getLastname();
+                    $reviews2['userinfo']['pathtophoto'] = $userinfo->getPathToPhoto();
+                    $reviews2['userinfo']['userid'] = $userinfo->getUserId();
+                } else if (isset($subject['companyid'])) {
+                    //$reviews2['company'] = $subject;
+                    /*unset($reviews2['company']['deleted']);
+                    unset($reviews2['company']['deletedcascade']);
+                    unset($reviews2['company']['ismaster']);
+                    unset($reviews2['company']['yandexMapPages']);*/
+
+                    $reviews2['company']['name'] = $subject['name'];
+                    $reviews2['company']['fullname'] = $subject['fullname'];
+                    $reviews2['company']['logotype'] = $subject['logotype'];
+                    $reviews2['company']['companyid'] = $subject['companyid'];
+                } else {
+                    //$reviews2['userinfo'] = $subject;
+                    $reviews2['userinfo']['firstname'] = $subject['firstname'];
+                    $reviews2['userinfo']['lastname'] = $subject['lastname'];
+                    $reviews2['userinfo']['pathtophoto'] = $subject['pathtophoto'];
+                    $reviews2['userinfo']['userid'] = $subject['userid'];
+                }
+                unset($reviews2['review']['fakename']);
+
+                $reviews2_ar[] = $reviews2;
+            }
+
+            if ($service['subjecttype'] == 1) {
+                $str = 'company';
+                $binder = Companies::findFirstByCompanyid($service['subjectid']);
+            } else {
+                $str = 'user';
+                $binder = Userinfo::findFirstByUserid($service['subjectid']);
+            }
+            //test
+            /*$str = 'user';
+            $binder = Userinfo::findFirstByUserid(6);*/
 
             $response->setJsonContent([
                 'status' => STATUS_OK,
                 'service' => $service,
                 'points' => $points2,
                 'images' => $images,
-                'reviews' => $reviews
+                'reviews' => $reviews2_ar,
+                $str => $binder
             ]);
 
             return $response;
@@ -1478,7 +1567,8 @@ class ServicesAPIController extends Controller
         }
     }
 
-    public function addImagesToAllServicesAction()
+    public
+    function addImagesToAllServicesAction()
     {
         if ($this->request->isPost()) {
             $response = new Response();
