@@ -137,7 +137,7 @@ class SecurityPlugin extends Plugin
             $publicResources = [
                 //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
                 'Userinfo' => ['viewprofile', 'handler'],
-                'index' => ['index'],
+                'index' => ['index', 'personcab'],
                 'register' => ['index'],
                 'errors' => ['show401', 'show404', 'show500'],
                 'session' => ['index', 'register', 'start', 'end', 'action'],
@@ -157,7 +157,7 @@ class SecurityPlugin extends Plugin
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
                     'getAutoCompleteForSearchServicesAndUsers'],
-                'RegisterAPI' => ['index', 'deactivateLink'],
+                'RegisterAPI' => ['index', 'deactivateLink', 'activateLink'],
             ];
 
             $publicResources2 = [];
@@ -172,7 +172,7 @@ class SecurityPlugin extends Plugin
             $defectUserResources = [
                 'UserinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
                     'setPhoto', 'editUserinfo', 'getUserInfo'],
-                'RegisterAPI' => ['commit','sendActivationCode'],
+                'RegisterAPI' => ['confirm','getActivationCode'],
             ];
 
             $defectUserResources2 = [];

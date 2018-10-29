@@ -10,6 +10,7 @@ $router->add("/:controller/:action/:params",
         "params" => 3
     )
 )->convert('controller', function($controller) {
+
     return SupportClass::transformControllerName($controller);
 });
 
@@ -28,6 +29,8 @@ $router->add("/:controller",
         "action" => 'index',
     )
 )->convert('controller', function($controller) {
+    SupportClass::writeMessageInLogFile('Имя контроллера '. $controller. ' заменено на '.
+        SupportClass::transformControllerName($controller));
     return SupportClass::transformControllerName($controller);
 });
 $router->add("/:controller/",
@@ -36,6 +39,8 @@ $router->add("/:controller/",
         "action" => 'index',
     )
 )->convert('controller', function($controller) {
+    SupportClass::writeMessageInLogFile('Имя контроллера '. $controller. ' заменено на '.
+        SupportClass::transformControllerName($controller));
     return SupportClass::transformControllerName($controller);
 });
 $router->add("/",
@@ -44,5 +49,7 @@ $router->add("/",
         "action" => 'index',
     )
 )->convert('controller', function($controller) {
+    SupportClass::writeMessageInLogFile('Имя контроллера '. $controller. ' заменено на '.
+        SupportClass::transformControllerName($controller));
     return SupportClass::transformControllerName($controller);
 });

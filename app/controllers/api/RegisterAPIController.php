@@ -8,7 +8,7 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 /**
  * Class RegisterAPIController
  * Контроллер для регистрации пользователей.
- * Содержит методы дл регистрации пользователя и работы с активационным кодом.
+ * Содержит методы для регистрации пользователя и работы с активационным кодом.
  * На данный момент это касается только активационного кода через email.
  */
 class RegisterAPIController extends Controller
@@ -101,11 +101,11 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            $tokens = $this->SessionAPI->createSession();
+            $tokens = $this->SessionAPI->createSession($user);
 
             $tokens = json_decode($tokens->getContent(), true);
 
-            $res = $this->sendActivationCode();
+            $res = $this->sendActivationCode($user);
             $res = json_decode($res->getContent(),true);
 
             $res2 = $res['status'] == STATUS_OK;
@@ -137,7 +137,7 @@ class RegisterAPIController extends Controller
      *
      * @method POST
      *
-     * @params (обязательные) firstname, lastname, male, activationCode
+     * @params (обязательные) firstname, lastname, male, activationCode, login
      * @params (Необязательные) patronymic, birthday, about (много текста о себе),
      * @return string - json array Status
      */
@@ -148,10 +148,10 @@ class RegisterAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $user = Users::findFirst(['userid = :userId and email = :email', 'bind' =>
+            $user = Users::findFirst(['userid = :userId: and email = :email:', 'bind' =>
                 [
                     'userId' => $userId,
-                    'email' => $this->request->getPost('email')
+                    'email' => $this->request->getPost('login')
                 ]
             ]);
 
@@ -175,9 +175,9 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            $activationCode = ActivatonCodes::findFirstByUserid($user->getUserId());
+            $activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
 
-            if (!$activationCode || (strtotime($activationCode->getTime()) - time() > 3600)) {
+            if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > 3600)) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -304,6 +304,164 @@ class RegisterAPIController extends Controller
     }
 
     /**
+     * Подтверждает, что пользователь - владелец (пока только) почты.
+     *
+     * @access guest
+     *
+     * @method POST
+     *
+     * @params activationCode, login
+     *
+     * @return Status
+     */
+    public function activateLinkAction(){
+        if ($this->request->isPost()) {
+
+            $auth = $this->session->get('auth');
+            $authUserId = null;
+            if($auth)
+                $authUserId = $auth['id'];
+
+            $response = new Response();
+
+            if($authUserId == null) {
+                $user = Users::findFirst(['email = :email:', 'bind' =>
+                    [
+                        'email' => $this->request->getPost('login')
+                    ]
+                ]);
+            } else{
+                $user = Users::findFirst(['userid = :userId: and email = :email:', 'bind' =>
+                    [
+                        'userid' => $authUserId,
+                        'email' => $this->request->getPost('login')
+                    ]
+                ]);
+            }
+
+            if (!$user) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_UNRESOLVED_ERROR,
+                        "errors" => ['Пользователь не создан']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($user->getActivated()) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь уже активирован']
+                    ]
+                );
+                return $response;
+            }
+
+            $activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
+
+            if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > 3600)) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Неправильный активационный код']
+                    ]
+                );
+                return $response;
+            }
+
+            if ($activationCode->getActivation() != $this->request->getPost('activationCode')) {
+                if ($activationCode->getDeactivation() != $this->request->getPost('activationCode')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Неправильный активационный код']
+                        ]
+                    );
+                    return $response;
+                } else {
+                    if ($user->delete() == false) {
+                        $this->db->rollback();
+                        $errors = [];
+                        foreach ($user->getMessages() as $message) {
+                            $errors[] = $message->getMessage();
+                        }
+                        $response->setJsonContent(
+                            [
+                                "status" => STATUS_WRONG,
+                                "errors" => $errors
+                            ]
+                        );
+                        return $response;
+                    }
+
+                    if ($this->session->get('auth') != null) {
+                        $this->SessionAPI->destroySession();
+                    }
+
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_OK
+                        ]
+                    );
+                    return $response;
+                }
+            }
+
+            $this->db->begin();
+
+            /*if(!$activationCode->delete()){
+                $this->db->rollback();
+                return SupportClass::getResponseWithErrors($activationCode);
+            }*/
+
+            $user->setRole(ROLE_USER_DEFECTIVE);
+
+            if ($user->update() == false) {
+                $this->db->rollback();
+                $errors = [];
+                foreach ($user->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $this->db->commit();
+
+            if($authUserId == null) {
+                $res = $this->SessionAPI->createSession($user);
+                $res = json_decode($res->getContent(), true);
+
+                $response->setJsonContent(
+                    $res
+                );
+
+                return $response;
+            }
+
+
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK,
+                ]
+            );
+
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
      * Деактивирует ссылку и частично активирует пользователя, давая ему немного прав.
      * При необходимости авторизует пользователя.
      *
@@ -343,7 +501,7 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            $activationCode = ActivatonCodes::findFirstByUserid($user->getUserId());
+            $activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
 
             if (!$activationCode || $activationCode->getUsed() ||
                 (strtotime($activationCode->getTime()) - time() > 3600)) {
@@ -478,16 +636,16 @@ class RegisterAPIController extends Controller
         }
 
         if ($user->getEmail() != null) {
-            $activationCode = ActivatonCodes::findFirstByUserid($userId);
+            $activationCode = ActivationCodes::findFirstByUserid($userId);
 
             if (!$activationCode) {
-                $activationCode = new ActivatonCodes();
+                $activationCode = new ActivationCodes();
                 $activationCode->setUserId($userId);
             }
 
             $activationCode->setActivation($user->generateActivation());
             $activationCode->setDeactivation($user->generateDeactivation());
-            $activationCode->setTime(time());
+            $activationCode->setTime(date('Y-m-d H:i:s'));
 
             if (!$activationCode->save()) {
                 $errors = [];
@@ -507,16 +665,17 @@ class RegisterAPIController extends Controller
             //Отправляем письмо.
             $mailer = new PHPMailerApp($this->config['mail']);
 
+            $newTo = $this->config['mail']['from']['email'];
+
             $res = $mailer->createMessageFromView('emails/hello_world', 'hello_world',
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email'=>$user->getEmail()])
-                ->to($user->getEmail())
+                ->to(/*$user->getEmail()*/$newTo)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 
             if ($res === true) {
-                $this->db->commit();
 
                 $response->setJsonContent([
                     'status' => STATUS_OK
@@ -536,7 +695,7 @@ class RegisterAPIController extends Controller
         $response->setJsonContent(
             [
                 "status" => STATUS_WRONG,
-                "errors" => ['Для мобильных устройств активация не предусмотрена'],
+                "errors" => ['Активация через sms пока не предусмотрена'],
             ]
         );
         return $response;

@@ -243,21 +243,22 @@ class UserLocation extends \Phalcon\Mvc\Model
     }
 
     public static function findUsersByQuery($query, $longitudeRH, $latitudeRH,
-            $longitudeLB, $latitudeLB){
+                                            $longitudeLB, $latitudeLB)
+    {
 
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $query = str_replace('!','',$query);
-        $query = str_replace('|','',$query);
-        $query = str_replace('&','',$query);
-        $ress = explode(' ',$query);
+        $query = str_replace('!', '', $query);
+        $query = str_replace('|', '', $query);
+        $query = str_replace('&', '', $query);
+        $ress = explode(' ', $query);
         $res2 = [];
-        foreach ($ress as $res){
-            if(trim($res) != "")
+        foreach ($ress as $res) {
+            if (trim($res) != "")
                 $res2[] = trim($res);
         }
 
-        $str = implode(' ',$res2);
+        $str = implode(' ', $res2);
 
         $query = $db->prepare("select userid, email, phone,
     firstname,lastname, patronymic, longitude, latitude, lasttime,
@@ -272,28 +273,34 @@ class UserLocation extends \Phalcon\Mvc\Model
             'latituderh' => $latitudeRH,
             'longitudelb' => $longitudeLB,
             'latitudelb' => $latitudeLB,
-            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
         ]);
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $str = var_export($result, true);
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        SupportClass::writeMessageInLogFile('Результат поиска по юзерам:');
+        SupportClass::writeMessageInLogFile($str);
+        /*return $query->fetchAll(\PDO::FETCH_ASSOC);*/
+        return $result;
     }
 
     public static function getAutoComplete($query, $longitudeRH, $latitudeRH,
-                                            $longitudeLB, $latitudeLB){
+                                           $longitudeLB, $latitudeLB)
+    {
 
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $query = str_replace('!','',$query);
-        $query = str_replace('|','',$query);
-        $query = str_replace('&','',$query);
-        $ress = explode(' ',$query);
+        $query = str_replace('!', '', $query);
+        $query = str_replace('|', '', $query);
+        $query = str_replace('&', '', $query);
+        $ress = explode(' ', $query);
         $res2 = [];
-        foreach ($ress as $res){
-            if(trim($res) != "")
+        foreach ($ress as $res) {
+            if (trim($res) != "")
                 $res2[] = trim($res);
         }
 
-        $str = implode(' ',$res2);
+        $str = implode(' ', $res2);
 
         $query = $db->prepare("select userid, firstname, lastname, patronymic,pathtophoto from 
             get_users_for_search_like(:str,:longituderh,
@@ -307,13 +314,20 @@ class UserLocation extends \Phalcon\Mvc\Model
             'latituderh' => $latitudeRH,
             'longitudelb' => $longitudeLB,
             'latitudelb' => $latitudeLB,
-            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
         ]);
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $str = var_export($result, true);
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        SupportClass::writeMessageInLogFile('Результат поиска по юзерам для автокомплита:');
+        SupportClass::writeMessageInLogFile($str);
+
+        /* return $query->fetchAll(\PDO::FETCH_ASSOC);*/
+        return $result;
     }
 
-    public static function getUserinfo($userid){
+    public static function getUserinfo($userid)
+    {
 
         $db = Phalcon\DI::getDefault()->getDb();
 
@@ -330,7 +344,7 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $query->execute([
             'userid' => $userid,
-            'lasttime' => date('Y-m-d H:i:s',time() + - 3600),
+            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);

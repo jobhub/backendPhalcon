@@ -69,17 +69,20 @@ class SessionAPIController extends Controller
     }
 
     public function createSession($user){
+        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера '. $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
         $response = new Response();
         $token = Accesstokens::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
             $this->session->getId());
 
         $accToken = new Accesstokens();
 
+        SupportClass::writeMessageInLogFile('ID юзера при этом - '. $user->getUserId());
         $accToken->setUserid($user->getUserId());
         $accToken->setToken($token);
         $accToken->setLifetime();
 
         if ($accToken->save() == false) {
+            SupportClass::writeMessageInLogFile('Не смог создать токен по указанной причине');
             $this->session->destroy();
             $errors = [];
             foreach ($accToken->getMessages() as $message) {
@@ -158,9 +161,12 @@ class SessionAPIController extends Controller
             // Производим поиск в базе данных
             $var = Phones::formatPhone($login);
             $phone = Phones::findFirstByPhone($var);
+
+            SupportClass::writeMessageInLogFile('var в SessionAPIController '. $var);
+
             $res = false;
             if ($phone) {
-
+                SupportClass::writeMessageInLogFile('логин это телефон');
                 $user = Users::findFirst(
                     [
                         "phoneid = :phoneId: AND issocial=false",
@@ -169,9 +175,12 @@ class SessionAPIController extends Controller
                         ]
                     ]
                 );
-                if ($user)
+                if ($user) {
+                    SupportClass::writeMessageInLogFile('Юзер найден в бд');
                     $res = $this->security->checkHash($password, $user->getPassword());
+                }
             } else {
+                SupportClass::writeMessageInLogFile('логин это email');
                 $user = Users::findFirst(
                     [
                         "email = :login: AND issocial=false",
@@ -180,8 +189,10 @@ class SessionAPIController extends Controller
                         ]
                     ]
                 );
-                if ($user)
+                if ($user) {
+                    SupportClass::writeMessageInLogFile('Юзер найден в бд');
                     $res = $this->security->checkHash($password, $user->getPassword());
+                }
             }
             // Формируем ответ
             $response = new Response();

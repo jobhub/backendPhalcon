@@ -69,6 +69,8 @@ class SupportClass
             }
             $new_controller[]=$lowercase;
         }
+        $str = implode('',$new_controller);
+        SupportClass::writeMessageInLogFile('Результат преобразования: '.$str);
         return implode('',$new_controller);
     }
 

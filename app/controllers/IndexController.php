@@ -7,4 +7,8 @@ class IndexController extends Controller
         $this->assets->addJs("public/js/bundle.js",true);
     }
 
+    public function personcabAction()
+    {
+        $this->assets->addJs("public/js/bundle.js",true);
+    }
 }
