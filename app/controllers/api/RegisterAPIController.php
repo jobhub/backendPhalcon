@@ -25,8 +25,11 @@ class RegisterAPIController extends Controller
      */
     public function indexAction()
     {
-        if ($this->request->isPost()) {
+        SupportClass::writeMessageInLogFile("Зашел в RegisterAPI");
+        /*if ($this->request->isPost() || $this->request->isOptions()) {*/
             $response = new Response();
+
+            SupportClass::writeMessageInLogFile("Прошел проверку на метод");
 
             $phone = $this->request->getPost('login');
             $email = $this->request->getPost('login');
@@ -53,6 +56,8 @@ class RegisterAPIController extends Controller
                 );
                 return $response;
             }
+
+            SupportClass::writeMessageInLogFile("Проверил юзера");
 
             $this->db->begin();
 
@@ -101,11 +106,14 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
+            SupportClass::writeMessageInLogFile("Дошел до создания сессии");
             $tokens = $this->SessionAPI->createSession($user);
 
             $tokens = json_decode($tokens->getContent(), true);
 
+            SupportClass::writeMessageInLogFile("Дошел до отправки кода активации");
             $res = $this->sendActivationCode($user);
+            SupportClass::writeMessageInLogFile("Отправил код активации");
             $res = json_decode($res->getContent(),true);
 
             $res2 = $res['status'] == STATUS_OK;
@@ -124,10 +132,10 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-        } else {
+        /*} else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
-        }
+        }*/
     }
 
     /**
@@ -615,6 +623,9 @@ class RegisterAPIController extends Controller
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
 
+        SupportClass::writeMessageInLogFile('all ok with SupportClass');
+        $aapt = new AaaaPt(0);
+
         if (!$user || $user == null) {
             $response->setJsonContent(
                 [
@@ -661,10 +672,8 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-
             //Отправляем письмо.
             $mailer = new PHPMailerApp($this->config['mail']);
-
             $newTo = $this->config['mail']['from']['email'];
 
             $res = $mailer->createMessageFromView('emails/hello_world', 'hello_world',
@@ -676,7 +685,6 @@ class RegisterAPIController extends Controller
                 ->send();
 
             if ($res === true) {
-
                 $response->setJsonContent([
                     'status' => STATUS_OK
                 ]);
