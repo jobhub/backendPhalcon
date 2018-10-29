@@ -70,7 +70,6 @@ class SupportClass
             $new_controller[]=$lowercase;
         }
         $str = implode('',$new_controller);
-        SupportClass::writeMessageInLogFile('Результат преобразования: '.$str);
         return implode('',$new_controller);
     }
 
@@ -123,7 +122,7 @@ class SupportClass
         $response->setJsonContent(
             [
                 "errors" => $errors,
-                "status" => "WRONG_DATA"
+                "status" => STATUS_WRONG
             ]);
 
         return $response;
