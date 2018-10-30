@@ -46,7 +46,7 @@ return new \Phalcon\Config([
     'database' => [
         'adapter'     => 'postgresql',
         'username'    => 'bro4you_parser',
-        'password'    => '98F6p8R4n80222',
+        'password'    => '',
         'port'        => '5432',
         'host'        => 'localhost',
         'dbname'      => 'bro4you_parser',
@@ -88,7 +88,7 @@ return new \Phalcon\Config([
         'port'       => 465,
         'encryption' => 'ssl',
         'username'   => 'x111s.rast@yandex.ru',
-        'password'   => 'wh#n5tmc',
+        'password'   => '',
         'from' => [
             'email' => 'x111s.rast@yandex.ru',
             'name' => 'Тестовая почта Раст'
