@@ -1,6 +1,7 @@
 <?php
 
 use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
@@ -78,8 +79,17 @@ class Userinfo extends \Phalcon\Mvc\Model
     protected $ratingclient;
     protected $pathtophoto;
 
+    protected $lasttime;
+
+    protected $email;
+
+    protected $phones;
+
     const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
         'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto'];
+
+    const publicColumnsInStr = 'userid, firstname, lastname, patronymic,
+        birthday, male, address, about, status, ratingexecutor, ratingclient, pathtophoto';
     /**
      * Method to set the value of field userId
      *
@@ -105,6 +115,24 @@ class Userinfo extends \Phalcon\Mvc\Model
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPhones()
+    {
+        return $this->phones;
+    }
+
+    /**
+     * @param mixed $phones
+     */
+    public function setPhones($phones)
+    {
+        $this->phones = $phones;
+    }
+
+
 
     /**
      * Method to set the value of field patronymic
@@ -292,6 +320,8 @@ class Userinfo extends \Phalcon\Mvc\Model
         return $this->birthday;
     }
 
+
+
     /**
      * Returns the value of field male
      *
@@ -334,6 +364,46 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         return $this->pathtophoto;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getLasttime()
+    {
+        return $this->lasttime;
+    }
+
+    /**
+     * @param mixed $lasttime
+     */
+    public function setLasttime($lasttime)
+    {
+        $this->lasttime = $lasttime;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+
+    //Поля не из базы
+
+
+
+
+
 
     /**
      * Validations and business logic
@@ -393,6 +463,17 @@ class Userinfo extends \Phalcon\Mvc\Model
                     ]
                 )
             );
+
+        if($this->getEmail() != null)
+        $validator->add(
+            'email',
+            new EmailValidator(
+                [
+                    'model' => $this,
+                    'message' => 'Введите, пожалуйста, правильный адрес',
+                ]
+            )
+        );
 
         return $this->validate($validator);
     }

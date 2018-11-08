@@ -46,25 +46,10 @@ class NewsAPIController extends Controller
             }
 
             $news = News::find([$query, "order" => "News.date DESC"]);*/
-
-            $query = $this->db->prepare("SELECT * FROM ((SELECT * FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
-                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
-                    WHERE favc.userid = :userId)
-                    UNION
-                    (SELECT * FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
-                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
-                    WHERE favu.usersubject = :userId)) as foo
-                    ORDER BY foo.date desc");
-
-            $result = $query->execute([
-                'userId' => $userId,
-            ]);
-
-            $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+            $news = News::getNewsForCurrentUser($userId);
 
             $response->setJsonContent($news);
             return $response;
-
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
@@ -111,7 +96,7 @@ class NewsAPIController extends Controller
 
             $new->setDate(date('Y-m-d H:i:s'));
 
-            $new->setNewText($this->request->getPost('newText'));
+            $new->setNewsText($this->request->getPost('newText'));
 
             if (!$new->save()) {
                 $errors = [];
@@ -130,7 +115,7 @@ class NewsAPIController extends Controller
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
-                    'newId' => $new->getNewId()
+                    'newId' => $new->getNewsId()
                 ]
             );
             return $response;

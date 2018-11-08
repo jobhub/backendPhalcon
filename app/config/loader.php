@@ -14,6 +14,7 @@ $loader->registerDirs(
         $config->application->modelsDir,
         $config->application->pluginsDir,
         $config->application->formsDir,
-        $config->application->libraryDir
+        $config->application->libraryDir,
+        $config->application->modelsResponsesDir,
     ]
 )->register();

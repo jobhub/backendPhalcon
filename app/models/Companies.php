@@ -87,6 +87,7 @@ class Companies extends NotDeletedModelWithCascade
     protected $ratingexecutor;
     protected $ratingclient;
 
+    protected $phones;
     /**
      *
      * @var string
@@ -96,6 +97,9 @@ class Companies extends NotDeletedModelWithCascade
 
      const publicColumns = ['companyid', 'name', 'fullname', 'tin',
         'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient', 'description'];
+
+     const publicColumnsInStr = 'companyid, name, fullname, tin,
+        regionid, userid, website, email, logotype, ratingexecutor, ratingclient, description';
 
     /**
      * Method to set the value of field companyId
@@ -239,6 +243,24 @@ class Companies extends NotDeletedModelWithCascade
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPhones()
+    {
+        return $this->phones;
+    }
+
+    /**
+     * @param mixed $phones
+     */
+    public function setPhones($phones)
+    {
+        $this->phones = $phones;
+    }
+
+
 
     public function setRatingExecutor($ratingexecutor)
     {

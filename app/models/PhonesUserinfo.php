@@ -1,6 +1,6 @@
 <?php
 
-class PhonesUsers extends \Phalcon\Mvc\Model
+class PhonesUserinfo extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -25,7 +25,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      * @param integer $phoneid
      * @return $this
      */
-    public function setPhoneId($phoneid)
+    public function setPhoneid($phoneid)
     {
         $this->phoneid = $phoneid;
 
@@ -38,7 +38,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      * @param integer $userid
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserid($userid)
     {
         $this->userid = $userid;
 
@@ -50,7 +50,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      *
      * @return integer
      */
-    public function getPhoneId()
+    public function getPhoneid()
     {
         return $this->phoneid;
     }
@@ -60,7 +60,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      *
      * @return integer
      */
-    public function getUserId()
+    public function getUserid()
     {
         return $this->userid;
     }
@@ -71,9 +71,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("phones_users");
-        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->setSource("phonesUserinfo");
     }
 
     /**
@@ -90,8 +88,8 @@ class PhonesUsers extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Телефон не был создан",
-                    "callback" => function($phoneUser) {
-                        $phone = Phones::findFirstByPhoneid($phoneUser->getPhoneId());
+                    "callback" => function($phoneUserinfo) {
+                        $phone = Phones::findFirstByPhoneid($phoneUserinfo->getPhoneId());
 
                         if($phone)
                             return true;
@@ -106,8 +104,8 @@ class PhonesUsers extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Такой пользователь не существует",
-                    "callback" => function($phoneUser) {
-                        $phone = Users::findFirstByUserid($phoneUser->getUserId());
+                    "callback" => function($phoneUserinfo) {
+                        $phone = Users::findFirstByUserid($phoneUserinfo->getUserId());
 
                         if($phone)
                             return true;
@@ -127,14 +125,14 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'phones_users';
+        return 'phonesUserinfo';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return PhonesUsers[]|PhonesUsers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return PhonesUserinfo[]|PhonesUserinfo|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -145,7 +143,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return PhonesUsers|\Phalcon\Mvc\Model\ResultInterface
+     * @return PhonesUserinfo|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
@@ -154,7 +152,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
 
     public static function findByIds($userId, $phoneId)
     {
-        return PhonesUsers::findFirst(["userid = :userId: AND phoneid = :phoneId:",
+        return PhonesUserinfo::findFirst(["userid = :userId: AND phoneid = :phoneId:",
             'bind' =>
                 [
                     'userId' => $userId,
@@ -166,9 +164,8 @@ class PhonesUsers extends \Phalcon\Mvc\Model
     {
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $query = $db->prepare("SELECT p.phone FROM phones_users p_u INNER JOIN phones p ON 
-            (p_u.phoneid = p.phoneid) where p_u.userid = :userId"
-        );
+        $query = $db->prepare("SELECT p.phone FROM public.\"phonesUserinfo\" p_u INNER JOIN phones p ON 
+            (p_u.phoneid = p.phoneid) where p_u.userid = :userId");
 
         $query->execute([
             'userId' => $userId,
@@ -176,5 +173,4 @@ class PhonesUsers extends \Phalcon\Mvc\Model
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
-
 }

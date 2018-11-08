@@ -1,6 +1,6 @@
 <?php
 
-class ActivatonCodes extends \Phalcon\Mvc\Model
+class ActivationCodes extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -149,7 +149,7 @@ class ActivatonCodes extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("activatoncodes");
+        $this->setSource("activationcodes");
         $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
 
@@ -160,14 +160,14 @@ class ActivatonCodes extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'activatoncodes';
+        return 'activationcodes';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ActivatonCodes[]|ActivatonCodes|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ActivationCodes[]|ActivationCodes|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -178,7 +178,7 @@ class ActivatonCodes extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ActivatonCodes|\Phalcon\Mvc\Model\ResultInterface
+     * @return ActivationCodes|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

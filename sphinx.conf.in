@@ -111,7 +111,7 @@ source companies_min
   sql_port    = 5432  # optional, default is 3306
 
   sql_query    = \
-    SELECT companyid, companies.name as name2, companies.name as name, companyid as elementId, 'company' as type,\
+    SELECT companyid, companies.name as name2, companies.description as description2, companies.name as name, companyid as elementId, 'company' as type,\
       radians(latitude) as latitude, \
     radians(longitude) as  longitude, regionid \
     FROM companies \
@@ -141,7 +141,7 @@ source services_min
      SELECT serviceid, serviceid as elementId, services.name as name, \
      regionid,  radians(latitude) as latitude, \
      radians(longitude) as  longitude, \
-     services.name as name2, 'service' as type\
+     services.name as name2,services.description as description2, 'service' as type\
      FROM services \
          LEFT JOIN "servicesPoints" USING (serviceid) \
          LEFT JOIN "tradePoints" USING (pointid)
@@ -165,9 +165,10 @@ source autocomplete
   sql_port    = 5432  # optional, default is 3306
 
   sql_query    = \
-    SELECT id2, name2, elementid, name, longitude, latitude, regionid, type\
+    SELECT id2, name2, description2, elementid, name, longitude, latitude, regionid, type\
     FROM (\
-    (SELECT serviceid as id2,(services.name || ' ' || services.description) as name2,\
+    (SELECT serviceid as id2,services.name as name2,\
+     services.description as description2, \
      services.name as name, serviceid as elementId, \
      radians(latitude) as latitude,radians(longitude) as  longitude, \
      'service' as type, regionid\
@@ -177,7 +178,7 @@ source autocomplete
        )\
      UNION ALL \
      (\
-        SELECT companyid as id2, companies.name as name2, \
+        SELECT companyid as id2, companies.name as name2,companies.description as description2, \
         companies.name as name, companyid as elementId, \
         radians(latitude) as latitude,radians(longitude) as  longitude, \
         'company' as type, regionid \
@@ -211,12 +212,13 @@ source categories_min
     SELECT categoryid, elementId, name, \
         latitude, \
         longitude, \
-        name2, type\
+        name2, description2,\
+         type\
         FROM(\
     (SELECT categoryid, categoryid as elementId, categoryname as name, \
-      radians(latitude) as latitude, \
-    radians(longitude) as  longitude, \
-    categoryname as name2, 'category' as type\
+        radians(latitude) as latitude, \
+        radians(longitude) as  longitude, \
+        categoryname as name2, categories.description as description2, 'category' as type\
     FROM categories \
         LEFT JOIN "companiesCategories" USING(categoryid) \
         LEFT JOIN companies USING(companyid) \
@@ -228,7 +230,7 @@ source categories_min
      SELECT categoryid, categoryid as elementId, categoryname as name, \
          radians(latitude) as latitude, \
          radians(longitude) as  longitude, \
-         categoryname as name2, 'category' as type\
+         categoryname as name2,categories.description as description2, 'category' as type\
          FROM categories \
              LEFT JOIN "userscategories" USING(categoryid) \
              LEFT JOIN users USING(userid) \
@@ -347,7 +349,11 @@ index companies_min_index
   docinfo = extern
   morphology    = stem_enru
     mlock = 0
-    min_word_len = 3
+    dict 				= keywords
+            index_exact_words 	= 1
+            expand_keywords		= 1
+            min_word_len		= 3
+            min_prefix_len		= 3
 }
 
 index services_min_index
@@ -357,7 +363,11 @@ index services_min_index
   docinfo = extern
   morphology    = stem_enru
     mlock = 0
-    min_word_len = 3
+    dict 				= keywords
+    index_exact_words 	= 1
+    expand_keywords		= 1
+    min_word_len		= 3
+    min_prefix_len		= 3
 }
 
 index autocomplete_index
@@ -377,7 +387,11 @@ index categories_min_index
   docinfo = extern
   morphology    = stem_enru
     mlock = 0
-    min_word_len = 3
+    dict 				= keywords
+        index_exact_words 	= 1
+        expand_keywords		= 1
+        min_word_len		= 3
+        min_prefix_len		= 3
 }
 
 index services_with_company_index
