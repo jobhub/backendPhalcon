@@ -1,53 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/PhonesUserinfo.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/responses/Stats.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/library/PHPMailerAPP.php" afterPath="$PROJECT_DIR$/app/library/PHPMailerApp.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/models/ActivatonCodes.php" afterPath="$PROJECT_DIR$/app/models/ActivationCodes.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.phalcon/devtools.log" afterPath="$PROJECT_DIR$/.phalcon/devtools.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/loader.php" afterPath="$PROJECT_DIR$/app/config/loader.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" afterPath="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Companies.php" afterPath="$PROJECT_DIR$/app/models/Companies.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/News.php" afterPath="$PROJECT_DIR$/app/models/News.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/PhonesUsers.php" afterPath="$PROJECT_DIR$/app/models/PhonesUsers.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Services.php" afterPath="$PROJECT_DIR$/app/models/Services.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/Userinfo.php" afterPath="$PROJECT_DIR$/app/models/Userinfo.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sphinx.conf.in" afterPath="$PROJECT_DIR$/sphinx.conf.in" />
+    <list default="true" id="a9331125-5d7a-4341-88df-0fa4801f7a3d" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_TABLE_DETAILS" value="true" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <expand />
-    <select />
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="News.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/News.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="180" column="0" lean-forward="false" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="251" column="0" lean-forward="false" selection-start-line="251" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
               <folding>
-                <element signature="n#validation#0;n#News#0;n#!!top" expanded="false" />
-                <element signature="n#initialize#0;n#News#0;n#!!top" expanded="false" />
                 <element signature="n#sendPush#0;n#News#0;n#!!top" expanded="false" />
                 <element signature="n#sendPushToUser#0;n#News#0;n#!!top" expanded="false" />
               </folding>
@@ -55,31 +25,44 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ActivationCodes.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/ActivationCodes.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" column="18" lean-forward="true" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="loader.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/config/loader.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="15" lean-forward="false" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="15" />
+            <state relative-caret-position="289">
+              <caret line="17" column="49" lean-forward="false" selection-start-line="17" selection-start-column="49" selection-end-line="17" selection-end-column="49" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PHPMailerApp.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/library/PHPMailerApp.php">
+      <file leaf-file-name="UserinfoAPIController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/UserinfoAPIController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="12" column="20" lean-forward="true" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+            <state relative-caret-position="238">
+              <caret line="554" column="39" lean-forward="true" selection-start-line="554" selection-start-column="39" selection-end-line="554" selection-end-column="39" />
+              <folding>
+                <element signature="n#indexAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#aboutAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#settingsAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#handlerAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#setPhotoAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="e#11465#13740#0#PHP" expanded="false" />
+                <element signature="n#deleteUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#restoreUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#editUserinfoAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#addImagesAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#addImagesHandler#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+                <element signature="n#addUsersAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FavoriteUsers.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/FavoriteUsers.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -92,6 +75,7 @@
               <caret line="520" column="5" lean-forward="false" selection-start-line="520" selection-start-column="5" selection-end-line="520" selection-end-column="5" />
               <folding>
                 <element signature="e#7#30#0#PHP" expanded="true" />
+                <marker date="1541663907554" expanded="true" signature="9238:9246" ph="..." />
               </folding>
             </state>
           </provider>
@@ -119,18 +103,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PhonesUserinfo.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/PhonesUserinfo.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2788">
-              <caret line="164" column="48" lean-forward="false" selection-start-line="164" selection-start-column="48" selection-end-line="164" selection-end-column="48" />
-              <folding>
-                <marker date="1541663481852" expanded="true" signature="3740:3878" ph="SELECT p.pho... phones_userinfo" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ImagesNews.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/ImagesNews.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -143,165 +115,16 @@
       </file>
     </leaf>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="CSS File" />
-      </list>
-    </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>getCurrentVersion</find>
-      <find>createClass</find>
-      <find>get</find>
-      <find>'public'</find>
-      <find>morphTable</find>
-      <find>run</find>
-      <find>morph</find>
-      <find>migrate</find>
-      <find>sessionAPI</find>
-      <find>ServicesAPI</find>
-      <find>router</find>
-      <find>getCompanies</find>
-      <find>getServices</find>
-      <find>Accesstokens.php</find>
-      <find>getToken</find>
-      <find>Undefined index: authorization in /var/www/www-root/data/www/bro4you.ru/app/plugins/SecurityPlugin.php on line 231&quot;</find>
-      <find>Support</find>
-      <find>$this-&gt;request-&gt;getPost(</find>
-      <find>Di</find>
-      <find>const</find>
-      <find>RunQueries</find>
-      <find>weight</find>
-      <find>sessionAPI/get</find>
-      <find>addImagesHandler</find>
-      <find>getReviewsForService2</find>
-      <find>Activaton</find>
-      <find>ActivationCodes</find>
-      <find>write</find>
-      <find>publicColumns</find>
-      <find>clip</find>
-    </findStrings>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
-    <push-targets>
-      <push-target-info target-remote="rast" target-branch="master" repo="$PROJECT_DIR$" source="master" />
-    </push-targets>
-  </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/app/controllers/api/RegionsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/RequestsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ReviewsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TasksAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TenderAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/TradePointsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/UserinfoAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ContactDetailsCompanyAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/CoordinationAPIController.php" />
-        <option value="$USER_HOME$/Desktop/Services.php" />
-        <option value="$PROJECT_DIR$/app/models/PhonesPoints.php" />
-        <option value="$USER_HOME$/Desktop/ServicesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Reviews.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/UserLocationAPIController.php" />
-        <option value="$PROJECT_DIR$/../../sphinx/sphinx.conf.in" />
-        <option value="$USER_HOME$/Desktop/UserLocationAPIController.php" />
-        <option value="$USER_HOME$/Desktop/UserLocation.php" />
-        <option value="$PROJECT_DIR$/app/plugins/NotFoundPlugin.php" />
-        <option value="$USER_HOME$/Desktop/index.php" />
-        <option value="$USER_HOME$/Desktop/services.php" />
-        <option value="$USER_HOME$/Desktop/RegisterAPIController.php" />
-        <option value="$USER_HOME$/Desktop/SecurityPlugin.php" />
-        <option value="$USER_HOME$/Desktop/bro4you.ru.error.log" />
-        <option value="$PROJECT_DIR$/app/controllers/api/SessionAPIController.php" />
-        <option value="$USER_HOME$/Desktop/logs.txt" />
-        <option value="$PROJECT_DIR$/app/controllers/IndexController.php" />
-        <option value="$PROJECT_DIR$/app/views/index/personcab.phtml" />
-        <option value="$PROJECT_DIR$/app/plugins/SecurityPlugin.php" />
-        <option value="$PROJECT_DIR$/app/models/ActivationCodes.php" />
-        <option value="$PROJECT_DIR$/app/models/NotDeletedModelWithCascade.php" />
-        <option value="$PROJECT_DIR$/app/library/AaaaPt.php" />
-        <option value="$USER_HOME$/Downloads/Telegram Desktop/bro4you.ru.error (12).log" />
-        <option value="$PROJECT_DIR$/app/library/SupportClass.php" />
-        <option value="$PROJECT_DIR$/app/config/router.php" />
-        <option value="$USER_HOME$/Downloads/Telegram Desktop/bro4you.ru.error (3).log" />
-        <option value="$PROJECT_DIR$/app/library/PHPMailerAPP.php" />
-        <option value="$PROJECT_DIR$/app/library/PHPMailerApp.php" />
-        <option value="$PROJECT_DIR$/app/views/emails/hello_world.phtml" />
-        <option value="$PROJECT_DIR$/app/controllers/api/RegisterAPIController.php" />
-        <option value="$PROJECT_DIR$/app/models/Services.php" />
-        <option value="$PROJECT_DIR$/app/models/responces/Stats.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/ServicesAPIController.php" />
-        <option value="$PROJECT_DIR$/app/controllers/api/NewsAPIController.php" />
-        <option value="$PROJECT_DIR$/app/config/config.php" />
-        <option value="$PROJECT_DIR$/app/models/responses/Stats.php" />
-        <option value="$PROJECT_DIR$/app/models/PhonesUsers.php" />
-        <option value="$PROJECT_DIR$/app/models/Companies.php" />
-        <option value="$PROJECT_DIR$/app/models/PhonesUserinfo.php" />
-        <option value="$PROJECT_DIR$/app/models/Userinfo.php" />
-        <option value="$PROJECT_DIR$/app/models/News.php" />
-        <option value="$PROJECT_DIR$/app/config/loader.php" />
-      </list>
-    </option>
-  </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="PhpDebugGeneral" xdebug_debug_port="9001" listening_started="true" notify_if_session_was_finished_without_being_paused="false" xdebug_force_break_when_no_path_mapping="false" xdebug_force_break_when_outside_project="false" />
   <component name="PhpServers">
-    <servers>
-      <server host="simpleMod" id="3e32742e-a439-4de6-ba8d-256730a6740b" name="simpleMod" />
-      <server host="127.0.0.1" id="fdf6f263-a2c1-4bf8-bb16-649bef7c5e61" name="127.0.0.1" />
-      <server host="localhost" id="e8d0e228-3861-4bea-9350-fc47ea2575f3" name="localhost" use_path_mappings="true">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$/public" remote-root="C:/OpenServer/domains/localhost" />
-        </path_mappings>
-      </server>
-      <server host="simplemod2" id="acd4a4d9-cc1a-4496-b48f-00088d5cc128" name="simplemod2" />
-      <server host="invo" id="9817bc55-c660-4c66-8437-0f2c3f1aa55d" name="invo" use_path_mappings="true">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$/public" remote-root="C:/OpenServer/domains/invo/public" />
-        </path_mappings>
-      </server>
-      <server host="tables-it41" id="8231ba45-4b21-4db9-b716-86eaa64b70b7" name="tables-it41" use_path_mappings="true">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$/public" remote-root="C:/OpenServer/domains/tables-it41" />
-        </path_mappings>
-      </server>
-      <server host="192.168.2.110" id="9675ece1-bdb8-442e-b1bb-84117723bd24" name="192.168.2.110" />
-      <server host="192.168.2.109" id="1b48a1db-8bbf-4dcf-bd1c-cbe9cb1ce5a2" name="192.168.2.109" />
-      <server host="192.168.2.105" id="f165da11-cef9-4b69-a2ab-055385f7a0d7" name="192.168.2.105" />
-      <server host="192.168.2.106" id="ad36f947-2b3b-4463-9f7c-50a2f266df6b" name="192.168.2.106" />
-      <server host="192.168.2.100" id="032c1feb-a293-47bf-915c-30da7197dedb" name="192.168.2.100" />
-      <server host="192.168.2.107" id="d6c9d3f4-fe70-4ec1-9a26-a8482e7fdc06" name="192.168.2.107" />
-      <server host="192.168.43.245" id="91df701e-0762-4f1d-9c0d-40cb2a26b938" name="192.168.43.245" />
-      <server host="192.168.88.220" id="51e23205-5494-48dc-adb3-ae8a5cb6ae58" name="192.168.88.220" />
-      <server host="192.168.1.197" id="7a7c38c7-8f35-44e9-b8da-779fa686bf89" name="192.168.1.197" />
-      <server host="job" id="7464fa3b-f018-4e0f-b2c7-233aa0a54b1b" name="job" />
-      <server host="test" id="cba32ae4-55ef-4712-abd8-704a608c3fe8" name="test" use_path_mappings="true">
-        <path_mappings>
-          <mapping local-root="$PROJECT_DIR$/public" remote-root="C:/OpenServer/domains/test" />
-        </path_mappings>
-      </server>
-      <server host="192.168.2.109" id="e2b61c33-9ccf-4d88-9f36-5e6048139959" name="192.168.2.109 (1)" port="443" />
-      <server host="job" id="e0c2cfdf-0705-4601-b2b7-b872cc9cbcb7" name="job (1)" port="443" />
-      <server host="insert" id="ef6408d6-0b16-4173-8514-26cbad830eef" name="insert" />
-      <server host="192.168.2.107" id="35fa4c25-a715-4b43-9b69-1916bb72bcfb" name="192.168.2.107 (1)" port="443" />
-      <server host="PhpStorm 2017.2.4" id="1ffee3af-3af2-4a30-9aa1-7cfaa5e123df" name="PhpStorm 2017.2.4" port="63342" />
-    </servers>
+    <servers />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP 7.1">
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-filter" />
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-config" />
@@ -366,11 +189,6 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
     </include_path>
   </component>
-  <component name="PhpXdebugProxy" ide_key="PHPSTORM" host="simpleMod" />
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="width" value="683" />
-    <option name="height" value="728" />
-  </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -387,7 +205,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -395,64 +212,13 @@
               <item name="job" type="b2602c69:ProjectViewProjectNode" />
               <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="config" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="controllers" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="library" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="job" type="b2602c69:ProjectViewProjectNode" />
-              <item name="job" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="app" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="plugins" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
-  </component>
-  <component name="PropertiesComponent">
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.intentionPowerPack" />
-    <property name="list.type.of.created.stylesheet" value="CSS" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/OpenServer/domains/simpleMod2/app/models/Users.php" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\OpenServer\domains\job\app\library" />
-      <recent name="C:\OpenServer\domains\job\public\js" />
-      <recent name="C:\OpenServer\domains\job\app\controllers\api" />
-      <recent name="C:\OpenServer\domains\job\app\controllers" />
-      <recent name="C:\OpenServer\domains\job\app\config" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\OpenServer\domains\job\app\views\index" />
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\layouts" />
-      <recent name="C:\OpenServer\domains\simpleMod2\app\views\coordination" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\forms" />
-      <recent name="C:\OpenServer\domains\simpleMod\app\controllers" />
-    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -466,692 +232,20 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="PHP Web Application.dev">
-    <configuration name="dev" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" server_name="job" />
-  </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="e8652e82-dfb5-461e-ae50-891dbaa8ad6e" name="Default" comment="" />
-      <created>1512462347164</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1512462347164</updated>
-      <workItem from="1512462348393" duration="26000" />
-      <workItem from="1512462490188" duration="283000" />
-      <workItem from="1512487356757" duration="47000" />
-      <workItem from="1512554654564" duration="15004000" />
-      <workItem from="1512587415395" duration="3192000" />
-      <workItem from="1512623167862" duration="289000" />
-      <workItem from="1512724026130" duration="5339000" />
-      <workItem from="1512738041641" duration="1288000" />
-      <workItem from="1512739414491" duration="648000" />
-      <workItem from="1512824664941" duration="1866000" />
-      <workItem from="1512933429052" duration="178000" />
-      <workItem from="1512934491877" duration="18000" />
-      <workItem from="1512935139343" duration="53000" />
-      <workItem from="1512935249804" duration="14000" />
-      <workItem from="1512982500916" duration="4000" />
-      <workItem from="1512982603032" duration="2671000" />
-      <workItem from="1513257890204" duration="10802000" />
-      <workItem from="1513278730191" duration="13000" />
-      <workItem from="1513283032129" duration="2111000" />
-      <workItem from="1513331400959" duration="3706000" />
-      <workItem from="1513416194341" duration="2161000" />
-      <workItem from="1513423873997" duration="7951000" />
-      <workItem from="1513432758297" duration="3828000" />
-      <workItem from="1513501470669" duration="1689000" />
-      <workItem from="1513503438070" duration="1781000" />
-      <workItem from="1513505264815" duration="1881000" />
-      <workItem from="1513507176997" duration="1784000" />
-      <workItem from="1513508986365" duration="1851000" />
-      <workItem from="1513519263459" duration="1773000" />
-      <workItem from="1513521489723" duration="1798000" />
-      <workItem from="1513523351554" duration="1785000" />
-      <workItem from="1513525167074" duration="1786000" />
-      <workItem from="1513526995173" duration="1766000" />
-      <workItem from="1513528806182" duration="1502000" />
-      <workItem from="1513587897950" duration="980000" />
-      <workItem from="1513615689828" duration="58000" />
-      <workItem from="1513616408621" duration="9531000" />
-      <workItem from="1513701025449" duration="20795000" />
-      <workItem from="1513756712485" duration="4095000" />
-      <workItem from="1513764498322" duration="6293000" />
-      <workItem from="1513770887249" duration="86000" />
-      <workItem from="1513786483385" duration="20400000" />
-      <workItem from="1513829155452" duration="348000" />
-      <workItem from="1517561951931" duration="875000" />
-      <workItem from="1518267618375" duration="127000" />
-      <workItem from="1518267793496" duration="69000" />
-      <workItem from="1518340911477" duration="281000" />
-      <workItem from="1523181593182" duration="3976000" />
-      <workItem from="1523188436952" duration="1177000" />
-      <workItem from="1523731297263" duration="244000" />
-      <workItem from="1523731835973" duration="10000" />
-      <workItem from="1524418685049" duration="811000" />
-      <workItem from="1524483823429" duration="609000" />
-      <workItem from="1524564216266" duration="1314000" />
-      <workItem from="1524573188775" duration="2048000" />
-      <workItem from="1524640061390" duration="2966000" />
-      <workItem from="1524674907809" duration="750000" />
-      <workItem from="1524679346026" duration="1677000" />
-      <workItem from="1524728617023" duration="2923000" />
-      <workItem from="1524738159171" duration="10223000" />
-      <workItem from="1524769449830" duration="1001000" />
-      <workItem from="1524823144050" duration="7450000" />
-      <workItem from="1524913507061" duration="1745000" />
-      <workItem from="1524929838288" duration="2709000" />
-      <workItem from="1525008265418" duration="783000" />
-      <workItem from="1525105507490" duration="4569000" />
-      <workItem from="1525112330691" duration="2560000" />
-      <workItem from="1525158784733" duration="322000" />
-      <workItem from="1525164075970" duration="8411000" />
-      <workItem from="1525251140441" duration="4717000" />
-      <workItem from="1525290175378" duration="226000" />
-      <workItem from="1525349323552" duration="867000" />
-      <workItem from="1525415278565" duration="2468000" />
-      <workItem from="1525419721372" duration="3136000" />
-      <workItem from="1525508690619" duration="5495000" />
-      <workItem from="1525589308295" duration="10055000" />
-      <workItem from="1525620807063" duration="1409000" />
-      <workItem from="1525675987969" duration="5430000" />
-      <workItem from="1525773970602" duration="507000" />
-      <workItem from="1525884522538" duration="803000" />
-      <workItem from="1525886289074" duration="581000" />
-      <workItem from="1525933881539" duration="642000" />
-      <workItem from="1525949091867" duration="3981000" />
-      <workItem from="1526043968031" duration="116000" />
-      <workItem from="1526122822121" duration="6292000" />
-      <workItem from="1526198927392" duration="7109000" />
-      <workItem from="1526310947884" duration="1505000" />
-      <workItem from="1526412604108" duration="93000" />
-      <workItem from="1526468525211" duration="1365000" />
-      <workItem from="1526572743293" duration="661000" />
-      <workItem from="1526625331606" duration="998000" />
-      <workItem from="1526735817671" duration="1076000" />
-      <workItem from="1526807050376" duration="807000" />
-      <workItem from="1526823575557" duration="691000" />
-      <workItem from="1526824492160" duration="890000" />
-      <workItem from="1526828240696" duration="6074000" />
-      <workItem from="1526982799902" duration="10939000" />
-      <workItem from="1527010660140" duration="3011000" />
-      <workItem from="1527079470495" duration="2483000" />
-      <workItem from="1527186534675" duration="2107000" />
-      <workItem from="1527239820348" duration="1426000" />
-      <workItem from="1527244507751" duration="1657000" />
-      <workItem from="1527255356509" duration="6890000" />
-      <workItem from="1527268980879" duration="1010000" />
-      <workItem from="1527275505186" duration="2508000" />
-      <workItem from="1527281214950" duration="92000" />
-      <workItem from="1527282916818" duration="489000" />
-      <workItem from="1527323057915" duration="2293000" />
-      <workItem from="1527327598201" duration="3274000" />
-      <workItem from="1527335721756" duration="1002000" />
-      <workItem from="1527339452732" duration="986000" />
-      <workItem from="1527343252856" duration="383000" />
-      <workItem from="1527348263945" duration="4710000" />
-      <workItem from="1527415349783" duration="2915000" />
-      <workItem from="1527451455351" duration="1144000" />
-      <workItem from="1527509784119" duration="17181000" />
-      <workItem from="1527581916806" duration="6068000" />
-      <workItem from="1527764519857" duration="3868000" />
-      <workItem from="1527865056605" duration="683000" />
-      <workItem from="1527866782606" duration="6320000" />
-      <workItem from="1528362843495" duration="3030000" />
-      <workItem from="1528393111633" duration="603000" />
-      <workItem from="1528812127069" duration="818000" />
-      <workItem from="1529321566671" duration="1543000" />
-      <workItem from="1529324584887" duration="2713000" />
-      <workItem from="1529344548118" duration="5452000" />
-      <workItem from="1529397445018" duration="2522000" />
-      <workItem from="1529404439683" duration="155000" />
-      <workItem from="1529405133903" duration="997000" />
-      <workItem from="1529425333234" duration="607000" />
-      <workItem from="1529494991430" duration="615000" />
-      <workItem from="1529747205310" duration="370000" />
-      <workItem from="1529752693331" duration="5952000" />
-      <workItem from="1529831073938" duration="2728000" />
-      <workItem from="1529841951757" duration="9913000" />
-      <workItem from="1529912535947" duration="1117000" />
-      <workItem from="1529917607272" duration="1834000" />
-      <workItem from="1529929425223" duration="7619000" />
-      <workItem from="1529944222005" duration="1250000" />
-      <workItem from="1529953320419" duration="608000" />
-      <workItem from="1530532825767" duration="9030000" />
-      <workItem from="1530601531182" duration="11806000" />
-      <workItem from="1530621304240" duration="2322000" />
-      <workItem from="1530690362657" duration="21776000" />
-      <workItem from="1530778684974" duration="2608000" />
-      <workItem from="1530865156416" duration="793000" />
-      <workItem from="1530870992860" duration="2746000" />
-      <workItem from="1530955811064" duration="732000" />
-      <workItem from="1530969898701" duration="3026000" />
-      <workItem from="1531040659288" duration="11745000" />
-      <workItem from="1531057321586" duration="5243000" />
-      <workItem from="1531064158986" duration="4511000" />
-      <workItem from="1531123736303" duration="13748000" />
-      <workItem from="1531149377101" duration="778000" />
-      <workItem from="1531212494503" duration="1181000" />
-      <workItem from="1531219674769" duration="6811000" />
-      <workItem from="1531291568626" duration="3728000" />
-      <workItem from="1531297190412" duration="17998000" />
-      <workItem from="1531380197962" duration="12783000" />
-      <workItem from="1531466211157" duration="215000" />
-      <workItem from="1531476795033" duration="1963000" />
-      <workItem from="1531573316497" duration="2737000" />
-      <workItem from="1531586516920" duration="2392000" />
-      <workItem from="1531642511770" duration="2979000" />
-      <workItem from="1531653839489" duration="4648000" />
-      <workItem from="1531742084335" duration="5050000" />
-      <workItem from="1531813725629" duration="2857000" />
-      <workItem from="1531827098272" duration="759000" />
-      <workItem from="1531849169160" duration="2459000" />
-      <workItem from="1531896622726" duration="21891000" />
-      <workItem from="1531986047123" duration="8844000" />
-      <workItem from="1532017521723" duration="1389000" />
-      <workItem from="1532079119097" duration="685000" />
-      <workItem from="1532170089514" duration="2094000" />
-      <workItem from="1532247333463" duration="4251000" />
-      <workItem from="1532252258544" duration="5509000" />
-      <workItem from="1532333285577" duration="7541000" />
-      <workItem from="1532347464926" duration="1798000" />
-      <workItem from="1532349577403" duration="70000" />
-      <workItem from="1532426457560" duration="1090000" />
-      <workItem from="1532501192778" duration="14276000" />
-      <workItem from="1532517773090" duration="6247000" />
-      <workItem from="1532601007929" duration="4231000" />
-      <workItem from="1532687956235" duration="723000" />
-      <workItem from="1532788680078" duration="5269000" />
-      <workItem from="1532850877070" duration="3403000" />
-      <workItem from="1532867124256" duration="3471000" />
-      <workItem from="1532892396139" duration="4426000" />
-      <workItem from="1532935648454" duration="12210000" />
-      <workItem from="1532968917946" duration="881000" />
-      <workItem from="1532969844056" duration="54000" />
-      <workItem from="1533715637331" duration="2820000" />
-      <workItem from="1533719068038" duration="502000" />
-      <workItem from="1533719638435" duration="40000" />
-      <workItem from="1533719979812" duration="66000" />
-      <workItem from="1533745545735" duration="1019000" />
-      <workItem from="1533800459903" duration="18411000" />
-      <workItem from="1533827263474" duration="189000" />
-      <workItem from="1533834131573" duration="4916000" />
-      <workItem from="1533845434129" duration="552000" />
-      <workItem from="1533851154097" duration="400000" />
-      <workItem from="1533896634821" duration="5399000" />
-      <workItem from="1533902413024" duration="282000" />
-      <workItem from="1534058028730" duration="19920000" />
-      <workItem from="1534082245828" duration="1407000" />
-      <workItem from="1534146561271" duration="1870000" />
-      <workItem from="1534148465822" duration="19510000" />
-      <workItem from="1534231088512" duration="6967000" />
-      <workItem from="1534239609506" duration="11938000" />
-      <workItem from="1534316977235" duration="26217000" />
-      <workItem from="1534417813512" duration="10318000" />
-      <workItem from="1534446310049" duration="340000" />
-      <workItem from="1534500005608" duration="14829000" />
-      <workItem from="1534672050265" duration="1105000" />
-      <workItem from="1534778120501" duration="5272000" />
-      <workItem from="1534783427584" duration="1253000" />
-      <workItem from="1534835469362" duration="1095000" />
-      <workItem from="1534842843339" duration="4918000" />
-      <workItem from="1534921658713" duration="4581000" />
-      <workItem from="1534929024942" duration="5168000" />
-      <workItem from="1534947234437" duration="214000" />
-      <workItem from="1535018462653" duration="3926000" />
-      <workItem from="1535104178246" duration="6579000" />
-      <workItem from="1535354899722" duration="1047000" />
-      <workItem from="1535361144961" duration="6615000" />
-      <workItem from="1535455466648" duration="2853000" />
-      <workItem from="1535460329518" duration="2338000" />
-      <workItem from="1535468222860" duration="151000" />
-      <workItem from="1535524303905" duration="22489000" />
-      <workItem from="1535618716509" duration="3364000" />
-      <workItem from="1535634625774" duration="690000" />
-      <workItem from="1535710882935" duration="9922000" />
-      <workItem from="1535798312439" duration="3001000" />
-      <workItem from="1535801443039" duration="5128000" />
-      <workItem from="1535809941783" duration="9589000" />
-      <workItem from="1535875319613" duration="16220000" />
-      <workItem from="1535892646544" duration="330000" />
-      <workItem from="1535956276554" duration="427000" />
-      <workItem from="1535967768706" duration="2531000" />
-      <workItem from="1535970442195" duration="4280000" />
-      <workItem from="1535977201112" duration="1673000" />
-      <workItem from="1535987497793" duration="649000" />
-      <workItem from="1536040196347" duration="2003000" />
-      <workItem from="1536055322187" duration="937000" />
-      <workItem from="1536057904242" duration="4458000" />
-      <workItem from="1536130130105" duration="15255000" />
-      <workItem from="1536229413934" duration="1393000" />
-      <workItem from="1536231194377" duration="1500000" />
-      <workItem from="1536305007165" duration="3391000" />
-      <workItem from="1536309895985" duration="1420000" />
-      <workItem from="1536312195484" duration="325000" />
-      <workItem from="1536390561536" duration="24981000" />
-      <workItem from="1536417193392" duration="1019000" />
-      <workItem from="1536418517917" duration="343000" />
-      <workItem from="1536418920519" duration="932000" />
-      <workItem from="1536566151107" duration="7163000" />
-      <workItem from="1536590430208" duration="2123000" />
-      <workItem from="1536651621706" duration="14247000" />
-      <workItem from="1536740784590" duration="1500000" />
-      <workItem from="1536746049103" duration="3152000" />
-      <workItem from="1536767500893" duration="1941000" />
-      <workItem from="1536992989459" duration="5008000" />
-      <workItem from="1537692314347" duration="1295000" />
-      <workItem from="1537869725730" duration="657000" />
-      <workItem from="1537900769155" duration="1259000" />
-      <workItem from="1538208674224" duration="1568000" />
-      <workItem from="1538380751176" duration="1487000" />
-      <workItem from="1538917086134" duration="7000" />
-      <workItem from="1539016540146" duration="713000" />
-      <workItem from="1539084636260" duration="112000" />
-      <workItem from="1539085019366" duration="3322000" />
-      <workItem from="1539165769993" duration="870000" />
-      <workItem from="1539268320574" duration="5237000" />
-      <workItem from="1539328408608" duration="2845000" />
-      <workItem from="1539359377903" duration="707000" />
-      <workItem from="1539424391856" duration="1395000" />
-      <workItem from="1539430998296" duration="923000" />
-      <workItem from="1539524003423" duration="1992000" />
-      <workItem from="1539694845457" duration="1062000" />
-      <workItem from="1539771183207" duration="7006000" />
-      <workItem from="1539850374578" duration="423000" />
-      <workItem from="1539947853339" duration="791000" />
-      <workItem from="1539949696976" duration="1373000" />
-      <workItem from="1540020211364" duration="4894000" />
-      <workItem from="1540037815276" duration="6251000" />
-      <workItem from="1540191409418" duration="3428000" />
-      <workItem from="1540218805051" duration="1823000" />
-      <workItem from="1540367109563" duration="1210000" />
-      <workItem from="1540379420889" duration="2438000" />
-      <workItem from="1540484458434" duration="1230000" />
-      <workItem from="1540489936664" duration="555000" />
-      <workItem from="1540491124803" duration="3400000" />
-      <workItem from="1540540720626" duration="5203000" />
-      <workItem from="1540568837030" duration="1245000" />
-      <workItem from="1540630277089" duration="1986000" />
-      <workItem from="1540823345197" duration="23357000" />
-      <workItem from="1540985596370" duration="711000" />
-      <workItem from="1540988678284" duration="2127000" />
-      <workItem from="1541230671518" duration="2835000" />
-      <workItem from="1541271085475" duration="2093000" />
-      <workItem from="1541354850451" duration="1048000" />
-      <workItem from="1541575800074" duration="7479000" />
-      <workItem from="1541588912452" duration="4515000" />
-      <workItem from="1541593465236" duration="3068000" />
-      <workItem from="1541662322158" duration="1284000" />
-    </task>
-    <task id="LOCAL-00023" summary="Добавил функцию для вывода инфы профиля">
-      <created>1524065821348</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1524065821348</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Добавил функцию для вывода инфы профиля">
-      <created>1524418482002</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1524418482002</updated>
-    </task>
-    <task id="LOCAL-00025" summary="Добавил несколько контроллеров и еще че-то">
-      <created>1525109917662</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1525109917662</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1525109982956</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1525109982956</updated>
-    </task>
-    <task id="LOCAL-00027" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1525110047998</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1525110047998</updated>
-    </task>
-    <task id="LOCAL-00028" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1525110417176</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1525110417176</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Функции API для получения заданий, отзывов и еще чего-то">
-      <created>1525884778019</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1525884778019</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1526832757415</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1526832757415</updated>
-    </task>
-    <task id="LOCAL-00031" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1526833517853</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1526833517853</updated>
-    </task>
-    <task id="LOCAL-00032" summary="Merge branch 'master' of https://bitbucket.org/temtit/second&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
-      <created>1527279291235</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1527279291235</updated>
-    </task>
-    <task id="LOCAL-00033" summary="В handlere загрузки фоток мелочь одна">
-      <created>1527279388156</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1527279388156</updated>
-    </task>
-    <task id="LOCAL-00034" summary="Что-то непонятное творится">
-      <created>1527283358779</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1527283358779</updated>
-    </task>
-    <task id="LOCAL-00035" summary="Что-то непонятное творится">
-      <created>1527330240944</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1527330240945</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Много чего добавлял, но в основном CoordinationAPI и отправку push в&#10;Coordination">
-      <created>1527516673905</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1527516673905</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Переопределил метод save в модели Reviews, чтоб пересчитывал рейтинг пользователя.&#10;И еще чего-то по мелочи">
-      <created>1527592004249</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1527592004250</updated>
-    </task>
-    <task id="LOCAL-00038" summary=" И еще в Messages тоже так сделал">
-      <created>1527592655328</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1527592655328</updated>
-    </task>
-    <task id="LOCAL-00039" summary="Компании">
-      <created>1530865745869</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1530865745869</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Дальнейшее развитие модуля компаний">
-      <created>1531142694915</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1531142694915</updated>
-    </task>
-    <task id="LOCAL-00041" summary="Дальнейшее развитие модуля точек оказания услуг, были добавлены некоторые основные action-ы для чата и новостей.">
-      <created>1531476927912</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1531476927912</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Добавил услуги, а также изменил логику удаления (и поиска) компаний и точек доступа и новостей - они не удаляются, а только помечаются как удаленные">
-      <created>1531657209127</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1531657209127</updated>
-    </task>
-    <task id="LOCAL-00043" summary="Начал работать над модулем заданий от пользователей. Добавил пока только несколько моделей">
-      <created>1531898277104</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1531898277104</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Что поменял, что-то добавил">
-      <created>1532333388929</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1532333388930</updated>
-    </task>
-    <task id="LOCAL-00045" summary="Добавил каскадное восстановление объектов и немного поменял каскадное удаление">
-      <created>1532501318611</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1532501318611</updated>
-    </task>
-    <task id="LOCAL-00046" summary="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи">
-      <created>1532523931983</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1532523931983</updated>
-    </task>
-    <task id="LOCAL-00047" summary="Merge branch 'production'&#10;&#10;# Conflicts:&#10;#&#9;.idea/simpleMod.iml&#10;#&#9;.idea/workspace.xml">
-      <created>1533715695907</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1533715695907</updated>
-    </task>
-    <task id="LOCAL-00048" summary="Карта, услуги">
-      <created>1533827350706</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1533827350706</updated>
-    </task>
-    <task id="LOCAL-00049" summary="Добавление услуг и вывод их на карту работает вполне стабильно">
-      <created>1533851391823</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1533851391824</updated>
-    </task>
-    <task id="LOCAL-00050" summary="Что-то еще делал за 10.08">
-      <created>1533902605810</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1533902605811</updated>
-    </task>
-    <task id="LOCAL-00051" summary="Добавил логотип к компании, нормалиовал работу с картинками (по крайней мере, на первое время)">
-      <created>1534148849575</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1534148849576</updated>
-    </task>
-    <task id="LOCAL-00052" summary="Отзывы меняют рейтинг компаний и ползователей, нормализировано установка фотографии пользователей и еще что-то">
-      <created>1534170548718</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1534170548719</updated>
-    </task>
-    <task id="LOCAL-00053" summary="Добавил в коммит миграции">
-      <created>1534239155647</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1534239155648</updated>
-    </task>
-    <task id="LOCAL-00054" summary="Изменил услуги, чтоб можно было добавить еще ongitude, latitude">
-      <created>1534251424146</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1534251424147</updated>
-    </task>
-    <task id="LOCAL-00055" summary="Что-то менял, что-то делал. Что не помню уже">
-      <created>1534507092704</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1534507092705</updated>
-    </task>
-    <task id="LOCAL-00056" summary="Добавил несколько ведение статистики просмотров услуги, получение отзывов для конкретной услуги и еще по мелочи. Кроме того, добавил написал модель и контроллер для акций">
-      <created>1534672799910</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1534672799911</updated>
-    </task>
-    <task id="LOCAL-00057" summary="Дописал код для акций">
-      <created>1534673132342</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1534673132342</updated>
-    </task>
-    <task id="LOCAL-00058" summary="Добавил получение инфы по услуге, точке и еще чего-то по мелочи">
-      <created>1534947367954</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1534947367955</updated>
-    </task>
-    <task id="LOCAL-00059" summary="Поменял запрос на получение отзывов по услуге. Добавил модель для хранения текущей координаты пользователя">
-      <created>1535455606904</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1535455606905</updated>
-    </task>
-    <task id="LOCAL-00060" summary="Дофига всего поменял и начал прикручивать поиск. Пока есть только для первого типа запроса">
-      <created>1535876986767</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1535876986768</updated>
-    </task>
-    <task id="LOCAL-00061" summary="Организовал предварительно поиск">
-      <created>1535892885959</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1535892885959</updated>
-    </task>
-    <task id="LOCAL-00062" summary="Организовал предварительно поиск">
-      <created>1535892969779</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1535892969779</updated>
-    </task>
-    <task id="LOCAL-00063" summary="Новый конфиг для сфинкса и еще некоторые мелкие изменения">
-      <created>1535976325866</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1535976325867</updated>
-    </task>
-    <task id="LOCAL-00064" summary="Добавил поиск людей, изображения для  отзывов, пользователей и кучу других мелочей">
-      <created>1536657793704</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1536657793705</updated>
-    </task>
-    <task id="LOCAL-00065" summary="Обновил документацию - подробней описал контроллеры">
-      <created>1539331230828</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1539331230829</updated>
-    </task>
-    <task id="LOCAL-00066" summary="Добавил поиск людей, изображения для  отзывов, пользователей и кучу других мелочей">
-      <created>1539850722267</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1539850722268</updated>
-    </task>
-    <task id="LOCAL-00067" summary="Исправил пару косяков, связанных с ServiceInfo и getServicesBySubject">
-      <created>1539949837978</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1539949837978</updated>
-    </task>
-    <task id="LOCAL-00068" summary="Исправил пару косяков, связанных с ServiceInfo и getServicesBySubject">
-      <created>1539949881796</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1539949881796</updated>
-    </task>
-    <task id="LOCAL-00069" summary="Небольшие изменения в поиске людей, получение автокомплита для услуг и людей в одном флаконе и еще может что-нибудь.">
-      <created>1540484618011</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1540484618012</updated>
-    </task>
-    <task id="LOCAL-00070" summary="Был проверен и исправлен модуль регистрации и еще некоторые мелочи">
-      <created>1540833767298</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1540833767299</updated>
-    </task>
-    <task id="LOCAL-00071" summary="Проверка модуля регистрации">
-      <created>1540847706586</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1540847706587</updated>
-    </task>
-    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1176701000" />
-  </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
+    <option name="totallyTimeSpent" value="59000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2677761" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27155825" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921174" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20593081" sideWeight="0.52122986" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15156507" sideWeight="0.47877014" order="7" side_tool="false" content_ui="tabs" />
@@ -1163,6 +257,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32857144" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1191,42 +286,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.044822257" sideWeight="0.46778917" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Изменил статусы и частично логику работы с заявками, услугами, заказами и офферсами. И еще чего-то по мелочи" />
-    <MESSAGE value="Merge branch 'production'&#10;&#10;# Conflicts:&#10;#&#9;.idea/simpleMod.iml&#10;#&#9;.idea/workspace.xml" />
-    <MESSAGE value="Карта, услуги" />
-    <MESSAGE value="Добавление услуг и вывод их на карту работает вполне стабильно" />
-    <MESSAGE value="Что-то еще делал за 10.08" />
-    <MESSAGE value="Добавил логотип к компании, нормалиовал работу с картинками (по крайней мере, на первое время)" />
-    <MESSAGE value="Отзывы меняют рейтинг компаний и ползователей, нормализировано установка фотографии пользователей и еще что-то" />
-    <MESSAGE value="Добавил в коммит миграции" />
-    <MESSAGE value="Изменил услуги, чтоб можно было добавить еще ongitude, latitude" />
-    <MESSAGE value="Что-то менял, что-то делал. Что не помню уже" />
-    <MESSAGE value="Добавил несколько ведение статистики просмотров услуги, получение отзывов для конкретной услуги и еще по мелочи. Кроме того, добавил написал модель и контроллер для акций" />
-    <MESSAGE value="Дописал код для акций" />
-    <MESSAGE value="Добавил получение инфы по услуге, точке и еще чего-то по мелочи" />
-    <MESSAGE value="Поменял запрос на получение отзывов по услуге. Добавил модель для хранения текущей координаты пользователя" />
-    <MESSAGE value="Дофига всего поменял и начал прикручивать поиск. Пока есть только для первого типа запроса" />
-    <MESSAGE value="Организовал предварительно поиск" />
-    <MESSAGE value="Новый конфиг для сфинкса и еще некоторые мелкие изменения" />
-    <MESSAGE value="Обновил документацию - подробней описал контроллеры" />
-    <MESSAGE value="Добавил поиск людей, изображения для  отзывов, пользователей и кучу других мелочей" />
-    <MESSAGE value="Исправил пару косяков, связанных с ServiceInfo и getServicesBySubject" />
-    <MESSAGE value="Небольшие изменения в поиске людей, получение автокомплита для услуг и людей в одном флаконе и еще может что-нибудь." />
-    <MESSAGE value="Был проверен и исправлен модуль регистрации и еще некоторые мелочи" />
-    <MESSAGE value="Проверка модуля регистрации" />
-    <MESSAGE value="Активационный код теперь нужен только при подтверждении владения почтой" />
-    <MESSAGE value="Что-то до этого исправлял, должно быть, и сделал вывод новостей в нужнном формате.&#10;Пока только getNews" />
-    <option name="LAST_COMMIT_MESSAGE" value="Что-то до этого исправлял, должно быть, и сделал вывод новостей в нужнном формате.&#10;Пока только getNews" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1267,7 +326,7 @@
           <option name="timeStamp" value="193" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="1621" />
+      <option name="time" value="1622" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="webtools.php">
@@ -1286,20 +345,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Downloads/Telegram Desktop/logs (3).txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="705" column="42" lean-forward="false" selection-start-line="705" selection-start-column="42" selection-end-line="705" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Downloads/Telegram Desktop/bro4you.ru.error (4) (3).log">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="119" lean-forward="false" selection-start-line="16" selection-start-column="119" selection-end-line="16" selection-end-column="119" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Downloads/Telegram Desktop/bro4you.ru.error (6) (2).log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="567205">
@@ -1314,13 +359,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/library/AaaaPt.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="10" column="27" lean-forward="false" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/library/AaaaPt.php" />
     <entry file="file://$USER_HOME$/Downloads/Telegram Desktop/bro4you.ru.error (7) (2).log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1365,18 +404,18 @@
             <element signature="n#getAutocompleteByQuery#0;n#Services#0;n#!!top" expanded="false" />
             <element signature="n#getServicesByElement#0;n#Services#0;n#!!top" expanded="false" />
             <element signature="n#getServicesByQuery2#0;n#Services#0;n#!!top" expanded="false" />
-            <marker date="1541230917143" expanded="true" signature="10088:11278" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="10103:11272" ph="SELECT row_t... companies" />
-            <marker date="1541230917143" expanded="true" signature="11338:12540" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="11354:12509" ph="SELECT row_t... userinfo" />
-            <marker date="1541230917143" expanded="true" signature="12675:13928" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="12690:13907" ph="SELECT row_t... companies" />
-            <marker date="1541230917143" expanded="true" signature="13973:15193" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="13989:15171" ph="SELECT row_t... userinfo" />
-            <marker date="1541230917143" expanded="true" signature="15391:16644" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="15406:16623" ph="SELECT row_t... companies" />
-            <marker date="1541230917143" expanded="true" signature="16685:17927" ph="SELECT * FRO... row_to_json" />
-            <marker date="1541230917143" expanded="true" signature="16701:17905" ph="SELECT row_t... userinfo" />
+            <marker date="1541663907551" expanded="true" signature="10088:11278" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="10103:11272" ph="SELECT row_t... companies" />
+            <marker date="1541663907551" expanded="true" signature="11338:12540" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="11354:12509" ph="SELECT row_t... userinfo" />
+            <marker date="1541663907551" expanded="true" signature="12675:13928" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="12690:13907" ph="SELECT row_t... companies" />
+            <marker date="1541663907551" expanded="true" signature="13973:15193" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="13989:15171" ph="SELECT row_t... userinfo" />
+            <marker date="1541663907551" expanded="true" signature="15391:16644" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="15406:16623" ph="SELECT row_t... companies" />
+            <marker date="1541663907551" expanded="true" signature="16685:17927" ph="SELECT * FRO... row_to_json" />
+            <marker date="1541663907551" expanded="true" signature="16701:17905" ph="SELECT row_t... userinfo" />
           </folding>
         </state>
       </provider>
@@ -1401,13 +440,6 @@
         <state relative-caret-position="392">
           <caret line="138" column="81" lean-forward="true" selection-start-line="138" selection-start-column="81" selection-end-line="138" selection-end-column="81" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/UserinfoAPIController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="19" column="10" lean-forward="false" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
         </state>
       </provider>
     </entry>
@@ -1532,14 +564,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/config/config.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="66" column="45" lean-forward="true" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/NewsAPIController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -1612,7 +636,7 @@
         <state relative-caret-position="153">
           <caret line="156" column="26" lean-forward="false" selection-start-line="156" selection-start-column="26" selection-end-line="156" selection-end-column="26" />
           <folding>
-            <marker date="1541663486261" expanded="true" signature="3865:3990" ph="SELECT p.pho... phones_users" />
+            <marker date="1541663907549" expanded="true" signature="3865:3990" ph="SELECT p.pho... phones_users" />
           </folding>
         </state>
       </provider>
@@ -1636,9 +660,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2788">
           <caret line="164" column="48" lean-forward="false" selection-start-line="164" selection-start-column="48" selection-end-line="164" selection-end-column="48" />
-          <folding>
-            <marker date="1541663481852" expanded="true" signature="3740:3878" ph="SELECT p.pho... phones_userinfo" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1674,17 +696,16 @@
           <caret line="520" column="5" lean-forward="false" selection-start-line="520" selection-start-column="5" selection-end-line="520" selection-end-column="5" />
           <folding>
             <element signature="e#7#30#0#PHP" expanded="true" />
+            <marker date="1541663907554" expanded="true" signature="9238:9246" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/News.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="180" column="0" lean-forward="false" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="251" column="0" lean-forward="false" selection-start-line="251" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
           <folding>
-            <element signature="n#validation#0;n#News#0;n#!!top" expanded="false" />
-            <element signature="n#initialize#0;n#News#0;n#!!top" expanded="false" />
             <element signature="n#sendPush#0;n#News#0;n#!!top" expanded="false" />
             <element signature="n#sendPushToUser#0;n#News#0;n#!!top" expanded="false" />
           </folding>
@@ -1699,10 +720,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/config/loader.php">
+    <entry file="file://$PROJECT_DIR$/app/config/config.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="15" lean-forward="false" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="15" />
+        <state relative-caret-position="324">
+          <caret line="71" column="47" lean-forward="true" selection-start-line="71" selection-start-column="47" selection-end-line="71" selection-end-column="47" />
           <folding />
         </state>
       </provider>
@@ -1710,8 +731,53 @@
     <entry file="file://$PROJECT_DIR$/app/library/PHPMailerApp.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
-          <caret line="12" column="20" lean-forward="true" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+          <caret line="12" column="20" lean-forward="false" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/config/loader.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="49" lean-forward="false" selection-start-line="17" selection-start-column="49" selection-end-line="17" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/FavoriteCompanies.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/FavoriteUsers.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="13" column="7" lean-forward="true" selection-start-line="13" selection-start-column="7" selection-end-line="13" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/UserinfoAPIController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="554" column="39" lean-forward="true" selection-start-line="554" selection-start-column="39" selection-end-line="554" selection-end-column="39" />
+          <folding>
+            <element signature="n#indexAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#aboutAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#settingsAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#handlerAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#setPhotoAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="e#11465#13740#0#PHP" expanded="false" />
+            <element signature="n#deleteUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#restoreUserAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#editUserinfoAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addImagesAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addImagesHandler#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+            <element signature="n#addUsersAction#0;n#UserinfoAPIController#0;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
