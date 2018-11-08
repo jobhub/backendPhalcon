@@ -24,7 +24,6 @@ class UserinfoAPIController extends Controller
             $response = new Response();
             $userinfo = Userinfo::findFirstByUserid($auth['id']);
             if (!$userinfo) {
-
                 $response->setJsonContent(
                     [
                         "status" => "FAIL"
@@ -527,7 +526,8 @@ class UserinfoAPIController extends Controller
      *
      * @param $userid
      *
-     * @return string - json array [userinfo, [phones]];
+     * @return string - json array [userinfo, [phones], [images], countNews, countSubscribers,
+     *          countSubscriptions];
      */
     public function getUserinfoAction($userid)
     {
@@ -548,10 +548,17 @@ class UserinfoAPIController extends Controller
             $phones = PhonesUsers::getUserPhones($userid);
             $images = ImagesUsers::findByUserid($userid);
 
+            $countNews = count(News::findBySubject($userid,0));
+            $countSubscribers = count(FavoriteUsers::findByUserobject($userid));
+            $countSubscriptions = count(FavoriteUsers::findByUsersubject($userid)) + count(FavoriteCompanies::findByUserid($userid));
+
             $response->setJsonContent([
                 'userinfo' => $userinfo,
                 'phones' => $phones,
-                'images' => $images
+                'images' => $images,
+                'countNews' => $countNews,
+                'countSubscribers' => $countSubscribers,
+                'countSubscriptions' => $countSubscriptions,
             ]);
 
             return $response;
