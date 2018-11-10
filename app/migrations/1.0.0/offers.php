@@ -25,7 +25,6 @@ class OffersMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'offerid'
                         ]
                     ),
@@ -43,7 +41,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'subjectid'
                         ]
                     ),
@@ -69,7 +66,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'description'
                         ]
                     ),
@@ -78,7 +74,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'price'
                         ]
                     ),
@@ -87,7 +82,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'selected'
                         ]
                     ),
@@ -96,7 +90,6 @@ class OffersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'deleted'
                         ]
                     ),
@@ -104,7 +97,6 @@ class OffersMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'subjecttype'
                         ]
                     ),
@@ -112,7 +104,6 @@ class OffersMigration_100 extends Migration
                         'confirmed',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'deletedcascade'
                         ]
                     )
@@ -127,11 +118,11 @@ class OffersMigration_100 extends Migration
                         'foreignkey_offers_tasks_taskId',
                         [
                             'referencedTable' => 'tasks',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['taskid'],
                             'referencedColumns' => ['taskid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

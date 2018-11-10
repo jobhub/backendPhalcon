@@ -25,7 +25,6 @@ class ServicesMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class ServicesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'serviceid'
                         ]
                     ),
@@ -50,7 +48,6 @@ class ServicesMigration_100 extends Migration
                         'pricemin',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'description'
                         ]
                     ),
@@ -58,7 +55,6 @@ class ServicesMigration_100 extends Migration
                         'pricemax',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'pricemin'
                         ]
                     ),
@@ -67,7 +63,6 @@ class ServicesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'pricemax'
                         ]
                     ),
@@ -76,7 +71,6 @@ class ServicesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'deleted'
                         ]
                     ),
@@ -84,7 +78,6 @@ class ServicesMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'subjecttype'
                         ]
                     ),
@@ -101,7 +94,6 @@ class ServicesMigration_100 extends Migration
                         'regionid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'datepublication'
                         ]
                     ),
@@ -109,8 +101,25 @@ class ServicesMigration_100 extends Migration
                         'name',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 150,
+                            'size' => 200,
                             'after' => 'regionid'
+                        ]
+                    ),
+                    new Column(
+                        'numberofdisplay',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'default' => "0",
+                            'after' => 'name'
+                        ]
+                    ),
+                    new Column(
+                        'rating',
+                        [
+                            'type' => Column::TYPE_FLOAT,
+                            'default' => "2.5",
+                            'size' => 24,
+                            'after' => 'numberofdisplay'
                         ]
                     )
                 ],
@@ -122,11 +131,11 @@ class ServicesMigration_100 extends Migration
                         'foreignkey_services_regions_regionId',
                         [
                             'referencedTable' => 'regions',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['regionid'],
                             'referencedColumns' => ['regionid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'SET NULL'
                         ]
                     )
                 ],

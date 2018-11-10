@@ -132,11 +132,17 @@ class SubjectsWithNotDeleted extends NotDeletedModelWithCascade
         return false;
     }
 
-    public static function findBySubject($subjectId,$subjectType, $order = null)
+    public static function findBySubject($subjectId,$subjectType, $order = null, $columns = null)
     {
         //if($order!= null)
+        if($columns == null)
         return parent::find(['subjectid = :subjectId: AND subjecttype = :subjectType:',
             'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType],
             'order' => $order]);
+        else{
+            return parent::find(['columns' => $columns,'subjectid = :subjectId: AND subjecttype = :subjectType:',
+                'bind' => ['subjectId' => $subjectId, 'subjectType' => $subjectType],
+                'order' => $order]);
+        }
     }
 }

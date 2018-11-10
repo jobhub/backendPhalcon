@@ -25,7 +25,6 @@ class ImagesservicesMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class ImagesservicesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'imageid'
                         ]
                     ),
@@ -55,11 +53,11 @@ class ImagesservicesMigration_100 extends Migration
                         'foreignkey_imagesservices_services_serviceid',
                         [
                             'referencedTable' => 'services',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['serviceid'],
                             'referencedColumns' => ['serviceid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

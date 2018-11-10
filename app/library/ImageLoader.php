@@ -29,10 +29,11 @@ class ImageLoader
 
         $image = new SimpleImage();
         $image->load($tempname);
-        $image->resizeToWidth($width);
+        if($width!= null)
+            $image->resizeToWidth($width);
 
         if(!is_dir(IMAGE_PATH . $subpath . '/'. $subdir)) {
-            $result = mkdir(IMAGE_PATH . $subpath . '\\' . $subdir);
+            $result = mkdir(IMAGE_PATH . $subpath . '/' . $subdir);
             $r = is_dir(IMAGE_PATH . $subpath . '/' . $subdir);
         }
 
@@ -89,7 +90,7 @@ class ImageLoader
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
         $filename =  ImageLoader::formImageName($imageFormat,$imageId);
         return ImageLoader::load('news',$tempname,
-            $filename,$newId,750);
+            $filename,$newId,null);
     }
 
     public static function formImageName($format, $imageId)
@@ -103,7 +104,7 @@ class ImageLoader
     }
 
     public static function delete($imageName){
-        $result = unlink(BASE_PATH.$imageName);
+        $result = unlink(BASE_PATH."/public/".$imageName);
         return $result;
     }
 }

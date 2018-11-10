@@ -25,7 +25,6 @@ class CategoriesMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -42,7 +41,6 @@ class CategoriesMigration_100 extends Migration
                         'parentid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'categoryname'
                         ]
                     ),

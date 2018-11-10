@@ -24,7 +24,6 @@ class CompaniescategoriesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -33,7 +32,6 @@ class CompaniescategoriesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'companyid'
                         ]
                     )
@@ -47,22 +45,22 @@ class CompaniescategoriesMigration_100 extends Migration
                         'foreignkey_companiesCategories_categories_categoryId',
                         [
                             'referencedTable' => 'categories',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['categoryid'],
                             'referencedColumns' => ['categoryid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     ),
                     new Reference(
                         'foreignkey_companiesCategories_companies_companyId',
                         [
                             'referencedTable' => 'companies',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['companyid'],
                             'referencedColumns' => ['companyid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

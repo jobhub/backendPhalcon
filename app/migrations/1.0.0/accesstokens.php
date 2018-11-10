@@ -25,7 +25,6 @@ class AccesstokensMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class AccesstokensMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'tokenid'
                         ]
                     ),
@@ -55,7 +53,8 @@ class AccesstokensMigration_100 extends Migration
                             'size' => 1,
                             'after' => 'token'
                         ]
-                    )
+                    ),
+
                 ],
                 'indexes' => [
                     new Index('accesstokens_pkey', ['tokenid'], null)
@@ -65,11 +64,11 @@ class AccesstokensMigration_100 extends Migration
                         'foreignkey_accesstokens_users_userid',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

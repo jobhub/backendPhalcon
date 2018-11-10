@@ -25,7 +25,6 @@ class UsersMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -59,7 +58,6 @@ class UsersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'role'
                         ]
                     ),
@@ -68,7 +66,6 @@ class UsersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'fake'
                         ]
                     ),
@@ -76,7 +73,6 @@ class UsersMigration_100 extends Migration
                         'phoneid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'deleted'
                         ]
                     ),
@@ -84,7 +80,6 @@ class UsersMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'phoneid'
                         ]
                     ),
@@ -94,7 +89,6 @@ class UsersMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'deletedcascade'
                         ]
                     ),
@@ -104,8 +98,23 @@ class UsersMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'issocial'
+                        ]
+                    ),
+                    new Column(
+                        'dateregistration',
+                        [
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'size' => 1,
+                            'after' => 'activated'
+                        ]
+                    ),
+                    new Column(
+                        'activationcode',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 200,
+                            'after' => 'dateregistration'
                         ]
                     )
                 ],
@@ -117,11 +126,11 @@ class UsersMigration_100 extends Migration
                         'foreignkey_users_phones',
                         [
                             'referencedTable' => 'phones',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['phoneid'],
                             'referencedColumns' => ['phoneid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'RESTRICT',
+                            'onDelete' => 'RESTRICT'
                         ]
                     )
                 ],

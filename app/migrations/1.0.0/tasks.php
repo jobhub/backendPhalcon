@@ -25,7 +25,6 @@ class TasksMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'taskid'
                         ]
                     ),
@@ -43,7 +41,6 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'subjectid'
                         ]
                     ),
@@ -77,7 +74,6 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'deadline'
                         ]
                     ),
@@ -85,7 +81,6 @@ class TasksMigration_100 extends Migration
                         'status',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'price'
                         ]
                     ),
@@ -101,7 +96,6 @@ class TasksMigration_100 extends Migration
                         'regionid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'polygon'
                         ]
                     ),
@@ -110,7 +104,6 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'regionid'
                         ]
                     ),
@@ -135,7 +128,6 @@ class TasksMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'latitude'
                         ]
                     ),
@@ -143,7 +135,6 @@ class TasksMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'subjecttype'
                         ]
                     ),
@@ -164,14 +155,6 @@ class TasksMigration_100 extends Migration
                             'size' => 1,
                             'after' => 'datestart'
                         ]
-                    ),
-                    new Column(
-                        'leftColumn',
-                        [
-                            'type' => Column::TYPE_BIGINTEGER,
-                            'size' => 1,
-                            'after' => 'dateend'
-                        ]
                     )
                 ],
                 'indexes' => [
@@ -184,33 +167,33 @@ class TasksMigration_100 extends Migration
                         'foreignkey_tasks_categories_categoryId',
                         [
                             'referencedTable' => 'categories',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['categoryid'],
                             'referencedColumns' => ['categoryid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'NO ACTION',
+                            'onDelete' => 'NO ACTION'
                         ]
                     ),
                     new Reference(
                         'foreignkey_tasks_regions_regionId',
                         [
                             'referencedTable' => 'regions',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['regionid'],
                             'referencedColumns' => ['regionid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'SET NULL'
                         ]
                     ),
                     new Reference(
                         'foreignkey_tasks_statuses_status',
                         [
                             'referencedTable' => 'statuses',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['status'],
                             'referencedColumns' => ['statusid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'NO ACTION',
+                            'onDelete' => 'NO ACTION'
                         ]
                     )
                 ],

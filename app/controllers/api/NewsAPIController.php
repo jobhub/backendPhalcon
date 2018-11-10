@@ -57,12 +57,15 @@ class NewsAPIController extends Controller
     }
 
     /**
-     * Создает новость компании или пользователя (в зависимости от subjectType)
+     * Создает новость компании или пользователя (в зависимости от subjectType).
+     * Если прикрепить изображения, они будут добавлены к новости.
      *
      * @method POST
      *
-     * @params int subjectType, int subjectId (если subjectType = 0 можно не передавать), string newText
-     *
+     * @params int subjectType, int subjectId (если subjectType = 0 можно не передавать)
+     * @params string newsText
+     * @params string title
+     * @params файлы изображений.
      * @return string - json array объекта Status
      */
     public function addNewAction()
@@ -94,12 +97,15 @@ class NewsAPIController extends Controller
                 $new->setSubjectType($this->request->getPost('subjectType'));
             }
 
-            $new->setDate(date('Y-m-d H:i:s'));
+            $new->setPublishDate(date('Y-m-d H:i:s'));
 
-            $new->setNewsText($this->request->getPost('newText'));
+            $new->setNewsText($this->request->getPost('newsText'));
+            $new->setTitle($this->request->getPost('title'));
 
+            //$this->db->begin();
             if (!$new->save()) {
                 $errors = [];
+                //$this->db->rollback();
                 foreach ($new->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -112,6 +118,20 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
+            if ($this->request->hasFiles()) {
+                $result = $this->addImagesHandler($new->getNewsId());
+
+                $resultContent = json_decode($result->getContent(), true);
+                if($resultContent['status'] != STATUS_OK){
+                    $new->delete(true);
+                } else{
+                    $resultContent['newId'] = $new->getNewsId();
+                    $result->setJsonContent($resultContent);
+                }
+                return $result;
+            }
+
+           // $this->db->commit();
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
@@ -131,18 +151,18 @@ class NewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $newId
+     * @param $newsId
      *
      * @return string - json array объекта Status
      */
-    public function deleteNewAction($newId)
+    public function deleteNewAction($newsId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $response = new Response();
 
-            $new = News::findFirstByNewid($newId);
+            $new = News::findFirstByNewsid($newsId);
             //проверки
 
             if (!$new) {
@@ -165,7 +185,7 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            if (!$new->delete()) {
+            if (!$new->delete(true)) {
                 foreach ($new->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
@@ -197,7 +217,7 @@ class NewsAPIController extends Controller
      *
      * @method PUT
      *
-     * @params int newId, string newText
+     * @params int newsId, string newsText, title
      *
      * @return string - json array объекта Status
      */
@@ -208,7 +228,7 @@ class NewsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $new = News::findFirstByNewid($this->request->getPut('newId'));
+            $new = News::findFirstByNewsid($this->request->getPut('newsId'));
             //проверки
 
             if (!$new) {
@@ -252,8 +272,9 @@ class NewsAPIController extends Controller
             }
 
             //Редактирование
-            $new->setDate(date('Y-m-d H:i:s'));
-            $new->setNewText($this->request->getPut('newText'));
+            $new->setPublishDate(date('Y-m-d H:i:s'));
+            $new->setNewsText($this->request->getPut('newsText'));
+            $new->setTitle($this->request->getPut('title'));
 
             if (!$new->save()) {
                 foreach ($new->getMessages() as $message) {
@@ -301,7 +322,7 @@ class NewsAPIController extends Controller
                 //Возвращаем новости компании
                 $company = Companies::findFirstByCompanyid($companyId);
 
-                if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
+                if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $companyId, 1, 'getOwnNews')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -311,11 +332,10 @@ class NewsAPIController extends Controller
                     return $response;
                 }
 
-                $news = News::findBySubject($companyId, 1, 'News.date DESC');
+                $news = News::getNewsForSubject($companyId, 1);
             } else {
                 //Возвращаем новости текущего пользователя
-
-                $news = News::findBySubject($userId, 0, 'News.date DESC');
+                $news = News::getNewsForSubject($userId, 0);
             }
             $response->setJsonContent($news);
             return $response;
@@ -342,8 +362,7 @@ class NewsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
 
-            $news = News::findBySubject($subjectId, $subjecttype, 'News.date DESC');
-
+            $news = News::getNewsForSubject($subjectId, $subjecttype);
 
             $response->setJsonContent($news);
             return $response;
@@ -387,8 +406,8 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$new->getSubjectId(),$new->getSubjectType(),
-                'editNew')){
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(),
+                'editNew')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -423,7 +442,7 @@ class NewsAPIController extends Controller
         if ($this->request->hasFiles()) {
             $files = $this->request->getUploadedFiles();
 
-            $new = News::findFirstByNewid($newId);
+            $new = News::findFirstByNewsid($newId);
 
             if (!$new) {
                 $response->setJsonContent(
@@ -435,14 +454,14 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            $images = ImagesNews::findByNewid($newId);
+            $images = ImagesNews::findByNewsid($newId);
             $countImages = count($images);
 
-            if(($countImages + count($files)) > ImagesNews::MAX_IMAGES ){
+            if (($countImages + count($files)) > ImagesNews::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для новости. 
-                        Можно сохранить для одной новости не более чем '.ImagesUsers::MAX_IMAGES.' изображений'],
+                        Можно сохранить для одной новости не более чем ' . ImagesUsers::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -455,7 +474,7 @@ class NewsAPIController extends Controller
             foreach ($files as $file) {
 
                 $newimage = new ImagesNews();
-                $newimage->setNewId($newId);
+                $newimage->setNewsId($newId);
                 $newimage->setImagePath("");
 
                 if (!$newimage->save()) {
@@ -471,15 +490,15 @@ class NewsAPIController extends Controller
 
                 $newimage->setImagePath($filename);
 
-                if(!$newimage->update()){
+                if (!$newimage->update()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($newimage);
                 }
             }
-            $i=0;
+            $i = 0;
             foreach ($files as $file) {
                 $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
-                    $newId,$imagesIds[$i]);
+                    $newId, $imagesIds[$i]);
                 $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {

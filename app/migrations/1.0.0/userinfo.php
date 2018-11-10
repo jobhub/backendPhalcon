@@ -17,14 +17,13 @@ class UserinfoMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('Userinfo', [
+        $this->morphTable('userinfo', [
                 'columns' => [
                     new Column(
                         'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -67,7 +66,6 @@ class UserinfoMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 16,
                             'after' => 'birthday'
                         ]
                     ),
@@ -83,7 +81,7 @@ class UserinfoMigration_100 extends Migration
                         'ratingexecutor',
                         [
                             'type' => Column::TYPE_FLOAT,
-                            'default' => "5.000000",
+                            'default' => "2.5",
                             'notNull' => true,
                             'size' => 24,
                             'after' => 'about'
@@ -93,7 +91,7 @@ class UserinfoMigration_100 extends Migration
                         'ratingclient',
                         [
                             'type' => Column::TYPE_FLOAT,
-                            'default' => "5.000000",
+                            'default' => "2.5",
                             'notNull' => true,
                             'size' => 24,
                             'after' => 'ratingexecutor'
@@ -114,6 +112,30 @@ class UserinfoMigration_100 extends Migration
                             'size' => 260,
                             'after' => 'address'
                         ]
+                    ),
+                    new Column(
+                        'status',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 1000,
+                            'after' => 'pathtophoto'
+                        ]
+                    ),
+                    new Column(
+                        'lasttime',
+                        [
+                            'type' => Column::TYPE_TIMESTAMP,
+                            'size' => 1,
+                            'after' => 'status'
+                        ]
+                    ),
+                    new Column(
+                        'email',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 150,
+                            'after' => 'lasttime'
+                        ]
                     )
                 ],
                 'indexes' => [
@@ -124,11 +146,11 @@ class UserinfoMigration_100 extends Migration
                         'foreignkey_userinfo_users_userId',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

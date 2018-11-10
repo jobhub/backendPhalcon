@@ -20,12 +20,11 @@ class NewsMigration_100 extends Migration
         $this->morphTable('news', [
                 'columns' => [
                     new Column(
-                        'newid',
+                        'newsid',
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,8 +33,7 @@ class NewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
-                            'after' => 'newid'
+                            'after' => 'newsid'
                         ]
                     ),
                     new Column(
@@ -43,12 +41,11 @@ class NewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'subjecttype'
                         ]
                     ),
                     new Column(
-                        'date',
+                        'publishdate',
                         [
                             'type' => Column::TYPE_TIMESTAMP,
                             'notNull' => true,
@@ -57,11 +54,11 @@ class NewsMigration_100 extends Migration
                         ]
                     ),
                     new Column(
-                        'newtext',
+                        'newstext',
                         [
                             'type' => Column::TYPE_TEXT,
                             'size' => 1,
-                            'after' => 'date'
+                            'after' => 'publishdate'
                         ]
                     ),
                     new Column(
@@ -69,21 +66,36 @@ class NewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
-                            'after' => 'newtext'
+                            'after' => 'newstext'
                         ]
                     ),
                     new Column(
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'deleted'
+                        ]
+                    ),
+                    new Column(
+                        'title',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 150,
+                            'after' => 'deletedcascade'
+                        ]
+                    ),
+                    new Column(
+                        'newid',
+                        [
+                            'type' => Column::TYPE_INTEGER,
+                            'notNull' => true,
+                            'autoIncrement' => true,
+                            'after' => 'title'
                         ]
                     )
                 ],
                 'indexes' => [
-                    new Index('news_pkey', ['newid'], null)
+                    new Index('news_pkey', ['newsid'], null)
                 ],
             ]
         );

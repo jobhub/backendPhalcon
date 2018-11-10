@@ -24,7 +24,6 @@ class ContractMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -41,7 +40,6 @@ class ContractMigration_100 extends Migration
                         'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'contractnumber'
                         ]
                     ),
@@ -49,7 +47,6 @@ class ContractMigration_100 extends Migration
                         'subjecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'subjectid'
                         ]
                     ),
@@ -57,7 +54,6 @@ class ContractMigration_100 extends Migration
                         'subjectidtwo',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'subjecttype'
                         ]
                     ),
@@ -65,7 +61,6 @@ class ContractMigration_100 extends Migration
                         'subjecttypetwo',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'subjectidtwo'
                         ]
                     ),
@@ -89,7 +84,6 @@ class ContractMigration_100 extends Migration
                         'userorganizer',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'requisitestwo'
                         ]
                     ),
@@ -97,7 +91,6 @@ class ContractMigration_100 extends Migration
                         'sum',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'userorganizer'
                         ]
                     )
@@ -110,11 +103,11 @@ class ContractMigration_100 extends Migration
                         'foreignkey_contracts_users_userorganizer',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userorganizer'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

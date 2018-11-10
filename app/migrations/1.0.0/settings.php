@@ -24,7 +24,6 @@ class SettingsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class SettingsMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'userid'
                         ]
                     ),
@@ -44,7 +42,6 @@ class SettingsMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'notificationemail'
                         ]
                     ),
@@ -54,7 +51,6 @@ class SettingsMigration_100 extends Migration
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'notificationpush'
                         ]
                     )
@@ -67,11 +63,11 @@ class SettingsMigration_100 extends Migration
                         'foreignkey_settings_users_userId',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],
