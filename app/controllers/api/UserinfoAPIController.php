@@ -318,7 +318,7 @@ class UserinfoAPIController extends Controller
             $userId = $this->session->get('auth')['id'];
             $image = ImagesUsers::findFirstByImageid($this->request->getPost('imageId'));
 
-            if(!$image || $image->getUserId()!= $userId){
+            if (!$image || $image->getUserId() != $userId) {
                 $response->setJsonContent([
                     'status' => STATUS_WRONG,
                     'errors' => ['Фотография не существует']
@@ -330,7 +330,7 @@ class UserinfoAPIController extends Controller
 
             $userinfo->setPathToPhoto($image->getImagePath());
 
-            if(!$userinfo->update()){
+            if (!$userinfo->update()) {
                 return SupportClass::getResponseWithErrors($userinfo);
             }
 
@@ -529,11 +529,24 @@ class UserinfoAPIController extends Controller
      * @return string - json array [userinfo, [phones], [images], countNews, countSubscribers,
      *          countSubscriptions];
      */
-    public function getUserinfoAction($userid)
+    public function getUserinfoAction($userid = null)
     {
         if ($this->request->isGet()) {
             $response = new Response();
+
+            if ($userid == null) {
+                $auth = $this->session->get('auth');
+                if ($auth != null) {
+                    $userid = $auth['id'];
+                } else{
+                    $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+                    throw $exception;
+                }
+            }
+
             $userinfo = Userinfo::findFirstByUserid($userid);
+
+
             if (!$userinfo) {
 
                 $response->setJsonContent(
@@ -545,10 +558,11 @@ class UserinfoAPIController extends Controller
                 return $response;
             }
 
+
             $phones = PhonesUsers::getUserPhones($userid);
             $images = ImagesUsers::findByUserid($userid);
 
-            $countNews = count(News::findBySubject($userid,0));
+            $countNews = count(News::findBySubject($userid, 0));
             $countSubscribers = count(FavoriteUsers::findByUserobject($userid));
             $countSubscriptions = count(FavoriteUsers::findByUsersubject($userid)) + count(FavoriteCompanies::findByUserid($userid));
 
@@ -603,22 +617,22 @@ class UserinfoAPIController extends Controller
                 return $response;
             }
 
-            if($this->request->getPut('firstname'))
+            if ($this->request->getPut('firstname'))
                 $userinfo->setFirstname($this->request->getPut('firstname'));
-            if($this->request->getPut('lastname'))
+            if ($this->request->getPut('lastname'))
                 $userinfo->setLastname($this->request->getPut('lastname'));
-            if($this->request->getPut('patronymic'))
+            if ($this->request->getPut('patronymic'))
                 $userinfo->setPatronymic($this->request->getPut('patronymic'));
-            if($this->request->getPut('address'))
+            if ($this->request->getPut('address'))
                 $userinfo->setAddress($this->request->getPut("address"));
-            if($this->request->getPut('birthday'))
+            if ($this->request->getPut('birthday'))
                 $userinfo->setBirthday(date('Y-m-d H:m', strtotime($this->request->getPut("birthday"))));
-            if($this->request->getPut('male'))
+            if ($this->request->getPut('male'))
                 $userinfo->setMale($this->request->getPut("male"));
 
-            if($this->request->getPut('status'))
+            if ($this->request->getPut('status'))
                 $userinfo->setStatus($this->request->getPut("status"));
-            if($this->request->getPut('about'))
+            if ($this->request->getPut('about'))
                 $userinfo->setAbout($this->request->getPut("about"));
 
             if (!$userinfo->update()) {
@@ -706,11 +720,11 @@ class UserinfoAPIController extends Controller
             $images = ImagesUsers::findByUserid($userId);
             $countImages = count($images);
 
-            if(($countImages + count($files)) > ImagesUsers::MAX_IMAGES ){
+            if (($countImages + count($files)) > ImagesUsers::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для пользователя. 
-                        Можно сохранить для одного пользователя не более чем '.ImagesUsers::MAX_IMAGES.' изображений'],
+                        Можно сохранить для одного пользователя не более чем ' . ImagesUsers::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -748,15 +762,15 @@ class UserinfoAPIController extends Controller
 
                 $newimage->setImagePath($filename);
 
-                if(!$newimage->update()){
+                if (!$newimage->update()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($newimage);
                 }
             }
-            $i=0;
+            $i = 0;
             foreach ($files as $file) {
                 $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
-                    $userId,$imagesIds[$i]);
+                    $userId, $imagesIds[$i]);
                 $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
@@ -793,7 +807,8 @@ class UserinfoAPIController extends Controller
         return $response;
     }
 
-    public function addUsersAction(){
+    public function addUsersAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
             $response = new Response();
@@ -802,11 +817,11 @@ class UserinfoAPIController extends Controller
 
             //юзеры
             $names = ['Родион', 'Всеслав', 'Никита', 'Бен', 'Ярополк', 'Абдула', 'Василиса'];
-            $males = [1,1,1,1,1,1,0];
+            $males = [1, 1, 1, 1, 1, 1, 0];
             $lastnames1 = ['Мраков', 'Стебль', 'Ладан', 'Маринов', 'Зрачков'];
             $lastnames0 = ['Мракова', 'Стебль', 'Ладан', 'Маринова', 'Зрачкова'];
-            $emailsName = ['mrak', 'bigbranch', 'lastpoint','stronghunger', 'anyname',
-                'littlemouse','stella', 'alldarkness'];
+            $emailsName = ['mrak', 'bigbranch', 'lastpoint', 'stronghunger', 'anyname',
+                'littlemouse', 'stella', 'alldarkness'];
 
             $emailsPost = ['mail.ru', 'mail.com', 'yandex.ru', 'gmail.com', 'outlook.com'];
             $count = 10;
@@ -816,32 +831,32 @@ class UserinfoAPIController extends Controller
             $latright = 55.23724689239517;
             $latleft = 55.748696337268484 - ($latright - 55.748696337268484);
 
-            $diffLong = ($longhigh - $longbottom)/  1000;
-            $diffLat = ($latright - $latleft)/1000;
+            $diffLong = ($longhigh - $longbottom) / 1000;
+            $diffLat = ($latright - $latleft) / 1000;
 
-            for($i = 0; $i < $count; $i++){
-                $pos = rand(0,count($names)-1);
+            for ($i = 0; $i < $count; $i++) {
+                $pos = rand(0, count($names) - 1);
                 $user['firstname'] = $names[$pos];
                 $user['male'] = $males[$pos];
-                if($user['male'] == 0){
-                    $user['lastname'] = $lastnames0[rand(0,count($lastnames0)-1)];
-                } else{
-                    $user['lastname'] = $lastnames1[rand(0,count($lastnames1)-1)];
+                if ($user['male'] == 0) {
+                    $user['lastname'] = $lastnames0[rand(0, count($lastnames0) - 1)];
+                } else {
+                    $user['lastname'] = $lastnames1[rand(0, count($lastnames1) - 1)];
                 }
                 do {
-                    $user['email'] = $emailsName[rand(0,count($emailsName)-1)] .'@'.
-                        $emailsPost[rand(0,count($emailsPost)-1)];
-                }while(Users::findFirstByEmail($user['email']));
+                    $user['email'] = $emailsName[rand(0, count($emailsName) - 1)] . '@' .
+                        $emailsPost[rand(0, count($emailsPost) - 1)];
+                } while (Users::findFirstByEmail($user['email']));
 
                 $user['password'] = '12345678';
 
-                $user['latitude'] = $latleft + rand(0,1000)*$diffLat;
-                $user['longitude'] = $longbottom + rand(0,1000)*$diffLong;
+                $user['latitude'] = $latleft + rand(0, 1000) * $diffLat;
+                $user['longitude'] = $longbottom + rand(0, 1000) * $diffLong;
                 $users[] = $user;
             }
 
             $this->db->begin();
-            foreach($users as $userArr){
+            foreach ($users as $userArr) {
                 $user = new Users();
                 $user->setActivated(true);
                 $user->setEmail($userArr['email']);

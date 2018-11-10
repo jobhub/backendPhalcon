@@ -86,10 +86,10 @@ class Userinfo extends \Phalcon\Mvc\Model
     protected $phones;
 
     const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
-        'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto'];
+        'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto', 'lasttime'];
 
     const publicColumnsInStr = 'userid, firstname, lastname, patronymic,
-        birthday, male, address, about, status, ratingexecutor, ratingclient, pathtophoto';
+        birthday, male, address, about, status, ratingexecutor, ratingclient, pathtophoto, lasttime';
     /**
      * Method to set the value of field userId
      *

@@ -340,7 +340,7 @@ class SecurityPlugin extends Plugin
         $allowed = $acl->isAllowed($role, $controller, $action);
 
         if (!$allowed) {
-            $this->flash->error("Нет доступа.");
+            //                                                                                                                                                                                                                                                                                                                                                                                                                                                                          $this->flash->error("Нет доступа.");
             $dispatcher->forward(['controller' => 'errors',
                 'action' => 'show401']);
             return false;
