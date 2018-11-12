@@ -60,6 +60,8 @@ class NewsAPIController extends Controller
      * Создает новость компании или пользователя (в зависимости от subjectType).
      * Если прикрепить изображения, они будут добавлены к новости.
      *
+     * @access private
+     *
      * @method POST
      *
      * @params int subjectType, int subjectId (если subjectType = 0 можно не передавать)
@@ -482,12 +484,20 @@ class NewsAPIController extends Controller
                     return SupportClass::getResponseWithErrors($newimage);
                 }
 
-                $imagesIds[] = $newimage->getImageId();
+
 
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
+                $imageFILEName = $file->getKey();
 
-                $filename = ImageLoader::formFullImageName('news', $imageFormat, $newId, $newimage->getImageId());
 
+
+                if($imageFILEName == "title"){
+                    $imagesIds[] = $imageFILEName;
+                    $filename = ImageLoader::formFullImageName('news', $imageFormat, $newId, $imageFILEName);
+                } else {
+                    $imagesIds[] = $newimage->getImageId();
+                    $filename = ImageLoader::formFullImageName('news', $imageFormat, $newId, $newimage->getImageId());
+                }
                 $newimage->setImagePath($filename);
 
                 if (!$newimage->update()) {
