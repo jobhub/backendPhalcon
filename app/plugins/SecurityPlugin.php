@@ -281,6 +281,18 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
+
+        $controller = $dispatcher->getControllerName();
+        $action = $dispatcher->getActionName();
+
+        if($this->request->isOptions() && $controller!="errors"){
+            $dispatcher->forward([
+                'controller' => 'errors',
+                'action' => 'show404'
+            ]);
+            return false;
+        }
+
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
         $log = new Logs();
@@ -323,9 +335,6 @@ class SecurityPlugin extends Plugin
         } else {
             $role = $auth['role'];
         }
-
-        $controller = $dispatcher->getControllerName();
-        $action = $dispatcher->getActionName();
 
         $acl = $this->getAcl();
 
