@@ -106,19 +106,28 @@ class ServicesAPIController extends Controller
                 return $response;
             } elseif ($this->request->getPost('typeQuery') == 2) {
 
-
                 if ($this->request->getPost('type') == 'category') {
-                    $categoriesId = $this->request->getPost('categoriesId');
+                    $categoriesId = $this->request->getPost('id');
 
-                    foreach ($categoriesId as $categoryId) {
-                        $childCategories = Categories::findByParentid($categoryId);
+                    if(is_array($categoriesId)) {
+                        $allCategories = [];
+                        foreach ($categoriesId as $categoryId) {
+                            $allCategories[] = $categoryId;
+                            $childCategories = Categories::findByParentid($categoryId);
+                            foreach ($childCategories as $childCategory) {
+                                $allCategories[] = $childCategory->getCategoryId();
+                            }
+                        }
+                    } else{
+                        $allCategories[] = $categoriesId;
+                        $childCategories = Categories::findByParentid($categoriesId);
                         foreach ($childCategories as $childCategory) {
-                            $categoriesId[] = $childCategory->getCategoryId();
+                            $allCategories[] = $childCategory->getCategoryId();
                         }
                     }
 
                     $result = Services::getServicesByElement($this->request->getPost('type'),
-                        $categoriesId,
+                        $allCategories,
                         $this->request->getPost('center'), $this->request->getPost('diagonal'),
                         $this->request->getPost('regionsId'));
 
@@ -139,15 +148,25 @@ class ServicesAPIController extends Controller
 
                 $categoriesId = $this->request->getPost('categoriesId');
 
-                foreach ($categoriesId as $categoryId) {
-                    $childCategories = Categories::findByParentid($categoryId);
+                if(is_array($categoriesId)) {
+                    $allCategories = [];
+                    foreach ($categoriesId as $categoryId) {
+                        $allCategories[] = $categoryId;
+                        $childCategories = Categories::findByParentid($categoryId);
+                        foreach ($childCategories as $childCategory) {
+                            $allCategories[] = $childCategory->getCategoryId();
+                        }
+                    }
+                } else{
+                    $allCategories[] = $categoriesId;
+                    $childCategories = Categories::findByParentid($categoriesId);
                     foreach ($childCategories as $childCategory) {
-                        $categoriesId[] = $childCategory->getCategoryId();
+                        $allCategories[] = $childCategory->getCategoryId();
                     }
                 }
 
                 $result = Services::getServicesByElement('category',
-                    $categoriesId,
+                    $allCategories,
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
 
@@ -157,7 +176,7 @@ class ServicesAPIController extends Controller
                 ]);
                 return $response;
             } elseif ($this->request->getPost('typeQuery') == 4) {
-                $result = Services::getServicesByQuery('',
+                $result = Services::getServicesByQuery($this->request->getPost('userQuery'),
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
                     $this->request->getPost('regionsId'));
 
@@ -1409,6 +1428,7 @@ class ServicesAPIController extends Controller
 
     /**
      * Возвращает все заказы, которые могут быть связаны с данной услугой.
+     * На самом деле нет, конечно же. Логики того, как это будет делаться нет.
      *
      * @method GET
      *

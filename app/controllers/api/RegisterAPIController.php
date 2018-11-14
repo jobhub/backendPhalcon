@@ -145,7 +145,7 @@ class RegisterAPIController extends Controller
      *
      * @method POST
      *
-     * @params (обязательные) firstname, lastname, male, activationCode, login
+     * @params (обязательные) firstname, lastname, male
      * @params (Необязательные) patronymic, birthday, about (много текста о себе),
      * @return string - json array Status
      */
@@ -156,10 +156,9 @@ class RegisterAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $user = Users::findFirst(['userid = :userId: and email = :email:', 'bind' =>
+            $user = Users::findFirst(['userid = :userId:', 'bind' =>
                 [
-                    'userId' => $userId,
-                    'email' => $this->request->getPost('login')
+                    'userId' => $userId
                 ]
             ]);
 
@@ -195,50 +194,7 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            if ($activationCode->getActivation() != $this->request->getPost('activationCode')) {
-                if ($activationCode->getDeactivation() != $this->request->getPost('activationCode')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Неправильный активационный код']
-                        ]
-                    );
-                    return $response;
-                } else {
-                    if ($user->delete() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($user->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    if ($this->session->get('auth') != null) {
-                        $this->SessionAPI->destroySession();
-                    }
-
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_OK
-                        ]
-                    );
-                    return $response;
-                }
-            }
-
             $this->db->begin();
-
-            if(!$activationCode->delete()){
-                $this->db->rollback();
-                return SupportClass::getResponseWithErrors($activationCode);
-            }
 
             $userInfo = new Userinfo();
             $userInfo->setUserId($userId);
@@ -419,10 +375,10 @@ class RegisterAPIController extends Controller
 
             $this->db->begin();
 
-            /*if(!$activationCode->delete()){
+            if(!$activationCode->delete()){
                 $this->db->rollback();
                 return SupportClass::getResponseWithErrors($activationCode);
-            }*/
+            }
 
             $user->setRole(ROLE_USER_DEFECTIVE);
 
@@ -672,23 +628,19 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-
-            SupportClass::writeMessageInLogFile('Создание PHPMailer');
             //Отправляем письмо.
             $mailer = new PHPMailerApp($this->config['mail']);
-
             $newTo = $this->config['mail']['from']['email'];
 
             $res = $mailer->createMessageFromView('emails/hello_world', 'hello_world',
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email'=>$user->getEmail()])
-                ->to($user->getEmail()/*$newTo*/)
+                ->to(/*$user->getEmail()*/$newTo)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 
             if ($res === true) {
-                SupportClass::writeMessageInLogFile('Успешно отправил сообщение');
                 $response->setJsonContent([
                     'status' => STATUS_OK
                 ]);

@@ -25,7 +25,6 @@ class MessagesMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -51,7 +50,6 @@ class MessagesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'date'
                         ]
                     ),
@@ -60,7 +58,6 @@ class MessagesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'useridobject'
                         ]
                     )
@@ -73,22 +70,22 @@ class MessagesMigration_100 extends Migration
                         'foreignkey_messages_users_userIdObject',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['useridobject'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     ),
                     new Reference(
                         'foreignkey_messages_users_userIdSubject',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['useridsubject'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

@@ -24,7 +24,6 @@ class CompaniesmanagersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -33,7 +32,6 @@ class CompaniesmanagersMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'companyid'
                         ]
                     )
@@ -46,22 +44,22 @@ class CompaniesmanagersMigration_100 extends Migration
                         'foreignkey_companiesManagers_companies_companyId',
                         [
                             'referencedTable' => 'companies',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['companyid'],
                             'referencedColumns' => ['companyid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     ),
                     new Reference(
                         'foreignkey_companiesManagers_users_userId',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

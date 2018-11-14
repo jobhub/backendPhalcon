@@ -25,7 +25,6 @@ class CompaniesMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,7 @@ class CompaniesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
-                            'size' => 45,
+                            'size' => 150,
                             'after' => 'companyid'
                         ]
                     ),
@@ -42,8 +41,7 @@ class CompaniesMigration_100 extends Migration
                         'fullname',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'notNull' => true,
-                            'size' => 90,
+                            'size' => 180,
                             'after' => 'name'
                         ]
                     ),
@@ -59,7 +57,6 @@ class CompaniesMigration_100 extends Migration
                         'regionid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'tin'
                         ]
                     ),
@@ -67,7 +64,6 @@ class CompaniesMigration_100 extends Migration
                         'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'regionid'
                         ]
                     ),
@@ -75,7 +71,7 @@ class CompaniesMigration_100 extends Migration
                         'website',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 90,
+                            'size' => 180,
                             'after' => 'userid'
                         ]
                     ),
@@ -83,7 +79,7 @@ class CompaniesMigration_100 extends Migration
                         'email',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 90,
+                            'size' => 180,
                             'after' => 'website'
                         ]
                     ),
@@ -91,7 +87,6 @@ class CompaniesMigration_100 extends Migration
                         'ismaster',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'email'
                         ]
                     ),
@@ -100,7 +95,6 @@ class CompaniesMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'ismaster'
                         ]
                     ),
@@ -108,7 +102,6 @@ class CompaniesMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'deleted'
                         ]
                     ),
@@ -124,7 +117,7 @@ class CompaniesMigration_100 extends Migration
                         'ratingexecutor',
                         [
                             'type' => Column::TYPE_FLOAT,
-                            'default' => "5",
+                            'default' => "2.5",
                             'notNull' => true,
                             'size' => 24,
                             'after' => 'logotype'
@@ -134,7 +127,7 @@ class CompaniesMigration_100 extends Migration
                         'ratingclient',
                         [
                             'type' => Column::TYPE_FLOAT,
-                            'default' => "5",
+                            'default' => "2.5",
                             'notNull' => true,
                             'size' => 24,
                             'after' => 'ratingexecutor'
@@ -151,22 +144,22 @@ class CompaniesMigration_100 extends Migration
                         'foreignkey_companies_regions_regionId',
                         [
                             'referencedTable' => 'regions',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['regionid'],
                             'referencedColumns' => ['regionid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'NO ACTION',
+                            'onDelete' => 'NO ACTION'
                         ]
                     ),
                     new Reference(
                         'foreignkey_companies_users_userId',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'NO ACTION'
                         ]
                     )
                 ],

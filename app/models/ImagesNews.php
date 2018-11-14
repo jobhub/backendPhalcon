@@ -1,5 +1,9 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Regex;
+use Phalcon\Validation\Validator\Callback;
+
 class ImagesNews extends \Phalcon\Mvc\Model
 {
 
@@ -17,7 +21,7 @@ class ImagesNews extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newid;
+    protected $newsid;
 
     /**
      *
@@ -43,12 +47,12 @@ class ImagesNews extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field newid
      *
-     * @param integer $newid
+     * @param integer $newsid
      * @return $this
      */
-    public function setNewId($newid)
+    public function setNewsId($newsid)
     {
-        $this->newid = $newid;
+        $this->newsid = $newsid;
 
         return $this;
     }
@@ -81,9 +85,9 @@ class ImagesNews extends \Phalcon\Mvc\Model
      *
      * @return integer
      */
-    public function getNewId()
+    public function getNewsId()
     {
-        return $this->newid;
+        return $this->newsid;
     }
 
     /**
@@ -106,12 +110,12 @@ class ImagesNews extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'newid',
+            'newsid',
             new Callback(
                 [
                     "message" => "Такая новость не существует",
                     "callback" => function ($image) {
-                        $new = News::findFirstByNewid($image->getNewId());
+                        $new = News::findFirstByNewsid($image->getNewsId());
                         if ($new)
                             return true;
                         return false;

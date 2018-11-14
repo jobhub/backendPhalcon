@@ -51,7 +51,6 @@ class UserssocialMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'after' => 'profile'
                         ]
                     ),
@@ -60,7 +59,6 @@ class UserssocialMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'usersocialid'
                         ]
                     )
@@ -73,11 +71,11 @@ class UserssocialMigration_100 extends Migration
                         'foreignkey_userssocial_users_userid',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

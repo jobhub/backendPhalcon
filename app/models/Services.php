@@ -719,7 +719,7 @@ class Services extends SubjectsWithNotDeleted
         else
             $cl->SetMatchMode(SPH_MATCH_ANY);
 
-        $cl->SetLimits(0, 10000, 15);
+        $cl->SetLimits(0, 10000, 50);
         $cl->SetFieldWeights(['name' => 100, 'description' => 10]);
         $cl->SetRankingMode(SPH_RANK_SPH04);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
@@ -892,7 +892,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 30);
+        $cl->SetLimits(0, 10000, 50);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -1010,7 +1010,7 @@ class Services extends SubjectsWithNotDeleted
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
         $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 30);
+        $cl->SetLimits(0, 10000, 50);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
         if ($regions != null) {
@@ -1080,7 +1080,6 @@ class Services extends SubjectsWithNotDeleted
     public static function getTasksForService($serviceId)
     {
         $db = Phalcon\DI::getDefault()->getDb();
-
         return [];
     }
 

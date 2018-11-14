@@ -24,8 +24,6 @@ class RegionsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),

@@ -25,7 +25,6 @@ class TradepointsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,7 @@ class TradepointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_VARCHAR,
                             'notNull' => true,
-                            'size' => 45,
+                            'size' => 200,
                             'after' => 'pointid'
                         ]
                     ),
@@ -69,7 +68,6 @@ class TradepointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'fax'
                         ]
                     ),
@@ -93,7 +91,6 @@ class TradepointsMigration_100 extends Migration
                         'usermanager',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'email'
                         ]
                     ),
@@ -101,7 +98,7 @@ class TradepointsMigration_100 extends Migration
                         'website',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 90,
+                            'size' => 180,
                             'after' => 'usermanager'
                         ]
                     ),
@@ -118,7 +115,6 @@ class TradepointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'address'
                         ]
                     ),
@@ -126,7 +122,6 @@ class TradepointsMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'deleted'
                         ]
                     ),
@@ -136,7 +131,6 @@ class TradepointsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'default' => "1",
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'deletedcascade'
                         ]
                     )
@@ -150,11 +144,11 @@ class TradepointsMigration_100 extends Migration
                         'foreignkey_tradePoints_userManager',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['usermanager'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'NO ACTION',
+                            'onDelete' => 'NO ACTION'
                         ]
                     )
                 ],

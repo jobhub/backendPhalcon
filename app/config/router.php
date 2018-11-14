@@ -10,7 +10,6 @@ $router->add("/:controller/:action/:params",
         "params" => 3
     )
 )->convert('controller', function($controller) {
-
     return SupportClass::transformControllerName($controller);
 });
 

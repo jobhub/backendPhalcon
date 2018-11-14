@@ -24,7 +24,6 @@ class PhonespointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -33,7 +32,6 @@ class PhonespointsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'phoneid'
                         ]
                     )
@@ -47,22 +45,22 @@ class PhonespointsMigration_100 extends Migration
                         'foreignkey_phonesPoints_phones_phoneId',
                         [
                             'referencedTable' => 'phones',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['phoneid'],
                             'referencedColumns' => ['phoneid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'RESTRICT'
                         ]
                     ),
                     new Reference(
                         'foreignkey_phonesPoints_tradePoints_pointId',
                         [
                             'referencedTable' => 'tradePoints',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['pointid'],
                             'referencedColumns' => ['pointid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     )
                 ],

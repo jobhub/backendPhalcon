@@ -25,7 +25,6 @@ class RequestsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -34,7 +33,6 @@ class RequestsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'requestid'
                         ]
                     ),
@@ -43,7 +41,6 @@ class RequestsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'subjectid'
                         ]
                     ),
@@ -60,7 +57,6 @@ class RequestsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'description'
                         ]
                     ),
@@ -70,7 +66,6 @@ class RequestsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'default' => "3",
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'deleted'
                         ]
                     ),
@@ -87,7 +82,6 @@ class RequestsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
-                            'size' => 32,
                             'after' => 'dateend'
                         ]
                     ),
@@ -95,7 +89,6 @@ class RequestsMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'subjecttype'
                         ]
                     )
@@ -108,22 +101,22 @@ class RequestsMigration_100 extends Migration
                         'foreignkey_requests_services_serviceId',
                         [
                             'referencedTable' => 'services',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['serviceid'],
                             'referencedColumns' => ['serviceid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'CASCADE'
                         ]
                     ),
                     new Reference(
                         'foreignkey_requests_statuses_status',
                         [
                             'referencedTable' => 'statuses',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['status'],
                             'referencedColumns' => ['statusid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'NO ACTION'
                         ]
                     )
                 ],

@@ -3,6 +3,10 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
+use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
+use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
+
+
 class News extends SubjectsWithNotDeleted
 {
 
@@ -13,33 +17,42 @@ class News extends SubjectsWithNotDeleted
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newid;
+    protected $newsid;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $date;
+    protected $publishdate;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $newtext;
+    protected $newstext;
 
-    const publicColumns = ['newid', 'date', 'newtext'];
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $title;
+
+    const publicColumns = ['newsid', 'publishdate', 'newstext', 'title'];
+
+    const publicColumnsInStr = 'newsid, publishdate, newstext, title';
 
     /**
      * Method to set the value of field newId
      *
-     * @param integer $newid
+     * @param integer $newsid
      * @return $this
      */
-    public function setNewId($newid)
+    public function setNewsId($newsid)
     {
-        $this->newid = $newid;
+        $this->newsid = $newsid;
 
         return $this;
     }
@@ -47,12 +60,12 @@ class News extends SubjectsWithNotDeleted
     /**
      * Method to set the value of field date
      *
-     * @param string $date
+     * @param string $publishdate
      * @return $this
      */
-    public function setDate($date)
+    public function setPublishDate($publishdate)
     {
-        $this->date = $date;
+        $this->publishdate = $publishdate;
 
         return $this;
     }
@@ -60,12 +73,12 @@ class News extends SubjectsWithNotDeleted
     /**
      * Method to set the value of field newText
      *
-     * @param string $newtext
+     * @param string $newstext
      * @return $this
      */
-    public function setNewText($newtext)
+    public function setNewsText($newstext)
     {
-        $this->newtext = $newtext;
+        $this->newstext = $newstext;
 
         return $this;
     }
@@ -75,9 +88,9 @@ class News extends SubjectsWithNotDeleted
      *
      * @return integer
      */
-    public function getNewId()
+    public function getNewsId()
     {
-        return $this->newid;
+        return $this->newsid;
     }
 
     /**
@@ -85,9 +98,9 @@ class News extends SubjectsWithNotDeleted
      *
      * @return string
      */
-    public function getDate()
+    public function getPublishDate()
     {
-        return $this->date;
+        return $this->publishdate;
     }
 
     /**
@@ -95,9 +108,25 @@ class News extends SubjectsWithNotDeleted
      *
      * @return string
      */
-    public function getNewText()
+    public function getNewsText()
     {
-        return $this->newtext;
+        return $this->newstext;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -108,7 +137,6 @@ class News extends SubjectsWithNotDeleted
     public function validation()
     {
         $validator = new Validation();
-
 
 
         return $this->validate($validator) && parent::validation();
@@ -143,6 +171,158 @@ class News extends SubjectsWithNotDeleted
         return $result;
     }
 
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
+    {
+        if ($delete) {
+            try {
+                // Создаем менеджера транзакций
+                $manager = new TxManager();
+                // Запрос транзакции
+                $transaction = $manager->get();
+                $this->setTransaction($transaction);
+                $images = ImagesNews::findByNewsid($this->getNewsId());
+
+                foreach ($images as $image) {
+                    $image->setTransaction($transaction);
+                    if (!$image->delete()) {
+                        $transaction->rollback(
+                            "Не удалось удалить изображение");
+                        foreach ($image->getMessages() as $message) {
+                            $this->appendMessage($message->getMessage());
+                        }
+                        return false;
+                    };
+                }
+
+
+                $transaction->commit();
+            } catch (TxFailed $e) {
+                $message = new Message(
+                    $e->getMessage()
+                );
+
+                $this->appendMessage($message);
+                return false;
+            }
+        }
+        $result = parent::delete($delete, $deletedCascade, $data, $whiteList);
+
+        return $result;
+    }
+
+    public static function getNewsForCurrentUser($userId)
+    {
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $str = "SELECT ";
+        foreach (News::publicColumns as $column) {
+            $str .= $column . ", ";
+        }
+
+        $str .= "subjectid, subjecttype";
+
+        $str .= " FROM ((SELECT * FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
+                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
+                    WHERE favc.userid = :userId)
+                    UNION
+                    (SELECT * FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
+                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
+                    WHERE favu.usersubject = :userId)) as foo
+                    ORDER BY foo.publishdate desc";
+
+        $query = $db->prepare($str);
+        $result = $query->execute([
+            'userId' => $userId,
+        ]);
+
+        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return News::handleNewsFromArray($news);
+    }
+
+    public static function getNewsForSubject($subjectId, $subjecttype)
+    {
+        $news = News::findBySubject($subjectId, $subjecttype, 'News.publishdate DESC',
+            News::publicColumnsInStr . ', subjectid, subjecttype');
+
+        $news = json_encode($news);
+        $news = json_decode($news, true);
+
+        return News::handleNewsFromArray($news);
+    }
+
+    private static function handleNewsFromArray($news)
+    {
+        $newsWithAll = [];
+        foreach ($news as $newsElement) {
+            $newsWithAllElement = $newsElement;
+            if ($newsElement['subjecttype'] == 0) {
+                $user = Userinfo::findFirst(
+                    ['conditions' => 'userid = :subjectid:',
+                        'columns' => Userinfo::publicColumnsInStr,
+                        'bind' => ['subjectid' => $newsElement['subjectid']]]);
+
+                $user = json_encode($user);
+                $user = json_decode($user, true);
+                $newsWithAllElement['publisherUser'] = $user;
+                $phones = PhonesUserinfo::getUserPhones($newsElement['subjectid']);
+                //$newsWithAllElement['publisherUser']->setPhones($phones);
+                $newsWithAllElement['publisherUser']['phones'] = $phones;
+            } else {
+                $company = Companies::findFirst(
+                    ['conditions' => 'companyid = :subjectid:',
+                        'columns' => Userinfo::publicColumnsInStr,
+                        'bind' => ['subjectid' => $newsElement['subjectid']]]);
+
+                $company = json_encode($company);
+                $company = json_decode($company, true);
+
+                $newsWithAllElement['publisherCompany'] = $company;
+                $phones = PhonesCompanies::getCompanyPhones($newsWithAllElement['publisherCompany']->getCompanyId());
+                $newsWithAllElement['publisherCompany']['phones'] = $phones;
+            }
+
+            $newsWithAllElement['stats'] = new Stats();
+
+            $newsWithAllElement['liked'] = rand() % 2 == 0 ? true : false;
+
+            $imagesNews = ImagesNews::findByNewsid($newsWithAllElement['newsid']);
+            $newsWithAllElement['images'] = [];
+            foreach ($imagesNews as $image) {
+                $newsWithAllElement['images'][] = $image->getImagePath();
+            }
+            $comments = [];
+            for ($i = 0; $i < $newsWithAllElement['stats']->getComments(); $i++) {
+                $type = rand(0, 2);
+                if ($type == 0) {
+                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать трам парам там там там пам',
+                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
+                    ];
+                } else if ($type == 1) {
+                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать НУ ПРЯМ ХОЧУ НЕ МОГУ',
+                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
+                    ];
+                } else if ($type == 2) {
+                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать ОТПУСТИТЕ МЕНЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ',
+                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
+                    ];
+                }
+
+                $comment['publisherUser'] = ['userid' => '9', 'email' => 'eenotova@mail.ru',
+                    'phone' => '+7 954 352-65-75', 'firstname' => 'Екатерина',
+                    'lastname' => 'Енотова', 'patronymic' => "Васильевна",
+                    'lasttime' => '2019-09-08 16:00:30+00', 'male' => '0',
+                    'birthday' => '1997-05-25 00:00:00+00', 'pathtophoto' => 'images/profile/user/1.jpg',
+                    'status' => null];
+
+                $comments[] = $comment;
+            }
+
+            $newsWithAllElement['comments'] = $comments;
+            $newsWithAll[] = $newsWithAllElement;
+        }
+        return $newsWithAll;
+    }
 
     private function sendPush($new)
     {
@@ -185,7 +365,7 @@ class News extends SubjectsWithNotDeleted
 
             $offer = Offers::findFirst("userId = '$userId' and auctionId = '$auctionId'");
 
-            if(!$offer)
+            if (!$offer)
                 $offer = null;
 
             $auctionAndTask = ['tender' => $tender, 'tasks' => $tender->tasks, 'Userinfo' => $user, 'offer' => $offer];
@@ -208,18 +388,18 @@ class News extends SubjectsWithNotDeleted
             $task = $offer->auctions->tasks;
             $userinfo = $task->Users->userinfo;
 
-            $offerWithTask = ['Offer' => $offer,'Tasks' => $task, 'Userinfo' => $userinfo, 'Tender'=> $auction];
+            $offerWithTask = ['Offer' => $offer, 'Tasks' => $task, 'Userinfo' => $userinfo, 'Tender' => $auction];
             $listNew = ["news" => $new, "offer" => $offerWithTask];
 
 
-        } else if($new->getNewType() == 2) {
+        } else if ($new->getNewType() == 2) {
             $review = Reviews::findFirstByIdReview($new->getIdentify());
 
             $userId = $review->getUserIdObject();
 
             $favUsers = Favoriteusers::findByUserObject($userId);
 
-            foreach($favUsers as $favUser){
+            foreach ($favUsers as $favUser) {
                 $userIds[] = $favUser->getUserSubject();
             }
 
@@ -229,7 +409,7 @@ class News extends SubjectsWithNotDeleted
             $listNew = ["news" => $new, "review" => $reviewAndUserinfo];
         }
 
-        $this->sendPushToUser($new,$userIds, $listNew);
+        $this->sendPushToUser($new, $userIds, $listNew);
     }
 
 

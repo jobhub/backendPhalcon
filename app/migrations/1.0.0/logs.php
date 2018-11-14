@@ -25,7 +25,6 @@ class LogsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -33,7 +32,6 @@ class LogsMigration_100 extends Migration
                         'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'logid'
                         ]
                     ),
@@ -41,7 +39,7 @@ class LogsMigration_100 extends Migration
                         'controller',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 30,
+                            'size' => 60,
                             'after' => 'userid'
                         ]
                     ),
@@ -49,7 +47,7 @@ class LogsMigration_100 extends Migration
                         'action',
                         [
                             'type' => Column::TYPE_VARCHAR,
-                            'size' => 30,
+                            'size' => 60,
                             'after' => 'controller'
                         ]
                     ),

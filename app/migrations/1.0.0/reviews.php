@@ -25,7 +25,6 @@ class ReviewsMigration_100 extends Migration
                             'type' => Column::TYPE_INTEGER,
                             'notNull' => true,
                             'autoIncrement' => true,
-                            'size' => 32,
                             'first' => true
                         ]
                     ),
@@ -50,8 +49,6 @@ class ReviewsMigration_100 extends Migration
                         'rating',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'notNull' => true,
-                            'size' => 32,
                             'after' => 'reviewdate'
                         ]
                     ),
@@ -60,7 +57,6 @@ class ReviewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'rating'
                         ]
                     ),
@@ -69,7 +65,6 @@ class ReviewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'default' => "false",
-                            'size' => 1,
                             'after' => 'fake'
                         ]
                     ),
@@ -77,7 +72,6 @@ class ReviewsMigration_100 extends Migration
                         'deletedcascade',
                         [
                             'type' => Column::TYPE_BOOLEAN,
-                            'size' => 1,
                             'after' => 'deleted'
                         ]
                     ),
@@ -85,7 +79,6 @@ class ReviewsMigration_100 extends Migration
                         'binderid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'deletedcascade'
                         ]
                     ),
@@ -94,7 +87,6 @@ class ReviewsMigration_100 extends Migration
                         [
                             'type' => Column::TYPE_BOOLEAN,
                             'notNull' => true,
-                            'size' => 1,
                             'after' => 'binderid'
                         ]
                     ),
@@ -102,7 +94,6 @@ class ReviewsMigration_100 extends Migration
                         'subjectid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'executor'
                         ]
                     ),
@@ -110,7 +101,6 @@ class ReviewsMigration_100 extends Migration
                         'subjecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'subjectid'
                         ]
                     ),
@@ -118,7 +108,6 @@ class ReviewsMigration_100 extends Migration
                         'objectid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'subjecttype'
                         ]
                     ),
@@ -126,7 +115,6 @@ class ReviewsMigration_100 extends Migration
                         'objecttype',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'objectid'
                         ]
                     ),
@@ -134,7 +122,6 @@ class ReviewsMigration_100 extends Migration
                         'userid',
                         [
                             'type' => Column::TYPE_INTEGER,
-                            'size' => 32,
                             'after' => 'objecttype'
                         ]
                     ),
@@ -144,6 +131,14 @@ class ReviewsMigration_100 extends Migration
                             'type' => Column::TYPE_VARCHAR,
                             'size' => 1,
                             'after' => 'userid'
+                        ]
+                    ),
+                    new Column(
+                        'fakename',
+                        [
+                            'type' => Column::TYPE_VARCHAR,
+                            'size' => 180,
+                            'after' => 'bindertype'
                         ]
                     )
                 ],
@@ -155,11 +150,11 @@ class ReviewsMigration_100 extends Migration
                         'foreignkey_reviews_users_userid',
                         [
                             'referencedTable' => 'users',
-                            'referencedSchema' => 'service_services',
+                            'referencedSchema' => 'public',
                             'columns' => ['userid'],
                             'referencedColumns' => ['userid'],
-                            'onUpdate' => '',
-                            'onDelete' => ''
+                            'onUpdate' => 'CASCADE',
+                            'onDelete' => 'SET NULL'
                         ]
                     )
                 ],
