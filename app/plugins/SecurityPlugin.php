@@ -59,7 +59,7 @@ class SecurityPlugin extends Plugin
             $privateResources = [
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
-                'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews',
+                'NewsAPI' => ['getNews', 'addNews', 'deleteNews', 'editNews', 'getOwnNews', 'getSubjectNews',
                     'addImages'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
@@ -281,6 +281,18 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
+
+        $controller = $dispatcher->getControllerName();
+        $action = $dispatcher->getActionName();
+
+        if($this->request->isOptions() && $controller!="errors"){
+            $dispatcher->forward([
+                'controller' => 'errors',
+                'action' => 'show404'
+            ]);
+            return false;
+        }
+
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
         $log = new Logs();
@@ -323,9 +335,6 @@ class SecurityPlugin extends Plugin
         } else {
             $role = $auth['role'];
         }
-
-        $controller = $dispatcher->getControllerName();
-        $action = $dispatcher->getActionName();
 
         $acl = $this->getAcl();
 
