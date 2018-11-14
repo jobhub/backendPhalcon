@@ -70,7 +70,7 @@ class NewsAPIController extends Controller
      * @params файлы изображений.
      * @return string - json array объекта Status
      */
-    public function addNewAction()
+    public function addNewsAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
@@ -157,7 +157,7 @@ class NewsAPIController extends Controller
      *
      * @return string - json array объекта Status
      */
-    public function deleteNewAction($newsId)
+    public function deleteNewsAction($newsId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
@@ -223,7 +223,7 @@ class NewsAPIController extends Controller
      *
      * @return string - json array объекта Status
      */
-    public function editNewAction()
+    public function editNewsAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');

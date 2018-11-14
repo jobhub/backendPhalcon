@@ -59,7 +59,7 @@ class SecurityPlugin extends Plugin
             $privateResources = [
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
-                'NewsAPI' => ['getNews', 'addNew', 'deleteNew', 'editNew', 'getOwnNews', 'getSubjectNews',
+                'NewsAPI' => ['getNews', 'addNews', 'deleteNews', 'editNews', 'getOwnNews', 'getSubjectNews',
                     'addImages'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
