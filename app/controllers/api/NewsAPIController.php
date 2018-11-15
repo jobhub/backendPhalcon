@@ -137,7 +137,7 @@ class NewsAPIController extends Controller
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
-                    'newId' => $new->getNewsId()
+                    'newsId' => $new->getNewsId()
                 ]
             );
             return $response;

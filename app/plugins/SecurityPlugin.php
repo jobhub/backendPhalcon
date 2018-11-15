@@ -281,7 +281,6 @@ class SecurityPlugin extends Plugin
      */
     public function beforeExecuteRoute(Event $event, Dispatcher $dispatcher)
     {
-
         $controller = $dispatcher->getControllerName();
         $action = $dispatcher->getActionName();
 
@@ -310,6 +309,7 @@ class SecurityPlugin extends Plugin
                 $this->flash->error((string)$message);
             }
         }
+
         if (!$this->notAPIController($dispatcher->getControllerName())) {
             if ($this->session->get("auth") != null) {
                 $tokenRecieved = SecurityPlugin::getTokenFromHeader();
@@ -319,7 +319,7 @@ class SecurityPlugin extends Plugin
 
                 if (!$token) {
                     $this->session->remove('auth');
-                    $this->session->destroy();
+                    //$this->session->destroy();
                 } else {
                     if (strtotime($token->getLifetime()) <= time()) {
                         $this->session->remove('auth');

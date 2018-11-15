@@ -152,7 +152,7 @@ class SessionAPIController extends Controller
      */
     public function indexAction()
     {
-        if ($this->request->isPost() || $this->request->isOptions()) {
+        if ($this->request->isPost()) {
             $login = $this->request->getPost("login");
             $password = $this->request->getPost("password");
 
