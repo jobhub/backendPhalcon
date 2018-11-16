@@ -74,7 +74,7 @@ class SecurityPlugin extends Plugin
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
                     'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest',
-                    'rejectRequest', 'editImageService', 'addImages', 'deleteImage'],
+                    'rejectRequest', 'editImageService', 'addImages', 'deleteImage', 'getOwnServices'],
                 'RequestsAPI' => ['addRequest', 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
                     'confirmPerformanceRequest'],
 

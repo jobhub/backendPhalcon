@@ -37,7 +37,7 @@ class ImageLoader
             SupportClass::writeMessageInLogFile('Нужной директории нет');
             $result = mkdir(IMAGE_PATH . $subpath . '/' . $subdir);
             SupportClass::writeMessageInLogFile('Результат создания директории '.IMAGE_PATH . $subpath . '/'. $subdir
-            .' = '.$result);
+                    .' = '.$result);
             $r = is_dir(IMAGE_PATH . $subpath . '/' . $subdir);
         }
 
@@ -104,7 +104,7 @@ class ImageLoader
 
     public static function formFullImageName($subpath, $format, $id, $imageId)
     {
-        return IMAGE_PATH_TRUNCATED. $subpath . '/'.$id.'/' .ImageLoader::formImageName($format,$imageId);
+        return IMAGE_PATH_TRUNCATED . $subpath . '/'.$id.'/' .ImageLoader::formImageName($format,$imageId);
     }
 
     public static function delete($imageName){

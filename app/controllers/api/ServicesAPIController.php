@@ -37,7 +37,41 @@ class ServicesAPIController extends Controller
 
             throw $exception;
         }
+    }
 
+    /**
+     * Возвращает все услуги данного юзера (или его компании)
+     *
+     * @method GET
+     *
+     * @params $companyId - если не указан, то будут возвращены
+     *
+     * @return string - json array услуг (Services).
+     */
+    public function getOwnServicesAction($companyId = null)
+    {
+        if ($this->request->isGet()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            if($companyId == null){
+                $services = Services::findBySubject($userId, 0);
+            } else{
+                if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$companyId,1,'getServices')){
+                    $response->setJsonContent([
+                        'status' => STATUS_WRONG,
+                        'errors' => ['permission denied']
+                    ]);
+                    return $response;
+                }
+                $services = Services::findBySubject($companyId, 1);
+            }
+            $response->setJsonContent($services);
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
     }
 
     /**
@@ -448,8 +482,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
-    public
-    function addServiceAction()
+    public function addServiceAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();
@@ -650,8 +683,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function addImagesAction()
+    public function addImagesAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -702,8 +734,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function deleteImageAction($imageId)
+    public function deleteImageAction($imageId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
 
@@ -784,8 +815,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function linkServiceWithPointAction()
+    public function linkServiceWithPointAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -858,8 +888,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function unlinkServiceAndPointAction($serviceId, $pointId)
+    public function unlinkServiceAndPointAction($serviceId, $pointId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
@@ -938,8 +967,7 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public
-    function confirmRequestAction()
+    public function confirmRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1009,8 +1037,7 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public
-    function performRequestAction()
+    public function performRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
