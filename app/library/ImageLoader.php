@@ -8,9 +8,9 @@
 
 class ImageLoader
 {
-    public const RESULT_ERROR_FORMAT_NOT_SUPPORTED = 1;
-    public const RESULT_ERROR_NOT_SAVED = 2;
-    public const RESULT_ALL_OK = 0;
+    const RESULT_ERROR_FORMAT_NOT_SUPPORTED = 1;
+    const RESULT_ERROR_NOT_SAVED = 2;
+    const RESULT_ALL_OK = 0;
 
     public static function load($subpath, $tempname, $imagename,$subdir, $width)
     {
