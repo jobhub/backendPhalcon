@@ -274,7 +274,7 @@ class SecurityPlugin extends Plugin
 
     /**
      * This action is executed before execute any action in the application
-     *
+     *S
      * @param Event $event
      * @param Dispatcher $dispatcher
      * @return bool

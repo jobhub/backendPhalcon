@@ -27,11 +27,10 @@ class FavouriteUsersAPIController extends Controller
             $userIdSubject = $auth['id'];
             $userIdObject = $this->request->getPost('userId');
 
-            $fav = Favoriteusers::findByIds($userIdObject,$userIdSubject);
+            $fav = FavoriteUsers::findByIds($userIdObject,$userIdSubject);
 
             if(!$fav){
-
-                $fav = new Favoriteusers();
+                $fav = new FavoriteUsers();
                 $fav->setUserObject($userIdObject);
                 $fav->setUserSubject($userIdSubject);
 

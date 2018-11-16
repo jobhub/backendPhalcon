@@ -271,14 +271,14 @@ class News extends SubjectsWithNotDeleted
             } else {
                 $company = Companies::findFirst(
                     ['conditions' => 'companyid = :subjectid:',
-                        'columns' => Userinfo::publicColumnsInStr,
+                        'columns' => Companies::publicColumnsInStr,
                         'bind' => ['subjectid' => $newsElement['subjectid']]]);
 
                 $company = json_encode($company);
                 $company = json_decode($company, true);
 
                 $newsWithAllElement['publisherCompany'] = $company;
-                $phones = PhonesCompanies::getCompanyPhones($newsWithAllElement['publisherCompany']->getCompanyId());
+                $phones = PhonesCompanies::getCompanyPhones($newsWithAllElement['publisherCompany']['companyid']);
                 $newsWithAllElement['publisherCompany']['phones'] = $phones;
             }
 
