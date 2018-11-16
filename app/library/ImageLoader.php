@@ -32,8 +32,12 @@ class ImageLoader
         if($width!= null)
             $image->resizeToWidth($width);
 
+        SupportClass::writeMessageInLogFile('Проверка на существовании директории '.IMAGE_PATH . $subpath . '/'. $subdir);
         if(!is_dir(IMAGE_PATH . $subpath . '/'. $subdir)) {
+            SupportClass::writeMessageInLogFile('Нужной директории нет');
             $result = mkdir(IMAGE_PATH . $subpath . '/' . $subdir);
+            SupportClass::writeMessageInLogFile('Результат создания директории '.IMAGE_PATH . $subpath . '/'. $subdir
+            .' = '.$result);
             $r = is_dir(IMAGE_PATH . $subpath . '/' . $subdir);
         }
 
