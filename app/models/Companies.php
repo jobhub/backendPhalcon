@@ -96,10 +96,10 @@ class Companies extends NotDeletedModelWithCascade
     protected $description;
 
      const publicColumns = ['companyid', 'name', 'fullname', 'tin',
-        'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient', 'description'];
+        'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient'];
 
      const publicColumnsInStr = 'companyid, name, fullname, tin,
-        regionid, userid, website, email, logotype, ratingexecutor, ratingclient, description';
+        regionid, userid, website, email, logotype, ratingexecutor, ratingclient';
 
     /**
      * Method to set the value of field companyId

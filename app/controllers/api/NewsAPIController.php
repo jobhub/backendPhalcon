@@ -64,7 +64,7 @@ class NewsAPIController extends Controller
      *
      * @method POST
      *
-     * @params int subjectType, int subjectId (если subjectType = 0 можно не передавать)
+     * @params int companyId (если не передать, то от имени юзера)
      * @params string newsText
      * @params string title
      * @params файлы изображений.
@@ -79,13 +79,13 @@ class NewsAPIController extends Controller
 
             $new = new News();
             //проверки
-            if ($this->request->getPost('subjectType') == 0 || $this->request->getPost('subjectType') == null) {
+            if ($this->request->getPost('companyId') == null) {
                 //Значит все просто
                 $new->setSubjectId($userId);
                 $new->setSubjectType(0);
-            } else if ($this->request->getPost('subjectType') == 1) {
+            } else {
 
-                if (!Companies::checkUserHavePermission($userId, $this->request->getPost('subjectId'), 'addNew')) {
+                if (!Companies::checkUserHavePermission($userId, $this->request->getPost('companyId'), 'addNew')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -94,9 +94,9 @@ class NewsAPIController extends Controller
                     );
                     return $response;
                 }
-                $company = Companies::findFirstByCompanyid($this->request->getPost('subjectId'));
+                $company = Companies::findFirstByCompanyid($this->request->getPost('companyId'));
                 $new->setSubjectId($company->getCompanyId());
-                $new->setSubjectType($this->request->getPost('subjectType'));
+                $new->setSubjectType(1);
             }
 
             $new->setPublishDate(date('Y-m-d H:i:s'));
@@ -137,7 +137,7 @@ class NewsAPIController extends Controller
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
-                    'newId' => $new->getNewsId()
+                    'newsId' => $new->getNewsId()
                 ]
             );
             return $response;

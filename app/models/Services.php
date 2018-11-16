@@ -356,7 +356,6 @@ class Services extends SubjectsWithNotDeleted
                     "message" => "Для услуги должен быть указан регион",
                     "callback" => function ($service) {
                         $region = Regions::findFirstByRegionid($service->getRegionId());
-
                         if ($region)
                             return true;
                         return false;
