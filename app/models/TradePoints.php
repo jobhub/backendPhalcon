@@ -80,8 +80,15 @@ class TradePoints extends SubjectsWithNotDeleted
      */
     protected $address;
 
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $positionvariable;
+
     const publicColumns = ['pointid','name', 'longitude', 'latitude', 'fax', 'time',
-        'email', 'usermanager', 'website', 'address'];
+        'email', 'usermanager', 'website', 'address', 'positionvariable'];
 
     /**
      * Method to set the value of field pointId
@@ -360,7 +367,7 @@ class TradePoints extends SubjectsWithNotDeleted
             );
         }
 
-        if($this->getSubjectType()==0){
+        if($this->getSubjectType()==0 && $this->getPointId() == null){
             $validator->add(
                 'subjectid',
                 new Callback(
