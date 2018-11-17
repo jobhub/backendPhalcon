@@ -360,6 +360,23 @@ class TradePoints extends SubjectsWithNotDeleted
             );
         }
 
+        if($this->getSubjectType()==0){
+            $validator->add(
+                'subjectid',
+                new Callback(
+                    [
+                        "message" => "Нельзя добавить больше одной точки оказания услуг для пользователя",
+                        "callback" => function ($tradePoint) {
+                            $tradePoint = TradePoints::findBySubject($tradePoint->getSubjectId(), $tradePoint->getSubjectType());
+                            if (count($tradePoint)==0)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
         return $this->validate($validator) && parent::validation();
     }
 
