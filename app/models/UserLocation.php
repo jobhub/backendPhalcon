@@ -284,6 +284,84 @@ class UserLocation extends \Phalcon\Mvc\Model
         return $result;
     }
 
+    public static function findUsersByQueryWithFilters($query, $longitudeRH, $latitudeRH,
+                                            $longitudeLB, $latitudeLB,$ageMin = null, $ageMax = null,
+                                                       $male = null, $hasPhoto = null)
+    {
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $query = str_replace('!', '', $query);
+        $query = str_replace('|', '', $query);
+        $query = str_replace('&', '', $query);
+        $ress = explode(' ', $query);
+        $res2 = [];
+        foreach ($ress as $res) {
+            if (trim($res) != "")
+                $res2[] = trim($res);
+        }
+
+        $str = implode(' ', $res2);
+
+        $sqlQuery = "select userid, email, phone,
+    firstname,lastname, patronymic, longitude, latitude, lasttime,
+    male, birthday,pathtophoto,status from get_users_for_search_like_2(:str,:longituderh,
+            :latituderh, :longitudelb, :latitudelb) 
+            where lasttime > :lasttime";
+
+        $params = [
+            'str' => $str,
+            'longituderh' => $longitudeRH,
+            'latituderh' => $latitudeRH,
+            'longitudelb' => $longitudeLB,
+            'latitudelb' => $latitudeLB,
+            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
+        ];
+        if($ageMin!=null){
+            $dateMin = date('Y-m-d H:i:s', mktime(date('H'),date('i'),date('s'),
+                date('m'),date('d'),date('Y') - $ageMin));
+            $sqlQuery.= " and birthday >= :dateMin";
+            $params['dateMin'] = $dateMin;
+        }
+
+        if($ageMax!=null){
+            $dateMax = date('Y-m-d H:i:s', mktime(date('H'),date('i'),date('s'),
+                date('m'),date('d'),date('Y') - $ageMax));
+            $sqlQuery.= " and birthday <= :dateMax";
+            $params['dateMax'] = $dateMax;
+        }
+
+        if($male!=null){
+            $sqlQuery.= " and male = :male";
+            $params['male'] = $male;
+        }
+
+        if($hasPhoto!=null){
+            if($hasPhoto)
+                $sqlQuery.= " and not (pathtophoto is null)";
+            else{
+                $sqlQuery.= " and (pathtophoto is null)";
+            }
+        }
+
+        $sqlQuery.=" LIMIT 50";
+
+        $query = $db->prepare($sqlQuery);
+
+        $query->execute($params);
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $str = var_export($result, true);
+        return $result;
+    }
+
+    function calculate_age($birthday) {
+        $birthday_timestamp = strtotime($birthday);
+        $age = date('Y') - date('Y', $birthday_timestamp);
+        if (date('md', $birthday_timestamp) > date('md')) {
+            $age--;
+        }
+        return $age;
+    }
+
     public static function getAutoComplete($query, $longitudeRH, $latitudeRH,
                                            $longitudeLB, $latitudeLB)
     {
