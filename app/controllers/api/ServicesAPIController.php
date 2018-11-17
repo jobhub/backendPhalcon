@@ -219,23 +219,36 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
-            } elseif ($_GET['typeQuery'] == 5) {
-                $result = Services::getServicesByQuery('',
-                    null, null,
-                    null, true);
+            } elseif($this->request->getPost('typeQuery') == 5){
 
-                $file = fopen(BASE_PATH . '/public/json_array.txt', 'w');
+                $categoriesId = $this->request->getPost('categoriesId');
 
-                $str = json_encode(['services' => $result, 'status' => STATUS_OK], JSON_UNESCAPED_UNICODE);
+                if(is_array($categoriesId)) {
+                    $allCategories = [];
+                    foreach ($categoriesId as $categoryId) {
+                        $allCategories[] = $categoryId;
+                        $childCategories = Categories::findByParentid($categoryId);
+                        foreach ($childCategories as $childCategory) {
+                            $allCategories[] = $childCategory->getCategoryId();
+                        }
+                    }
+                } else{
+                    $allCategories[] = $categoriesId;
+                    $childCategories = Categories::findByParentid($categoriesId);
+                    foreach ($childCategories as $childCategory) {
+                        $allCategories[] = $childCategory->getCategoryId();
+                    }
+                }
 
-                /*fwrite($file,$str);
-                //echo json_encode($result);
-                fflush($file);
-                fclose($file);*/
-
-                echo $str;
-
-                exit;
+                $result = Services::getServicesWithFilters($this->request->getPost('userQuery'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'),$categoriesId,$this->request->getPost('priceMin'),
+                    $this->request->getPost('priceMax'),$this->request->getPost('ratingMin'));
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
             }
 
             //$result = Services::getServices($this->request->getPost('categoriesId'));

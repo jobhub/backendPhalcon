@@ -156,7 +156,7 @@ class SecurityPlugin extends Plugin
                 'UserinfoAPI' => ['getUserinfo'],
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
-                    'getAutoCompleteForSearchServicesAndUsers'],
+                    'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],
                 'RegisterAPI' => ['index', 'deactivateLink', 'activateLink'],
             ];
 
@@ -284,7 +284,11 @@ class SecurityPlugin extends Plugin
         $controller = $dispatcher->getControllerName();
         $action = $dispatcher->getActionName();
 
+        SupportClass::writeMessageInLogFile('Контроллер: '. $controller.
+        ' action: '. $action);
+
         if($this->request->isOptions() && $controller!="errors"){
+            SupportClass::writeMessageInLogFile('Определил запрос, как Options');
             $dispatcher->forward([
                 'controller' => 'errors',
                 'action' => 'show404'
@@ -294,6 +298,9 @@ class SecurityPlugin extends Plugin
 
         $this->convertRequestBody();
         $auth = $this->session->get('auth');
+
+
+
         $log = new Logs();
         if ($this->session->get("auth") != null) {
             $auth = $this->session->get("auth");
@@ -312,16 +319,20 @@ class SecurityPlugin extends Plugin
 
         if (!$this->notAPIController($dispatcher->getControllerName())) {
             if ($this->session->get("auth") != null) {
+                SupportClass::writeMessageInLogFile('Сессия есть и закреплена за юзером '.$this->session->get("auth")['id']);
                 $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+                SupportClass::writeMessageInLogFile('Токен из заголовка '.$tokenRecieved);
+
                 $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
                     'bind' => ['userId' => $auth['id'],
                         'token' => hash('sha256', $tokenRecieved)]]);
 
                 if (!$token) {
                     $this->session->remove('auth');
-                    //$this->session->destroy();
+                    SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
                 } else {
                     if (strtotime($token->getLifetime()) <= time()) {
+                        SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
                         $this->session->remove('auth');
                         $this->session->destroy();
                         $token->delete();
@@ -331,9 +342,11 @@ class SecurityPlugin extends Plugin
         }
 
         if (!$this->session->get('auth')) {
+            SupportClass::writeMessageInLogFile('Сессии нет или же переменной в сессии нет. Роль гостя');
             $role = ROLE_GUEST;
         } else {
-            $role = $auth['role'];
+            SupportClass::writeMessageInLogFile('Сессия есть, роль '.$this->session->get('auth')['role']);
+            $role = $this->session->get('auth')['role'];
         }
 
         $acl = $this->getAcl();

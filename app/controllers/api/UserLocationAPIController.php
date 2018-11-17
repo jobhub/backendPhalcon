@@ -131,6 +131,61 @@ class UserLocationAPIController extends Controller
         }
     }
 
+
+    /**
+     * Ищет пользователей по поисковой строке и внутри заданных координат.
+     * С заданным фильтром.
+     * @access public
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params center - [longitude => ..., latitude => ...] - центральная точка
+     * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+     * @params ageMin - минимальный возраст
+     * @params ageMax - максимальный возраст
+     * @params male - пол
+     * @params hasPhoto - фильтр, имеется ли у него фотография
+     * @return string - json array - массив пользователей.
+     *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+     *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+     */
+    public function findUsersWithFiltersAction(){
+        if ($this->request->isPost()) {
+            $auth = $this->session->get("auth");
+            $response = new Response();
+            $userId = $auth['id'];
+
+            $center = $this->request->getPost('center');
+            $diagonal = $this->request->getPost('diagonal');
+
+            $longitudeHR = $diagonal['longitude'];
+            $latitudeHR = $diagonal['latitude'];
+
+            $diffLong = $diagonal['longitude'] - $center['longitude'];
+            $longitudeLB = $center['longitude'] - $diffLong;
+
+            $diffLat = $diagonal['latitude'] - $center['latitude'];
+            $latitudeLB = $center['latitude'] - $diffLat;
+
+            $results = UserLocation::findUsersByQueryWithFilters($this->request->getPost('query'),
+                $longitudeHR,$latitudeHR,$longitudeLB,$latitudeLB,
+                $this->request->getPost('ageMin'),$this->request->getPost('ageMax'),
+                $this->request->getPost('male'),$this->request->getPost('hasPhoto'));
+
+            $response->setJsonContent([
+                "status" => STATUS_OK,
+                'users' => $results
+            ]);
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
     /**
      * Возвращает данные для автокомплита поиска по пользователям.
      *
