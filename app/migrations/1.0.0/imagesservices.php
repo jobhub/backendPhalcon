@@ -17,7 +17,7 @@ class ImagesservicesMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('imagesservices', [
+        $this->morphTable('ImagesServices', [
                 'columns' => [
                     new Column(
                         'imageid',

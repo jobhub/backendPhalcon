@@ -87,7 +87,7 @@ class TradePoints extends SubjectsWithNotDeleted
      */
     protected $positionvariable;
 
-    const publicColumns = ['pointid','name', 'longitude', 'latitude', 'fax', 'time',
+    const publicColumns = ['pointid','name', 'longitude', 'latitude', 'time',
         'email', 'usermanager', 'website', 'address', 'positionvariable'];
 
     /**

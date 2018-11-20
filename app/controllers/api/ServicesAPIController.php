@@ -29,7 +29,7 @@ class ServicesAPIController extends Controller
     {
         if ($this->request->isGet()) {
             $response = new Response();
-            $services = Services::findBySubject($subjectId, $subjectType);
+            $services = Services::getServicesForSubject($subjectId, $subjectType);
             $response->setJsonContent($services);
             return $response;
         } else {
@@ -55,7 +55,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             if($companyId == null){
-                $services = Services::findBySubject($userId, 0);
+                $services = Services::getServicesForSubject($userId, 0);
             } else{
                 if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$companyId,1,'getServices')){
                     $response->setJsonContent([
@@ -64,7 +64,7 @@ class ServicesAPIController extends Controller
                     ]);
                     return $response;
                 }
-                $services = Services::findBySubject($companyId, 1);
+                $services = Services::getServicesForSubject($companyId, 1);
             }
             $response->setJsonContent($services);
             return $response;
@@ -755,7 +755,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = Imagesservices::findFirstByImageid($imageId);
+            $image = ImagesServices::findFirstByImageid($imageId);
 
             if (!$image) {
                 $response->setJsonContent(
@@ -1215,7 +1215,7 @@ class ServicesAPIController extends Controller
 
             $filenames = [];
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
             $countImages = count($images);
 
             $this->db->begin();
@@ -1248,7 +1248,7 @@ class ServicesAPIController extends Controller
 
                 $imageFullName = str_replace(BASE_PATH, '', $filename);
 
-                $newimage = new Imagesservices();
+                $newimage = new ImagesServices();
                 $newimage->setServiceId($serviceId);
                 $newimage->setImagePath($imageFullName);
 
@@ -1323,14 +1323,14 @@ class ServicesAPIController extends Controller
 
             $filenames = [];
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
             $countImages = count($images);
 
-            if (($countImages + count($files)) > Imagesservices::MAX_IMAGES) {
+            if (($countImages + count($files)) > ImagesServices::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для услуги. 
-                        Можно сохранить для одной услуги не более чем ' . Imagesservices::MAX_IMAGES . ' изображений'],
+                        Можно сохранить для одной услуги не более чем ' . ImagesServices::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -1342,7 +1342,7 @@ class ServicesAPIController extends Controller
 
             foreach ($files as $file) {
 
-                $newimage = new Imagesservices();
+                $newimage = new ImagesServices();
                 $newimage->setServiceId($serviceId);
                 $newimage->setImagePath("");
 
@@ -1542,7 +1542,7 @@ class ServicesAPIController extends Controller
 
             $points = Services::getPointsForService($serviceId);
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
 
             $points2 = [];
             foreach ($points as $point) {
@@ -1639,7 +1639,7 @@ class ServicesAPIController extends Controller
                 $randnumber = rand(0, 3);
 
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/desert.jpg');
                     if (!$imageserv->save()) {
@@ -1659,7 +1659,7 @@ class ServicesAPIController extends Controller
                 }
 
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/butterfly.jpg');
                     if (!$imageserv->save()) {
@@ -1678,7 +1678,7 @@ class ServicesAPIController extends Controller
                     $randnumber--;
                 }
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/flower.jpg');
                     if (!$imageserv->save()) {
