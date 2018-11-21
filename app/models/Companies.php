@@ -511,7 +511,7 @@ class Companies extends NotDeletedModelWithCascade
         $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         try {
             // Создаем менеджера транзакций
