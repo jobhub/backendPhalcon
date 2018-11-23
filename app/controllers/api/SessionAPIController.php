@@ -203,7 +203,6 @@ class SessionAPIController extends Controller
                 $result = json_decode($result->getContent(),true);
                 $result['role'] = $user->getRole();
                 $response->setJsonContent($result);
-
             } else {
                 $response->setJsonContent(
                     [
@@ -211,11 +210,9 @@ class SessionAPIController extends Controller
                         'errors' => ['Неверные логин или пароль']
                     ]);
             }
-
             return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
             throw $exception;
         }
     }
