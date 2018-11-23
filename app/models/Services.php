@@ -933,7 +933,6 @@ class Services extends SubjectsWithNotDeleted
             $cl->AddQuery('', 'services_with_company_index');
         } elseif ($type == 'category') {
             $cl->setFilter('categoryid', $elementIds, false);
-            $cl->SetFilterRange();
             $cl->AddQuery('', 'services_with_category_index');
         }
 
@@ -1209,6 +1208,32 @@ class Services extends SubjectsWithNotDeleted
 
             $serviceAll['point'] = count(Services::getPointsForService($service['serviceid']))>0?
                 Services::getPointsForService($service['serviceid'])[0]:[];
+
+            if ($subjectType == 0) {
+                $user = Userinfo::findFirst(
+                    ['conditions' => 'userid = :subjectid:',
+                        'columns' => Userinfo::publicColumnsInStr,
+                        'bind' => ['subjectid' => $subjectId]]);
+
+                $user = json_encode($user);
+                $user = json_decode($user, true);
+                $serviceAll['publisherUser'] = $user;
+                $phones = PhonesUserinfo::getUserPhones($subjectId);
+                //$newsWithAllElement['publisherUser']->setPhones($phones);
+                $serviceAll['publisherUser']['phones'] = $phones;
+            } else {
+                $company = Companies::findFirst(
+                    ['conditions' => 'companyid = :subjectid:',
+                        'columns' => Companies::publicColumnsInStr,
+                        'bind' => ['subjectid' => $subjectId]]);
+
+                $company = json_encode($company);
+                $company = json_decode($company, true);
+
+                $serviceAll['publisherCompany'] = $company;
+                $phones = PhonesCompanies::getCompanyPhones($serviceAll['publisherCompany']['companyid']);
+                $serviceAll['publisherCompany']['phones'] = $phones;
+            }
 
             $servicesAll[] =$serviceAll;
         }
