@@ -80,8 +80,15 @@ class TradePoints extends SubjectsWithNotDeleted
      */
     protected $address;
 
-    const publicColumns = ['pointid','name', 'longitude', 'latitude', 'fax', 'time',
-        'email', 'usermanager', 'website', 'address'];
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $positionvariable;
+
+    const publicColumns = ['pointid','name', 'longitude', 'latitude', 'time',
+        'email', 'usermanager', 'website', 'address', 'positionvariable'];
 
     /**
      * Method to set the value of field pointId
@@ -352,6 +359,23 @@ class TradePoints extends SubjectsWithNotDeleted
                         "callback" => function ($company) {
                             $user = Users::findFirstByUserId($company->getUserManager());
                             if ($user)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        if($this->getSubjectType()==0 && $this->getPointId() == null){
+            $validator->add(
+                'subjectid',
+                new Callback(
+                    [
+                        "message" => "Нельзя добавить больше одной точки оказания услуг для пользователя",
+                        "callback" => function ($tradePoint) {
+                            $tradePoint = TradePoints::findBySubject($tradePoint->getSubjectId(), $tradePoint->getSubjectType());
+                            if (count($tradePoint)==0)
                                 return true;
                             return false;
                         }

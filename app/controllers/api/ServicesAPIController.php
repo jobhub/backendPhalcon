@@ -29,7 +29,7 @@ class ServicesAPIController extends Controller
     {
         if ($this->request->isGet()) {
             $response = new Response();
-            $services = Services::findBySubject($subjectId, $subjectType);
+            $services = Services::getServicesForSubject($subjectId, $subjectType);
             $response->setJsonContent($services);
             return $response;
         } else {
@@ -37,7 +37,41 @@ class ServicesAPIController extends Controller
 
             throw $exception;
         }
+    }
 
+    /**
+     * Возвращает все услуги данного юзера (или его компании)
+     *
+     * @method GET
+     *
+     * @params $companyId - если не указан, то будут возвращены
+     *
+     * @return string - json array услуг (Services).
+     */
+    public function getOwnServicesAction($companyId = null)
+    {
+        if ($this->request->isGet()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            if($companyId == null){
+                $services = Services::getServicesForSubject($userId, 0);
+            } else{
+                if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$companyId,1,'getServices')){
+                    $response->setJsonContent([
+                        'status' => STATUS_WRONG,
+                        'errors' => ['permission denied']
+                    ]);
+                    return $response;
+                }
+                $services = Services::getServicesForSubject($companyId, 1);
+            }
+            $response->setJsonContent($services);
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
     }
 
     /**
@@ -185,23 +219,36 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
-            } elseif ($_GET['typeQuery'] == 5) {
-                $result = Services::getServicesByQuery('',
-                    null, null,
-                    null, true);
+            } elseif($this->request->getPost('typeQuery') == 5){
 
-                $file = fopen(BASE_PATH . '/public/json_array.txt', 'w');
+                $categoriesId = $this->request->getPost('categoriesId');
 
-                $str = json_encode(['services' => $result, 'status' => STATUS_OK], JSON_UNESCAPED_UNICODE);
+                if(is_array($categoriesId)) {
+                    $allCategories = [];
+                    foreach ($categoriesId as $categoryId) {
+                        $allCategories[] = $categoryId;
+                        $childCategories = Categories::findByParentid($categoryId);
+                        foreach ($childCategories as $childCategory) {
+                            $allCategories[] = $childCategory->getCategoryId();
+                        }
+                    }
+                } else{
+                    $allCategories[] = $categoriesId;
+                    $childCategories = Categories::findByParentid($categoriesId);
+                    foreach ($childCategories as $childCategory) {
+                        $allCategories[] = $childCategory->getCategoryId();
+                    }
+                }
 
-                /*fwrite($file,$str);
-                //echo json_encode($result);
-                fflush($file);
-                fclose($file);*/
-
-                echo $str;
-
-                exit;
+                $result = Services::getServicesWithFilters($this->request->getPost('userQuery'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'),$categoriesId,$this->request->getPost('priceMin'),
+                    $this->request->getPost('priceMax'),$this->request->getPost('ratingMin'));
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
             }
 
             //$result = Services::getServices($this->request->getPost('categoriesId'));
@@ -448,8 +495,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
-    public
-    function addServiceAction()
+    public function addServiceAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();
@@ -650,8 +696,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function addImagesAction()
+    public function addImagesAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -702,8 +747,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function deleteImageAction($imageId)
+    public function deleteImageAction($imageId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
 
@@ -711,7 +755,7 @@ class ServicesAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = Imagesservices::findFirstByImageid($imageId);
+            $image = ImagesServices::findFirstByImageid($imageId);
 
             if (!$image) {
                 $response->setJsonContent(
@@ -784,8 +828,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function linkServiceWithPointAction()
+    public function linkServiceWithPointAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -858,8 +901,7 @@ class ServicesAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public
-    function unlinkServiceAndPointAction($serviceId, $pointId)
+    public function unlinkServiceAndPointAction($serviceId, $pointId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
@@ -938,8 +980,7 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public
-    function confirmRequestAction()
+    public function confirmRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1009,8 +1050,7 @@ class ServicesAPIController extends Controller
      *
      * @return Response - с json массивом в формате Status
      */
-    public
-    function performRequestAction()
+    public function performRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1175,7 +1215,7 @@ class ServicesAPIController extends Controller
 
             $filenames = [];
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
             $countImages = count($images);
 
             $this->db->begin();
@@ -1208,7 +1248,7 @@ class ServicesAPIController extends Controller
 
                 $imageFullName = str_replace(BASE_PATH, '', $filename);
 
-                $newimage = new Imagesservices();
+                $newimage = new ImagesServices();
                 $newimage->setServiceId($serviceId);
                 $newimage->setImagePath($imageFullName);
 
@@ -1283,14 +1323,14 @@ class ServicesAPIController extends Controller
 
             $filenames = [];
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
             $countImages = count($images);
 
-            if (($countImages + count($files)) > Imagesservices::MAX_IMAGES) {
+            if (($countImages + count($files)) > ImagesServices::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для услуги. 
-                        Можно сохранить для одной услуги не более чем ' . Imagesservices::MAX_IMAGES . ' изображений'],
+                        Можно сохранить для одной услуги не более чем ' . ImagesServices::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -1302,7 +1342,7 @@ class ServicesAPIController extends Controller
 
             foreach ($files as $file) {
 
-                $newimage = new Imagesservices();
+                $newimage = new ImagesServices();
                 $newimage->setServiceId($serviceId);
                 $newimage->setImagePath("");
 
@@ -1502,7 +1542,7 @@ class ServicesAPIController extends Controller
 
             $points = Services::getPointsForService($serviceId);
 
-            $images = Imagesservices::findByServiceid($serviceId);
+            $images = ImagesServices::findByServiceid($serviceId);
 
             $points2 = [];
             foreach ($points as $point) {
@@ -1599,7 +1639,7 @@ class ServicesAPIController extends Controller
                 $randnumber = rand(0, 3);
 
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/desert.jpg');
                     if (!$imageserv->save()) {
@@ -1619,7 +1659,7 @@ class ServicesAPIController extends Controller
                 }
 
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/butterfly.jpg');
                     if (!$imageserv->save()) {
@@ -1638,7 +1678,7 @@ class ServicesAPIController extends Controller
                     $randnumber--;
                 }
                 if ($randnumber > 0) {
-                    $imageserv = new Imagesservices();
+                    $imageserv = new ImagesServices();
                     $imageserv->setServiceId($service->getServiceId());
                     $imageserv->setImagePath('/images/services/flower.jpg');
                     if (!$imageserv->save()) {

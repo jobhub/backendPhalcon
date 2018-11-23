@@ -484,12 +484,8 @@ class NewsAPIController extends Controller
                     return SupportClass::getResponseWithErrors($newimage);
                 }
 
-
-
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
                 $imageFILEName = $file->getKey();
-
-
 
                 if($imageFILEName == "title"){
                     $imagesIds[] = $imageFILEName;

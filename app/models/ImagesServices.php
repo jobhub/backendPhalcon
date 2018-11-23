@@ -6,7 +6,7 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class Imagesservices extends \Phalcon\Mvc\Model
+class ImagesServices extends \Phalcon\Mvc\Model
 {
     /**
      *
@@ -177,7 +177,7 @@ class Imagesservices extends \Phalcon\Mvc\Model
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Imagesservices[]|Imagesservices|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ImagesServices[]|ImagesServices|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -188,7 +188,7 @@ class Imagesservices extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Imagesservices|\Phalcon\Mvc\Model\ResultInterface
+     * @return ImagesServices|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
