@@ -80,7 +80,10 @@ class Services extends SubjectsWithNotDeleted
     protected $rating;
 
     const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
-        'regionid', 'name', 'longitude', 'latitude', 'rating'];
+        'regionid', 'name', 'rating'];
+
+    const publicColumnsInStr = 'serviceid, description, datepublication, pricemin, pricemax,
+        regionid, name, rating';
 
     /**
      * Method to set the value of field serviceId
@@ -411,7 +414,7 @@ class Services extends SubjectsWithNotDeleted
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         if ($delete) {
-            $images = Imagesservices::findByServiceid($this->getServiceId());
+            $images = ImagesServices::findByServiceid($this->getServiceId());
 
             foreach ($images as $image) {
                 if (!$image->delete()) {
@@ -757,7 +760,7 @@ class Services extends SubjectsWithNotDeleted
 
         foreach ($allmatches as $match) {
             $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
             if (count($match['attrs']['pointid']) > 0) {
                 $str = '';
 
@@ -793,10 +796,10 @@ class Services extends SubjectsWithNotDeleted
                 $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
 
-            $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
 
             if (count($service['images']) == 0) {
-                $image = new Imagesservices();
+                $image = new ImagesServices();
                 $image->setImagePath('/images/no_image.jpg');
                 $image->setServiceId($service['service']['serviceid']);
                 $service['images'] = [$image];
@@ -952,7 +955,7 @@ class Services extends SubjectsWithNotDeleted
 
         foreach ($allmatches as $match) {
             $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
             if (count($match['attrs']['pointid']) > 0) {
                 $str = '';
 
@@ -987,10 +990,10 @@ class Services extends SubjectsWithNotDeleted
 
                 $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
-            $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
 
             if (count($service['images']) == 0) {
-                $image = new Imagesservices();
+                $image = new ImagesServices();
                 $image->setImagePath('/images/no_image.jpg');
                 $image->setServiceId($service['service']['serviceid']);
                 $service['images'] = [$image];
@@ -1055,7 +1058,7 @@ class Services extends SubjectsWithNotDeleted
 
         foreach ($allmatches as $match) {
             $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
             if (count($match['attrs']['pointid']) > 0) {
                 $str = '';
 
@@ -1090,10 +1093,10 @@ class Services extends SubjectsWithNotDeleted
 
                 $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
             }
-            $service['images'] = Imagesservices::findByServiceid($service['service']['serviceid']);
+            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
 
             if (count($service['images']) == 0) {
-                $image = new Imagesservices();
+                $image = new ImagesServices();
                 $image->setImagePath('/images/no_image.jpg');
                 $image->setServiceId($service['service']['serviceid']);
                 $service['images'] = [$image];
@@ -1180,6 +1183,39 @@ class Services extends SubjectsWithNotDeleted
         return $services;
     }
 
+    public static function getServicesForSubject($subjectId, $subjectType){
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $services = Services::findBySubject($subjectId,$subjectType,'datepublication desc',Services::publicColumnsInStr);
+
+        $servicesArr = json_encode($services);
+        $servicesArr = json_decode($servicesArr,true);
+        $servicesAll = [];
+
+        if($subjectType == 0){
+            $categories = UsersCategories::getCategoriesByUser($subjectId);
+        } else{
+            $categories = CompaniesCategories::getCategoriesByCompany($subjectId);
+        }
+
+        foreach ($servicesArr as $service) {
+            $serviceAll = $service;
+            $serviceAll['categories'] = $categories;
+            $images = ImagesServices::findByServiceid($service['serviceid']);
+            $serviceAll['images'] = [];
+            foreach ($images as $image){
+                $serviceAll['images'][] = $image->getImagePath();
+            }
+
+            $serviceAll['point'] = count(Services::getPointsForService($service['serviceid']))>0?
+                Services::getPointsForService($service['serviceid'])[0]:[];
+
+            $servicesAll[] =$serviceAll;
+        }
+
+        return $servicesAll;
+    }
+
     public static function getTasksForService($serviceId)
     {
         $db = Phalcon\DI::getDefault()->getDb();
@@ -1189,7 +1225,12 @@ class Services extends SubjectsWithNotDeleted
     public static function getPointsForService($serviceId)
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $columns = [];
+        foreach(TradePoints::publicColumns as $publicColumn){
+            $columns[] = 'p.'.$publicColumn;
+        }
         $result = $modelsManager->createBuilder()
+            ->columns($columns)
             ->from(["p" => "TradePoints"])
             ->join('ServicesPoints', 'p.pointid = sp.pointid', 'sp')
             ->join('Services', 'sp.serviceid = s.serviceid', 's')

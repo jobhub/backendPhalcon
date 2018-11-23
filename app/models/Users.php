@@ -343,7 +343,7 @@ class Users extends NotDeletedModelWithCascade
         return 'users';
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         try {
             // Создаем менеджера транзакций
@@ -353,7 +353,6 @@ class Users extends NotDeletedModelWithCascade
             $this->setTransaction($transaction);
 
             if (!$delete) {
-
                 //каскадное 'удаление' точек оказания услуг
                 $tradePoints = TradePoints::findBySubject($this->getUserId(), 0);
                 foreach ($tradePoints as $tradePoint) {
