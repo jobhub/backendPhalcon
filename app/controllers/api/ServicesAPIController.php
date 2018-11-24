@@ -492,6 +492,7 @@ class ServicesAPIController extends Controller
      *           (обязательно) regionId,
      *           (необязательно) longitude, latitude
      *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
+     * @params прикрепленные изображения. Именование роли не играет.
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
      */
@@ -668,6 +669,20 @@ class ServicesAPIController extends Controller
                         return $response;
                     }
                 }
+            }
+
+            if ($this->request->hasFiles()) {
+                $result = $this->addImagesHandler($service->getServiceId());
+
+                $resultContent = json_decode($result->getContent(), true);
+                if($resultContent['status'] != STATUS_OK){
+                    $service->delete(true);
+                } else{
+                    $this->db->commit();
+                    $resultContent['serviceId'] = $service->getServiceId();
+                    $result->setJsonContent($resultContent);
+                }
+                return $result;
             }
 
             $this->db->commit();
@@ -1301,8 +1316,7 @@ class ServicesAPIController extends Controller
      * @param $serviceId
      * @return Response с json массивом типа Status
      */
-    public
-    function addImagesHandler($serviceId)
+    public function addImagesHandler($serviceId)
     {
         include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
