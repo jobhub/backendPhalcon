@@ -3,6 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\StringLength as StringLength;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Validation\Validator\Alpha as AlphaValidator;
 use Phalcon\Validation\Validator\Callback;
 
 class Tags extends \Phalcon\Mvc\Model
@@ -87,6 +88,15 @@ class Tags extends \Phalcon\Mvc\Model
                     "min"            => 3,
                     "messageMaximum" => "We don't like really long tags",
                     "messageMinimum" => "It's really too few for tag",
+                ]
+            )
+        );
+
+        $validator->add(
+            "tag",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
                 ]
             )
         );

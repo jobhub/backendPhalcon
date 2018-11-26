@@ -284,8 +284,6 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            //$result = Services::getServices($this->request->getPost('categoriesId'));
-
             $response->setJsonContent([
                 'status' => STATUS_WRONG,
                 'errors' => ['Неправильно указан тип запроса']
