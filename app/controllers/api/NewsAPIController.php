@@ -620,19 +620,19 @@ class NewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @params $newid - id новости
-     * @params $imageName - название изображения с расширением
+     * @param $newsId id новости
+     * @param $imageName название изображения с расширением
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageByNameAction($newid, $imageName)
+    public function deleteImageByNameAction($newsId, $imageName)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $news = News::findFirstByNewsid($newid);
+            $news = News::findFirstByNewsid($newsId);
 
             if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
                     $news->getSubjectType(), 'editNews')) {
@@ -646,7 +646,7 @@ class NewsAPIController extends Controller
             }
 
             $image = ImagesNews::findFirstByImagepath(
-                ImageLoader::formFullImagePathFromImageName('news', $newid, $imageName));
+                ImageLoader::formFullImagePathFromImageName('news', $newsId, $imageName));
 
             if (!$image) {
                 $response->setJsonContent(
@@ -694,7 +694,7 @@ class NewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @params $imageid - id изображения
+     * @param $imageId id изображения
      *
      * @return string - json array в формате Status - результат операции
      */

@@ -832,7 +832,7 @@ class ServicesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $imageId
+     * @param $imageId integer id изображения
      *
      * @return string - json array в формате Status - результат операции
      */
@@ -902,8 +902,8 @@ class ServicesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @params $serviceid - id изображения
-     * @params $imageName - название изображения с расширением
+     * @param $serviceId - id услуги
+     * @param $imageName - название изображения с расширением
      *
      * @return string - json array в формате Status - результат операции
      */
