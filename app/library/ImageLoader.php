@@ -107,6 +107,11 @@ class ImageLoader
         return IMAGE_PATH_TRUNCATED . $subpath . '/'.$id.'/' .ImageLoader::formImageName($format,$imageId);
     }
 
+    public static function formFullImagePathFromImageName($subpath, $id, $imageName)
+    {
+        return IMAGE_PATH_TRUNCATED . $subpath . '/'.$id.'/' .$imageName;
+    }
+
     public static function delete($imageName){
         $result = unlink(BASE_PATH."/public/".$imageName);
         return $result;
