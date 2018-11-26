@@ -1384,7 +1384,7 @@ class Services extends SubjectsWithNotDeleted
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
 
         $result = $modelsManager->createBuilder()
-            ->from(["t" => "tags"])
+            ->from(["t" => "Tags"])
             ->join('ServicesTags', 't.tagid = st.tagid', 'st')
             ->join('Services', 'st.serviceid = s.serviceid', 's')
             ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
