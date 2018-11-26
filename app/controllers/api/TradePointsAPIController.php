@@ -243,6 +243,7 @@ class TradePointsAPIController extends Controller
         $point->setAddress($params["address"]);
         $point->setFax($params["fax"]);
         $point->setTime($params["time"]);
+        $point->setPositionVariable($params["positionvariable"]);
         $point->setUserManager($params["userId"]);
 
         if (!$point->save()) {
@@ -312,6 +313,7 @@ class TradePointsAPIController extends Controller
             $point->setLatitude($this->request->getPut("latitude"));
             $point->setLongitude($this->request->getPut("longitude"));
             $point->setAddress($this->request->getPut("address"));
+            $point->setPositionVariable($this->request->getPut("positionvariable"));
             $point->setFax($this->request->getPut("fax"));
             $point->setTime($this->request->getPut("time"));
 

@@ -208,6 +208,19 @@ class TradePoints extends SubjectsWithNotDeleted
     }
 
     /**
+     * Method to set the value of field webSite
+     *
+     * @param string $positionvariable
+     * @return $this
+     */
+    public function setPositionVariable($positionvariable)
+    {
+        $this->positionvariable = $positionvariable;
+
+        return $this;
+    }
+
+    /**
      * Method to set the value of field address
      *
      * @param string $address
@@ -288,6 +301,16 @@ class TradePoints extends SubjectsWithNotDeleted
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Returns the value of field email
+     *
+     * @return string
+     */
+    public function getPositionVariable()
+    {
+        return $this->positionvariable;
     }
 
     /**

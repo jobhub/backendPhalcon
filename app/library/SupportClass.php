@@ -127,4 +127,15 @@ class SupportClass
 
         return $response;
     }
+
+    public static function getResponseWithErrorsFromArray($errors){
+        $response = new Response();
+        $response->setJsonContent(
+            [
+                "errors" => $errors,
+                "status" => STATUS_WRONG
+            ]);
+
+        return $response;
+    }
 }
