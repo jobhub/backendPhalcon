@@ -23,7 +23,10 @@ class ServicesAPIController extends Controller
      *
      * @param $subjectId
      * @param $subjectType
-     * @return string - json array услуг (Services).
+     * @return string -  массив услуг в виде:
+     *      [{serviceid, description, datepublication, pricemin, pricemax,
+     *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
+     *      {Userinfo или Company} }].
      */
     public function getServicesForSubjectAction($subjectId, $subjectType)
     {
@@ -46,7 +49,10 @@ class ServicesAPIController extends Controller
      *
      * @params $companyId - если не указан, то будут возвращены
      *
-     * @return string - json array услуг (Services).
+     * @return string -  массив услуг в виде:
+     *      [{serviceid, description, datepublication, pricemin, pricemax,
+     *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
+     *      {Userinfo или Company} }].
      */
     public function getOwnServicesAction($companyId = null)
     {
@@ -89,6 +95,11 @@ class ServicesAPIController extends Controller
      * и массив регионов, как в 0-вом запросе. Возвращает массив услуг, как везде.
      * 4 - запрос для поиска по области. Центральная точка, крайняя точка, массив регионов, которые попадут в область.
      * Возвращает массив услуг, как везде.
+     * 5 - запрос для поиска с фильтрами. Принимает центральную, диагональные точки, массив категорий,
+     * минимальную и максимальную цены (priceMin, priceMax) и минимальный рейтинг (ratingMin)
+     *
+     * @access public
+     *
      * @method POST
      *
      * @params int typeQuery (обязательно)
@@ -99,6 +110,9 @@ class ServicesAPIController extends Controller
      * @params string userQuery (необязательно)
      * @params array regionsId (необязательно) массив регионов,
      * @params array categoriesId (необязательно) массив категорий,
+     * @params priceMin
+     * @params priceMax
+     * @params ratingMin
      *
      * @return string json массив [status, service, company/userinfo,[categories],[tradepoints],[images]] или
      *   json массив [status, [{type : ..., id : ..., name : ...}, {...}]].
@@ -268,14 +282,14 @@ class ServicesAPIController extends Controller
 
     /**
      * Удаляет указанную услугу
+     * @access private
      *
      * @method DELETE
      *
      * @param $serviceId
      * @return Response - с json массивом в формате Status
      */
-    public
-    function deleteServiceAction($serviceId)
+    public function deleteServiceAction($serviceId)
     {
         if ($this->request->isDelete()) {
             $response = new Response();
@@ -334,15 +348,21 @@ class ServicesAPIController extends Controller
 
     /**
      * Редактирует указанную услугу
+     * @access private
      *
      * @method PUT
      *
-     * @params serviceId , description, name, priceMin, priceMax (или же вместо них просто price), regionId
+     * @params serviceId
+     * @params description
+     * @params name
+     * @params priceMin, priceMax (или же вместо них просто price)
+     * @params regionId
+     * @params deletedTags - массив int-ов - id удаленных тегов
+     * @params addedTags - массив строк
      * @params (необязательные) companyId или userId.
      * @return Response - с json массивом в формате Status
      */
-    public
-    function editServiceAction()
+    public function editServiceAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -352,7 +372,6 @@ class ServicesAPIController extends Controller
             $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
 
             if (!$service) {
-                //$response->setStatusCode('404', 'Not Found');
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -393,20 +412,50 @@ class ServicesAPIController extends Controller
 
             $service->setRegionId($this->request->getPut("regionId"));
 
+            $this->db->begin();
             if (!$service->save()) {
-                $errors = [];
-                foreach ($service->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+                $this->db->rollback();
+                return SupportClass::getResponseWithErrors($service);
             }
 
+            $deletedTags = $this->request->getPut("deletedTags");
+
+            foreach ($deletedTags as $tagId){
+                $serviceTag = ServicesTags::findByIds($service->getServiceId(), $tagId);
+                if(!$serviceTag) {
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrorsFromArray(
+                        ["Услуга не связана с указанным якобы удаляемым тегом."]);
+                }
+
+                if(!$serviceTag->delete()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($serviceTag);
+                }
+            }
+
+            $addedTags = $this->request->getPut("addedTags");
+
+            foreach($addedTags as $tag){
+                $tagObject = new Tags();
+                $tagObject->setTag($tag);
+
+                if(!$tagObject->save()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($tagObject);
+                }
+
+                $serviceTag = new ServicesTags();
+                $serviceTag->setServiceId($service->getServiceId());
+                $serviceTag->setTagId($tagObject->getTagId());
+
+                if(!$serviceTag->save()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($serviceTag);
+                }
+            }
+
+            $this->db->commit();
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK
@@ -492,6 +541,7 @@ class ServicesAPIController extends Controller
      *           (обязательно) regionId,
      *           (необязательно) longitude, latitude
      *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
+     * @params массив строк tags с тегами.
      * @params прикрепленные изображения. Именование роли не играет.
      *
      * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
@@ -671,12 +721,36 @@ class ServicesAPIController extends Controller
                 }
             }
 
+            //С точками разобрались, теперь надо добавить теги
+            $tags = $this->request->getPost("tags");
+
+            foreach($tags as $tag){
+                $tagObject = new Tags();
+                $tagObject->setTag($tag);
+
+                if(!$tagObject->save()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($tagObject);
+                }
+
+                $serviceTag = new ServicesTags();
+                $serviceTag->setServiceId($service->getServiceId());
+                $serviceTag->setTagId($tagObject->getTagId());
+
+                if(!$serviceTag->save()){
+                    $this->db->rollback();
+                    return SupportClass::getResponseWithErrors($serviceTag);
+                }
+            }
+
+            //Добавление изображений
             if ($this->request->hasFiles()) {
                 $result = $this->addImagesHandler($service->getServiceId());
 
                 $resultContent = json_decode($result->getContent(), true);
                 if($resultContent['status'] != STATUS_OK){
-                    $service->delete(true);
+                    //$service->delete(true);
+                    $this->db->rollback();
                 } else{
                     $this->db->commit();
                     $resultContent['serviceId'] = $service->getServiceId();
@@ -809,22 +883,83 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            $result = ImageLoader::delete($image->getImagePath());
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
 
-            if ($result) {
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет картинку из списка картинок услуги
+     *
+     * @method DELETE
+     *
+     * @params $serviceid - id изображения
+     * @params $imageName - название изображения с расширением
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteImageByNameAction($serviceId, $imageName)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $service = Services::findFirstByServiceid($serviceId);
+
+            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+                    $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
-                        "status" => STATUS_OK
-                    ]
-                );
-            } else {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Не удалось удалить файл'],
+                        "errors" => ['permission error'],
                         "status" => STATUS_WRONG
                     ]
                 );
+                return $response;
             }
+
+            $image = ImagesServices::findFirstByImagepath(
+                ImageLoader::formFullImagePathFromImageName('services', $serviceId, $imageName));
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверное название изображения'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
             return $response;
 
         } else {

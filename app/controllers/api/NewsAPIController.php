@@ -124,16 +124,16 @@ class NewsAPIController extends Controller
                 $result = $this->addImagesHandler($new->getNewsId());
 
                 $resultContent = json_decode($result->getContent(), true);
-                if($resultContent['status'] != STATUS_OK){
+                if ($resultContent['status'] != STATUS_OK) {
                     $new->delete(true);
-                } else{
+                } else {
                     $resultContent['newId'] = $new->getNewsId();
                     $result->setJsonContent($resultContent);
                 }
                 return $result;
             }
 
-           // $this->db->commit();
+            // $this->db->commit();
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK,
@@ -382,7 +382,7 @@ class NewsAPIController extends Controller
      *
      * @method POST
      *
-     * @params newId
+     * @params newsId
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
@@ -394,11 +394,11 @@ class NewsAPIController extends Controller
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $newId = $this->request->getPost('newId');
+            $newsId = $this->request->getPost('newsId');
 
-            $new = News::findFirstByNewid($newId);
+            $news = News::findFirstByNewsid($newsId);
 
-            if (!$new) {
+            if (!$news) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Неверный идентификатор новости'],
@@ -408,7 +408,7 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(),
+            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(), $news->getSubjectType(),
                 'editNew')) {
                 $response->setJsonContent(
                     [
@@ -418,7 +418,7 @@ class NewsAPIController extends Controller
                 );
                 return $response;
             }
-            $result = $this->addImagesHandler($this->request->getPost('newId'));
+            $result = $this->addImagesHandler($newsId);
 
             return $result;
 
@@ -487,7 +487,7 @@ class NewsAPIController extends Controller
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
                 $imageFILEName = $file->getKey();
 
-                if($imageFILEName == "title"){
+                if ($imageFILEName == "title") {
                     $imagesIds[] = $imageFILEName;
                     $filename = ImageLoader::formFullImageName('news', $imageFormat, $newId, $imageFILEName);
                 } else {
@@ -539,5 +539,224 @@ class NewsAPIController extends Controller
             ]
         );
         return $response;
+    }
+
+    /**
+     * Удаляет картинку из списка изображений новости
+     * @access private
+     *
+     * @method DELETE
+     *
+     * @param $image - путь к изображению
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    /*public function deleteImageAction($images, $subpath, $newid, $imageName)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $image = ImagesNews::findFirstByImagepath(
+                ImageLoader::formFullImagePathFromImageName($subpath, $newid, $imageName));
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный путь к изображению'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $news = News::findFirstByNewsid($image->getNewsId());
+
+            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+                    $news->getSubjectType(), 'editNews')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            //$result = ImageLoader::delete($image->getImagePath());
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }*/
+
+    /**
+     * Удаляет картинку из списка изображений новости
+     * @access private
+     *
+     * @method DELETE
+     *
+     * @params $newid - id новости
+     * @params $imageName - название изображения с расширением
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteImageByNameAction($newid, $imageName)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $news = News::findFirstByNewsid($newid);
+
+            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+                    $news->getSubjectType(), 'editNews')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $image = ImagesNews::findFirstByImagepath(
+                ImageLoader::formFullImagePathFromImageName('news', $newid, $imageName));
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверное название изображения'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            //$result = ImageLoader::delete($image->getImagePath());
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет картинку из списка изображений новости
+     * @access private
+     *
+     * @method DELETE
+     *
+     * @params $imageid - id изображения
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteImageByIdAction($imageId)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $image = ImagesNews::findFirstByImageid($imageId);
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный путь к изображению'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $news = News::findFirstByNewsid($image->getNewsId());
+
+            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+                    $news->getSubjectType(), 'editNews')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            //$result = ImageLoader::delete($image->getImagePath());
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
     }
 }

@@ -60,7 +60,7 @@ class SecurityPlugin extends Plugin
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'NewsAPI' => ['getNews', 'addNews', 'deleteNews', 'editNews', 'getOwnNews', 'getSubjectNews',
-                    'addImages'],
+                    'addImages', 'deleteImageByName', 'deleteImageById'],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
                 'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager',
@@ -74,7 +74,8 @@ class SecurityPlugin extends Plugin
                 'FavouriteCompaniesAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'ServicesAPI' => ['deleteService', 'addService', 'editService',
                     'linkServiceWithPoint', 'unlinkServiceAndPoint', 'confirmRequest', 'performRequest',
-                    'rejectRequest', 'editImageService', 'addImages', 'deleteImage', 'getOwnServices'],
+                    'rejectRequest', 'editImageService', 'addImages', 'deleteImage', 'getOwnServices',
+                    'deleteImageByName'],
                 'RequestsAPI' => ['addRequest', 'deleteRequest', 'editRequest', 'getRequests', 'cancelRequest',
                     'confirmPerformanceRequest'],
 

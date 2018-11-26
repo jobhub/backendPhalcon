@@ -1182,6 +1182,14 @@ class Services extends SubjectsWithNotDeleted
         return $services;
     }
 
+    /**
+     * @param $subjectId
+     * @param $subjectType
+     * @return Возвращает массив услуг в виде:
+     *      [{serviceid, description, datepublication, pricemin, pricemax,
+            regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
+            [Userinfo или Company]}]
+     */
     public static function getServicesForSubject($subjectId, $subjectType){
         $db = Phalcon\DI::getDefault()->getDb();
 
@@ -1205,9 +1213,13 @@ class Services extends SubjectsWithNotDeleted
             foreach ($images as $image){
                 $serviceAll['images'][] = $image->getImagePath();
             }
+            $points = Services::getPointsForService($service['serviceid']);
+            $serviceAll['point'] = count($points)>0?
+                $points[0]:[];
 
-            $serviceAll['point'] = count(Services::getPointsForService($service['serviceid']))>0?
-                Services::getPointsForService($service['serviceid'])[0]:[];
+            $tags = Services::getTagsForService($service['serviceid']);
+            $serviceAll['tags'] = count($tags)>0?
+                $tags:[];
 
             if ($subjectType == 0) {
                 $user = Userinfo::findFirst(
@@ -1259,6 +1271,21 @@ class Services extends SubjectsWithNotDeleted
             ->from(["p" => "TradePoints"])
             ->join('ServicesPoints', 'p.pointid = sp.pointid', 'sp')
             ->join('Services', 'sp.serviceid = s.serviceid', 's')
+            ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
+            ->getQuery()
+            ->execute();
+
+        return $result;
+    }
+
+    public static function getTagsForService($serviceId)
+    {
+        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->from(["t" => "tags"])
+            ->join('ServicesTags', 't.tagid = st.tagid', 'st')
+            ->join('Services', 'st.serviceid = s.serviceid', 's')
             ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
             ->getQuery()
             ->execute();
