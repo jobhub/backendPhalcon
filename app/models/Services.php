@@ -1182,6 +1182,107 @@ class Services extends SubjectsWithNotDeleted
         return $services;
     }
 
+    public static function getServicesByQueryByTags($query, $center, $diagonal, $regions = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        //$cl->SetMatchMode(SPH_MATCH_ANY);
+        if (trim($query) == '')
+            $cl->SetMatchMode(SPH_MATCH_ALL);
+        else
+            $cl->SetMatchMode(SPH_MATCH_ANY);
+
+        $cl->SetLimits(0, 10000, 50);
+        $cl->SetRankingMode(SPH_RANK_SPH04);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        if ($regions != null) {
+            $cl->setFilter('regionid', $regions, false);
+            $cl->AddQuery($query, 'bro4you_small_tags_index');
+            $cl->ResetFilters();
+        }
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        $cl->AddQuery($query, 'bro4you_small_tags_index');
+
+        $results = $cl->RunQueries();
+        $services = [];
+        $allmatches = [];
+        foreach ($results as $result) {
+            if ($result['total'] > 0) {
+                $allmatches = array_merge($allmatches, $result['matches']);
+            }
+        }
+
+        $res = usort($allmatches, function ($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
+
+        foreach ($allmatches as $match) {
+            $service['service'] = json_decode($match['attrs']['service'], true);
+            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
+            if (count($match['attrs']['pointid']) > 0) {
+                $str = '';
+
+                foreach ($match['attrs']['pointid'] as $pointid) {
+                    if ($str == '')
+                        $str .= 'pointid IN (' . $pointid;
+                    else {
+                        $str .= ', ' . $pointid;
+                    }
+                }
+                $str .= ')';
+
+                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
+
+                $service['points'] = $points;
+            }
+
+            if ($service['service']['subjecttype'] == 1) {
+                $service['companies'] = Companies::findFirst([
+                    'companyid = :companyId:',
+                    'bind' => ['companyId' => $service['service']['subjectid']],
+                    'columns' => Companies::publicColumns
+                ]);
+
+                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
+            } elseif ($service['service']['subjecttype'] == 0) {
+                $service['userinfo'] = Userinfo::findFirst([
+                    'userid = :userId:',
+                    'bind' => ['userId' => $service['service']['subjectid']],
+                    'columns' => Userinfo::publicColumns
+                ]);
+
+                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
+            }
+
+            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
+
+            if (count($service['images']) == 0) {
+                $image = new ImagesServices();
+                $image->setImagePath('/images/no_image.jpg');
+                $image->setServiceId($service['service']['serviceid']);
+                $service['images'] = [$image];
+            }
+
+            $service['ratingcount'] = count(Reviews::getReviewsForService($service['service']['serviceid']));
+            $services[] = $service;
+        }
+
+
+        return $services;
+    }
     /**
      * @param $subjectId
      * @param $subjectType

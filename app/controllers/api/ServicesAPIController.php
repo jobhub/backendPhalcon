@@ -263,6 +263,25 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
+            } elseif($this->request->getPost('typeQuery') == 6){
+                if (strlen($this->request->getPost('userQuery')) < 3) {
+                    $response->setJsonContent([
+                        'status' => STATUS_WRONG,
+                        'errors' => ['Слишком маленькая длина запроса']
+                    ]);
+                    return $response;
+                }
+
+                $result = Services::getServicesByQueryByTags($this->request->getPost('userQuery'),
+                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
+                    $this->request->getPost('regionsId'));
+
+
+                $response->setJsonContent([
+                    'status' => STATUS_OK,
+                    'services' => $result
+                ]);
+                return $response;
             }
 
             //$result = Services::getServices($this->request->getPost('categoriesId'));
