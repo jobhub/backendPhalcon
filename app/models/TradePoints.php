@@ -390,7 +390,7 @@ class TradePoints extends SubjectsWithNotDeleted
             );
         }
 
-        if($this->getSubjectType()==0 && $this->getPointId() == null){
+        /*if($this->getSubjectType()==0 && $this->getPointId() == null){
             $validator->add(
                 'subjectid',
                 new Callback(
@@ -405,7 +405,7 @@ class TradePoints extends SubjectsWithNotDeleted
                     ]
                 )
             );
-        }
+        }*/
 
         return $this->validate($validator) && parent::validation();
     }
