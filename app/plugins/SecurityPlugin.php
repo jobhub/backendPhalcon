@@ -288,6 +288,11 @@ class SecurityPlugin extends Plugin
         SupportClass::writeMessageInLogFile('Контроллер: '. $controller.
         ' action: '. $action);
 
+        if($this->request->isPut()){
+            SupportClass::writeMessageInLogFile('Определил запрос, как Put');
+
+        }
+
         if($this->request->isOptions() && $controller!="errors"){
             SupportClass::writeMessageInLogFile('Определил запрос, как Options');
             $dispatcher->forward([
