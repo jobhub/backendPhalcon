@@ -57,6 +57,47 @@ class NewsAPIController extends Controller
     }
 
     /**
+     * Возвращает все новости юзера и новости тех, на кого он подписан.
+     * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+     *
+     * @method GET
+     *
+     * @return string - json array с новостями (или их отсутствием)
+     */
+    public function getAllNewsAction()
+    {
+        if ($this->request->isGet()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            /*$favCompanies = FavoriteCompanies::findByUserid($userId);
+            $favUsers = Favoriteusers::findByUsersubject($userId);
+
+            $query = '';
+            foreach ($favCompanies as $favCompany){
+                if($query != '')
+                    $query.=' OR ';
+                $query .= '(subjectid = ' . $favCompany->getCompanyId() . ' AND subjecttype = 1)';
+            }
+
+            foreach ($favUsers as $favUser){
+                if($query != '')
+                    $query.=' OR ';
+                $query .= '(subjectid = ' . $favUser->getUserObject() . ' AND subjecttype = 0)';
+            }
+
+            $news = News::find([$query, "order" => "News.date DESC"]);*/
+            $news = News::getAllNewsForCurrentUser($userId);
+
+            $response->setJsonContent($news);
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+    /**
      * Создает новость компании или пользователя (в зависимости от subjectType).
      * Если прикрепить изображения, они будут добавлены к новости.
      *

@@ -240,6 +240,40 @@ class News extends SubjectsWithNotDeleted
         return News::handleNewsFromArray($news);
     }
 
+    public static function getAllNewsForCurrentUser($userId)
+    {
+        $db = Phalcon\DI::getDefault()->getDb();
+
+        $str = "SELECT ";
+        foreach (News::publicColumns as $column) {
+            $str .= $column . ", ";
+        }
+
+        $str .= "subjectid, subjecttype";
+
+        $str .= " FROM ((SELECT n.* FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
+                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
+                    WHERE favc.userid = :userId)
+                    UNION
+                    (SELECT n.* FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
+                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
+                    WHERE favu.usersubject = :userId)
+                    UNION
+                    (SELECT * FROM public.news 
+                    WHERE subjectid = :userId and subjecttype = 0)
+                    ) as foo
+                    ORDER BY foo.publishdate desc";
+
+        $query = $db->prepare($str);
+        $result = $query->execute([
+            'userId' => $userId,
+        ]);
+
+        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return News::handleNewsFromArray($news);
+    }
+
     public static function getNewsForSubject($subjectId, $subjecttype)
     {
         $news = News::findBySubject($subjectId, $subjecttype, 'News.publishdate DESC',
