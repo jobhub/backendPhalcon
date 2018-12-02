@@ -416,18 +416,22 @@ class ServicesAPIController extends Controller
                 $service->setSubjectType(0);
             }
 
-            $service->setDescription($this->request->getPut("description"));
-            $service->setName($this->request->getPut("name"));
+            if($this->request->getPut("description"))
+                $service->setDescription($this->request->getPut("description"));
+            if($this->request->getPut("name"))
+                $service->setName($this->request->getPut("name"));
 
             if ($this->request->getPut("price")) {
                 $service->setPriceMin($this->request->getPut("price"));
                 $service->setPriceMax($this->request->getPut("price"));
             } else {
-                $service->setPriceMin($this->request->getPut("priceMin"));
-                $service->setPriceMax($this->request->getPut("priceMax"));
+                if($this->request->getPut("priceMin"))
+                    $service->setPriceMin($this->request->getPut("priceMin"));
+                if($this->request->getPut("priceMax"))
+                    $service->setPriceMax($this->request->getPut("priceMax"));
             }
-
-            $service->setRegionId($this->request->getPut("regionId"));
+            if($this->request->getPut("regionId"))
+                $service->setRegionId($this->request->getPut("regionId"));
 
             $this->db->begin();
             if (!$service->save()) {

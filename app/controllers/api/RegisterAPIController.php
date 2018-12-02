@@ -26,7 +26,7 @@ class RegisterAPIController extends Controller
     public function indexAction()
     {
         SupportClass::writeMessageInLogFile("Зашел в RegisterAPI");
-        /*if ($this->request->isPost() || $this->request->isOptions()) {*/
+        if ($this->request->isPost() || $this->request->isOptions()) {
             $response = new Response();
 
             SupportClass::writeMessageInLogFile("Прошел проверку на метод");
@@ -132,10 +132,10 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-        /*} else {
+        } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
-        }*/
+        }
     }
 
     /**
@@ -288,6 +288,16 @@ class RegisterAPIController extends Controller
 
             $response = new Response();
 
+            if($this->request->getPost('login') == null || trim($this->request->getPost('login')) == ""){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Необходимо указать логин активируемого пользователя']
+                    ]
+                );
+                return $response;
+            }
+
             if($authUserId == null) {
                 $user = Users::findFirst(['email = :email:', 'bind' =>
                     [
@@ -297,7 +307,7 @@ class RegisterAPIController extends Controller
             } else{
                 $user = Users::findFirst(['userid = :userId: and email = :email:', 'bind' =>
                     [
-                        'userid' => $authUserId,
+                        'userId' => $authUserId,
                         'email' => $this->request->getPost('login')
                     ]
                 ]);
@@ -580,7 +590,6 @@ class RegisterAPIController extends Controller
         $userId = $auth['id'];
 
         SupportClass::writeMessageInLogFile('all ok with SupportClass');
-        $aapt = new AaaaPt(0);
 
         if (!$user || $user == null) {
             $response->setJsonContent(
