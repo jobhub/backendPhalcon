@@ -341,7 +341,7 @@ class Services extends SubjectsWithNotDeleted
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
                     "callback" => function ($service) {
-                        if ($service->getPriceMin() == null || $service->getPriceMax())
+                        if ($service->getPriceMin() == null || $service->getPriceMax() == null)
                             return true;
                         if (!SupportClass::checkPositiveInteger($service->getPriceMin())
                             || !SupportClass::checkPositiveInteger($service->getPriceMax()))
