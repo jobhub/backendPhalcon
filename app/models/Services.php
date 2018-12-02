@@ -341,6 +341,8 @@ class Services extends SubjectsWithNotDeleted
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
                     "callback" => function ($service) {
+                        if ($service->getPriceMin() == null || $service->getPriceMax())
+                            return true;
                         if (!SupportClass::checkPositiveInteger($service->getPriceMin())
                             || !SupportClass::checkPositiveInteger($service->getPriceMax()))
                             return false;
@@ -1016,19 +1018,19 @@ class Services extends SubjectsWithNotDeleted
         $cl->SetLimits(0, 10000, 50);
         $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
-        if($regions!= null)
+        if ($regions != null)
             $cl->setFilter('regionid', $regions, false);
-        if($categories!=null)
+        if ($categories != null)
             $cl->setFilter('categoryid', $categories, false);
 
-        if($priceMin!=null)
-            $cl->setFilterFloatRange('pricemin', $priceMin,9223372036854775807, false);
+        if ($priceMin != null)
+            $cl->setFilterFloatRange('pricemin', $priceMin, 9223372036854775807, false);
 
-        if($priceMax!=null)
-            $cl->setFilterFloatRange('pricemax', 0,$priceMax, false);
+        if ($priceMax != null)
+            $cl->setFilterFloatRange('pricemax', 0, $priceMax, false);
 
-        if($ratingMin!=null)
-            $cl->setFilterFloatRange('rating', $ratingMin,100.0, false);
+        if ($ratingMin != null)
+            $cl->setFilterFloatRange('rating', $ratingMin, 100.0, false);
 
         if ($center != null && $diagonal != null) {
             $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
@@ -1283,26 +1285,28 @@ class Services extends SubjectsWithNotDeleted
 
         return $services;
     }
+
     /**
      * @param $subjectId
      * @param $subjectType
      * @return Возвращает массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
-            regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
-            [Userinfo или Company]}]
+     * regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
+     * [Userinfo или Company]}]
      */
-    public static function getServicesForSubject($subjectId, $subjectType){
+    public static function getServicesForSubject($subjectId, $subjectType)
+    {
         $db = Phalcon\DI::getDefault()->getDb();
 
-        $services = Services::findBySubject($subjectId,$subjectType,'datepublication desc',Services::publicColumnsInStr);
+        $services = Services::findBySubject($subjectId, $subjectType, 'datepublication desc', Services::publicColumnsInStr);
 
         $servicesArr = json_encode($services);
-        $servicesArr = json_decode($servicesArr,true);
+        $servicesArr = json_decode($servicesArr, true);
         $servicesAll = [];
 
-        if($subjectType == 0){
+        if ($subjectType == 0) {
             $categories = UsersCategories::getCategoriesByUser($subjectId);
-        } else{
+        } else {
             $categories = CompaniesCategories::getCategoriesByCompany($subjectId);
         }
 
@@ -1311,16 +1315,16 @@ class Services extends SubjectsWithNotDeleted
             $serviceAll['categories'] = $categories;
             $images = ImagesServices::findByServiceid($service['serviceid']);
             $serviceAll['images'] = [];
-            foreach ($images as $image){
+            foreach ($images as $image) {
                 $serviceAll['images'][] = $image->getImagePath();
             }
             $points = Services::getPointsForService($service['serviceid']);
-            $serviceAll['point'] = count($points)>0?
-                $points[0]:[];
+            $serviceAll['point'] = count($points) > 0 ?
+                $points[0] : [];
 
             $tags = Services::getTagsForService($service['serviceid']);
-            $serviceAll['tags'] = count($tags)>0?
-                $tags:[];
+            $serviceAll['tags'] = count($tags) > 0 ?
+                $tags : [];
 
             if ($subjectType == 0) {
                 $user = Userinfo::findFirst(
@@ -1348,7 +1352,7 @@ class Services extends SubjectsWithNotDeleted
                 $serviceAll['publisherCompany']['phones'] = $phones;
             }
 
-            $servicesAll[] =$serviceAll;
+            $servicesAll[] = $serviceAll;
         }
 
         return $servicesAll;
@@ -1364,8 +1368,8 @@ class Services extends SubjectsWithNotDeleted
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $columns = [];
-        foreach(TradePoints::publicColumns as $publicColumn){
-            $columns[] = 'p.'.$publicColumn;
+        foreach (TradePoints::publicColumns as $publicColumn) {
+            $columns[] = 'p.' . $publicColumn;
         }
         $result = $modelsManager->createBuilder()
             ->columns($columns)
