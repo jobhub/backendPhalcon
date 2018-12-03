@@ -724,8 +724,10 @@ class RegisterAPIController extends Controller
 
             //Пока, если код существует, то просто перезаписывается
             $resetCode = PasswordResetCodes::findFirstByUserid($user->getUserId());
+            $exists = true;
             if (!$resetCode) {
-                $resetCode = new ActivationCodes();
+                $exists = false;
+                $resetCode = new PasswordResetCodes();
                 $resetCode->setUserId($user->getUserId());
             }
 
@@ -733,10 +735,15 @@ class RegisterAPIController extends Controller
 
                 $resetCode->generateResetCode($user->getUserId());
                 $resetCode->setTime(date('Y-m-d H:i:s'));
-
-                if (!$resetCode->save()) {
+                $res = false;
+                /*if(!$exists)
+                    $res = $resetCode->save();
+                else{
+                    $res = $resetCode->update();
+                }*/
+                if (!/*$res*/$resetCode->save()) {
                     SupportClass::writeMessageInLogFile("Не удалось создать активационный код со следующими ошибками:");
-                    foreach ($user->getMessages() as $message) {
+                    foreach ($resetCode->getMessages() as $message) {
                         SupportClass::writeMessageInLogFile($message->getMessage());
                     }
                     $response->setJsonContent(
@@ -846,13 +853,13 @@ class RegisterAPIController extends Controller
             }
 
             if($user->getPhoneId() == null) {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId and reset_code = :resetCode',
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
                     ]]);
             } else{
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId and reset_code_phone = :resetCode',
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
@@ -866,6 +873,18 @@ class RegisterAPIController extends Controller
                     ]
                 );
                 return $response;
+            }
+
+            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
+                'bind' => [
+                    'userId' => $user->getUserId(),
+                    'resetCode' => $this->request->getPost('resetcode')
+                ]]);
+
+            if($resetCode){
+                if(!$resetCode->delete()){
+                    return SupportClass::getResponseWithErrors($resetCode);
+                }
             }
 
             $response->setJsonContent(
@@ -893,7 +912,7 @@ class RegisterAPIController extends Controller
      *
      * @return string - json array Status
      */
-    public function changePasswordCodeAction(){
+    public function changePasswordAction(){
         if ($this->request->isPost()) {
             $response = new Response();
 
@@ -910,13 +929,13 @@ class RegisterAPIController extends Controller
             }
 
             if($user->getPhoneId() == null) {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId and reset_code = :resetCode',
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
                     ]]);
             } else{
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId and reset_code_phone = :resetCode',
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
@@ -924,11 +943,13 @@ class RegisterAPIController extends Controller
             }
 
             if($resetCode){
-                $user->setPassword($this->request->getPost('login'));
+                $user->setPassword($this->request->getPost('password'));
 
-                if(!$user){
+                if(!$user->update()){
                     return SupportClass::getResponseWithErrors($user);
                 }
+
+                $resetCode->delete();
 
                 $response->setJsonContent(
                     [

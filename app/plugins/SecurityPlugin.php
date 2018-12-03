@@ -158,7 +158,7 @@ class SecurityPlugin extends Plugin
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
                     'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],
                 'RegisterAPI' => ['index', 'deactivateLink', 'activateLink', 'getActivationCode',
-                        'getResetPasswordCode','checkResetPasswordCode'],
+                        'getResetPasswordCode','checkResetPasswordCode', 'changePassword'],
             ];
 
             $publicResources2 = [];

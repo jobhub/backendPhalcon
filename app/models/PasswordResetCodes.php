@@ -197,18 +197,13 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
                             false);
                         if (!$user)
                             return false;
-
-                        $resetCodeExists = PasswordResetCodes::findFirstByUserid($resetcode
-                            ->getUserId());
-                        if($resetCodeExists)
-                            return false;
                         return true;
                     }
                 ]
             )
         );
 
-        $validator->add(
+        /*$validator->add(
             'userid',
             new Callback(
                 [
@@ -223,7 +218,7 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
                     }
                 ]
             )
-        );
+        );*/
 
         $validator->add(
             'reset_code',
