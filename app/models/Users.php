@@ -236,6 +236,24 @@ class Users extends NotDeletedModelWithCascade
             . $this->getPassword() . '-no');
     }
 
+    public static function findByLogin($login)
+    {
+        $phone = $login;
+        $email = $login;
+        $formatPhone = Phones::formatPhone($phone);
+        $phoneObj = Phones::findFirstByPhone($formatPhone);
+        $user = Users::findFirst(
+            [
+                "(email = :email: OR phoneid = :phoneId:)",
+                "bind" => [
+                    "email" => $email,
+                    "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
+                ]
+            ]
+        );
+        return $user;
+    }
+
     /**
      * Validations and business logic
      *
