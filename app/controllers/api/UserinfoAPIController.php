@@ -807,6 +807,75 @@ class UserinfoAPIController extends Controller
         return $response;
     }
 
+    /**
+     * Удаляет картинку из спискафотографий пользователя
+     *
+     * @method DELETE
+     *
+     * @param $imageId integer id изображения
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteImageAction($imageId)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $image = ImagesUsers::findFirstByImageid($imageId);
+
+            if (!$image) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор картинки'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $user = Users::findFirstByUserid($image->getUserId());
+
+            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $user->getUserId(),
+                    0, 'deleteImage')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
     public function addUsersAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
