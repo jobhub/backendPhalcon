@@ -30,14 +30,13 @@ class RegisterAPIController extends Controller
             $response = new Response();
 
             SupportClass::writeMessageInLogFile("Прошел проверку на метод");
-
-            $phone = $this->request->getPost('login');
-            $email = $this->request->getPost('login');
             $password = $this->request->getPost('password');
-            $formatPhone = Phones::formatPhone($phone);
-            $phoneObj = Phones::findFirstByPhone($formatPhone);
 
-            $user = Users::findFirst(
+            $email = $this->request->getPost('login');
+            $phone = $this->request->getPost('login');
+            $formatPhone = Phones::formatPhone($phone);
+
+            /*$user = Users::findFirst(
                 [
                     "(email = :email: OR phoneid = :phoneId:)",
                     "bind" => [
@@ -45,7 +44,8 @@ class RegisterAPIController extends Controller
                         "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
                     ]
                 ]
-            );
+            );*/
+            $user = Users::findByLogin($this->request->getPost('login'));
 
             if ($user != false) {
                 $response->setJsonContent(
@@ -695,4 +695,281 @@ class RegisterAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Отправляет пользователю код для сброса пароля
+     * @access public
+     *
+     * @method POST
+     *
+     * @params login
+     *
+     * @return Status
+     */
+    public function getResetPasswordCodeAction(){
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $user = Users::findByLogin($this->request->getPost('login'));
+
+            if (!$user || $user == null) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            //Пока, если код существует, то просто перезаписывается
+            $resetCode = PasswordResetCodes::findFirstByUserid($user->getUserId());
+            $exists = true;
+            if (!$resetCode) {
+                $exists = false;
+                $resetCode = new PasswordResetCodes();
+                $resetCode->setUserId($user->getUserId());
+            }
+
+            if ($user->getPhoneId() == null) {
+
+                $resetCode->generateResetCode($user->getUserId());
+                $resetCode->setTime(date('Y-m-d H:i:s'));
+                $res = false;
+                /*if(!$exists)
+                    $res = $resetCode->save();
+                else{
+                    $res = $resetCode->update();
+                }*/
+                if (!/*$res*/$resetCode->save()) {
+                    SupportClass::writeMessageInLogFile("Не удалось создать активационный код со следующими ошибками:");
+                    foreach ($resetCode->getMessages() as $message) {
+                        SupportClass::writeMessageInLogFile($message->getMessage());
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Проблема с созданием активационного кода']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $mailer = new PHPMailerApp($this->config['mail']);
+                $newTo = $this->config['mail']['from']['email'];
+
+                $res = $mailer->createMessageFromView('emails/reset_code_letter', 'reset_code_letter',
+                    ['resetcode' => $resetCode->getResetCode(),
+                        'deactivate' => $resetCode->getDeactivateCode(),
+                        'email'=>$user->getEmail()])
+                    ->to($newTo)
+                    ->subject('Подтвердите сброс пароля')
+                    ->send();
+
+                if ($res === true) {
+                    $response->setJsonContent([
+                        'status' => STATUS_OK
+                    ]);
+                    return $response;
+                } else {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => [$res],
+                        ]
+                    );
+                    return $response;
+                }
+            } else{
+                //Иначе отправляем на телефон
+                $resetCode->generateResetCodePhone($user->getUserId());
+                $resetCode->setTime(date('Y-m-d H:i:s'));
+
+                if (!$resetCode->save()) {
+                    SupportClass::writeMessageInLogFile("Не удалось создать активационный код со следующими ошибками:");
+                    foreach ($user->getMessages() as $message) {
+                        SupportClass::writeMessageInLogFile($message->getMessage());
+                    }
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Проблема с созданием активационного кода']
+                        ]
+                    );
+                    return $response;
+                }
+
+                //Тут типа отправляем
+                $res = true;
+                //Отправили
+
+                if ($res === true) {
+                    $response->setJsonContent([
+                        'status' => STATUS_OK
+                    ]);
+                    return $response;
+                } else {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => [$res],
+                        ]
+                    );
+                    return $response;
+                }
+            }
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Проверяет, верен ли код для сброса пароля
+     * @access public
+     *
+     * @method POST
+     *
+     * @params login
+     * @params resetcode
+     *
+     * @return Status
+     */
+    public function checkResetPasswordCodeAction(){
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $user = Users::findByLogin($this->request->getPost('login'));
+
+            if (!$user || $user == null) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if($user->getPhoneId() == null) {
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
+                    'bind' => [
+                        'userId' => $user->getUserId(),
+                        'resetCode' => $this->request->getPost('resetcode')
+                    ]]);
+            } else{
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
+                    'bind' => [
+                        'userId' => $user->getUserId(),
+                        'resetCode' => $this->request->getPost('resetcode')
+                    ]]);
+            }
+
+            if($resetCode){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_OK,
+                    ]
+                );
+                return $response;
+            }
+
+            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
+                'bind' => [
+                    'userId' => $user->getUserId(),
+                    'resetCode' => $this->request->getPost('resetcode')
+                ]]);
+
+            if($resetCode){
+                if(!$resetCode->delete()){
+                    return SupportClass::getResponseWithErrors($resetCode);
+                }
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => ['Код указан неверно'],
+                ]
+            );
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Проверяет, верен ли код для сброса пароля
+     * @access public
+     *
+     * @method POST
+     *
+     * @params login
+     * @params resetcode
+     * @params password
+     *
+     * @return string - json array Status
+     */
+    public function changePasswordAction(){
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $user = Users::findByLogin($this->request->getPost('login'));
+
+            if (!$user || $user == null) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Пользователь не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if($user->getPhoneId() == null) {
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
+                    'bind' => [
+                        'userId' => $user->getUserId(),
+                        'resetCode' => $this->request->getPost('resetcode')
+                    ]]);
+            } else{
+                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
+                    'bind' => [
+                        'userId' => $user->getUserId(),
+                        'resetCode' => $this->request->getPost('resetcode')
+                    ]]);
+            }
+
+            if($resetCode){
+                $user->setPassword($this->request->getPost('password'));
+
+                if(!$user->update()){
+                    return SupportClass::getResponseWithErrors($user);
+                }
+
+                $resetCode->delete();
+
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_OK,
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_WRONG,
+                    "errors" => ['Код указан неверно'],
+                ]
+            );
+            return $response;
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
 }
+

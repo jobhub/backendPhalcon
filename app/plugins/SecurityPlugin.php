@@ -87,7 +87,7 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview', 'addImages'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
-                'UserinfoAPI' => ['addImages'],
+                'UserinfoAPI' => ['addImages', 'deleteImage'],
             ];
 
             $privateResources2 = [];
@@ -157,7 +157,8 @@ class SecurityPlugin extends Plugin
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
                     'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],
-                'RegisterAPI' => ['index', 'deactivateLink', 'activateLink', 'getActivationCode'],
+                'RegisterAPI' => ['index', 'deactivateLink', 'activateLink', 'getActivationCode',
+                        'getResetPasswordCode','checkResetPasswordCode', 'changePassword'],
             ];
 
             $publicResources2 = [];
