@@ -491,7 +491,7 @@ class ReviewsAPIController extends Controller
             foreach ($files as $file) {
                 $newimage = new ImagesReviews();
                 $newimage->setReviewId($reviewId);
-                $newimage->setImagePath(' ');
+                $newimage->setImagePath('magic_string');
 
                 if (!$newimage->save()) {
                     $errors = [];

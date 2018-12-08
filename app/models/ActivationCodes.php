@@ -40,6 +40,12 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     protected $used;
 
     /**
+     * Минимальное время, которое должно пройти перед повторной отправкой.
+     * В секундах.
+     */
+    const RESEND_TIME = 300;
+
+    /**
      * Method to set the value of field userid
      *
      * @param integer $userid
