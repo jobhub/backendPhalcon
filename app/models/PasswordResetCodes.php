@@ -43,6 +43,12 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
     protected $time;
 
     /**
+     * Минимальное время, которое должно пройти перед повторной отправкой.
+     * В asszсекундах.
+     */
+    const RESEND_TIME = 300;
+
+    /**
      * Method to set the value of field userid
      *
      * @param integer $userid
