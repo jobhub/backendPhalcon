@@ -738,7 +738,7 @@ class UserinfoAPIController extends Controller
 
                 $newimage = new ImagesUsers();
                 $newimage->setUserId($userId);
-                $newimage->setImagePath("");
+                $newimage->setImagePath("magic_string");
 
                 if (!$newimage->save()) {
                     $errors = [];
@@ -754,6 +754,7 @@ class UserinfoAPIController extends Controller
                     );
                     return $response;
                 }
+
                 $imagesIds[] = $newimage->getImageId();
 
                 $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
@@ -808,7 +809,7 @@ class UserinfoAPIController extends Controller
     }
 
     /**
-     * Удаляет картинку из спискафотографий пользователя
+     * Удаляет картинку из списка фотографий пользователя
      *
      * @method DELETE
      *

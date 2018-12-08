@@ -5,12 +5,15 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 class Users extends NotDeletedModelWithCascade
 {
+
+    const LOGIN_EXISTS = 1;
+    const ALL_OK = 0;
+    const LOGIN_INCORRECT = 2;
 
     /**
      *
@@ -252,6 +255,38 @@ class Users extends NotDeletedModelWithCascade
             ]
         );
         return $user;
+    }
+
+    public static function checkLogin($login)
+    {
+        $user = Users::findByLogin($login);
+
+        if ($user != false) {
+            return Users::LOGIN_EXISTS;
+        }
+
+        $result = Phones::isValidPhone($login);
+
+        if(!$result) {
+            $user = new Users();
+            $user->setEmail($login);
+
+            $validator = new Validation();
+            $validator->add(
+                'email',
+                new EmailValidator(
+                    [
+                        'model' => $user,
+                        'message' => 'Введите, пожалуйста, правильный адрес',
+                    ]
+                )
+            );
+            if(!$user->validate($validator)){
+                return Users::LOGIN_INCORRECT;
+            }
+        }
+
+        return Users::ALL_OK;
     }
 
     /**

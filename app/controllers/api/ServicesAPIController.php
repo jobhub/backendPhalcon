@@ -1514,7 +1514,7 @@ class ServicesAPIController extends Controller
 
                 $newimage = new ImagesServices();
                 $newimage->setServiceId($serviceId);
-                $newimage->setImagePath("");
+                $newimage->setImagePath("magic_string");
 
                 if (!$newimage->save()) {
                     $errors = [];

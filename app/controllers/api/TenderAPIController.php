@@ -81,6 +81,7 @@ class TenderAPIController extends Controller
                     'taskId' => $this->request->getPut("taskId"),
                 ]
             );*/
+
             $task = Tasks::findFirstByTaskId($this->request->getPut("taskId"));
 
             if ($task->getUserId() == $this->session->get('auth')['id']) {

@@ -520,7 +520,7 @@ class NewsAPIController extends Controller
 
                 $newimage = new ImagesNews();
                 $newimage->setNewsId($newId);
-                $newimage->setImagePath("");
+                $newimage->setImagePath('magic_string');
 
                 if (!$newimage->save()) {
                     $this->db->rollback();

@@ -16,6 +16,7 @@ class RegisterAPIController extends Controller
     /**
      * Регистрирует пользователя в системе
      *
+     * @access public
      * @method POST
      *
      * @params login, password,
@@ -114,11 +115,11 @@ class RegisterAPIController extends Controller
             SupportClass::writeMessageInLogFile("Дошел до отправки кода активации");
             $res = $this->sendActivationCode($user);
             SupportClass::writeMessageInLogFile("Отправил код активации");
-            $res = json_decode($res->getContent(),true);
+            $res = json_decode($res->getContent(), true);
 
             $res2 = $res['status'] == STATUS_OK;
             $tokens['role'] = $user->getRole();
-            if($res2 === true){
+            if ($res2 === true) {
                 $this->db->commit();
 
                 $response->setJsonContent(
@@ -132,6 +133,51 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Проверяет, подходит ли логин для регистрации нового пользователя
+     *
+     * @access public
+     * @method POST
+     *
+     * @params login
+     *
+     * @return string json array Status
+     */
+    public function checkLoginAction()
+    {
+        if ($this->request->isPost()) {
+            $response = new Response();
+
+            $result = Users::checkLogin($this->request->getPost('login'));
+
+            if ($result == Users::ALL_OK) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_OK,
+                    ]
+                );
+            } else if ($result == Users::LOGIN_EXISTS) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_ALREADY_EXISTS,
+                        'errors' => ['Пользователь с таким логином уже существует']
+                    ]
+                );
+            } else {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        'errors' => ['Некорректный логин']
+                    ]
+                );
+            }
+            return $response;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
@@ -278,17 +324,18 @@ class RegisterAPIController extends Controller
      *
      * @return Status
      */
-    public function activateLinkAction(){
+    public function activateLinkAction()
+    {
         if ($this->request->isPost()) {
 
             $auth = $this->session->get('auth');
             $authUserId = null;
-            if($auth)
+            if ($auth)
                 $authUserId = $auth['id'];
 
             $response = new Response();
 
-            if($this->request->getPost('login') == null || trim($this->request->getPost('login')) == ""){
+            if ($this->request->getPost('login') == null || trim($this->request->getPost('login')) == "") {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -298,13 +345,13 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            if($authUserId == null) {
+            if ($authUserId == null) {
                 $user = Users::findFirst(['email = :email:', 'bind' =>
                     [
                         'email' => $this->request->getPost('login')
                     ]
                 ]);
-            } else{
+            } else {
                 $user = Users::findFirst(['userid = :userId: and email = :email:', 'bind' =>
                     [
                         'userId' => $authUserId,
@@ -385,7 +432,7 @@ class RegisterAPIController extends Controller
 
             $this->db->begin();
 
-            if(!$activationCode->delete()){
+            if (!$activationCode->delete()) {
                 $this->db->rollback();
                 return SupportClass::getResponseWithErrors($activationCode);
             }
@@ -409,7 +456,7 @@ class RegisterAPIController extends Controller
 
             $this->db->commit();
 
-            if($authUserId == null) {
+            if ($authUserId == null) {
                 $res = $this->SessionAPI->createSession($user);
                 $res = json_decode($res->getContent(), true);
 
@@ -419,7 +466,6 @@ class RegisterAPIController extends Controller
 
                 return $response;
             }
-
 
 
             $response->setJsonContent(
@@ -581,7 +627,8 @@ class RegisterAPIController extends Controller
     /**
      * Отправляет активационный код пользователю на почту.
      * @param $user - объект типа User
-     * @return Response - json array в формате Status
+     * @return Response - json array в формате [Status, timeLeft] - объект статус и, если время еще не истекло,
+     * timeLeft - оставшееся время.
      */
     public function sendActivationCode($user)
     {
@@ -617,6 +664,19 @@ class RegisterAPIController extends Controller
             if (!$activationCode) {
                 $activationCode = new ActivationCodes();
                 $activationCode->setUserId($userId);
+            } else {
+                if (strtotime($activationCode->getTime()) > strtotime(date('Y-m-d H:i:s O')) - ActivationCodes::RESEND_TIME) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Время для повторной отправки должно составлять не менее 5 минут'],
+                            'timeLeft' => date('Y-m-d H:i:s',
+                                strtotime($activationCode->getTime())
+                                - (strtotime(date('Y-m-d H:i:s O')) - ActivationCodes::RESEND_TIME))
+                        ]
+                    );
+                    return $response;
+                }
             }
 
             $activationCode->setActivation($user->generateActivation());
@@ -644,8 +704,9 @@ class RegisterAPIController extends Controller
             $res = $mailer->createMessageFromView('emails/hello_world', 'hello_world',
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
-                    'email'=>$user->getEmail()])
-                ->to(/*$user->getEmail()*/$newTo)
+                    'email' => $user->getEmail()])
+                ->to(/*$user->getEmail()*/
+                    $newTo)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 
@@ -681,7 +742,8 @@ class RegisterAPIController extends Controller
      *
      * @return Response - json array в формате Status
      */
-    public function getActivationCodeAction(){
+    public function getActivationCodeAction()
+    {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $response = new Response();
             $auth = $this->session->get('auth');
@@ -706,7 +768,8 @@ class RegisterAPIController extends Controller
      *
      * @return Status
      */
-    public function getResetPasswordCodeAction(){
+    public function getResetPasswordCodeAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
 
@@ -729,7 +792,16 @@ class RegisterAPIController extends Controller
                 $exists = false;
                 $resetCode = new PasswordResetCodes();
                 $resetCode->setUserId($user->getUserId());
-            }
+            } else
+                if (strtotime($resetCode->getTime()) > strtotime(date('Y-m-d H:i:s') . '+00') - PasswordResetCodes::RESEND_TIME) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['Время для повторной отправки должно составлять не менее 5 минут']
+                        ]
+                    );
+                    return $response;
+                }
 
             if ($user->getPhoneId() == null) {
 
@@ -761,7 +833,7 @@ class RegisterAPIController extends Controller
                 $res = $mailer->createMessageFromView('emails/reset_code_letter', 'reset_code_letter',
                     ['resetcode' => $resetCode->getResetCode(),
                         'deactivate' => $resetCode->getDeactivateCode(),
-                        'email'=>$user->getEmail()])
+                        'email' => $user->getEmail()])
                     ->to($newTo)
                     ->subject('Подтвердите сброс пароля')
                     ->send();
@@ -780,7 +852,7 @@ class RegisterAPIController extends Controller
                     );
                     return $response;
                 }
-            } else{
+            } else {
                 //Иначе отправляем на телефон
                 $resetCode->generateResetCodePhone($user->getUserId());
                 $resetCode->setTime(date('Y-m-d H:i:s'));
@@ -836,7 +908,8 @@ class RegisterAPIController extends Controller
      *
      * @return Status
      */
-    public function checkResetPasswordCodeAction(){
+    public function checkResetPasswordCodeAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
 
@@ -852,13 +925,13 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            if($user->getPhoneId() == null) {
+            if ($user->getPhoneId() == null) {
                 $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
                     ]]);
-            } else{
+            } else {
                 $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
@@ -866,7 +939,7 @@ class RegisterAPIController extends Controller
                     ]]);
             }
 
-            if($resetCode){
+            if ($resetCode) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_OK,
@@ -881,8 +954,8 @@ class RegisterAPIController extends Controller
                     'resetCode' => $this->request->getPost('resetcode')
                 ]]);
 
-            if($resetCode){
-                if(!$resetCode->delete()){
+            if ($resetCode) {
+                if (!$resetCode->delete()) {
                     return SupportClass::getResponseWithErrors($resetCode);
                 }
             }
@@ -912,7 +985,8 @@ class RegisterAPIController extends Controller
      *
      * @return string - json array Status
      */
-    public function changePasswordAction(){
+    public function changePasswordAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
 
@@ -928,13 +1002,13 @@ class RegisterAPIController extends Controller
                 return $response;
             }
 
-            if($user->getPhoneId() == null) {
+            if ($user->getPhoneId() == null) {
                 $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
                         'resetCode' => $this->request->getPost('resetcode')
                     ]]);
-            } else{
+            } else {
                 $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
                     'bind' => [
                         'userId' => $user->getUserId(),
@@ -942,10 +1016,10 @@ class RegisterAPIController extends Controller
                     ]]);
             }
 
-            if($resetCode){
+            if ($resetCode) {
                 $user->setPassword($this->request->getPost('password'));
 
-                if(!$user->update()){
+                if (!$user->update()) {
                     return SupportClass::getResponseWithErrors($user);
                 }
 
