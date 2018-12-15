@@ -809,6 +809,33 @@ class UserinfoAPIController extends Controller
     }
 
     /**
+     * Возвращает комментарии к указанной фотографии пользователя
+     *
+     * @method GET
+     *
+     * @param $imageId
+     *
+     * @return string - json array массив комментариев
+     */
+    public function getCommentsForImageAction($imageId)
+    {
+        if ($this->request->isGet()) {
+            /*$auth = $this->session->get('auth');
+            $userId = $auth['id'];*/
+            $response = new Response();
+
+            $comments = ImagesUsers::getComments($imageId);
+
+            $response->setJsonContent($comments);
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
      * Удаляет картинку из списка фотографий пользователя
      *
      * @method DELETE
