@@ -737,7 +737,7 @@ class RegisterAPIController extends Controller
 
     /**
      * Отправляет активационный код пользователю. Пока только на почту.
-     * @access defective
+     * @access public, но пользователь должен быть авторизован
      * @method POST
      *
      * @return Response - json array в формате Status

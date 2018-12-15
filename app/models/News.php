@@ -303,6 +303,7 @@ class News extends SubjectsWithNotDeleted
                     'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
                 ];
             }
+
             $comment['likes'] = ($i*(int)(7/5))+$i*7%6;
 
             $comment['publisherUser'] = ['userid' => '9', 'email' => 'eenotova@mail.ru',
