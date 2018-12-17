@@ -244,7 +244,7 @@ class OffersAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $offer->getSubjectId(),$offer->getSubjectType(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $offer->getSubjectId(),$offer->getSubjectType(),
                 'deleteOffer')) {
                 $response->setJsonContent(
                     [
@@ -301,7 +301,7 @@ class OffersAPIController extends Controller
             $userId = $auth['id'];
 
             $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
-            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'editOffer')){
+            if(!$offer || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'editOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -390,7 +390,7 @@ class OffersAPIController extends Controller
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
             $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
-            if(!$offer ||!SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'confirmOffer')){
+            if(!$offer ||!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'confirmOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -445,7 +445,7 @@ class OffersAPIController extends Controller
             $userId = $auth['id'];
 
             $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
-            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'rejectOffer')){
+            if(!$offer || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),'rejectOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -502,7 +502,7 @@ class OffersAPIController extends Controller
 
             $offer = Offers::findFirstByOfferid($this->request->getPut("offerId"));
 
-            if(!$offer || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),
+            if(!$offer || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$offer->getSubjectId(),$offer->getSubjectType(),
                     'performTask')){
                 $response->setJsonContent(
                     [

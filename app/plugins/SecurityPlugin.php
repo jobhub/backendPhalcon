@@ -87,7 +87,7 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview', 'addImages'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
-                'UserinfoAPI' => ['addImages', 'deleteImage'],
+                'UserinfoAPI' => ['addImages', 'deleteImage', 'addCommentForImage'],
             ];
 
             $privateResources2 = [];

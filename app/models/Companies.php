@@ -95,11 +95,15 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $description;
 
-     const publicColumns = ['companyid', 'name', 'fullname', 'tin',
+    const publicColumns = ['companyid', 'name', 'fullname', 'tin',
         'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient'];
 
-     const publicColumnsInStr = 'companyid, name, fullname, tin,
+    const publicColumnsInStr = 'companyid, name, fullname, tin,
         regionid, userid, website, email, logotype, ratingexecutor, ratingclient';
+
+    const shortColumns = ['companyid', 'name', 'logotype'];
+
+    const shortColumnsInStr = 'companyid, name, logotype';
 
     /**
      * Method to set the value of field companyId
@@ -261,13 +265,13 @@ class Companies extends NotDeletedModelWithCascade
     }
 
 
-
     public function setRatingExecutor($ratingexecutor)
     {
         $this->ratingexecutor = $ratingexecutor;
 
         return $this;
     }
+
     public function setRatingClient($ratingclient)
     {
         $this->ratingclient = $ratingclient;
@@ -389,6 +393,7 @@ class Companies extends NotDeletedModelWithCascade
     {
         return $this->ratingexecutor;
     }
+
     public function getRatingClient()
     {
         return $this->ratingclient;
@@ -470,28 +475,28 @@ class Companies extends NotDeletedModelWithCascade
             )
         );
 
-        if($this->getLogotype() != null)
-        $validator->add(
-            'logotype',
-            new Callback(
-                [
-                    "message" => "Формат логотипа не поддерживается",
-                    "callback" => function ($company) {
-                        $format = pathinfo($company->getLogotype(), PATHINFO_EXTENSION);
+        if ($this->getLogotype() != null)
+            $validator->add(
+                'logotype',
+                new Callback(
+                    [
+                        "message" => "Формат логотипа не поддерживается",
+                        "callback" => function ($company) {
+                            $format = pathinfo($company->getLogotype(), PATHINFO_EXTENSION);
 
-                        if ($format == 'jpeg' || 'jpg')
-                            return true;
-                        elseif ($format == 'png')
-                            return true;
-                        elseif ($format == 'gif')
-                            return true;
-                        else {
-                            return false;
+                            if ($format == 'jpeg' || 'jpg')
+                                return true;
+                            elseif ($format == 'png')
+                                return true;
+                            elseif ($format == 'gif')
+                                return true;
+                            else {
+                                return false;
+                            }
                         }
-                    }
-                ]
-            )
-        );
+                    ]
+                )
+            );
 
 
         return $this->validate($validator);
@@ -522,7 +527,7 @@ class Companies extends NotDeletedModelWithCascade
 
             if (!$delete) {
                 //каскадное 'удаление' точек оказания услуг
-                $tradePoints = TradePoints::findBySubject($this->getCompanyId(),1);
+                $tradePoints = TradePoints::findBySubject($this->getCompanyId(), 1);
                 foreach ($tradePoints as $tradePoint) {
                     $tradePoint->setTransaction($transaction);
                     if (!$tradePoint->delete(false, true)) {
@@ -608,7 +613,7 @@ class Companies extends NotDeletedModelWithCascade
                     }
                 }
 
-                $result = parent::delete($delete,false, $data, $whiteList);
+                $result = parent::delete($delete, false, $data, $whiteList);
 
                 if (!$result) {
                     $transaction->rollback(
@@ -623,9 +628,9 @@ class Companies extends NotDeletedModelWithCascade
 
                 $logo = $this->getLogotype();
 
-                $result = parent::delete($delete,false, $data, $whiteList);
+                $result = parent::delete($delete, false, $data, $whiteList);
 
-                if($result){
+                if ($result) {
                     ImageLoader::delete($logo);
                 }
 
@@ -649,7 +654,7 @@ class Companies extends NotDeletedModelWithCascade
         // Запрос транзакции
         $transaction = $manager->get();
         $this->setTransaction($transaction);
-        if(!parent::restore()){
+        if (!parent::restore()) {
             $transaction->rollback(
                 "Невозможно восстановить компанию"
             );
@@ -659,7 +664,7 @@ class Companies extends NotDeletedModelWithCascade
         $tradePoints = TradePoints::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($tradePoints as $tradePoint) {
             $tradePoint->setTransaction($transaction);
             if (!$tradePoint->restore()) {
@@ -674,7 +679,7 @@ class Companies extends NotDeletedModelWithCascade
         $news = News::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($news as $new) {
             $new->setTransaction($transaction);
             if (!$new->restore()) {
@@ -689,7 +694,7 @@ class Companies extends NotDeletedModelWithCascade
         $services = Services::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($services as $service) {
             $service->setTransaction($transaction);
             if (!$service->restore()) {
@@ -704,7 +709,7 @@ class Companies extends NotDeletedModelWithCascade
         $requests = Requests::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($requests as $request) {
             $request->setTransaction($transaction);
             if (!$request->restore()) {
@@ -719,7 +724,7 @@ class Companies extends NotDeletedModelWithCascade
         $tasks = Tasks::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($tasks as $task) {
             $task->setTransaction($transaction);
             if (!$task->restore()) {
@@ -734,7 +739,7 @@ class Companies extends NotDeletedModelWithCascade
         $offers = Offers::find(["subjectid = :companyId: AND subjecttype = 1 AND deleted = true AND deletedcascade = true",
             'bind' =>
                 ['companyId' => $this->getCompanyId()
-                ]],false);
+                ]], false);
         foreach ($offers as $offer) {
             $offer->setTransaction($transaction);
             if (!$offer->restore()) {
@@ -794,9 +799,9 @@ class Companies extends NotDeletedModelWithCascade
 
     public function beforeSave()
     {
-        if($this->getRatingClient() == null)
+        if ($this->getRatingClient() == null)
             $this->setRatingClient(5);
-        if($this->getRatingExecutor() == null)
+        if ($this->getRatingExecutor() == null)
             $this->setRatingExecutor(5);
     }
 }

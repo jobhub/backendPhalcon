@@ -220,7 +220,7 @@ class NewsAPIController extends Controller
 
                 return $response;
             }
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(), 'deleteNew')) {
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(), 'deleteNew')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -367,7 +367,7 @@ class NewsAPIController extends Controller
                 //Возвращаем новости компании
                 $company = Companies::findFirstByCompanyid($companyId);
 
-                if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $companyId, 1, 'getOwnNews')) {
+                if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $companyId, 1, 'getOwnNews')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -451,7 +451,7 @@ class NewsAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(), $news->getSubjectType(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(), $news->getSubjectType(),
                 'editNew')) {
                 $response->setJsonContent(
                     [
@@ -616,7 +616,7 @@ class NewsAPIController extends Controller
 
             $news = News::findFirstByNewsid($image->getNewsId());
 
-            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+            if (!$news || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(),
                     $news->getSubjectType(), 'editNews')) {
                 $response->setJsonContent(
                     [
@@ -677,7 +677,7 @@ class NewsAPIController extends Controller
 
             $news = News::findFirstByNewsid($newsId);
 
-            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+            if (!$news || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(),
                     $news->getSubjectType(), 'editNews')) {
                 $response->setJsonContent(
                     [
@@ -762,7 +762,7 @@ class NewsAPIController extends Controller
 
             $news = News::findFirstByNewsid($image->getNewsId());
 
-            if (!$news || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $news->getSubjectId(),
+            if (!$news || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(),
                     $news->getSubjectType(), 'editNews')) {
                 $response->setJsonContent(
                     [

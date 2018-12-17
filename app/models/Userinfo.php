@@ -90,6 +90,11 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     const publicColumnsInStr = 'userid, firstname, lastname, patronymic,
         birthday, male, address, about, status, ratingexecutor, ratingclient, pathtophoto, lasttime';
+
+    const shortColumns = ['userid', 'firstname', 'lastname', 'pathtophoto'];
+
+    const shortColumnsInStr = 'userid, firstname, lastname, pathtophoto';
+
     /**
      * Method to set the value of field userId
      *

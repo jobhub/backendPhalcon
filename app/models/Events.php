@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Callback;
 
-class Events extends SubjectsWithNotDeleted
+class Events extends SubjectsWithNotDeletedWithCascade
 {
     /**
      *

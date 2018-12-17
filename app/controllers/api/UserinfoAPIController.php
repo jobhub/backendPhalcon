@@ -425,7 +425,7 @@ class UserinfoAPIController extends Controller
 
             $user = Users::findFirstByUserid($userId);
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -481,7 +481,7 @@ class UserinfoAPIController extends Controller
             $user = Users::findFirst(['userid = :userId:',
                 'bind' => ['userId' => $this->request->getPost('userId')]], false);
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $user->getUserId(), 0, 'restoreCompany')) {
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(), 0, 'restoreCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -820,17 +820,161 @@ class UserinfoAPIController extends Controller
     public function getCommentsForImageAction($imageId)
     {
         if ($this->request->isGet()) {
-            /*$auth = $this->session->get('auth');
-            $userId = $auth['id'];*/
             $response = new Response();
 
-            $comments = ImagesUsers::getComments($imageId);
+            $comments = CommentsImagesUsers::getComments($imageId);
 
             $response->setJsonContent($comments);
             return $response;
 
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет комментарий к фотографии пользователя
+     * @access private
+     *
+     * @method POST
+     *
+     * @params objectid - id изображения
+     * @params commenttext - текст комментария
+     * @params replyid (не обязательное) - id комментария, на который оставляется ответ.
+     * @params accountid (не обязательное) - если не указано, значит от имени пользователя - аккаунта по умолчанию.
+     *
+     * @return string - json array в формате Status + id созданного комментария
+     */
+    public function addCommentForImageAction()
+    {
+        if ($this->request->isPost()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+            $comment = new CommentsImagesUsers();
+            if($this->request->getPost('accountid')!=null){
+                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountid'), 'addNew')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $comment->setAccountId($this->request->getPost('accountid'));
+            } else{
+                /*$comment
+                    ->setSubjectType(0)
+                    ->setSubjectId($userId);*/
+
+                $account = Accounts::findFirst([
+                    'user_id = :userId: and company_id is null',
+                    'bind' => ['userId' => $userId]
+                    ]);
+
+                if(!$account){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_UNRESOLVED_ERROR,
+                            "errors" => ['аккаунт для указанного пользователя не создан, хотя такого быть не должно']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $comment->setAccountId($account->getId());
+            }
+
+            $comment
+                ->setCommentDate(date('Y-m-d H:i:s'))
+                ->setCommentText($this->request->getPost('commenttext'))
+                ->setImageId($this->request->getPost('objectid'))
+                ->setReplyId($this->request->getPost('replyid'));
+
+            if(!$comment->save()){
+                return SupportClass::getResponseWithErrors($comment);
+            }
+
+            $response->setJsonContent(
+                ['status' => STATUS_OK,
+                    'commentid' => $comment->getCommentId()]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет комментарий, оставленный к фотографии пользователя
+     *
+     * @method DELETE
+     *
+     * @param $commentId int id комментария
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteCommentForImageAction($commentId)
+    {
+        if ($this->request->isDelete() && $this->session->get('auth')) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $comment = CommentsImagesUsers::findFirstByCommentid($commentId);
+
+            if (!$comment) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный идентификатор комментария'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            /*$user = Users::findFirstByUserid($image->getUserId());
+
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(),
+                    0, 'deleteImage')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$image->delete()) {
+                $errors = [];
+                foreach ($image->getMessages() as $message) {
+                    $errors[] = $message->getMessage();
+                }
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => $errors
+                    ]
+                );
+                return $response;
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;*/
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
             throw $exception;
         }
     }
@@ -865,7 +1009,7 @@ class UserinfoAPIController extends Controller
 
             $user = Users::findFirstByUserid($image->getUserId());
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $user->getUserId(),
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(),
                     0, 'deleteImage')) {
                 $response->setJsonContent(
                     [

@@ -189,7 +189,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
 
     public static function getComments($imageId)
     {
-        $comments = [];
+        /*$comments = [];
         for ($i = 0; $i < 6; $i++) {
             $type = rand(0, 2);
             if ($type == 0) {
@@ -215,7 +215,9 @@ class ImagesUsers extends \Phalcon\Mvc\Model
                 'status' => null];
 
             $comments[] = $comment;
-        }
+        }*/
+
+        $comments = CommentsImagesUsers::findByImageId($imageId);
 
         return $comments;
     }

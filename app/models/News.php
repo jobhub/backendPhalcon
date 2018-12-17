@@ -7,7 +7,7 @@ use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 
-class News extends SubjectsWithNotDeleted
+class News extends SubjectsWithNotDeletedWithCascade
 {
 
     /**
@@ -287,8 +287,7 @@ class News extends SubjectsWithNotDeleted
 
     public static function getComments($newsId)
     {
-        $comments = [];
-        for ($i = 0; $i < 6; $i++) {
+        /*for ($i = 0; $i < 6; $i++) {
             $type = rand(0, 2);
             if ($type == 0) {
                 $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать трам парам там там там пам',
@@ -314,7 +313,9 @@ class News extends SubjectsWithNotDeleted
                 'status' => null];
 
             $comments[] = $comment;
-        }
+        }*/
+
+        $comments = [];
 
         return $comments;
     }
