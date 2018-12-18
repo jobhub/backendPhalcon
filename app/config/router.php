@@ -1,49 +1,63 @@
 <?php
 
+use Phalcon\Mvc\Micro;
+use Phalcon\Events\Manager; 
+use App\Middleware\CORSMiddleware; // for CORS origine
+
 $router = $di->getRouter();
+$eventsManager = new Manager();
 
-// Define your routes here
-$router->add("/:controller/:action/:params",
-    array(
-        "controller" => 1,
-        "action" => 2,
-        "params" => 3
-    )
-)->convert('controller', function($controller) {
-    return SupportClass::transformControllerName($controller);
-});
+$app = new Micro();
 
-$router->add("/:controller/:action",
-    array(
-        "controller" => 1,
-        "action" => 2
-    )
-)->convert('controller', function($controller) {
-    return SupportClass::transformControllerName($controller);
-});
+ 
+$eventsManager->attach('micro', new CORSMiddleware()); 
+$app->before(new CORSMiddleware());
 
-$router->add("/:controller",
-    array(
-        "controller" => 1,
-        "action" => 'index',
-    )
-)->convert('controller', function($controller) {
-    return SupportClass::transformControllerName($controller);
-});
-$router->add("/:controller/",
-    array(
-        "controller" => 1,
-        "action" => 'index',
-    )
-)->convert('controller', function($controller) {
+//$eventsManager->attach('micro', new CORSMiddleware());
+//$app->after(new CORSMiddleware());
 
-    return SupportClass::transformControllerName($controller);
-});
-$router->add("/",
-    array(
-        "controller" => 'index',
-        "action" => 'index',
-    )
-)->convert('controller', function($controller) {
-    return SupportClass::transformControllerName($controller);
-});
+// Handler user
+$usersCollection = new \Phalcon\Mvc\Micro\Collection();
+$usersCollection->setHandler('\App\Controllers\UserController', true);
+$usersCollection->setPrefix('/user');
+$usersCollection->post('/add', 'addAction');
+$usersCollection->get('/list/{id}', 'getUserListAction');
+$usersCollection->get('/find/{email}', 'getUserByAction'); 
+$usersCollection->get('/chanels/{idUser}', 'getUserChanelAction'); 
+
+// Handler Message
+$msgCollection = new \Phalcon\Mvc\Micro\Collection();
+$msgCollection->setHandler('\App\Controllers\MessageController', true);
+$msgCollection->setPrefix('/chat');
+$msgCollection->post('/send', 'sendMessageAction'); 
+$msgCollection->Options('/send', 'sendMessageAction'); 
+$msgCollection->post('/chat-box', 'getChatBoxAction'); 
+$msgCollection->options('/chat-box', 'getChatBoxAction');
+$msgCollection->post('/all-readed', 'setAllToReadAction'); 
+$msgCollection->options('/all-readed', 'setAllToReadAction'); 
+
+// Handler Group
+$groupCollection = new \Phalcon\Mvc\Micro\Collection();
+$groupCollection->setHandler('\App\Controllers\GroupController', true);
+$groupCollection->setPrefix('/chat');
+$groupCollection->post('/new-group', 'addAction');  
+
+
+$app->mount($groupCollection);
+$app->mount($usersCollection);
+$app->mount($msgCollection); 
+// not found URLs
+$app->notFound(
+  function () use ($app) {
+      $exception =
+        new \App\Controllers\HttpExceptions\Http404Exception(
+          _('URI not found or error in request.'),
+          \App\Controllers\AbstractController::ERROR_NOT_FOUND,
+          new \Exception('URI not found: ' . $app->request->getMethod() . ' ' . $app->request->getURI())
+        );
+      throw $exception;
+  }
+);
+
+$router->handle();
+$app->setEventsManager($eventsManager);
