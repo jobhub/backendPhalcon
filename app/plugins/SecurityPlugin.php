@@ -87,7 +87,8 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview', 'addImages'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
-                'UserinfoAPI' => ['addImages', 'deleteImage', 'addCommentForImage'],
+                'UserinfoAPI' => ['addImages', 'deleteImage', ],
+                'CommentsAPI' => ['addCommentForImage', 'deleteCommentForImage', 'toggleLikeCommentForImage'],
             ];
 
             $privateResources2 = [];
@@ -150,7 +151,8 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
                 'EventsAPI' => ['getEvents'],
                 'TradePointsAPI' => ['getPointInfo'],
-                'UserinfoAPI' => ['getUserinfo', 'getCommentsForImage'],
+                'UserinfoAPI' => ['getUserinfo', ],
+                'CommentsAPI' => ['getCommentsForImage',],
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
                     'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],

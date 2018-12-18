@@ -2,7 +2,6 @@
 
 class Accounts extends \Phalcon\Mvc\Model
 {
-    const COMPANY_ROLE_OWNER = 1;
 
     /**
      *
@@ -82,6 +81,7 @@ class Accounts extends \Phalcon\Mvc\Model
     public function setCompanyRoleId($company_role_id)
     {
         $this->company_role_id = $company_role_id;
+
         return $this;
     }
 
@@ -142,16 +142,6 @@ class Accounts extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'accounts';
-    }
-
-    /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
@@ -173,6 +163,15 @@ class Accounts extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+
+    public static function findForUserDefaultAccount($userId)
+    {
+        return Accounts::findFirst([
+            'user_id = :userId: and company_id is null',
+            'bind' => ['userId' => $userId]
+        ]);
+    }
+
     /**
      * Realise simple logic for checking permission of user to specified account.
      * Or checking permission of user to act on behalf of specified account.
@@ -183,7 +182,7 @@ class Accounts extends \Phalcon\Mvc\Model
      */
     public static function checkUserHavePermission($userId, $accountId, $right = null)
     {
-        $account = Accounts::findFirstByAccountId($accountId);
+        $account = Accounts::findFirstById($accountId);
 
         if (!$account)
             return false;
@@ -192,7 +191,7 @@ class Accounts extends \Phalcon\Mvc\Model
          * It's simple logic without checking specified rights. If user is manager or owner, then he has rights.
          * Owner of company has rights to all accounts associated with this company.
          */
-        if($account->UserId() == $userId)
+        if($account->getUserId() == $userId)
             return true;
 
         if($account->getCompanyId()!= null){
@@ -211,4 +210,15 @@ class Accounts extends \Phalcon\Mvc\Model
 
         return false;
     }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'accounts';
+    }
+
 }

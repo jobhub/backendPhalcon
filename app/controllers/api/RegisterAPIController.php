@@ -94,17 +94,15 @@ class RegisterAPIController extends Controller
 
             if ($user->save() == false) {
                 $this->db->rollback();
-                $errors = [];
-                foreach ($user->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+                return SupportClass::getResponseWithErrors($user);
+            }
+
+            $account = new Accounts();
+            $account->setUserId($user->getUserId());
+
+            if ($account->save() == false) {
+                $this->db->rollback();
+                return SupportClass::getResponseWithErrors($account);
             }
 
             SupportClass::writeMessageInLogFile("Дошел до создания сессии");

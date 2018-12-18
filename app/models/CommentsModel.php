@@ -171,6 +171,8 @@ abstract class CommentsModel extends AccountWithNotDeleted
                 }
             }
 
+            $handledComment['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comment->getCommentId()));
+
             $handledComments[] = $handledComment;
         }
         return $handledComments;

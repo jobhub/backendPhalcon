@@ -53,7 +53,9 @@ class CommentsImagesUsers extends CommentsModel
                 [
                     "message" => "Попытка оставить комментарий на несуществующий комментарий была неуспешна",
                     "callback" => function ($comment) {
-                        $replycomment = CommentsImagesUsers::findFirstByCommentid($comment->getReplyId());
+                        $replycomment = CommentsImagesUsers::findFirst(['commentid = :commentid:',
+                            'bind' =>['commentid'=>$comment->getReplyId()]
+                        ], false);
 
                         if ($replycomment)
                             return true;
