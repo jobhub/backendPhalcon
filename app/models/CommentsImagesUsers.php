@@ -66,7 +66,7 @@ class CommentsImagesUsers extends CommentsModel
         );
 
 
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     /**

@@ -61,7 +61,7 @@ class CommentsAPIController extends Controller
             $response = new Response();
             $comment = new CommentsImagesUsers();
             if($this->request->getPost('accountid')!=null){
-                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountid'), 'addNew')) {
+                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountid'), 'addComment')) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
@@ -138,7 +138,7 @@ class CommentsAPIController extends Controller
                 return $response;
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteImage')) {
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -233,6 +233,159 @@ class CommentsAPIController extends Controller
                         return SupportClass::getResponseWithErrors($like);
                     }
                 }
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Возвращает комментарии к указанной новости
+     *
+     * @method GET
+     *
+     * @param $newsId
+     *
+     * @return string - json array массив комментариев
+     */
+    public function getCommentsForNewsAction($newsId)
+    {
+        if ($this->request->isGet()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+
+            $news = CommentsNews::getComments($newsId);
+
+            $response->setJsonContent($news);
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Добавляет комментарий к новости
+     * @access private
+     *
+     * @method POST
+     *
+     * @params objectid - id новости
+     * @params commentText - текст комментария
+     * @params accountId - int id аккаунта, от имени которого добавляется комментарий.
+     * Если не указан, то от имени текущего пользователя по умолчанию.
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function addCommentForNewsAction()
+    {
+        if ($this->request->isPost()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+            $comment = new CommentsNews();
+            if($this->request->getPost('accountId')!=null){
+                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountId'), 'addComment')) {
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_WRONG,
+                            "errors" => ['permission error']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $comment->setAccountId($this->request->getPost('accountId'));
+            } else{
+                $account = Accounts::findForUserDefaultAccount($userId);
+
+                if(!$account){
+                    $response->setJsonContent(
+                        [
+                            "status" => STATUS_UNRESOLVED_ERROR,
+                            "errors" => ['аккаунт для указанного пользователя не создан, хотя такого быть не должно']
+                        ]
+                    );
+                    return $response;
+                }
+
+                $comment->setAccountId($account->getId());
+            }
+
+            $comment
+                ->setCommentDate(date('Y-m-d H:i:s'))
+                ->setCommentText($this->request->getPost('commenttext'))
+                ->setNewsId($this->request->getPost('objectid'))
+                ->setReplyId($this->request->getPost('replyid'));
+
+            if(!$comment->save()){
+                return SupportClass::getResponseWithErrors($comment);
+            }
+
+            $response->setJsonContent(
+                ['status' => STATUS_OK,
+                    'commentid' => $comment->getCommentId()]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Удаляет комментарий, оставленный к фотографии пользователя
+     *
+     * @method DELETE
+     *
+     * @param $commentId int id комментария
+     *
+     * @return string - json array в формате Status - результат операции
+     */
+    public function deleteCommentForNewsAction($commentId)
+    {
+        if ($this->request->isDelete()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $comment = CommentsNews::findFirstByCommentid($commentId);
+
+            if (!$comment) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный id, комментарий не существует'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if (!$comment->delete()) {
+                return SupportClass::getResponseWithErrors($comment);
             }
 
             $response->setJsonContent(

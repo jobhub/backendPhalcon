@@ -1,7 +1,6 @@
 <?php
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Callback;
-class LikesCommentsImagesUsers extends AccountModel
+
+class LikesCommentsNews extends AccountModel
 {
 
     /**
@@ -11,6 +10,19 @@ class LikesCommentsImagesUsers extends AccountModel
      * @Column(type="integer", length=32, nullable=false)
      */
     protected $comment_id;
+
+    /**
+     * Method to set the value of field account_id
+     *
+     * @param integer $account_id
+     * @return $this
+     */
+    public function setAccountId($account_id)
+    {
+        $this->account_id = $account_id;
+
+        return $this;
+    }
 
     /**
      * Method to set the value of field comment_id
@@ -23,6 +35,16 @@ class LikesCommentsImagesUsers extends AccountModel
         $this->comment_id = $comment_id;
 
         return $this;
+    }
+
+    /**
+     * Returns the value of field account_id
+     *
+     * @return integer
+     */
+    public function getAccountId()
+    {
+        return $this->account_id;
     }
 
     /**
@@ -50,18 +72,7 @@ class LikesCommentsImagesUsers extends AccountModel
                 [
                     "message" => "Компания может оставить только один лайк, независимо от количества менеджеров",
                     "callback" => function ($likesModel) {
-                        /*$modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
-                        $account = Accounts::findFirstById($likesModel->getAccountId());
-                        if(!$account)
-                            return false;
-                        $result = $modelsManager->createBuilder()
-                            ->from(["a" => "Accounts"])
-                            ->join('LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
-                            ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
-                                ['companyId' => $account->getCompanyId(),
-                                  'commentId' => $likesModel->getCommentId()])
-                            ->getQuery()
-                            ->execute();*/
+
                         $result = self::findCommentLikedByCompany($likesModel->getAccountId(),$likesModel->getCommentId());
 
                         if (count($result)>0)
@@ -112,15 +123,26 @@ class LikesCommentsImagesUsers extends AccountModel
     {
         parent::initialize();
         $this->setSchema("public");
-        $this->setSource("likes_comments_imagesusers");
-        $this->belongsTo('comment_id', '\CommentsImagesusers', 'commentid', ['alias' => 'CommentsImagesusers']);
+        $this->setSource("likes_comments_news");
+        $this->belongsTo('account_id', '\Accounts', 'id', ['alias' => 'Accounts']);
+        $this->belongsTo('comment_id', '\CommentsNews', 'commentid', ['alias' => 'CommentsNews']);
+    }
+
+    /**
+     * Returns table name mapped in the model.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        return 'likes_comments_news';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return LikesCommentsImagesusers[]|LikesCommentsImagesusers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return LikesCommentsNews[]|LikesCommentsNews|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -131,21 +153,10 @@ class LikesCommentsImagesUsers extends AccountModel
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return LikesCommentsImagesusers|\Phalcon\Mvc\Model\ResultInterface
+     * @return LikesCommentsNews|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
     }
-
-    /**
-     * Returns table name mapped in the model.
-     *
-     * @return string
-     */
-    public function getSource()
-    {
-        return 'likes_comments_imagesusers';
-    }
-
 }

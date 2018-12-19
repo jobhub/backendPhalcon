@@ -39,7 +39,7 @@ class AccountWithNotDeleted extends NotDeletedModel
                 [
                     "message" => "Такой аккаунт не существует",
                     "callback" => function ($account_model) {
-                        return Accounts::findFirstByAccountId($account_model->getAccountId());
+                        return Accounts::findFirstById($account_model->getAccountId())?true:false;
                     }
                 ]
             )

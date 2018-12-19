@@ -134,8 +134,6 @@ abstract class CommentsModel extends AccountWithNotDeleted
     {
         parent::initialize();
         $this->setSchema("public");
-        //$this->setSource("comments_imagesusers");
-        $this->belongsTo('imageid', '\Imagesusers', 'imageid', ['alias' => 'Imagesusers']);
     }
 
     /**
