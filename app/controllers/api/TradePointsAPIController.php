@@ -290,7 +290,7 @@ class TradePointsAPIController extends Controller
             $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
             if (!$point ||
-                !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(),
+                !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(),
                     $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
@@ -376,7 +376,7 @@ class TradePointsAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,

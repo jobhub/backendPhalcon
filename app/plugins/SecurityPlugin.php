@@ -60,7 +60,7 @@ class SecurityPlugin extends Plugin
                 'CategoriesAPI' => ['getFavourites', 'setFavourite', 'deleteFavourite', 'editRadiusInFavourite'],
                 'FavouriteUsersAPI' => ['setFavourite', 'deleteFavourite', 'getFavourites'],
                 'NewsAPI' => ['getNews', 'addNews', 'deleteNews', 'editNews', 'getOwnNews', 'getSubjectNews',
-                    'addImages', 'deleteImageByName', 'deleteImageById', 'getAllNews'],
+                    'addImages', 'deleteImageByName', 'deleteImageById', 'getAllNews',],
                 'coordinationAPI' => ['addMessage', 'getMessages', 'selectOffer', 'addTokenId', 'clearTokens', 'finishTask', 'completeTask'],
 
                 'CompaniesAPI' => ['addCompany', 'editCompany', 'deleteCompany', 'setManager', 'deleteManager',
@@ -87,7 +87,9 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['addReview', 'editReview', 'deleteReview', 'addImages'],
                 'EventsAPI' => ['addEvent', 'setImage', 'deleteEvent', 'editEvent'],
                 'UserLocationAPI' => ['setLocation'],
-                'UserinfoAPI' => ['addImages', 'deleteImage'],
+                'UserinfoAPI' => ['addImages', 'deleteImage', ],
+                'CommentsAPI' => ['addCommentForImage', 'deleteCommentForImage', 'toggleLikeCommentForImage',
+                    'addCommentForNews', 'getCommentsForNews','deleteCommentForNews'],
             ];
 
             $privateResources2 = [];
@@ -136,8 +138,6 @@ class SecurityPlugin extends Plugin
             //Public area resources
             //БД, все БД.
             $publicResources = [
-                //   'base'       =>['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
-                'Userinfo' => ['viewprofile', 'handler'],
                 'index' => ['index', 'personcab'],
                 'errors' => ['show401', 'show404', 'show500'],
                 'session' => ['index', 'register', 'start', 'end', 'action'],
@@ -152,8 +152,8 @@ class SecurityPlugin extends Plugin
                 'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
                 'EventsAPI' => ['getEvents'],
                 'TradePointsAPI' => ['getPointInfo'],
-                'Search' => ['index'],
-                'UserinfoAPI' => ['getUserinfo'],
+                'UserinfoAPI' => ['getUserinfo', ],
+                'CommentsAPI' => ['getCommentsForImage',],
                 'CompaniesAPI' => ['getCompanyInfo'],
                 'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
                     'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],

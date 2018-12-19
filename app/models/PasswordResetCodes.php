@@ -116,6 +116,14 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
         return $this;
     }
 
+    public function generateDeactivateResetCode($userId)
+    {
+        $hash = hash('sha256',$userId . time() . rand(). '-no');
+        $this->deactivate_code = $hash;
+
+        return $this;
+    }
+
     /**
      * Method to set the value of field time
      *

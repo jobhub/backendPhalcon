@@ -113,7 +113,7 @@ class EventsAPIController extends Controller
                 $userId = $auth['id'];
                 $event = Events::findFirstByEventid($this->request->getPost('eventId'));
 
-                if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $event->getSubjectId(),
+                if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $event->getSubjectId(),
                     $event->getSubjectType(), 'editEvent')) {
 
                     $response->setJsonContent(
@@ -188,7 +188,7 @@ class EventsAPIController extends Controller
             $userId = $auth['id'];
             $event = Events::findFirstByEventid($eventId);
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $event->getSubjectId(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $event->getSubjectId(),
                 $event->getSubjectType(), 'deleteEvent')) {
 
                 $response->setJsonContent(
@@ -251,7 +251,7 @@ class EventsAPIController extends Controller
             $userId = $auth['id'];
             $event = Events::findFirstByEventid($this->request->getPut('eventId'));
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $event->getSubjectId(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $event->getSubjectId(),
                 $event->getSubjectType(), 'editEvent')) {
 
                 $response->setJsonContent(

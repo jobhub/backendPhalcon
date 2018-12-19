@@ -103,7 +103,7 @@ class ServicesPoints extends \Phalcon\Mvc\Model
                         $point = TradePoints::findFirstByPointid($servicePoint->getPointId());
                         $service = Services::findFirstByServiceid($servicePoint->getServiceId());
                         if ($point && $service &&
-                            (SubjectsWithNotDeleted::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
+                            (SubjectsWithNotDeletedWithCascade::equals($point->getSubjectId(), $point->getSubjectType(),$service->getSubjectId(), $service->getSubjectType())))
                             return true;
                         return false;
                     }

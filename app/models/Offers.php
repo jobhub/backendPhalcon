@@ -8,7 +8,7 @@ use Phalcon\Mvc\Model\Message;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
-class Offers extends SubjectsWithNotDeleted
+class Offers extends SubjectsWithNotDeletedWithCascade
 {
 
     /**
@@ -242,7 +242,7 @@ class Offers extends SubjectsWithNotDeleted
                     "callback" => function ($offer) {
                         $task = Tasks::findFirstByTaskid($offer->getTaskId());
 
-                        if ($task && !SubjectsWithNotDeleted::equals($offer->getSubjectId(),
+                        if ($task && !SubjectsWithNotDeletedWithCascade::equals($offer->getSubjectId(),
                                 $offer->getSubjectType(), $task->getSubjectId(),
                                 $task->getSubjectType()))
                             return true;
@@ -314,7 +314,7 @@ class Offers extends SubjectsWithNotDeleted
         if (!$offer)
             return false;
 
-        return SubjectsWithNotDeleted::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
+        return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
     }*/
 
     /**

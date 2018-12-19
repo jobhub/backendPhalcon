@@ -425,7 +425,7 @@ class UserinfoAPIController extends Controller
 
             $user = Users::findFirstByUserid($userId);
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -481,7 +481,7 @@ class UserinfoAPIController extends Controller
             $user = Users::findFirst(['userid = :userId:',
                 'bind' => ['userId' => $this->request->getPost('userId')]], false);
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $user->getUserId(), 0, 'restoreCompany')) {
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(), 0, 'restoreCompany')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -838,7 +838,7 @@ class UserinfoAPIController extends Controller
 
             $user = Users::findFirstByUserid($image->getUserId());
 
-            if (!$user || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $user->getUserId(),
+            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(),
                     0, 'deleteImage')) {
                 $response->setJsonContent(
                     [

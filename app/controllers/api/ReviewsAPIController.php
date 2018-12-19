@@ -241,7 +241,7 @@ class ReviewsAPIController extends Controller
                     return $response;
                 }
             } else {
-                if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $review->getSubjectId(),
+                if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $review->getSubjectId(),
                     $review->getSubjectType(), 'deleteReview')) {
                     $response->setJsonContent(
                         [

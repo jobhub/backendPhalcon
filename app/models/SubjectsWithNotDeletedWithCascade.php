@@ -3,7 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class SubjectsWithNotDeleted extends NotDeletedModel
+class SubjectsWithNotDeletedWithCascade extends NotDeletedModelWithCascade
 {
     /**
      *

@@ -4,7 +4,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends SubjectsWithNotDeleted
+class Tasks extends SubjectsWithNotDeletedWithCascade
 {
     /**
      * @var integer

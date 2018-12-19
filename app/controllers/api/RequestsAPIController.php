@@ -106,7 +106,7 @@ class RequestsAPIController extends Controller
             $request = Requests::findFirstByRequestid($requestId);
 
             if (!$request ||
-                (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
                     'deleteRequest'))) {
                 $response->setJsonContent(
                     [
@@ -164,7 +164,7 @@ class RequestsAPIController extends Controller
             $request = Requests::findFirstByRequestid($this->request->getPut('requestId'));
 
             if (!$request ||
-                (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
+                (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
                     'editRequest'))) {
                 $response->setJsonContent(
                     [
@@ -237,7 +237,7 @@ class RequestsAPIController extends Controller
                 $subjectId = $companyId;
                 $subjectType = 1;
             }
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $subjectId, $subjectType,
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $subjectId, $subjectType,
                 'getRequests')) {
                 $response->setJsonContent(
                     [
@@ -283,7 +283,7 @@ class RequestsAPIController extends Controller
 
             $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
-            if (!$request || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(),
+            if (!$request || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(),
                     $request->getSubjectType(), 'cancelRequest')) {
                 $response->setJsonContent(
                     [
@@ -357,7 +357,7 @@ class RequestsAPIController extends Controller
 
             $request = Requests::findFirstByRequestid($this->request->getPut("requestId"));
 
-            if (!$request || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $request->getSubjectId(),
+            if (!$request || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(),
                     $request->getSubjectType(), 'cancelRequest')) {
                 $response->setJsonContent(
                     [
