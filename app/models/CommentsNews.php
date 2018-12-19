@@ -92,7 +92,11 @@ class CommentsNews extends CommentsModel
         $comments = CommentsNews::find(['newsid = :newsId:','bind' =>['newsId'=> $newsId],
             'order' => 'commentdate DESC'],false);
 
-        return CommentsModel::handleComments($comments);
+        $comments_arr =  CommentsModel::handleComments($comments);
+        for($i = 0; $i < count($comments_arr);$i++){
+            $comments_arr[$i]['likes'] = count(LikesCommentsNews::findByCommentId($comments_arr[$i]['commentid']));
+        }
+        return $comments_arr;
     }
 
 }

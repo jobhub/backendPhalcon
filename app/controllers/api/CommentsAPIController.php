@@ -401,4 +401,87 @@ class CommentsAPIController extends Controller
             throw $exception;
         }
     }
+
+    /**
+     * Меняет лайкнутость текущим пользователем указанного комментария.
+     * @params commentId - int id комментария
+     * @params accountId - int id аккаунта, от имени которого совершается данное действие
+     * (если не указан, значит берется по умолчанию для пользователя)
+     *
+     * @return Response
+     */
+    public function toggleLikeCommentForNewsAction(){
+        if ($this->request->isPost()) {
+            $response = new Response();
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+
+            $comment = CommentsNews::findFirstByCommentid($this->request->getPost('commentId'));
+
+            if (!$comment) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['Неверный id, комментарий не существует'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            if(!$this->request->getPost('accountId')){
+                $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+            } else{
+                $accountId = $this->request->getPost('accountId');
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $accountId,'toggleLikes')) {
+                $response->setJsonContent(
+                    [
+                        "errors" => ['permission error'],
+                        "status" => STATUS_WRONG
+                    ]
+                );
+                return $response;
+            }
+
+            $like = LikesCommentsNews::findCommentLiked($accountId,
+                $this->request->getPost('commentId'));
+
+            if($like){
+                if(!$like->delete()){
+                    return SupportClass::getResponseWithErrors($like);
+                }
+            } else{
+                $like = LikesCommentsNews::findCommentLikedByCompany($accountId,
+                    $this->request->getPost('commentId'));
+
+                if($like){
+                    if(!$like->delete()){
+                        return SupportClass::getResponseWithErrors($like);
+                    }
+                } else {
+
+                    $like = new LikesCommentsNews();
+                    $like->setAccountId($accountId)
+                        ->setCommentid($this->request->getPost('commentId'));
+
+                    if (!$like->save()) {
+                        return SupportClass::getResponseWithErrors($like);
+                    }
+                }
+            }
+
+            $response->setJsonContent(
+                [
+                    "status" => STATUS_OK
+                ]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+
+            throw $exception;
+        }
+    }
 }

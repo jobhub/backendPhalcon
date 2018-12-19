@@ -89,7 +89,7 @@ class SecurityPlugin extends Plugin
                 'UserLocationAPI' => ['setLocation'],
                 'UserinfoAPI' => ['addImages', 'deleteImage', ],
                 'CommentsAPI' => ['addCommentForImage', 'deleteCommentForImage', 'toggleLikeCommentForImage',
-                    'addCommentForNews', 'getCommentsForNews','deleteCommentForNews'],
+                    'addCommentForNews', 'getCommentsForNews','deleteCommentForNews','toggleLikeCommentForNews'],
             ];
 
             $privateResources2 = [];
