@@ -1,6 +1,6 @@
 <?php
 
-class Contract extends SubjectsWithNotDeleted
+class Contract extends SubjectsWithNotDeletedWithCascade
 {
 
     /**

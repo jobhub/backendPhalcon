@@ -146,7 +146,7 @@ class PhonesAPIController extends Controller
 
             $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'editPoint')) {
+            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'editPoint')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -353,7 +353,7 @@ class PhonesAPIController extends Controller
 
             $point = $phonesPoint->tradepoints;
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
+            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
                     'editPoint')) {
                 $response->setJsonContent(
                     [
@@ -413,7 +413,7 @@ class PhonesAPIController extends Controller
             $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
 
-            if (!$point || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
+            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
                     'editPoint')) {
                 $response->setJsonContent(
                     [

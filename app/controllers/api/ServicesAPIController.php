@@ -63,7 +63,7 @@ class ServicesAPIController extends Controller
             if($companyId == null){
                 $services = Services::getServicesForSubject($userId, 0);
             } else{
-                if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$companyId,1,'getServices')){
+                if(!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$companyId,1,'getServices')){
                     $response->setJsonContent([
                         'status' => STATUS_WRONG,
                         'errors' => ['permission denied']
@@ -325,7 +325,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -398,7 +398,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -513,7 +513,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -826,7 +826,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
                 $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
@@ -879,7 +879,7 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceid($image->getServiceId());
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
                     $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
@@ -938,7 +938,7 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceid($serviceId);
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
                     $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
@@ -1019,7 +1019,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
                 'linkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
@@ -1091,7 +1091,7 @@ class ServicesAPIController extends Controller
                 return $response;
             }
 
-            if (!SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
                 'unlinkServiceWithPoint')) {
                 $response->setJsonContent(
                     [
@@ -1162,7 +1162,7 @@ class ServicesAPIController extends Controller
 
             $service = $request->services;
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -1232,7 +1232,7 @@ class ServicesAPIController extends Controller
 
             $service = $request->services;
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -1303,7 +1303,7 @@ class ServicesAPIController extends Controller
 
             $service = $request->services;
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -1654,7 +1654,7 @@ class ServicesAPIController extends Controller
             $userId = $auth['id'];
             $service = Services::findFirstByServiceid($serviceId);
 
-            if (!$service || !SubjectsWithNotDeleted::checkUserHavePermission($userId, $service->getSubjectId(),
+            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
                     $service->getSubjectType(), 'getTasksForSubject')) {
 
                 $response->setJsonContent(

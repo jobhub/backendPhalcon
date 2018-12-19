@@ -187,6 +187,41 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function getComments($imageId)
+    {
+        /*$comments = [];
+        for ($i = 0; $i < 6; $i++) {
+            $type = rand(0, 2);
+            if ($type == 0) {
+                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать трам парам там там там пам',
+                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
+                ];
+            } else if ($type == 1) {
+                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать НУ ПРЯМ ХОЧУ НЕ МОГУ',
+                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,'replyid'  => ($i-1)>0?($i-1):0
+                ];
+            } else if ($type == 2) {
+                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать ОТПУСТИТЕ МЕНЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ',
+                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
+                ];
+            }
+            $comment['likes'] = ($i*(int)(7/5))+$i*7%6;
+
+            $comment['publisherUser'] = ['userid' => '9', 'email' => 'eenotova@mail.ru',
+                'phone' => '+7 954 352-65-75', 'firstname' => 'Екатерина',
+                'lastname' => 'Енотова', 'patronymic' => "Васильевна",
+                'lasttime' => '2019-09-08 16:00:30+00', 'male' => '0',
+                'birthday' => '1997-05-25 00:00:00+00', 'pathtophoto' => 'images/profile/user/1.jpg',
+                'status' => null];
+
+            $comments[] = $comment;
+        }*/
+
+        $comments = CommentsImagesUsers::findByImageId($imageId);
+
+        return $comments;
+    }
+
     public function delete($delete = false, $data = null, $whiteList = null)
     {
         $path = $this->getImagePath();

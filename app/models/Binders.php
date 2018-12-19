@@ -26,7 +26,7 @@ class Binders
             } else{
                 $binder = $task;
             }
-            return SubjectsWithNotDeleted::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
+            return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
         } else if ($binderType == 'request') {
             //связующий объект - заявка
 
@@ -44,7 +44,7 @@ class Binders
                 $binder = $request;
             }
 
-            return SubjectsWithNotDeleted::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
+            return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
         }
 
         return false;
