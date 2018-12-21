@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Controllers\AbstractController;
@@ -9,26 +10,23 @@ use App\Services\AbstractService;
 use App\Services\ServiceException;
 use App\Services\UserService;
 
-class UserController extends AbstractController
-{
+class UserController extends AbstractController {
 
     /**
      * Adding user
      */
-    public function addAction()
-    {
-       /** Init Block **/
+    public function addAction() {
+        /** Init Block * */
         $errors = [];
         $data = [];
-   /** End Init Block **/
-
-   /** Validation Block **/ 
-        $data['email'] = $this->request->getPost('email'); 
+        /** End Init Block * */
+        /** Validation Block * */
+        $data['email'] = $this->request->getPost('email');
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Invalid email addresse';
-        }else  
-            if(!is_null($this->userService->findOnByEmail($data['email']))){
-                $errors['email'] = 'Email addresse already used '; 
+        } else
+        if (!is_null($this->userService->findOnByEmail($data['email']))) {
+            $errors['email'] = 'Email addresse already used ';
         }
 
         $data['password'] = $this->request->getPost('password');
@@ -45,22 +43,21 @@ class UserController extends AbstractController
         if (empty(trim($data['last_name']))) {
             $errors['last_name'] = 'String expected';
         }
-        
+
         $data['status'] = $this->request->getPost('status');
         if (empty(trim($data['status']))) {
             $data['status'] = 'He there i\'am a new user';
         }
 
         if ($errors) {
-        	$errors['errors'] = true;
+            $errors['errors'] = true;
             $exception = new Http400Exception(_('Input parameters validation error'), self::ERROR_INVALID_REQUEST);
             throw $exception->addErrorDetails($errors);
         }
-   /** End Validation Block **/
-
-   		/** Passing to business logic and preparing the response **/
+        /** End Validation Block * */
+        /** Passing to business logic and preparing the response * */
         try {
-            $this->userService->createUser($data); 
+            $this->userService->createUser($data);
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AbstractService::ERROR_ALREADY_EXISTS:
@@ -69,10 +66,9 @@ class UserController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        } 
+        }
         return parent::chatResponce('User successfull created');
-   /** End Passing to business logic and preparing the response  **/
-
+        /** End Passing to business logic and preparing the response  * */
     }
 
     /**
@@ -80,50 +76,45 @@ class UserController extends AbstractController
      *
      * @return array
      */
-    public function getUserListAction($id)
-    { 
-               try {
-            $userList = $this->userService->getUserList(''.$id); 
-        } catch (ServiceException $e) {
+    public function getUserListAction($id) {
+        try {
+
+            $userList = $this->userService->getUserList('' . $id); 
+        } catch (ServiceException $e) { 
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
 
         return $userList;
-
     }
 
-     /**
+    /**
      * Get existing user by email
      *
      * @param string $userId
      */
-    public function getUserByAction($email)
-    {  
-       try {
-            $user = $this->userService->findOnByEmail(''.$email); 
+    public function getUserByAction($email) {
+        try {
+            $user = $this->userService->findOnByEmail('' . $email);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
 
         return $user;
     }
-    
-     /**
+
+    /**
      * Get user discussions
      *
      * @param string $userId
      */
-    public function getUserChanelAction($idUser)
-    {  
-       try {
-            $user = $this->privateChatService->getUserDiscutionChat(''.$idUser); 
+    public function getUserChanelAction($idUser) {
+        try {
+            $user = $this->privateChatService->getUserDiscutionChat('' . $idUser);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
 
         return $user;
     }
-                
 
 }
-

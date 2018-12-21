@@ -12,8 +12,11 @@ use App\Models\ChatHistory;
  */
 class MessageService extends AbstractService {
 
-    /** Unable to create user */
+    /** Unable to get message */
     const ERROR_UNABLE_GET_DATA = 11001;
+    
+    /** Unable to send message */
+    const ERROR_UNABLE_SEND_MSG = 11001;
 
     /**
      * Send message

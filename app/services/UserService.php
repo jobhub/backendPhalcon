@@ -162,13 +162,17 @@ class UserService extends AbstractService {
      * @return array
      */
     public function getUserList($currentUserId) {
-        try {
+        try { 
             $users = Users::find(
                             [
                                 'conditions' => 'id != :id:',
                                 'bind' => ['id' => $currentUserId], // Must be change by the logged user
                                 //'columns' => "id, email, first_name, last_name, lastconnexion, status",
                             ]
+            );
+            
+            $this->logger->critical(
+                  ' Internal Server Error '
             );
 
             if (!$users) {
@@ -177,6 +181,9 @@ class UserService extends AbstractService {
 
             return $users->toArray();
         } catch (\PDOException $e) {
+             $this->logger->critical(
+                    $e->getMessage() . ' ' . $e->getCode()
+            );
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
     }
