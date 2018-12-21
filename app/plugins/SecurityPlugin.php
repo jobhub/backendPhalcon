@@ -324,7 +324,8 @@ class SecurityPlugin extends Plugin
         }
 
         if (!$this->notAPIController($dispatcher->getControllerName())) {
-            if ($this->session->get("auth") != null) {
+
+            /*if ($this->session->get("auth") != null) {
                 SupportClass::writeMessageInLogFile('Сессия есть и закреплена за юзером '.$this->session->get("auth")['id']);
                 $tokenRecieved = SecurityPlugin::getTokenFromHeader();
                 SupportClass::writeMessageInLogFile('Токен из заголовка '.$tokenRecieved);
@@ -343,6 +344,22 @@ class SecurityPlugin extends Plugin
                         $this->session->destroy();
                         $token->delete();
                     }
+                }
+            }*/
+            $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+            $info = json_decode(Accesstokens::checkToken($tokenRecieved),true);
+
+            if (!$info) {
+                //$this->session->remove('auth');
+                SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
+            } else {
+                if (strtotime($info['lifetime']) <= time()) {
+                    SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
+                    /*$this->session->remove('auth');
+                    $this->session->destroy();
+                    $token->delete();*/
+                } else{
+                    $this->SessionAPI->_registerSessionByData($info);
                 }
             }
         }
