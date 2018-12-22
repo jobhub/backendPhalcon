@@ -6,7 +6,7 @@ use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class TradePoints extends SubjectsWithNotDeleted
+class TradePoints extends SubjectsWithNotDeletedWithCascade
 {
 
     /**

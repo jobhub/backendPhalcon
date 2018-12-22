@@ -1,8 +1,6 @@
 <?php
-
 class ActivationCodes extends \Phalcon\Mvc\Model
 {
-
     /**
      *
      * @var integer
@@ -10,41 +8,35 @@ class ActivationCodes extends \Phalcon\Mvc\Model
      * @Column(type="integer", length=32, nullable=false)
      */
     protected $userid;
-
     /**
      *
      * @var string
      * @Column(type="string", length=150, nullable=false)
      */
     protected $activation;
-
     /**
      *
      * @var string
      * @Column(type="string", length=150, nullable=false)
      */
     protected $deactivation;
-
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
     protected $time;
-
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
     protected $used;
-
     /**
      * Минимальное время, которое должно пройти перед повторной отправкой.
      * В секундах.
      */
     const RESEND_TIME = 300;
-
     /**
      * Method to set the value of field userid
      *
@@ -54,10 +46,8 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     public function setUserId($userid)
     {
         $this->userid = $userid;
-
         return $this;
     }
-
     /**
      * Method to set the value of field activation
      *
@@ -67,10 +57,8 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     public function setActivation($activation)
     {
         $this->activation = $activation;
-
         return $this;
     }
-
     /**
      * Method to set the value of field deactivation
      *
@@ -80,10 +68,8 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     public function setDeactivation($deactivation)
     {
         $this->deactivation = $deactivation;
-
         return $this;
     }
-
     /**
      * Method to set the value of field time
      *
@@ -93,17 +79,13 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     public function setTime($time)
     {
         $this->time = $time;
-
         return $this;
     }
-
     public function setUsed($used)
     {
         $this->used = $used;
-
         return $this;
     }
-
     /**
      * Returns the value of field userid
      *
@@ -113,7 +95,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return $this->userid;
     }
-
     /**
      * Returns the value of field activation
      *
@@ -123,7 +104,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return $this->activation;
     }
-
     /**
      * Returns the value of field deactivation
      *
@@ -133,7 +113,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return $this->deactivation;
     }
-
     /**
      * Returns the value of field time
      *
@@ -143,12 +122,10 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return $this->time;
     }
-
     public function getUsed()
     {
         return $this->used;
     }
-
     /**
      * Initialize method for model.
      */
@@ -158,7 +135,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
         $this->setSource("activationcodes");
         $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
     }
-
     /**
      * Returns table name mapped in the model.
      *
@@ -168,7 +144,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return 'activationcodes';
     }
-
     /**
      * Allows to query a set of records that match the specified conditions
      *
@@ -179,7 +154,6 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return parent::find($parameters);
     }
-
     /**
      * Allows to query the first record that match the specified conditions
      *
@@ -190,5 +164,4 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         return parent::findFirst($parameters);
     }
-
 }

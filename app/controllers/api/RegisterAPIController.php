@@ -94,17 +94,15 @@ class RegisterAPIController extends Controller
 
             if ($user->save() == false) {
                 $this->db->rollback();
-                $errors = [];
-                foreach ($user->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+                return SupportClass::getResponseWithErrors($user);
+            }
+
+            $account = new Accounts();
+            $account->setUserId($user->getUserId());
+
+            if ($account->save() == false) {
+                $this->db->rollback();
+                return SupportClass::getResponseWithErrors($account);
             }
 
             SupportClass::writeMessageInLogFile("Дошел до создания сессии");
@@ -665,14 +663,14 @@ class RegisterAPIController extends Controller
                 $activationCode = new ActivationCodes();
                 $activationCode->setUserId($userId);
             } else {
-                if (strtotime($activationCode->getTime()) > strtotime(date('Y-m-d H:i:s O')) - ActivationCodes::RESEND_TIME) {
+                if (strtotime($activationCode->getTime()) > strtotime(date('Y-m-d H:i:s').'+00') - ActivationCodes::RESEND_TIME) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
                             "errors" => ['Время для повторной отправки должно составлять не менее 5 минут'],
-                            'timeLeft' => date('Y-m-d H:i:s',
+                            'timeLeft' =>
                                 strtotime($activationCode->getTime())
-                                - (strtotime(date('Y-m-d H:i:s O')) - ActivationCodes::RESEND_TIME))
+                                - (strtotime(date('Y-m-d H:i:s'.'+00')) - ActivationCodes::RESEND_TIME)
                         ]
                     );
                     return $response;
@@ -705,8 +703,8 @@ class RegisterAPIController extends Controller
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email' => $user->getEmail()])
-                ->to(/*$user->getEmail()*/
-                    $newTo)
+                ->to($user->getEmail()
+                    /*$newTo*/)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 
@@ -737,7 +735,7 @@ class RegisterAPIController extends Controller
 
     /**
      * Отправляет активационный код пользователю. Пока только на почту.
-     * @access defective
+     * @access public, но пользователь должен быть авторизован
      * @method POST
      *
      * @return Response - json array в формате Status
@@ -797,7 +795,10 @@ class RegisterAPIController extends Controller
                     $response->setJsonContent(
                         [
                             "status" => STATUS_WRONG,
-                            "errors" => ['Время для повторной отправки должно составлять не менее 5 минут']
+                            "errors" => ['Время для повторной отправки должно составлять не менее 5 минут'],
+                            'timeLeft' =>
+                                strtotime($resetCode->getTime())
+                                - (strtotime(date('Y-m-d H:i:s'.'+00')) - PasswordResetCodes::RESEND_TIME)
                         ]
                     );
                     return $response;
@@ -806,6 +807,7 @@ class RegisterAPIController extends Controller
             if ($user->getPhoneId() == null) {
 
                 $resetCode->generateResetCode($user->getUserId());
+                $resetCode->generateDeactivateResetCode($user->getUserId());
                 $resetCode->setTime(date('Y-m-d H:i:s'));
                 $res = false;
                 /*if(!$exists)

@@ -7,7 +7,7 @@ use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 
-class News extends SubjectsWithNotDeleted
+class News extends SubjectsWithNotDeletedWithCascade
 {
 
     /**
@@ -321,11 +321,13 @@ class News extends SubjectsWithNotDeleted
             $newsWithAllElement['liked'] = rand() % 2 == 0 ? true : false;
 
             $imagesNews = ImagesNews::findByNewsid($newsWithAllElement['newsid']);
+
             $newsWithAllElement['images'] = [];
             foreach ($imagesNews as $image) {
                 $newsWithAllElement['images'][] = $image->getImagePath();
             }
-            $comments = [];
+
+            /*$comments = [];
             for ($i = 0; $i < $newsWithAllElement['stats']->getComments(); $i++) {
                 $type = rand(0, 2);
                 if ($type == 0) {
@@ -350,9 +352,11 @@ class News extends SubjectsWithNotDeleted
                     'status' => null];
 
                 $comments[] = $comment;
-            }
+            }*/
 
-            $newsWithAllElement['comments'] = $comments;
+            $newsWithAllElement['comments'] = CommentsNews::getComments($newsWithAllElement['newsid']);
+
+            $newsWithAllElement['stats']->setComments(count($newsWithAllElement['comments']));
             $newsWithAll[] = $newsWithAllElement;
         }
         return $newsWithAll;

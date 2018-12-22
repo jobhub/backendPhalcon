@@ -327,7 +327,7 @@ class TasksAPIController extends Controller
             $userId = $auth['id'];
 
             $task = Tasks::findFirstByTaskid($this->request->getPost('taskId'));
-            if(!SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
+            if(!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -416,7 +416,7 @@ class TasksAPIController extends Controller
             $userId = $auth['id'];
 
             $task = Tasks::findFirstByTaskid($this->request->getPut('taskId'));
-            if(!$task || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+            if(!$task || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
@@ -483,7 +483,7 @@ class TasksAPIController extends Controller
             $userId = $auth['id'];
 
             $task = Tasks::findFirstByTaskid($this->request->getPut('taskId'));
-            if(!$task || !SubjectsWithNotDeleted::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
+            if(!$task || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'rejectTask')){
                 $response->setJsonContent(
                     [
                         "status" => STATUS_WRONG,
