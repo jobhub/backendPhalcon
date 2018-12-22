@@ -560,7 +560,7 @@ class UserinfoAPIController extends Controller
 
 
             $phones = PhonesUsers::getUserPhones($userid);
-            $images = ImagesUsers::findByUserid($userid);
+            $images = ImagesUsers::getImages($userid);
 
             $countNews = count(News::findBySubject($userid, 0));
             $countSubscribers = count(FavoriteUsers::findByUserobject($userid));

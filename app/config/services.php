@@ -12,6 +12,7 @@ use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use ULogin\Auth;
+//use App\Libs;
 //use SlowProg\Mailer\MailerService;
 use Phalcon\Mailer;
 
@@ -121,9 +122,11 @@ $di->set('flash', function () {
  * Start the session the first time some component request the session service
  */
 $di->setShared('session', function () {
-    $session = new SessionAdapter();
+    /*$session = new SessionAdapter();
 
-    $session->start();
+    $session->start();*/
+
+    $session = new PseudoSession();
 
     return $session;
 });

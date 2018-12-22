@@ -327,7 +327,7 @@ class News extends SubjectsWithNotDeletedWithCascade
                 $newsWithAllElement['images'][] = $image->getImagePath();
             }
 
-            $comments = [];
+            /*$comments = [];
             for ($i = 0; $i < $newsWithAllElement['stats']->getComments(); $i++) {
                 $type = rand(0, 2);
                 if ($type == 0) {
@@ -352,9 +352,11 @@ class News extends SubjectsWithNotDeletedWithCascade
                     'status' => null];
 
                 $comments[] = $comment;
-            }
+            }*/
 
-            $newsWithAllElement['comments'] = $comments;
+            $newsWithAllElement['comments'] = CommentsNews::getComments($newsWithAllElement['newsid']);
+
+            $newsWithAllElement['stats']->setComments(count($newsWithAllElement['comments']));
             $newsWithAll[] = $newsWithAllElement;
         }
         return $newsWithAll;
