@@ -1,6 +1,7 @@
 <?php
 
-use App\Controllers\AbstractHttpException; 
+use App\Controllers\AbstractHttpException;
+use Dmkit\Phalcon\Auth\Middleware\Micro as AuthMicro;
 
 // error_reporting(E_ALL);
 // define('BASE_PATH', dirname(__DIR__));
@@ -21,11 +22,29 @@ try {
     // Initializing application
     $app = new \Phalcon\Mvc\Micro();
     // Setting DI container
-    $app->setDI($di); 
+    $app->setDI($di);
+
+    // get jwt config
+    $jwt_conf = require __DIR__ . '/../app/config/jwtConfig.php';
+    // AUTH MICRO
+    $auth = new AuthMicro($app, $jwt_conf);
+
+    $auth->onUnauthorized(function($authMicro, $app) {
+        $response = $app->response;
+        $response->setStatusCode(401, 'Unauthorized');
+        $response->setContentType("application/json");
+
+        // to get the error messages
+        $response->setContent(json_encode([$authMicro->getMessages()[0]]));
+        $response->send();
+
+        // return false to stop the execution
+        return false;
+    });
 
     // Setting up routing
     require __DIR__ . '/../app/config/router.php';
- 
+
     // Making the correct answer after executing
     $app->after(
             function () use ($app) {

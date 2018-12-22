@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "76160d96dd4ba359c1d1b0019c1bca22",
+    "content-hash": "add98fbabe08160d4f28676a098781fe",
     "packages": [
         {
             "name": "cilex/cilex",
@@ -154,6 +154,47 @@
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
             "time": "2017-02-14T19:40:03+00:00"
+        },
+        {
+            "name": "dmkit/phalcon-jwt-auth",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dmkit/phalcon-jwt-auth.git",
+                "reference": "47030b933da8a16de111231064b58272dff9f708"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dmkit/phalcon-jwt-auth/zipball/47030b933da8a16de111231064b58272dff9f708",
+                "reference": "47030b933da8a16de111231064b58272dff9f708",
+                "shasum": ""
+            },
+            "require": {
+                "ext-phalcon": "^3.0",
+                "firebase/php-jwt": "^5.0",
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dmkit\\Phalcon\\Auth\\": "src/Phalcon/Auth/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Dan Bangayan",
+                    "email": "danny.bangayan@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple JWT middleware for Phalcon Micro to handle stateless authentication",
+            "keywords": [
+                "Authentication",
+                "jwt",
+                "phalcon"
+            ],
+            "time": "2018-02-08T11:49:19+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -376,6 +417,52 @@
                 "parser"
             ],
             "time": "2018-03-08T01:11:30+00:00"
+        },
+        {
+            "name": "firebase/php-jwt",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/firebase/php-jwt.git",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": " 4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Firebase\\JWT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Neuman Vong",
+                    "email": "neuman+pear@twilio.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anant Narayanan",
+                    "email": "anant@php.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+            "homepage": "https://github.com/firebase/php-jwt",
+            "time": "2017-06-27T22:17:23+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",

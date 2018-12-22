@@ -10,16 +10,16 @@ class UserEmailAccountType implements \PhalconRest\Auth\AccountType
 {
     const NAME = "email";
 
-    public function login($data)
+    public static function login($data)
     {
         /** @var \Phalcon\Security $security */
         $security = Di::getDefault()->get(Services::SECURITY);
 
-        $username = $data[Manager::LOGIN_DATA_USERNAME];
-        $password = $data[Manager::LOGIN_DATA_PASSWORD];
+        $username = $data['email'];
+       // $password = $data[Manager::LOGIN_DATA_PASSWORD];
 
         /** @var \User $user */
-        $user = \App\Models\User::findFirst([
+        $user = \App\Models\Users::findFirst([
             'conditions' => 'email = :email:',
             'bind' => ['email' => $username]
         ]);
@@ -28,11 +28,11 @@ class UserEmailAccountType implements \PhalconRest\Auth\AccountType
             return null;
         }
 
-        if(!$security->checkHash($password, $user->password)){
+       /* if(!$security->checkHash($password, $user->password)){
             return null;
-        }
+        }*/
 
-        return (string)$user->id;
+        return $user;
     }
 
     public function authenticate($identity)

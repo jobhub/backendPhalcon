@@ -21,6 +21,8 @@ $usersCollection = new \Phalcon\Mvc\Micro\Collection();
 $usersCollection->setHandler('\App\Controllers\UserController', true);
 $usersCollection->setPrefix('/user');
 $usersCollection->post('/add', 'addAction');
+$usersCollection->post('/login', 'loginAction');
+$usersCollection->Options('/login', 'loginAction');
 $usersCollection->get('/list/{id}', 'getUserListAction');
 $usersCollection->get('/find/{email}', 'getUserByAction'); 
 $usersCollection->get('/chanels/{idUser}', 'getUserChanelAction'); 

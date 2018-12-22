@@ -71,6 +71,24 @@ class UserController extends AbstractController {
         /** End Passing to business logic and preparing the response  * */
     }
 
+    public function loginAction() {
+        $data = [];
+        $jsonData = $this->request->getJsonRawBody();
+        $data["email"] = $jsonData->email;
+        //$data["password"] = $jsonData->password;
+        $user = \App\Auth\UserEmailAccountType::login($data);
+        $payload = [
+            'sub' => $user->userid,
+            'email' => $user->email,
+            //'username' => $user->username,
+            'role' => 'admin',
+            'iat' => time(),
+        ];
+        $token = $this->auth->make($payload);
+        $response = ['token' => $token];
+        return $response;
+    }
+
     /**
      * Returns user list
      *
@@ -79,8 +97,8 @@ class UserController extends AbstractController {
     public function getUserListAction($id) {
         try {
 
-            $userList = $this->userService->getUserList('' . $id); 
-        } catch (ServiceException $e) { 
+            $userList = $this->userService->getUserList('' . $id);
+        } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
 

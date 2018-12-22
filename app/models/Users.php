@@ -662,5 +662,5 @@ class Users extends NotDeletedModelWithCascade
         );
         $avg = $avg[0]['a'];
         return $avg;
-    }
+    } 
 }

@@ -94,7 +94,7 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
      * @return TradePoints[]|TradePoints|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null, $addParamNotDeleted = true)
-    {
+    { 
         if ($addParamNotDeleted) {
             if(isset($parameters['conditions']))
                 $conditions = $parameters['conditions'];
