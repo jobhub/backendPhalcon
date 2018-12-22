@@ -703,8 +703,8 @@ class RegisterAPIController extends Controller
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email' => $user->getEmail()])
-                ->to(/*$user->getEmail()*/
-                    $newTo)
+                ->to($user->getEmail()
+                    /*$newTo*/)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 

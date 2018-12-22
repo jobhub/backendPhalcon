@@ -2,6 +2,9 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+
+use Emarref\Jwt\Claim;
+
 class Accesstokens extends \Phalcon\Mvc\Model
 {
     /**
@@ -182,9 +185,40 @@ class Accesstokens extends \Phalcon\Mvc\Model
         $result = parent::findFirst($parameters);
         return $result;
     }
-    public static function GenerateToken($userId, $login, $sessionId){
-        //$security = Phalcon\DI::getDefault()->getSecurity();
-        return  hash('sha256',$sessionId . $userId .
-            $login . time());
+    public static function GenerateToken($userId, $login, $role, $lifetime){
+        $header = base64_encode('{"alg":"RS512","typ":"JWT"}');
+        $payload = base64_encode(json_encode(['userId'=>$userId,'login'=>$login,'role'=>$role,'lifetime'=> $lifetime]));
+        $signature = '.';
+        //$private = openssl_pkey_get_private(,'foobar');
+        $di = Phalcon\DI::getDefault();
+
+        $riv = file_get_contents($di->getConfig()['token_rsa']['pathToPrivateKey']);
+
+        $pk  = openssl_get_privatekey($riv,$di->getConfig()['token_rsa']['password']);
+
+        $err = openssl_error_string();
+        $result = openssl_private_encrypt($header.'.'.$payload,$signature,$pk, OPENSSL_PKCS1_PADDING);
+        if(!$result){
+            return openssl_error_string();
+        }
+
+        return $header.'.'.$payload.'.'.base64_encode($signature);
+    }
+
+    public static function checkToken($token){
+        $data = explode('.',$token);
+        //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
+        $di = Phalcon\DI::getDefault();
+
+        $pub = file_get_contents($di->getConfig()['token_rsa']['pathToPublicKey']);
+
+        $pk  = openssl_get_publickey($pub);
+
+        openssl_public_decrypt(base64_decode($data[2]),$signature,$pk,OPENSSL_PKCS1_PADDING);
+
+        if($data[0].'.'.$data[1] == $signature)
+            return base64_decode($data[1]);
+        else
+            return false;
     }
 }

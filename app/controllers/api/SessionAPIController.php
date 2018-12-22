@@ -26,6 +26,18 @@ class SessionAPIController extends Controller
         );
     }
 
+    public function _registerSessionByData($data)
+    {
+        $this->session->set(
+            "auth",
+            [
+                "id" => $data['userId'],
+                "login" => $data['login'],
+                "role" => $data['role']
+            ]
+        );
+    }
+
     /**
      * Разрывает сессию пользователя
      * @method POST
@@ -71,12 +83,13 @@ class SessionAPIController extends Controller
     public function createSession($user){
         SupportClass::writeMessageInLogFile('Начало создания сессии для юзера '. $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
         $response = new Response();
+        $lifetime = date('Y-m-d H:i:s',time() + 604800);
         $token = Accesstokens::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
-            $this->session->getId());
-
-        $accToken = new Accesstokens();
-
+            $user->getRole(), $lifetime);
         SupportClass::writeMessageInLogFile('ID юзера при этом - '. $user->getUserId());
+
+        /*$accToken = new Accesstokens();
+
         $accToken->setUserid($user->getUserId());
         $accToken->setToken($token);
         $accToken->setLifetime();
@@ -95,15 +108,15 @@ class SessionAPIController extends Controller
                 ]
             );
             return $response;
-        }
+        }*/
 
-        $this->_registerSession($user);
+        //$this->_registerSession($user);
 
         $response->setJsonContent(
             [
                 "status" => STATUS_OK,
                 'token' => $token,
-                'lifetime' => $accToken->getLifetime()
+                'lifetime' => $lifetime
             ]
         );
         return $response;

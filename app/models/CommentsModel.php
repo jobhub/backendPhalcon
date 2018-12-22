@@ -144,7 +144,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
     public static function handleComments($comments){
         $handledComments = [];
         foreach ($comments as $comment){
-            $handledComment = ['deleted' => $comment->getDeleted(),
+            $handledComment = [
                 'commentdate' => $comment->getCommentDate(),
                 'commentid' => $comment->getCommentId(),
                 'replyid' => $comment->getReplyId()];
@@ -167,9 +167,11 @@ abstract class CommentsModel extends AccountWithNotDeleted
                         $handledComment['publisherCompany'] = $company;
                     }
                 }
+            } else{
+                $handledComment['deleted'] = $comment->getDeleted();
             }
 
-            $handledComment['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comment->getCommentId()));
+            //$handledComment['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comment->getCommentId()));
 
             $handledComments[] = $handledComment;
         }

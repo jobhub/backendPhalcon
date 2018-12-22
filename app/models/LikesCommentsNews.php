@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class LikesCommentsNews extends AccountModel
 {
 
@@ -10,19 +13,6 @@ class LikesCommentsNews extends AccountModel
      * @Column(type="integer", length=32, nullable=false)
      */
     protected $comment_id;
-
-    /**
-     * Method to set the value of field account_id
-     *
-     * @param integer $account_id
-     * @return $this
-     */
-    public function setAccountId($account_id)
-    {
-        $this->account_id = $account_id;
-
-        return $this;
-    }
 
     /**
      * Method to set the value of field comment_id
@@ -37,15 +27,6 @@ class LikesCommentsNews extends AccountModel
         return $this;
     }
 
-    /**
-     * Returns the value of field account_id
-     *
-     * @return integer
-     */
-    public function getAccountId()
-    {
-        return $this->account_id;
-    }
 
     /**
      * Returns the value of field comment_id
@@ -84,7 +65,7 @@ class LikesCommentsNews extends AccountModel
         );
 
 
-        return $this->validate($validator);
+        return $this->validate($validator) && parent::validation();
     }
 
     //Определяет, лайкал ли кто-нибудь из компании указанный комментарий.
@@ -97,7 +78,7 @@ class LikesCommentsNews extends AccountModel
             return null;
         return $modelsManager->createBuilder()
             ->from(["a" => "Accounts"])
-            ->join('LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
+            ->join('LikesCommentsNews', 'a.id = likes.account_id', 'likes')
             ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
                 ['companyId' => $account->getCompanyId(),
                     'commentId' => $commentId])
@@ -105,6 +86,13 @@ class LikesCommentsNews extends AccountModel
             ->execute();
     }
 
+    /**
+     * return LikesCommentsNews object by account id and comment id.
+     *
+     * @param $accountId
+     * @param $commentId
+     * @return LikesCommentsNews|\Phalcon\Mvc\Model\ResultInterface
+     */
     public static function findCommentLiked($accountId, $commentId)
     {
         return self::findFirst([
@@ -124,7 +112,6 @@ class LikesCommentsNews extends AccountModel
         parent::initialize();
         $this->setSchema("public");
         $this->setSource("likes_comments_news");
-        $this->belongsTo('account_id', '\Accounts', 'id', ['alias' => 'Accounts']);
         $this->belongsTo('comment_id', '\CommentsNews', 'commentid', ['alias' => 'CommentsNews']);
     }
 

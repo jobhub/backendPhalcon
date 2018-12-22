@@ -1,7 +1,9 @@
 <?php
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+
 class ImagesUsers extends \Phalcon\Mvc\Model
 {
 
@@ -28,6 +30,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
     protected $imagepath;
 
     const MAX_IMAGES = 10;
+
     /**
      * Method to set the value of field imageid
      *
@@ -232,7 +235,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
             ImageLoader::delete($path);
 
             $userinfo = Userinfo::findFirstByUserid($this->getUserId());
-            if($userinfo->getPathToPhoto() == $path){
+            if ($userinfo->getPathToPhoto() == $path) {
                 $userinfo->setPathToPhoto(null);
 
                 $userinfo->update();
@@ -240,5 +243,27 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         }
 
         return $result;
+    }
+
+    public static function getImages($userId)
+    {
+        $images = ImagesUsers::findByUserid($userId);
+        return self::handleImages($images);
+    }
+
+    public static function handleImages($images)
+    {
+        $handledImages = [];
+        foreach ($images as $image) {
+            $handledImage = [
+                'imageid' => $image->getImageId(),
+                'imagepath' => $image->getImagePath()];
+
+            $handledImage['stats'] = new Stats();
+            $handledImage['comments'] = CommentsImagesUsers::getComments($image->getImageId());
+            $handledImage['stats']->setComments(count($handledImage['comments']));
+            $handledImages[] = $handledImage;
+        }
+        return $handledImages;
     }
 }
