@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 /**
  * Class CommentsModel - abstract class for all comment models
  */

@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Models;
+
 class ActivationCodes extends \Phalcon\Mvc\Model
 {
     /**

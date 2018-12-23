@@ -1,4 +1,10 @@
 {
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Dmkit\\": "vendor/"
+        }
+    },
     "require": {
         "stanislav-web/phalcon-ulogin": "dev-master",
         "giggsey/libphonenumber-for-php": "^8.9",

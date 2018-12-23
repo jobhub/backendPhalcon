@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 class NotDeletedModel extends \Phalcon\Mvc\Model
 {
     /**

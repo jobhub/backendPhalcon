@@ -12,6 +12,7 @@ use Phalcon\Flash\Direct as Flash;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use ULogin\Auth;
+use App\Controllers\SessionAPIController;
 //use App\Libs;
 //use SlowProg\Mailer\MailerService;
 use Phalcon\Mailer;

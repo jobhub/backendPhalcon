@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+use Phalcon\DI\FactoryDefault as DI;
+
 class PhonesUsers extends \Phalcon\Mvc\Model
 {
 
@@ -164,7 +167,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
 
     public static function getUserPhones($userId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $query = $db->prepare("SELECT p.phone FROM phones_users p_u INNER JOIN phones p ON 
             (p_u.phoneid = p.phoneid) where p_u.userid = :userId"

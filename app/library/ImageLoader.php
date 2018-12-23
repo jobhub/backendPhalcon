@@ -6,6 +6,8 @@
  * Time: 9:17
  */
 
+namespace App\Libs;
+
 class ImageLoader
 {
     const RESULT_ERROR_FORMAT_NOT_SUPPORTED = 1;
