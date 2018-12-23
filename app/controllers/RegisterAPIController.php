@@ -1,9 +1,19 @@
 <?php
 
+namespace App\Controllers;
+
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+
+use App\Libs\SupportClass;
+use App\Libs\PHPMailerApp;
+
+use App\Models\Phones;
+use App\Models\Accounts;
+use App\Models\Users;
+use App\Models\ActivationCodes;
 
 /**
  * Class RegisterAPIController
@@ -21,7 +31,7 @@ class RegisterAPIController extends Controller
      *
      * @params login, password,
      *
-     * @return string json array. Если все прошло успешно - [status, token, lifetime (время, после которого токен будет недействительным)],
+     * @return array. Если все прошло успешно - [status, token, lifetime (время, после которого токен будет недействительным)],
      * иначе [status,errors => <массив сообщений об ошибках>]
      */
     public function indexAction()
@@ -49,13 +59,11 @@ class RegisterAPIController extends Controller
             $user = Users::findByLogin($this->request->getPost('login'));
 
             if ($user != false) {
-                $response->setJsonContent(
-                    [
+                return [
                         "status" => STATUS_ALREADY_EXISTS,
                         'errors' => ['Пользователь с таким телефоном/email-ом уже зарегистрирован']
-                    ]
-                );
-                return $response;
+                    ];
+                //return $response;
             }
 
             SupportClass::writeMessageInLogFile("Проверил юзера");
@@ -74,13 +82,11 @@ class RegisterAPIController extends Controller
                     foreach ($phoneObject->getMessages() as $message) {
                         $errors[] = $message->getMessage();
                     }
-                    $response->setJsonContent(
+                    return
                         [
                             "status" => STATUS_WRONG,
                             "errors" => $errors
-                        ]
-                    );
-                    return $response;
+                        ];
                 }
                 $user->setPhoneId($phoneObject->getPhoneId());
             } else {
@@ -106,7 +112,7 @@ class RegisterAPIController extends Controller
             }
 
             SupportClass::writeMessageInLogFile("Дошел до создания сессии");
-            $tokens = $this->SessionAPI->createSession($user);
+            $tokens = $this->sessionAPI->createSession($user);
 
             $tokens = json_decode($tokens->getContent(), true);
 
@@ -114,21 +120,15 @@ class RegisterAPIController extends Controller
             $res = $this->sendActivationCode($user);
             SupportClass::writeMessageInLogFile("Отправил код активации");
             $res = json_decode($res->getContent(), true);
-
+            SupportClass::writeMessageInLogFile("Статус отправки - ".$res['status']);
+            SupportClass::writeMessageInLogFile("Сообщение отправки - ".$res['errors'][0]);
             $res2 = $res['status'] == STATUS_OK;
             $tokens['role'] = $user->getRole();
             if ($res2 === true) {
                 $this->db->commit();
-
-                $response->setJsonContent(
-                    $tokens
-                );
-                return $response;
+                return $tokens;
             } else {
-                $response->setJsonContent(
-                    $res
-                );
-                return $response;
+                return $res;
             }
 
         } else {
@@ -703,8 +703,8 @@ class RegisterAPIController extends Controller
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email' => $user->getEmail()])
-                ->to($user->getEmail()
-                    /*$newTo*/)
+                ->to(/*$user->getEmail()*/
+                    $newTo)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 

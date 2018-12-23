@@ -6,6 +6,8 @@
  * Time: 10:40
  */
 
+namespace App\Models;
+
 class Stats
 {
     public $views;

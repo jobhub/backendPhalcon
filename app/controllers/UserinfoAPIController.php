@@ -1,5 +1,14 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\Userinfo;
+use App\Models\PhonesUsers;
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\FavoriteUsers;
+use App\Models\FavoriteCompanies;
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Http\Response;
@@ -526,7 +535,7 @@ class UserinfoAPIController extends Controller
      *
      * @param $userid
      *
-     * @return string - json array [userinfo, [phones], [images], countNews, countSubscribers,
+     * @return array [userinfo, [phones], [images], countNews, countSubscribers,
      *          countSubscriptions];
      */
     public function getUserinfoAction($userid = null)
@@ -549,13 +558,10 @@ class UserinfoAPIController extends Controller
 
             if (!$userinfo) {
 
-                $response->setJsonContent(
-                    [
+                return [
                         'status' => STATUS_WRONG,
                         'errors' => ['Пользователь с таким id не существует']
-                    ]);
-
-                return $response;
+                    ];
             }
 
 
@@ -566,16 +572,16 @@ class UserinfoAPIController extends Controller
             $countSubscribers = count(FavoriteUsers::findByUserobject($userid));
             $countSubscriptions = count(FavoriteUsers::findByUsersubject($userid)) + count(FavoriteCompanies::findByUserid($userid));
 
-            $response->setJsonContent([
+            /*$response->setJsonContent(*/$result = [
                 'userinfo' => $userinfo,
                 'phones' => $phones,
                 'images' => $images,
                 'countNews' => $countNews,
                 'countSubscribers' => $countSubscribers,
                 'countSubscriptions' => $countSubscriptions,
-            ]);
+            ];
 
-            return $response;
+            return $result;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;

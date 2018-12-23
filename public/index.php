@@ -2,6 +2,9 @@
 
 use App\Controllers\AbstractHttpException;
 use Dmkit\Phalcon\Auth\Middleware\Micro as AuthMicro;
+use Phalcon\Events\Manager;
+use App\Middleware\CORSMiddleware; // for CORS origine
+use App\Middleware\JWTMiddleware;
 
 // error_reporting(E_ALL);
 // define('BASE_PATH', dirname(__DIR__));
@@ -23,6 +26,14 @@ try {
     $app = new \Phalcon\Mvc\Micro();
     // Setting DI container
     $app->setDI($di);
+
+
+    $eventsManager = new Manager();
+    $eventsManager->attach('micro', new CORSMiddleware());
+    $eventsManager->attach('micro', new JWTMiddleware());
+    $app->before(new CORSMiddleware());
+
+    $app->before(new JWTMiddleware());
 
     // get jwt config
     $jwt_conf = require __DIR__ . '/../app/config/jwtConfig.php';

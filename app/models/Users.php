@@ -9,6 +9,8 @@ use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 class Users extends NotDeletedModelWithCascade
 {
 
@@ -128,7 +130,7 @@ class Users extends NotDeletedModelWithCascade
      */
     public function setPassword($password)
     {
-        $security = Phalcon\DI::getDefault()->getSecurity();
+        $security = DI::getDefault()->getSecurity();
         $this->password = $security->hash($password);
 
         return $this;

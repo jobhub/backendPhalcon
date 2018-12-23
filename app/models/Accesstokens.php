@@ -1,5 +1,9 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
+use Phalcon\DI\FactoryDefault as DI;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
@@ -185,12 +189,13 @@ class Accesstokens extends \Phalcon\Mvc\Model
         $result = parent::findFirst($parameters);
         return $result;
     }
+
     public static function GenerateToken($userId, $login, $role, $lifetime){
         $header = base64_encode('{"alg":"RS512","typ":"JWT"}');
         $payload = base64_encode(json_encode(['userId'=>$userId,'login'=>$login,'role'=>$role,'lifetime'=> $lifetime]));
         $signature = '.';
         //$private = openssl_pkey_get_private(,'foobar');
-        $di = Phalcon\DI::getDefault();
+        $di = DI::getDefault();
 
         $riv = file_get_contents($di->getConfig()['token_rsa']['pathToPrivateKey']);
 
@@ -208,7 +213,7 @@ class Accesstokens extends \Phalcon\Mvc\Model
     public static function checkToken($token){
         $data = explode('.',$token);
         //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
-        $di = Phalcon\DI::getDefault();
+        $di = DI::getDefault();
 
         $pub = file_get_contents($di->getConfig()['token_rsa']['pathToPublicKey']);
 

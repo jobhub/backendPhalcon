@@ -6,6 +6,8 @@
  * Time: 15:29
  */
 
+namespace App\Libs;
+
 use Phalcon\Http\Response;
 
 class SupportClass
@@ -113,7 +115,7 @@ class SupportClass
         return $str;
     }
 
-    public static function getResponseWithErrors($object){
+    /*public static function getResponseWithErrors($object){
         $response = new Response();
         $errors = [];
         foreach ($object->getMessages() as $message) {
@@ -126,6 +128,18 @@ class SupportClass
             ]);
 
         return $response;
+    }*/
+
+    public static function getResponseWithErrors($object){
+        $errors = [];
+        foreach ($object->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+        return
+            [
+                "errors" => $errors,
+                "status" => STATUS_WRONG
+            ];
     }
 
     public static function getResponseWithErrorsFromArray($errors){

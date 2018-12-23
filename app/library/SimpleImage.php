@@ -5,7 +5,7 @@
  * Date: 22.04.2018
  * Time: 20:50
  */
-
+namespace App\Libs;
 class SimpleImage {
     var $image;
     var $image_type;

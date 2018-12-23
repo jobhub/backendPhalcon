@@ -1,7 +1,16 @@
 <?php
 
+namespace App\Controllers;
+
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
+
+use App\Libs\SupportClass;
+
+use App\Models\Phones;
+use App\Models\Accesstokens;
+use App\Models\Users;
+
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use ULogin\Auth;
@@ -110,7 +119,7 @@ class SessionAPIController extends Controller
             return $response;
         }*/
 
-        //$this->_registerSession($user);
+        $this->_registerSession($user);
 
         $response->setJsonContent(
             [
@@ -208,22 +217,20 @@ class SessionAPIController extends Controller
                 }
             }
             // Формируем ответ
-            $response = new Response();
             if ($user && $res) {
 
                 $result = $this->createSession($user);
 
                 $result = json_decode($result->getContent(),true);
                 $result['role'] = $user->getRole();
-                $response->setJsonContent($result);
             } else {
-                $response->setJsonContent(
-                    [
+                $result = [
                         "status" => STATUS_WRONG,
                         'errors' => ['Неверные логин или пароль']
-                    ]);
+                    ];
             }
-            return $response;
+
+            return $result;
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
