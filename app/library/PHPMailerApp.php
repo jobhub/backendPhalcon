@@ -5,6 +5,8 @@ namespace App\Libs;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 class PHPMailerApp
 {
     /**
@@ -27,7 +29,7 @@ class PHPMailerApp
     }
 
     public function createMessageFromView($path,$action,$params){
-        $view = Phalcon\DI::getDefault()->getView();
+        $view = DI::getDefault()->getView();
         //$this->currMessage = $view->render($path, $params);
         ob_start();
         $view->partial($path, $params);

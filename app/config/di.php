@@ -4,6 +4,10 @@ use Phalcon\Db\Adapter\Pdo\Postgresql;
 use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File as FileAdapter;
 
+use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Php as PhpEngine;
+use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
+
 use PhalconRest\Constants\Services;
 use PhalconRest\Auth\Manager as AuthManager;
 use App\Auth\UserEmailAccountType;
@@ -99,5 +103,32 @@ $di['mailer'] = function() {
 };
 
 $di->setShared('session','\App\Libs\PseudoSession');
+
+//It's only for parse content for sending mails.
+$di->setShared('view', function () {
+    $config = $this->getConfig();
+
+    $view = new View();
+    $view->setDI($this);
+    $view->setViewsDir($config->application->viewsDir);
+
+    $view->registerEngines([
+        '.volt' => function ($view) {
+            $config = $this->getConfig();
+
+            $volt = new VoltEngine($view, $this);
+
+            $volt->setOptions([
+                'compiledPath' => $config->application->cacheDir,
+                'compiledSeparator' => '_'
+            ]);
+
+            return $volt;
+        },
+        '.phtml' => PhpEngine::class
+
+    ]);
+    return $view;
+});
 
 return $di;
