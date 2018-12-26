@@ -225,18 +225,23 @@ class Users extends NotDeletedModelWithCascade
         return $this->activated;
     }
 
+    /**
+     * @return string - magic string
+     */
     public function generateActivation()
     {
-        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
+        $hash = hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
             time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
             . $this->getPassword());
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     public function generateDeactivation()
     {
-        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
+        $hash = hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
             time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
             . $this->getPassword() . '-no');
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     public static function findByLogin($login)

@@ -466,6 +466,8 @@ class ServicesAPIController extends Controller
                     return SupportClass::getResponseWithErrors($tagObject);
                 }
 
+                SupportClass::writeMessageInLogFile('Сохранил тег '.$tag.' с id = '.$tagObject->getTagId());
+
                 $serviceTag = new ServicesTags();
                 $serviceTag->setServiceId($service->getServiceId());
                 $serviceTag->setTagId($tagObject->getTagId());
@@ -474,6 +476,8 @@ class ServicesAPIController extends Controller
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
+                SupportClass::writeMessageInLogFile('Сохранил связь тега '.$serviceTag->getTagId()
+                    .' с услугой = '.$service->getName());
             }
 
             $this->db->commit();
