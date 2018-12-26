@@ -382,6 +382,7 @@ class ServicesAPIController extends Controller
     public function editServiceAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
+            SupportClass::writeMessageInLogFile('Зашел в editService');
             $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -433,11 +434,14 @@ class ServicesAPIController extends Controller
             if($this->request->getPut("regionId"))
                 $service->setRegionId($this->request->getPut("regionId"));
 
+            SupportClass::writeMessageInLogFile('Поизменял там что-то');
             $this->db->begin();
             if (!$service->save()) {
                 $this->db->rollback();
+                SupportClass::writeMessageInLogFile('Не сумел сохранить изменения');
                 return SupportClass::getResponseWithErrors($service);
             }
+            SupportClass::writeMessageInLogFile('Сохранил изменения');
 
             $deletedTags = $this->request->getPut("deletedTags");
 
@@ -454,6 +458,8 @@ class ServicesAPIController extends Controller
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
             }
+            
+            SupportClass::writeMessageInLogFile('Удалил теги');
 
             $addedTags = $this->request->getPut("addedTags");
 
@@ -475,6 +481,7 @@ class ServicesAPIController extends Controller
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
             }
+            SupportClass::writeMessageInLogFile('Добавил теги');
 
             $this->db->commit();
             $response->setJsonContent(

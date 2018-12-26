@@ -110,7 +110,7 @@ class SessionAPIController extends Controller
             return $response;
         }*/
 
-        //$this->_registerSession($user);
+        $this->_registerSession($user);
 
         $response->setJsonContent(
             [

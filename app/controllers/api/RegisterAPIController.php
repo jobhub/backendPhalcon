@@ -114,6 +114,8 @@ class RegisterAPIController extends Controller
             $res = $this->sendActivationCode($user);
             SupportClass::writeMessageInLogFile("Отправил код активации");
             $res = json_decode($res->getContent(), true);
+            SupportClass::writeMessageInLogFile("Статус отправки - ".$res['status']);
+            SupportClass::writeMessageInLogFile("Сообщение отправки - ".$res['errors'][0]);
 
             $res2 = $res['status'] == STATUS_OK;
             $tokens['role'] = $user->getRole();

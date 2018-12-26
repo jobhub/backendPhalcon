@@ -13,10 +13,12 @@ class PseudoSession
     private $data;
 
     public function set($name,$data){
+        SupportClass::writeMessageInLogFile('Запись в сессию свойства: '.$name);
         $this->data[$name] = $data;
     }
 
     public function get($name){
+        SupportClass::writeMessageInLogFile('Получение из сессии свойства: '.$name);
         return $this->data[$name];
     }
 }

@@ -24,6 +24,7 @@ class SecurityPlugin extends Plugin
     public function getAcl()
     {
         //if (!isset($this->persistent->acl))
+        SupportClass::writeMessageInLogFile('Зашел в getAcl()');
         {
             $acl = new AclList();
 
@@ -105,6 +106,7 @@ class SecurityPlugin extends Plugin
             foreach ($privateResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
+            SupportClass::writeMessageInLogFile('Записал private resources');
 
             $moderatorsResources = [
                 'users' => ['index', 'search', 'new', 'edit', 'save', 'create', 'delete'],
@@ -134,6 +136,8 @@ class SecurityPlugin extends Plugin
             foreach ($moderatorsResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
+            
+            SupportClass::writeMessageInLogFile('Записал moderator resources');
 
             //Public area resources
             //БД, все БД.
@@ -169,6 +173,8 @@ class SecurityPlugin extends Plugin
             foreach ($publicResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
+            
+            SupportClass::writeMessageInLogFile('Записал public resources');
 
             $defectUserResources = [
                 'UserinfoAPI' => ['index', 'settings', 'about', 'handler', 'restoreUser', 'deleteUser',
@@ -185,6 +191,8 @@ class SecurityPlugin extends Plugin
             foreach ($defectUserResources as $resource => $actions) {
                 $acl->addResource(new Resource($resource), $actions);
             }
+            
+            SupportClass::writeMessageInLogFile('Записал defective resources');
 
 
             //Grant access to public areas to both users and guests
@@ -221,6 +229,7 @@ class SecurityPlugin extends Plugin
             $this->persistent->acl = $acl;
         }
 
+        SupportClass::writeMessageInLogFile('Вышел из getAcl()');
         return $this->persistent->acl;
     }
 
@@ -359,11 +368,13 @@ class SecurityPlugin extends Plugin
                     $this->session->destroy();
                     $token->delete();*/
                 } else{
+                    SupportClass::writeMessageInLogFile('Записал в сессию данные из SecurityPlugin');
                     $this->SessionAPI->_registerSessionByData($info);
                 }
             }
         }
 
+        SupportClass::writeMessageInLogFile('Перед получением данных из сессии в SecurityPlugin');
         if (!$this->session->get('auth')) {
             SupportClass::writeMessageInLogFile('Сессии нет или же переменной в сессии нет. Роль гостя');
             $role = ROLE_GUEST;
@@ -390,6 +401,8 @@ class SecurityPlugin extends Plugin
                 'action' => 'show401']);
             return false;
         }
+        
+        SupportClass::writeMessageInLogFile('Вышел из SecurityPlugin');
     }
 
     private function convertRequestBody()
