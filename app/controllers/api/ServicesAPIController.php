@@ -389,6 +389,8 @@ class ServicesAPIController extends Controller
 
             $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
 
+            SupportClass::writeMessageInLogFile('Id услуги = '.$this->request->getPut("serviceId"));
+
             if (!$service) {
                 $response->setJsonContent(
                     [
@@ -471,9 +473,7 @@ class ServicesAPIController extends Controller
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($tagObject);
                 }
-
                 SupportClass::writeMessageInLogFile('Сохранил тег '.$tag.' с id = '.$tagObject->getTagId());
-
                 $serviceTag = new ServicesTags();
                 $serviceTag->setServiceId($service->getServiceId());
                 $serviceTag->setTagId($tagObject->getTagId());
@@ -488,6 +488,7 @@ class ServicesAPIController extends Controller
             SupportClass::writeMessageInLogFile('Добавил теги');
 
             $this->db->commit();
+
             $response->setJsonContent(
                 [
                     "status" => STATUS_OK
