@@ -60,7 +60,7 @@ class CommentsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
             $comment = new CommentsImagesUsers();
-            if($this->request->getPost('accountid')!=null){
+            if ($this->request->getPost('accountid') != null) {
                 if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountid'), 'addComment')) {
                     $response->setJsonContent(
                         [
@@ -72,10 +72,10 @@ class CommentsAPIController extends Controller
                 }
 
                 $comment->setAccountId($this->request->getPost('accountid'));
-            } else{
+            } else {
                 $account = Accounts::findForUserDefaultAccount($userId);
 
-                if(!$account){
+                if (!$account) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_UNRESOLVED_ERROR,
@@ -94,13 +94,70 @@ class CommentsAPIController extends Controller
                 ->setImageId($this->request->getPost('objectid'))
                 ->setReplyId($this->request->getPost('replyid'));
 
-            if(!$comment->save()){
+            if (!$comment->save()) {
                 return SupportClass::getResponseWithErrors($comment);
             }
 
             $response->setJsonContent(
                 ['status' => STATUS_OK,
                     'commentid' => $comment->getCommentId()]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Редактирует комментарий к фотографии пользователя
+     * @access private
+     *
+     * @method PUT
+     *
+     * @params commentid - id комментария
+     * @params commenttext - текст комментария
+     *
+     * @return string - json array в формате Status
+     */
+    public function editCommentForImageAction()
+    {
+        if ($this->request->isPut()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+            $comment = CommentsImagesUsers::findFirstByCommentid($this->request->getPut('commentid'));
+
+            if(!$comment){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Указанный комментарий не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'editComment')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $comment
+                ->setCommentText($this->request->getPut('commenttext'));
+
+            if (!$comment->save()) {
+                return SupportClass::getResponseWithErrors($comment);
+            }
+
+            $response->setJsonContent(
+                ['status' => STATUS_OK]
             );
             return $response;
 
@@ -138,7 +195,7 @@ class CommentsAPIController extends Controller
                 return $response;
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'deleteComment')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -174,7 +231,8 @@ class CommentsAPIController extends Controller
      *
      * @return Response
      */
-    public function toggleLikeCommentForImageAction(){
+    public function toggleLikeCommentForImageAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
@@ -192,13 +250,13 @@ class CommentsAPIController extends Controller
                 return $response;
             }
 
-            if(!$this->request->getPost('accountId')){
+            if (!$this->request->getPost('accountId')) {
                 $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
-            } else{
+            } else {
                 $accountId = $this->request->getPost('accountId');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $accountId,'toggleLikes')) {
+            if (!Accounts::checkUserHavePermission($userId, $accountId, 'toggleLikes')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -209,18 +267,18 @@ class CommentsAPIController extends Controller
             }
 
             $like = LikesCommentsImagesUsers::findCommentLiked($accountId,
-                                                               $this->request->getPost('commentId'));
+                $this->request->getPost('commentId'));
 
-            if($like){
-                if(!$like->delete()){
+            if ($like) {
+                if (!$like->delete()) {
                     return SupportClass::getResponseWithErrors($like);
                 }
-            } else{
+            } else {
                 $like = LikesCommentsImagesUsers::findCommentLikedByCompany($accountId,
                     $this->request->getPost('commentId'));
 
-                if($like){
-                    if(!$like->delete()){
+                if ($like) {
+                    if (!$like->delete()) {
                         return SupportClass::getResponseWithErrors($like);
                     }
                 } else {
@@ -296,7 +354,7 @@ class CommentsAPIController extends Controller
             $userId = $auth['id'];
             $response = new Response();
             $comment = new CommentsNews();
-            if($this->request->getPost('accountId')!=null){
+            if ($this->request->getPost('accountId') != null) {
                 if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountId'), 'addComment')) {
                     $response->setJsonContent(
                         [
@@ -308,10 +366,10 @@ class CommentsAPIController extends Controller
                 }
 
                 $comment->setAccountId($this->request->getPost('accountId'));
-            } else{
+            } else {
                 $account = Accounts::findForUserDefaultAccount($userId);
 
-                if(!$account){
+                if (!$account) {
                     $response->setJsonContent(
                         [
                             "status" => STATUS_UNRESOLVED_ERROR,
@@ -330,7 +388,7 @@ class CommentsAPIController extends Controller
                 ->setNewsId($this->request->getPost('objectid'))
                 ->setReplyId($this->request->getPost('replyid'));
 
-            if(!$comment->save()){
+            if (!$comment->save()) {
                 return SupportClass::getResponseWithErrors($comment);
             }
 
@@ -374,7 +432,7 @@ class CommentsAPIController extends Controller
                 return $response;
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'deleteComment')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -410,7 +468,8 @@ class CommentsAPIController extends Controller
      *
      * @return Response
      */
-    public function toggleLikeCommentForNewsAction(){
+    public function toggleLikeCommentForNewsAction()
+    {
         if ($this->request->isPost()) {
             $response = new Response();
             $auth = $this->session->get('auth');
@@ -428,13 +487,13 @@ class CommentsAPIController extends Controller
                 return $response;
             }
 
-            if(!$this->request->getPost('accountId')){
+            if (!$this->request->getPost('accountId')) {
                 $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
-            } else{
+            } else {
                 $accountId = $this->request->getPost('accountId');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $accountId,'toggleLikes')) {
+            if (!Accounts::checkUserHavePermission($userId, $accountId, 'toggleLikes')) {
                 $response->setJsonContent(
                     [
                         "errors" => ['permission error'],
@@ -447,16 +506,16 @@ class CommentsAPIController extends Controller
             $like = LikesCommentsNews::findCommentLiked($accountId,
                 $this->request->getPost('commentId'));
 
-            if($like){
-                if(!$like->delete()){
+            if ($like) {
+                if (!$like->delete()) {
                     return SupportClass::getResponseWithErrors($like);
                 }
-            } else{
+            } else {
                 $like = LikesCommentsNews::findCommentLikedByCompany($accountId,
                     $this->request->getPost('commentId'));
 
-                if($like){
-                    if(!$like->delete()){
+                if ($like) {
+                    if (!$like->delete()) {
                         return SupportClass::getResponseWithErrors($like);
                     }
                 } else {
@@ -481,6 +540,63 @@ class CommentsAPIController extends Controller
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
+            throw $exception;
+        }
+    }
+
+    /**
+     * Редактирует комментарий к фотографии пользователя
+     * @access private
+     *
+     * @method PUT
+     *
+     * @params commentid - id комментария
+     * @params commenttext - текст комментария
+     *
+     * @return string - json array в формате Status
+     */
+    public function editCommentForNewsAction()
+    {
+        if ($this->request->isPut()) {
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
+            $response = new Response();
+            $comment = CommentsNews::findFirstByCommentid($this->request->getPut('commentid'));
+
+            if(!$comment){
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['Указанный комментарий не существует']
+                    ]
+                );
+                return $response;
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'editComment')) {
+                $response->setJsonContent(
+                    [
+                        "status" => STATUS_WRONG,
+                        "errors" => ['permission error']
+                    ]
+                );
+                return $response;
+            }
+
+            $comment
+                ->setCommentText($this->request->getPut('commenttext'));
+
+            if (!$comment->save()) {
+                return SupportClass::getResponseWithErrors($comment);
+            }
+
+            $response->setJsonContent(
+                ['status' => STATUS_OK]
+            );
+            return $response;
+
+        } else {
+            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
     }

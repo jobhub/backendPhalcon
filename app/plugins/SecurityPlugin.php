@@ -90,7 +90,8 @@ class SecurityPlugin extends Plugin
                 'UserLocationAPI' => ['setLocation'],
                 'UserinfoAPI' => ['addImages', 'deleteImage', ],
                 'CommentsAPI' => ['addCommentForImage', 'deleteCommentForImage', 'toggleLikeCommentForImage',
-                    'addCommentForNews', 'getCommentsForNews','deleteCommentForNews','toggleLikeCommentForNews'],
+                    'addCommentForNews', 'getCommentsForNews','deleteCommentForNews','toggleLikeCommentForNews',
+                    'editCommentForImage','editCommentForNews'],
             ];
 
             $privateResources2 = [];
@@ -226,11 +227,10 @@ class SecurityPlugin extends Plugin
                 }
             }
             //The acl is stored in session, APC would be useful here too
-            $this->persistent->acl = $acl;
+            //$this->persistent->acl = $acl;
         }
-
-        SupportClass::writeMessageInLogFile('Вышел из getAcl()');
-        return $this->persistent->acl;
+        
+        return $acl;
     }
 
     public static function getTokenFromHeader()
