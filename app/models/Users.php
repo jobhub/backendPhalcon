@@ -13,11 +13,6 @@ use Phalcon\DI\FactoryDefault as DI;
 
 class Users extends NotDeletedModelWithCascade
 {
-
-    const LOGIN_EXISTS = 1;
-    const ALL_OK = 0;
-    const LOGIN_INCORRECT = 2;
-
     /**
      *
      * @var integer
@@ -30,7 +25,7 @@ class Users extends NotDeletedModelWithCascade
     /**
      *
      * @var string
-     * @Column(type="string", length=30, nullable=false)
+     * @Column(type="string", length=150, nullable=false)
      */
     protected $email;
 
@@ -228,20 +223,6 @@ class Users extends NotDeletedModelWithCascade
         return $this->activated;
     }
 
-    public function generateActivation()
-    {
-        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
-            time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
-            . $this->getPassword());
-    }
-
-    public function generateDeactivation()
-    {
-        return hash('sha256', ($this->getEmail() == null ? ' ' : $this->getEmail()) .
-            time() . ($this->getPhoneId() == null ? ' ' : $this->phones->getPhone())
-            . $this->getPassword() . '-no');
-    }
-
     public static function findByLogin($login)
     {
         $phone = $login;
@@ -258,38 +239,6 @@ class Users extends NotDeletedModelWithCascade
             ]
         );
         return $user;
-    }
-
-    public static function checkLogin($login)
-    {
-        $user = Users::findByLogin($login);
-
-        if ($user != false) {
-            return Users::LOGIN_EXISTS;
-        }
-
-        $result = Phones::isValidPhone($login);
-
-        if(!$result) {
-            $user = new Users();
-            $user->setEmail($login);
-
-            $validator = new Validation();
-            $validator->add(
-                'email',
-                new EmailValidator(
-                    [
-                        'model' => $user,
-                        'message' => 'Введите, пожалуйста, правильный адрес',
-                    ]
-                )
-            );
-            if(!$user->validate($validator)){
-                return Users::LOGIN_INCORRECT;
-            }
-        }
-
-        return Users::ALL_OK;
     }
 
     /**
@@ -341,22 +290,6 @@ class Users extends NotDeletedModelWithCascade
                         "callback" => function ($user) {
                             $phone = Phones::findFirstByPhoneid($user->getPhoneId());
                             if ($phone)
-                                return true;
-                            return false;
-                        }
-                    ]
-                )
-            );
-
-        if (!$this->getIsSocial())
-            $validator->add(
-                'password',
-                new Callback(
-                    [
-                        "message" => "Пароль должен содержать не менее 6 символов",
-                        "callback" => function ($user) {
-
-                            if ($user->getPassword() != null && strlen($user->getPassword()) >= 6)
                                 return true;
                             return false;
                         }

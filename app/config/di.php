@@ -15,10 +15,10 @@ use App\Controllers\SessionAPIController;
 use App\Services\SessionService;
 use App\Libs\PseudoSession;
 use Phalcon\Mailer;
+use Phalcon\Di\FactoryDefault;
 
 // Initializing a DI Container
-$di = new \Phalcon\DI\FactoryDefault();
-
+$di = new FactoryDefault();
 /**
  * Overriding Response-object to set the Content-type header globally
  */
@@ -67,7 +67,10 @@ $di->setShared(
     }
 );
 
-$di->setShared('sessionAPI','\App\Services\SessionService');
+$di->setShared('authService', '\App\Services\AuthService');
+$di->setShared('phoneService', '\App\Services\PhoneService');
+$di->setShared('accountService', '\App\Services\AccountService');
+$di->setShared('userInfoService', '\App\Services\UserInfoService');
 
 $di->setShared(
     "TradePointsAPI",

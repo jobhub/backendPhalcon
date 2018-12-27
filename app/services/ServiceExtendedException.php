@@ -9,12 +9,19 @@ namespace App\Services;
  *
  * @package App\Exceptions
  */
-class ServiceException extends \RuntimeException
+class ServiceExtendedException extends ServiceException
 {
-    public function __construct(string $message = '', int $code = 0,\Throwable $e = null, $logger = null) {
+    //Some added data
+    private $data = null;
+    public function __construct(string $message = '', int $code = 0,\Throwable $e = null, $logger = null, $data = null) {
         // $logger->critical(
         //                 $code. ' '. $message
         //         );
+        $this->data = $data;
         return parent::__construct($message, $code,$e);
+    }
+
+    public function getData(){
+        return $this->data;
     }
 }

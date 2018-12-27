@@ -3,6 +3,7 @@
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\StringLength as StringLength;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Alpha as AlphaValidator;
 use Phalcon\Validation\Validator\Callback;
 
@@ -84,19 +85,28 @@ class Tags extends \Phalcon\Mvc\Model
             "tag",
             new StringLength(
                 [
-                    "max"            => 100,
-                    "min"            => 3,
-                    "messageMaximum" => "We don't like really long tags",
+                    "max" => 100,
+                    "min" => 3,
+                    "messageMaximum" => "We don't like too long tags",
                     "messageMinimum" => "It's really too few for tag",
                 ]
             )
         );
 
-        $validator->add(
+        /*$validator->add(
             "tag",
             new AlphaValidator(
                 [
                     "message" => ":field must contain only letters",
+                ]
+            )
+        );*/
+        $validator->add(
+            'tin',
+            new Regex(
+                [
+                    "pattern" => "/^[a-z A-Z]$/",
+                    "message" => "Введите корректный ИНН",
                 ]
             )
         );
@@ -105,7 +115,7 @@ class Tags extends \Phalcon\Mvc\Model
             "tag",
             new UniquenessValidator(
                 [
-                    "model"   => new Tags(),
+                    "model" => new Tags(),
                     "message" => ":field must be unique",
                 ]
             )
@@ -138,7 +148,7 @@ class Tags extends \Phalcon\Mvc\Model
     {
         $this->setTag(mb_strtolower($this->getTag()));
         $tag = Tags::findFirstByTag($this->getTag());
-        if($tag){
+        if ($tag) {
             $this->setTag($tag->getTag());
             $this->setTagId($tag->getTagId());
             return true;

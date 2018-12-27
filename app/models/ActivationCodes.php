@@ -40,6 +40,9 @@ class ActivationCodes extends \Phalcon\Mvc\Model
      * В секундах.
      */
     const RESEND_TIME = 300;
+
+    const TIME_LIFE = 3600;
+
     /**
      * Method to set the value of field userid
      *

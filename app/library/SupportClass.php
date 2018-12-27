@@ -142,6 +142,14 @@ class SupportClass
             ];
     }
 
+    public static function getArrayWithErrors($object){
+        $errors = [];
+        foreach ($object->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+        return $errors;
+    }
+
     public static function getResponseWithErrorsFromArray($errors){
         $response = new Response();
         $response->setJsonContent(

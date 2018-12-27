@@ -54,7 +54,16 @@ class PHPMailerApp
     public function send(){
         try {
             //Server settings
-            $this->mail->SMTPDebug = 2;                                 // Enable verbose debug output
+            // Enable verbose debug output
+            $this->mail->SMTPDebug = 2;
+            $this->mail->Debugoutput = function ($str, $level) {
+                file_put_contents(
+                    BASE_PATH.'/logs/phpmailer.log',
+                    date('Y-m-d H:i:s') . "\t" . $str."\r\n",
+                    FILE_APPEND | LOCK_EX
+                );
+            };
+
             $this->mail->isSMTP();                                      // Set mailer to use SMTP
             $this->mail->Host = $this->config['host'];  // Specify main and backup SMTP servers
             $this->mail->SMTPAuth = true;                               // Enable SMTP authentication
