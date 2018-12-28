@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 class Settings extends \Phalcon\Mvc\Model
 {
 

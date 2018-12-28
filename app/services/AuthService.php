@@ -67,8 +67,7 @@ class AuthService extends AbstractService
     /**
      * Отправляет активационный код пользователю на почту.
      * @param $user - объект типа User
-     * @return array в формате [Status, timeLeft] - объект статус и, если время еще не истекло,
-     * timeLeft - оставшееся время.
+     * @return boolean.
      */
     public function sendActivationCode(Users $user)
     {
@@ -135,11 +134,12 @@ class AuthService extends AbstractService
      * @param Users $user
      * @return string
      */
-    private function generateActivation(Users $user)
+    public function generateActivation(Users $user)
     {
-        return hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
+        $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword());
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     /**
@@ -147,22 +147,20 @@ class AuthService extends AbstractService
      * @param Users $user
      * @return string
      */
-    private function generateDeactivation(Users $user)
+    public function generateDeactivation(Users $user)
     {
-        return hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
+        $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword() . '-no');
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     public function sendMailForActivation(ActivationCodes $activationCode, string $email)
     {
-        $mailer = new PHPMailerApp($this->config['mail']);
-        $newTo = 'titow.german@yandex.ru'/*$this->config['mail']['from']['email']*/;
-
         $this->sendMail('hello_world','emails/hello_world',
             ['activation' => $activationCode->getActivation(),
             'deactivation' => $activationCode->getDeactivation(),
-            'email' => $email]);
+            'email' => $email],'Подтвердите регистрацию в нашем замечательном сервисе');
     }
 
     public function _registerSession($user)
@@ -249,117 +247,5 @@ class AuthService extends AbstractService
             return base64_decode($data[1]);
         else
             return false;
-    }
-
-    public function checkResetPasswordCode(Users $user, string $code){
-        if ($user->getPhoneId() == null) {
-            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
-                'bind' => [
-                    'userId' => $user->getUserId(),
-                    'resetCode' => $code
-                ]]);
-        } else {
-            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
-                'bind' => [
-                    'userId' => $user->getUserId(),
-                    'resetCode' => $code
-                ]]);
-        }
-
-        if ($resetCode) {
-            return self::RIGHT_PASSWORD_RESET_CODE;
-        }
-
-        $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
-            'bind' => [
-                'userId' => $user->getUserId(),
-                'resetCode' => $this->request->getPost('resetcode')
-            ]]);
-
-        if ($resetCode) {
-            return self::RIGHT_DEACTIVATE_PASSWORD_RESET_CODE;
-        }
-
-        return self::WRONG_PASSWORD_RESET_CODE;
-    }
-
-    public function deletePasswordResetCode(int $userId){
-        try {
-            $code = PasswordResetCodes::findFirstByUserid($userId);
-
-            if (!$code) {
-                return true;
-            }
-
-            if (!$code->delete()) {
-                $errors = SupportClass::getArrayWithErrors($code);
-                if (count($errors) > 0)
-                    throw new ServiceExtendedException('Unable to delete reset password code',
-                        self::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE, null, null, $errors);
-                else {
-                    throw new ServiceExtendedException('Unable to delete reset password code',
-                        self::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE);
-                }
-            }
-        } catch (\PDOException $e) {
-            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
-    public function sendPasswordResetCode(Users $user)
-    {
-        $resetCode = $this->createPasswordResetCode($user);
-
-        if($user->getPhoneId()==null){
-            $this->sendMail('reset_code_letter','emails/reset_code_letter',
-                ['resetcode' => $resetCode->getResetCode(),
-                    'deactivate' => $resetCode->getDeactivateCode(),
-                    'email' => $user->getEmail()]);
-        } else {
-            //Тут типа отправляем
-            $res = true;
-            //Отправили
-        }
-    }
-
-    /**
-     * Creating code for reset password.
-     * @param Users $user
-     * @return PasswordResetCodes
-     */
-    public function createPasswordResetCode(Users $user)
-    {
-        $resetCode = PasswordResetCodes::findFirstByUserid($user->getUserId());
-        if (!$resetCode) {
-            $resetCode = new PasswordResetCodes();
-            $resetCode->setUserId($user->getUserId());
-        } else if (strtotime($resetCode->getTime()) > strtotime(date('Y-m-d H:i:s') . '+00') - PasswordResetCodes::RESEND_TIME) {
-            throw new ServiceExtendedException('Time to resend did\'t come', self::ERROR_NO_TIME_TO_RESEND, null, null,
-                ['time_left' => strtotime($resetCode->getTime())
-                    - (strtotime(date('Y-m-d H:i:s' . '+00')) - PasswordResetCodes::RESEND_TIME)]);
-        }
-
-        if ($user->getPhoneId() == null) {
-            $resetCode->generateResetCode($user->getUserId());
-            $resetCode->generateDeactivateResetCode($user->getUserId());
-        } else {
-            //Иначе отправляем на телефон
-            $resetCode->generateResetCodePhone($user->getUserId());
-        }
-
-        $resetCode->setTime(date('Y-m-d H:i:s'));
-
-        if (!$resetCode->save()) {
-            $errors = SupportClass::getArrayWithErrors($resetCode);
-            if (count($errors) > 0)
-                throw new ServiceExtendedException('Unable to create reset password code',
-                    self::ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE, null, null, $errors);
-            else {
-                throw new ServiceExtendedException('Unable to create reset password code',
-                    self::ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE);
-            }
-        }
-
-        return $resetCode;
     }
 }

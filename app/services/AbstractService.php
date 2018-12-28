@@ -24,12 +24,12 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
 
     const ERROR_UNABLE_SEND_TO_MAIL = 100003;
 
-    public function sendMail($action, $view, $data){
+    public function sendMail($action, $view, $data, $title){
         $mailer = new PHPMailerApp($this->config['mail']);
-        $newTo = $this->config['mail']['from']['email'];
+        $newTo = 'titow.german@yandex.ru';//$this->config['mail']['from']['email'];
         $res = $mailer->createMessageFromView($view, $action, $data)
             ->to($newTo)
-            ->subject('Подтвердите сброс пароля')
+            ->subject($title)
             ->send();
 
         if ($res === true) {

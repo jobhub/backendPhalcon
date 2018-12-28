@@ -19,8 +19,8 @@ class UserService extends AbstractService
 {
 
     const WRONG_ACTIVATION_CODE = 1;
-    const RIGHT_ACTIVATION_CODE = 1;
-    const RIGHT_DEACTIVATION_CODE = 1;
+    const RIGHT_ACTIVATION_CODE = 0;
+    const RIGHT_DEACTIVATION_CODE = 2;
 
     const ADDED_CODE_NUMBER = 5000;
 
@@ -147,6 +147,43 @@ class UserService extends AbstractService
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function changeUser(Users $user, array $userData){
+        if(!empty(trim($userData['email']))){
+            $user->setEmail($userData['email']);
+        }
+
+        if(!empty(trim($userData['phoneId']))){
+            $user->setPhoneId($userData['phoneId']);
+        }
+
+        if(!empty(trim($userData['role']))){
+            $user->setRole($userData['role']);
+        }
+
+        if(!empty(trim($userData['password']))){
+            $user->setPassword($userData['password']);
+        }
+
+        if(!empty(trim($userData['activated']))){
+            $user->setActivated($userData['activated']);
+        }
+
+        if(!empty(trim($userData['isSocial']))){
+            $user->setIsSocial($userData['isSocial']);
+        }
+
+        if (!$user->update()) {
+            $errors = SupportClass::getArrayWithErrors($user);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to update user',
+                    self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to update user',
+                    self::ERROR_UNABLE_CHANGE_USER);
+            }
         }
     }
 
@@ -361,8 +398,7 @@ class UserService extends AbstractService
      *
      * @return array
      */
-    public
-    function getUserList($currentUserId)
+    public function getUserList($currentUserId)
     {
         try {
 

@@ -24,6 +24,7 @@ class ResetPasswordService extends AbstractService
 
     const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 6 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 7 + self::ADDED_CODE_NUMBER;
+    const ERROR_NO_TIME_TO_RESEND = 5 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -94,7 +95,7 @@ class ResetPasswordService extends AbstractService
             $this->sendMail('reset_code_letter','emails/reset_code_letter',
                 ['resetcode' => $resetCode->getResetCode(),
                     'deactivate' => $resetCode->getDeactivateCode(),
-                    'email' => $user->getEmail()]);
+                    'email' => $user->getEmail()],'Подтвердите сброс пароля');
         } else {
             //Тут типа отправляем
             $res = true;
@@ -120,11 +121,11 @@ class ResetPasswordService extends AbstractService
         }
 
         if ($user->getPhoneId() == null) {
-            $resetCode->generateResetCode($user->getUserId());
-            $resetCode->generateDeactivateResetCode($user->getUserId());
+            $resetCode->setResetCode($this->generateResetCode($user->getUserId()));
+            $resetCode->setDeactivateCode($this->generateDeactivateResetCode($user->getUserId()));
         } else {
             //Иначе отправляем на телефон
-            $resetCode->generateResetCodePhone($user->getUserId());
+            $resetCode->setResetCodePhone($this->generateResetCodePhone($user->getUserId()));
         }
 
         $resetCode->setTime(date('Y-m-d H:i:s'));
@@ -141,5 +142,24 @@ class ResetPasswordService extends AbstractService
         }
 
         return $resetCode;
+    }
+
+    public function generateResetCodePhone($userId)
+    {
+        $hash = hash('sha256',$userId . time() . rand());
+
+        return substr($hash,5,4);
+    }
+
+    public function generateResetCode($userId)
+    {
+        $hash = hash('sha256',$userId . time() . rand());
+        return substr($hash,5,4);
+    }
+
+    public function generateDeactivateResetCode($userId)
+    {
+        $hash = hash('sha256',$userId . time() . rand(). '-no');
+        return substr($hash,5,4);
     }
 }

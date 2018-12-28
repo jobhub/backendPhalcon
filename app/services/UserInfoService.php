@@ -10,6 +10,7 @@ use App\Libs\SupportClass;
 
 //models
 use App\Models\Userinfo;
+use App\Models\Settings;
 
 /**
  * business logic for users

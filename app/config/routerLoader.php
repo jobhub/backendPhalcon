@@ -65,7 +65,7 @@ $routes = [
              * Частично активирует пользователя, давая ему роль defectiveUser.
              * Или деактивирует ссылку, в зависимости от кода.
              *
-             * @access public
+             * @access publicfr
              *
              * @method POST
              *

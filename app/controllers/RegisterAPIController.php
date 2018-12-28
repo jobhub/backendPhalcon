@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Services\AbstractService;
 use App\Services\ResetPasswordService;
 use Dmkit\Phalcon\Auth\Auth;
 use Phalcon\Http\Response;
@@ -192,16 +193,9 @@ class RegisterAPIController extends AbstractController
             throw new Http500Exception('Пользователь не создан');
         }
 
-        if ($user->getActivated()) {
-            /*$response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => ['Пользователь уже активирован']
-                ]
-            );
-            return $response;*/
+        /*if ($user->getActivated()) {
             throw new Http422Exception('Пользователь уже активирован');
-        }
+        }*/
 
         /*$activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
 
@@ -278,7 +272,7 @@ class RegisterAPIController extends AbstractController
         try {
             if ($checking == UserService::RIGHT_ACTIVATION_CODE) {
                 $this->userService->deleteActivationCode($user->getUserId());
-                $this->userService->setNewRoleForUser($user, ROLE_USER_DEFECTIVE);
+                $this->userService->changeUser($user, ['role'=>ROLE_USER_DEFECTIVE,'activated'=>true]);
             } elseif ($checking == UserService::RIGHT_DEACTIVATION_CODE) {
                 $this->userService->deleteUser($user->getUserId());
             } else {
@@ -334,10 +328,10 @@ class RegisterAPIController extends AbstractController
         try {
             $this->authService->sendActivationCode($user);
         } catch (ServiceExtendedException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case AuthService::ERROR_UNABLE_SEND_TO_MAIL:
                 case AuthService::ERROR_UNABLE_TO_CREATE_ACTIVATION_CODE:
+                case AuthService::ERROR_NO_TIME_TO_RESEND:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -382,13 +376,12 @@ class RegisterAPIController extends AbstractController
 
         //Пока, если код существует, то просто перезаписывается
         try {
-            $this->resetPasswordService->sendResetPasswordCode($user);
+            $this->resetPasswordService->sendPasswordResetCode($user);
         } catch (ServiceExtendedException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
-                case AuthService::ERROR_UNABLE_SEND_TO_MAIL:
-                case AuthService::ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE:
-                case AuthService::ERROR_NO_TIME_TO_RESEND:
+                case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
+                case ResetPasswordService::ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE:
+                case ResetPasswordService::ERROR_NO_TIME_TO_RESEND:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -400,6 +393,8 @@ class RegisterAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
+
+        return self::successResponse('Code for reset password successfully sent');
     }
 
     /**
@@ -486,7 +481,7 @@ class RegisterAPIController extends AbstractController
 
             if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
 
-                $this->userService->setPasswordForUser($data['password']);
+                $this->userService->setPasswordForUser($user,$data['password']);
                 return self::successResponse('Password was changed successfully');
             }
 
