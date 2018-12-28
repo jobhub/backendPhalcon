@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Controllers\HttpExceptions\Http400Exception;
 use App\Models\ActivationCodes;
 use App\Models\Users;
 use App\Models\Group;
@@ -21,7 +22,7 @@ class UserService extends AbstractService
     const RIGHT_ACTIVATION_CODE = 1;
     const RIGHT_DEACTIVATION_CODE = 1;
 
-    const ADDED_CODE_NUMBER = 1000;
+    const ADDED_CODE_NUMBER = 5000;
 
     /** Unable to create user */
     const ERROR_UNABLE_CREATE_USER = 1 + self::ADDED_CODE_NUMBER;
@@ -97,6 +98,31 @@ class UserService extends AbstractService
         }
 
         return $user;
+    }
+
+    /**
+     * Setting a new password for user
+     *
+     * @param Users $user
+     * @param string $password
+     */
+    public function setPasswordForUser(Users $user, string $password)
+    {
+        try {
+            $user->setPassword($password);
+            if ($user->update() == false) {
+                $errors = SupportClass::getArrayWithErrors($user);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to change password of user',
+                        self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to change password of user',
+                        self::ERROR_UNABLE_CHANGE_USER);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -204,6 +230,14 @@ class UserService extends AbstractService
         }
     }
 
+    public function getUserByLogin(string $login){
+        $user = Users::findByLogin($login);
+
+        if (!$user || $user == null) {
+            throw new ServiceException('Invalid login', self::ERROR_USER_NOT_FOUND);
+        }
+        return $user;
+    }
     /**
      * Updating an existing user
      *

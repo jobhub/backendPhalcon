@@ -24,7 +24,7 @@ class AuthService extends AbstractService
     const LOGIN_DO_NOT_EXISTS = 0;
     const LOGIN_INCORRECT = 2;
 
-    const ADDED_CODE_NUMBER = 3000;
+    const ADDED_CODE_NUMBER = 2000;
 
     const ERROR_USER_DO_NOT_EXISTS = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_USER_ALREADY_ACTIVATED = 2 + self::ADDED_CODE_NUMBER;
@@ -33,7 +33,12 @@ class AuthService extends AbstractService
     /*Time to resend did't come. Return time to resend*/
     const ERROR_NO_TIME_TO_RESEND = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 7 + self::ADDED_CODE_NUMBER;
 
+    //
+    const RIGHT_PASSWORD_RESET_CODE = 0;
+    const WRONG_PASSWORD_RESET_CODE = 1;
+    const RIGHT_DEACTIVATE_PASSWORD_RESET_CODE = 2;
     /**
      * Check login.
      *
@@ -160,6 +165,147 @@ class AuthService extends AbstractService
             'email' => $email]);
     }
 
+    public function _registerSession($user)
+    {
+        $di = DI::getDefault();
+
+        $di->getSession()->set(
+            "auth",
+            [
+                "id" => $user->getUserId(),
+                "email" => $user->getEmail(),
+                "role" => $user->getRole()
+            ]
+        );
+    }
+
+    public function _registerSessionByData($data)
+    {
+        $di = DI::getDefault();
+
+        $di->getSession()->set(
+            "auth",
+            [
+                "id" => $data['userId'],
+                "login" => $data['login'],
+                "role" => $data['role']
+            ]
+        );
+    }
+
+    public function createSession(Users $user)
+    {
+        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
+
+        $lifetime = date('Y-m-d H:i:s', time() + 604800);
+        $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
+            $user->getRole(), $lifetime);
+
+        SupportClass::writeMessageInLogFile('ID юзера при этом - ' . $user->getUserId());
+
+        $this->_registerSession($user);
+
+        return
+            [
+                'token' => $token,
+                'lifetime' => $lifetime
+            ];
+    }
+
+    public function GenerateToken($userId, $login, $role, $lifetime)
+    {
+        $header = base64_encode('{"alg":"RS512","typ":"JWT"}');
+        $payload = base64_encode(json_encode(['userId' => $userId, 'login' => $login, 'role' => $role, 'lifetime' => $lifetime]));
+        $signature = '.';
+        //$private = openssl_pkey_get_private(,'foobar');
+        $di = DI::getDefault();
+
+        $riv = file_get_contents($di->getConfig()['token_rsa']['pathToPrivateKey']);
+
+        $pk = openssl_get_privatekey($riv, $di->getConfig()['token_rsa']['password']);
+
+        $err = openssl_error_string();
+        $result = openssl_private_encrypt($header . '.' . $payload, $signature, $pk, OPENSSL_PKCS1_PADDING);
+        if (!$result) {
+            return openssl_error_string();
+        }
+
+        return $header . '.' . $payload . '.' . base64_encode($signature);
+    }
+
+    public function checkToken($token)
+    {
+        $data = explode('.', $token);
+        //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
+        $di = DI::getDefault();
+
+        $pub = file_get_contents($di->getConfig()['token_rsa']['pathToPublicKey']);
+
+        $pk = openssl_get_publickey($pub);
+
+        openssl_public_decrypt(base64_decode($data[2]), $signature, $pk, OPENSSL_PKCS1_PADDING);
+
+        if ($data[0] . '.' . $data[1] == $signature)
+            return base64_decode($data[1]);
+        else
+            return false;
+    }
+
+    public function checkResetPasswordCode(Users $user, string $code){
+        if ($user->getPhoneId() == null) {
+            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
+                'bind' => [
+                    'userId' => $user->getUserId(),
+                    'resetCode' => $code
+                ]]);
+        } else {
+            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
+                'bind' => [
+                    'userId' => $user->getUserId(),
+                    'resetCode' => $code
+                ]]);
+        }
+
+        if ($resetCode) {
+            return self::RIGHT_PASSWORD_RESET_CODE;
+        }
+
+        $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
+            'bind' => [
+                'userId' => $user->getUserId(),
+                'resetCode' => $this->request->getPost('resetcode')
+            ]]);
+
+        if ($resetCode) {
+            return self::RIGHT_DEACTIVATE_PASSWORD_RESET_CODE;
+        }
+
+        return self::WRONG_PASSWORD_RESET_CODE;
+    }
+
+    public function deletePasswordResetCode(int $userId){
+        try {
+            $code = PasswordResetCodes::findFirstByUserid($userId);
+
+            if (!$code) {
+                return true;
+            }
+
+            if (!$code->delete()) {
+                $errors = SupportClass::getArrayWithErrors($code);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete reset password code',
+                        self::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete reset password code',
+                        self::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
     public function sendPasswordResetCode(Users $user)
     {
         $resetCode = $this->createPasswordResetCode($user);
@@ -215,95 +361,5 @@ class AuthService extends AbstractService
         }
 
         return $resetCode;
-    }
-
-    public function _registerSession($user)
-    {
-        $di = DI::getDefault();
-
-        $di->getSession()->set(
-            "auth",
-            [
-                "id" => $user->getUserId(),
-                "email" => $user->getEmail(),
-                "role" => $user->getRole()
-            ]
-        );
-    }
-
-    public
-    function _registerSessionByData($data)
-    {
-        $di = DI::getDefault();
-
-        $di->getSession()->set(
-            "auth",
-            [
-                "id" => $data['userId'],
-                "login" => $data['login'],
-                "role" => $data['role']
-            ]
-        );
-    }
-
-    public
-    function createSession(Users $user)
-    {
-        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
-
-        $lifetime = date('Y-m-d H:i:s', time() + 604800);
-        $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
-            $user->getRole(), $lifetime);
-
-        SupportClass::writeMessageInLogFile('ID юзера при этом - ' . $user->getUserId());
-
-        $this->_registerSession($user);
-
-        return
-            [
-                'token' => $token,
-                'lifetime' => $lifetime
-            ];
-    }
-
-    public
-    function GenerateToken($userId, $login, $role, $lifetime)
-    {
-        $header = base64_encode('{"alg":"RS512","typ":"JWT"}');
-        $payload = base64_encode(json_encode(['userId' => $userId, 'login' => $login, 'role' => $role, 'lifetime' => $lifetime]));
-        $signature = '.';
-        //$private = openssl_pkey_get_private(,'foobar');
-        $di = DI::getDefault();
-
-        $riv = file_get_contents($di->getConfig()['token_rsa']['pathToPrivateKey']);
-
-        $pk = openssl_get_privatekey($riv, $di->getConfig()['token_rsa']['password']);
-
-        $err = openssl_error_string();
-        $result = openssl_private_encrypt($header . '.' . $payload, $signature, $pk, OPENSSL_PKCS1_PADDING);
-        if (!$result) {
-            return openssl_error_string();
-        }
-
-        return $header . '.' . $payload . '.' . base64_encode($signature);
-    }
-
-    public
-    function checkToken($token)
-    {
-        $data = explode('.', $token);
-        //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
-        $di = DI::getDefault();
-
-        $pub = file_get_contents($di->getConfig()['token_rsa']['pathToPublicKey']);
-
-        $pk = openssl_get_publickey($pub);
-
-        openssl_public_decrypt(base64_decode($data[2]), $signature, $pk, OPENSSL_PKCS1_PADDING);
-
-        if ($data[0] . '.' . $data[1] == $signature)
-            return base64_decode($data[1]);
-        else
-            return false;
     }
 }

@@ -12,7 +12,7 @@ use App\Models\Phones;
  */
 class PhoneService extends AbstractService {
 
-    const ERROR_UNABLE_CREATE_PHONE = 11001;
+    //const ERROR_UNABLE_CREATE_PHONE = 11001;
     /**
      * Create phone if it don't exists.
      *

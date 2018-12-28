@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Services\ResetPasswordService;
 use Dmkit\Phalcon\Auth\Auth;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
@@ -381,8 +382,8 @@ class RegisterAPIController extends AbstractController
 
         //Пока, если код существует, то просто перезаписывается
         try {
-            $this->authService->sendResetPasswordCode($user);
-        }catch (ServiceExtendedException $e) {
+            $this->resetPasswordService->sendResetPasswordCode($user);
+        } catch (ServiceExtendedException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
                 case AuthService::ERROR_UNABLE_SEND_TO_MAIL:
@@ -408,72 +409,51 @@ class RegisterAPIController extends AbstractController
      * @method POST
      *
      * @params login
-     * @params resetcode
+     * @params reset_code
      *
      * @return Status
      */
     public function checkResetPasswordCodeAction()
     {
-        if ($this->request->isPost()) {
-            $response = new Response();
+        $data = json_decode($this->request->getRawBody(), true);
+        try {
+            $user = $this->userService->getUserByLogin($data['login']);
 
-            $user = Users::findByLogin($this->request->getPost('login'));
+            $checking = $this->resetPasswordService->checkResetPasswordCode($user,$data['reset_code']);
 
-            if (!$user || $user == null) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Пользователь не существует']
-                    ]
-                );
-                return $response;
+            if($checking == ResetPasswordService::RIGHT_DEACTIVATE_PASSWORD_RESET_CODE){
+                $this->resetPasswordService->deletePasswordResetCode($user->getUserId());
+                return self::successResponse('Request to change password successfully canceled');
             }
 
-            if ($user->getPhoneId() == null) {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
-                    'bind' => [
-                        'userId' => $user->getUserId(),
-                        'resetCode' => $this->request->getPost('resetcode')
-                    ]]);
-            } else {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
-                    'bind' => [
-                        'userId' => $user->getUserId(),
-                        'resetCode' => $this->request->getPost('resetcode')
-                    ]]);
+            if($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE){
+                $exception = new Http400Exception(_('Invalid some parameters'));
+                $errors['errors'] = true;
+                $errors['reset_code'] = 'Invalid reset code';
+                throw $exception->addErrorDetails($errors);
             }
 
-            if ($resetCode) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_OK,
-                    ]
-                );
-                return $response;
+            if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
+                return self::successResponse('Code is valid');
             }
 
-            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
-                'bind' => [
-                    'userId' => $user->getUserId(),
-                    'resetCode' => $this->request->getPost('resetcode')
-                ]]);
+            throw new Http500Exception(_('Internal Server Error'));
 
-            if ($resetCode) {
-                if (!$resetCode->delete()) {
-                    return SupportClass::getResponseWithErrors($resetCode);
-                }
+        } catch(ServiceExtendedException $e){
+            switch ($e->getCode()) {
+                case ResetPasswordService::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => ['Код указан неверно'],
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch(ServiceException $e){
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 
@@ -491,62 +471,43 @@ class RegisterAPIController extends AbstractController
      */
     public function changePasswordAction()
     {
-        if ($this->request->isPost()) {
-            $response = new Response();
+        $data = json_decode($this->request->getRawBody(), true);
+        try {
+            $user = $this->userService->getUserByLogin($data['login']);
 
-            $user = Users::findByLogin($this->request->getPost('login'));
+            $checking = $this->resetPasswordService->checkResetPasswordCode($user,$data['reset_code']);
 
-            if (!$user || $user == null) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Пользователь не существует']
-                    ]
-                );
-                return $response;
+            if($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE){
+                $exception = new Http400Exception(_('Invalid some parameters'));
+                $errors['errors'] = true;
+                $errors['reset_code'] = 'Invalid reset code';
+                throw $exception->addErrorDetails($errors);
             }
 
-            if ($user->getPhoneId() == null) {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
-                    'bind' => [
-                        'userId' => $user->getUserId(),
-                        'resetCode' => $this->request->getPost('resetcode')
-                    ]]);
-            } else {
-                $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
-                    'bind' => [
-                        'userId' => $user->getUserId(),
-                        'resetCode' => $this->request->getPost('resetcode')
-                    ]]);
+            if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
+
+                $this->userService->setPasswordForUser($data['password']);
+                return self::successResponse('Password was changed successfully');
             }
 
-            if ($resetCode) {
-                $user->setPassword($this->request->getPost('password'));
+            throw new Http500Exception(_('Internal Server Error'));
 
-                if (!$user->update()) {
-                    return SupportClass::getResponseWithErrors($user);
-                }
-
-                $resetCode->delete();
-
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_OK,
-                    ]
-                );
-                return $response;
+        } catch(ServiceExtendedException $e){
+            switch ($e->getCode()) {
+                case UserService::ERROR_UNABLE_CHANGE_USER:
+                case ResetPasswordService::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => ['Код указан неверно'],
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch(ServiceException $e){
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ use App\Models\Phones;
  */
 class AccountService extends AbstractService {
 
-    const ADDED_CODE_NUMBER = 2000;
+    const ADDED_CODE_NUMBER = 1000;
 
     const ERROR_UNABLE_CREATE_ACCOUNT = 1 + self::ADDED_CODE_NUMBER;
     /**

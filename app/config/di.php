@@ -71,6 +71,7 @@ $di->setShared('authService', '\App\Services\AuthService');
 $di->setShared('phoneService', '\App\Services\PhoneService');
 $di->setShared('accountService', '\App\Services\AccountService');
 $di->setShared('userInfoService', '\App\Services\UserInfoService');
+$di->setShared('resetPasswordService', '\App\Services\ResetPasswordService');
 
 $di->setShared(
     "TradePointsAPI",
