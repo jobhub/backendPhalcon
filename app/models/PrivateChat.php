@@ -158,8 +158,8 @@ class PrivateChat extends \Phalcon\Mvc\Model
         $this->setSchema("public");
         $this->setSource("privateChat");
         $this->belongsTo('chat_hist_id', 'App\Models\ChatHistory', 'id', ['alias' => 'Chathistory']);
-        $this->belongsTo('user1', 'App\Models\User', 'id', ['alias' => 'User']);
-        $this->belongsTo('user2', 'App\Models\User', 'id', ['alias' => 'User']);
+        $this->belongsTo('user1', 'App\Models\Users', 'id', ['alias' => 'User']);
+        $this->belongsTo('user2', 'App\Models\Users', 'id', ['alias' => 'User']);
     }
 
     /**
