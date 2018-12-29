@@ -138,27 +138,7 @@ class SecurityPlugin extends Plugin
             //Public area resources
             //БД, все БД.
             $publicResources = [
-                'index' => ['index', 'personcab'],
-                'errors' => ['show401', 'show404', 'show500'],
-                'session' => ['index', 'register', 'start', 'end', 'action'],
-                'authorized' => ['index', 'register', 'start', 'end', 'action'],
-                'auctions' => ['index'],
-                'sessionAPI' => ['index', 'authWithSocial', 'end', 'getCurrentRole'],
-                'CategoriesAPI' => ['index', 'getCategoriesForSite', 'getCategories'],
-                'tenderAPI' => ['index'],
-                'TasksAPI' => ['getTasksForSubject'],
-                'ServicesAPI' => ['getServicesForSubject', 'getServices', 'incrementNumberOfDisplayForService',
-                    'getServiceInfo'],
-                'ReviewsAPI' => ['getReviewsForSubject', 'getReviewsForService'],
-                'EventsAPI' => ['getEvents'],
-                'TradePointsAPI' => ['getPointInfo'],
-                'UserinfoAPI' => ['getUserinfo', ],
-                'CommentsAPI' => ['getCommentsForImage',],
-                'CompaniesAPI' => ['getCompanyInfo'],
-                'UserLocationAPI' => ['findUsers', 'getAutoCompleteForSearch', 'getUserById',
-                    'getAutoCompleteForSearchServicesAndUsers','findUsersWithFilters'],
-                'RegisterAPI' => ['index', 'deactivateLink', 'activateLink', 'getActivationCode',
-                        'getResetPasswordCode','checkResetPasswordCode', 'changePassword', 'checkLogin'],
+                'send/chat'
             ];
 
             $publicResources2 = [];

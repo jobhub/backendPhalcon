@@ -16,8 +16,12 @@ class CategoryService extends AbstractService
     const ADDED_CODE_NUMBER = 6000;
 
     const ERROR_ALREADY_SIGNED = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_DON_NOT_SIGNED = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_SUBSCRIBE = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_CHANGE_RADIUS = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_UNSUBSCRIBE = 5 + self::ADDED_CODE_NUMBER;
 
-    public function setFavourite(int $userId, int $categoryId, double $radius)
+    public function setFavourite(int $userId, int $categoryId, $radius)
     {
         $fav = FavoriteCategories::findByIds($userId, $categoryId);
         if ($fav) {
@@ -31,25 +35,62 @@ class CategoryService extends AbstractService
         $fav->setRadius($radius);
 
         if (!$fav->save()) {
-            $errors = [];
-            foreach ($fav->getMessages() as $message) {
-                $errors[] = $message->getMessage();
+            $errors = SupportClass::getArrayWithErrors($fav);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to sign user to category',
+                    self::ERROR_UNABlE_SUBSCRIBE, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to sign user to category',
+                    self::ERROR_UNABlE_SUBSCRIBE);
             }
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => $errors
-                ]
-            );
-            return $response;
         }
 
-        $response->setJsonContent(
-            [
-                "status" => STATUS_OK,
-            ]
-        );
-        return $response;
+        return $fav;
+    }
+
+    public function editRadius(int $userId, int $categoryId, $radius)
+    {
+        $fav = FavoriteCategories::findByIds($userId, $categoryId);
+
+        if (!$fav) {
+            throw new ServiceException('User don\'t signed on this category',
+                self::ERROR_DON_NOT_SIGNED);
+        }
+
+        $fav->setRadius($radius);
+
+        if (!$fav->update()) {
+            $errors = SupportClass::getArrayWithErrors($fav);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to change radius for category',
+                    self::ERROR_UNABlE_CHANGE_RADIUS, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to change radius for category',
+                    self::ERROR_UNABlE_CHANGE_RADIUS);
+            }
+        }
+    }
+
+    public function deleteFavourite(int $userId, int $categoryId)
+    {
+        $fav = FavoriteCategories::findByIds($userId, $categoryId);
+
+        if (!$fav) {
+            return true;
+        }
+
+        if (!$fav->delete()) {
+            $errors = SupportClass::getArrayWithErrors($fav);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to unsubscribe user',
+                    self::ERROR_UNABlE_UNSUBSCRIBE, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to unsubscribe user',
+                    self::ERROR_UNABlE_UNSUBSCRIBE);
+            }
+        }
+
+        return true;
     }
 
     /**

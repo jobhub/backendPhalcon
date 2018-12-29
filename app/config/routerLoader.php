@@ -2,14 +2,44 @@
 
 $routes = [
     '\App\Controllers\UserController' => [
-        'prefix' => '/user', 
-        'resources' => [ 
+        'prefix' => '/user',
+        'resources' => [
             ['type' => 'post', // post; options, get, 
-            'path' => '/login',
+                'path' => '/login',
                 'action' => 'loginAction'
-                ],
+            ],
         ]
     ],
+
+    '\App\Controllers\MessageController' => [
+        'prefix' => '/chat',
+        'resources' => [
+            ['type' => 'post',
+                'path' => '/send',
+                'action' => 'sendMessageAction'
+            ],
+            ['type' => 'post',
+                'path' => '/chat-box',
+                'action' => 'getChatBoxAction'
+            ],
+            ['type' => 'post',
+                'path' => '/all-readed',
+                'action' => 'setAllToReadAction'
+            ]
+        ],
+    ],
+
+    '\App\Controllers\GroupController' => [
+        'prefix' => '/group',
+        'resources' => [
+            [
+                'type' => 'post',
+                'path' => '/new-group',
+                'action' => 'addAction'
+            ]
+        ]
+    ],
+
     '\App\Controllers\RegisterAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
@@ -141,20 +171,104 @@ $routes = [
             ],
         ]
     ],
-    /**
-     * Авторизует пользователя в системе
-     *
-     * @method POST
-     * @params login (это может быть его email или номер телефона), password
-     * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
-     */
+
     '\App\Controllers\SessionAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
+            /**
+             * Авторизует пользователя в системе
+             *
+             * @method POST
+             * @params login (это может быть его email или номер телефона), password
+             * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
+             */
             [
                 'type' => 'post',
                 'path' => '/login',
                 'action' => 'indexAction'
+            ],
+        ]
+    ],
+
+    //********************************************************
+    //********************************************************
+    //CategoriesAPI
+    //********************************************************
+    //********************************************************
+    '\App\Controllers\CategoriesAPIController' => [
+        'prefix' => '/categories',
+        'resources' => [
+            /**
+             * Возвращает категории в удобном для сайта виде
+             *
+             * @method GET
+             *
+             * @return string - json array с категориями
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/site',
+                'action' => 'getCategoriesForSiteAction'
+            ],
+
+            /**
+             * Возвращает категории
+             *
+             * @method GET
+             *
+             * @return string - json array с категориями
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getCategoriesAction'
+            ],
+
+            /**
+             * Подписывает текущего пользователя на указанную категорию.
+             * @access private
+             * @method POST
+             * @params category_id, radius
+             * @return string - json array Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/subscribe',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Меняет радиус на получение уведомлений для подписки на категорию
+             * @method PUT
+             * @params radius, category_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit/radius',
+                'action' => 'editRadiusInFavouriteAction'
+            ],
+
+            /**
+             * Отписывает текущего пользователя от категории
+             * @method DELETE
+             * @param $category_id
+             */
+            [
+                'type' => 'delete',
+                'path' => '/unsubscribe/{category_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает все подписки пользователя на категории
+             * @GET
+             * @return string - json array - подписки пользователя
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/favourites',
+                'action' => 'getFavouritesAction'
             ],
         ]
     ],

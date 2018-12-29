@@ -116,7 +116,7 @@ foreach ($routes as $key => $value) {
     }
     $app->mount($collection);
 }
-
+*/
 // not found URLs
 $app->notFound(
         function () use ($app) {
