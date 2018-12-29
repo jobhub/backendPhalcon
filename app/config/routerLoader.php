@@ -10,11 +10,6 @@ $routes = [
                 ],
         ]
     ],
-    //********************************************************
-    //********************************************************
-    //RegisterAPI
-    //********************************************************
-    //********************************************************
     '\App\Controllers\RegisterAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
@@ -146,64 +141,20 @@ $routes = [
             ],
         ]
     ],
-
-    //********************************************************
-    //********************************************************
-    //SessionAPI
-    //********************************************************
-    //********************************************************
-
+    /**
+     * Авторизует пользователя в системе
+     *
+     * @method POST
+     * @params login (это может быть его email или номер телефона), password
+     * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
+     */
     '\App\Controllers\SessionAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
             [
-                /**
-                 * Авторизует пользователя в системе
-                 *
-                 * @method POST
-                 * @params login (это может быть его email или номер телефона), password
-                 * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
-                 */
-
                 'type' => 'post',
                 'path' => '/login',
                 'action' => 'indexAction'
-            ],
-        ]
-    ],
-
-    //********************************************************
-    //********************************************************
-    //CategoriesAPI
-    //********************************************************
-    //********************************************************
-    '\App\Controllers\CategoriesAPIController' => [
-        'prefix' => '/categories',
-        'resources' => [
-            /**
-             * Возвращает категории в удобном для сайта виде
-             *
-             * @method GET
-             *
-             * @return string - json array с категориями
-             */
-            [
-                'type' => 'get',
-                'path' => '/get/site',
-                'action' => 'getCategoriesForSiteAction'
-            ],
-
-            /**
-             * Возвращает категории
-             *
-             * @method GET
-             *
-             * @return string - json array с категориями
-             */
-            [
-                'type' => 'get',
-                'path' => '/get',
-                'action' => 'getCategoriesAction'
             ],
         ]
     ],

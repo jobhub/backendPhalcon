@@ -21,10 +21,15 @@ class MessageController extends AbstractController {
     public function sendMessageAction() {
         $data = [];
         $jsonData = $this->request->getJsonRawBody();
+        $payload = $this->session->get('auth');
+        $current_user_id = $payload['id'];
+        $this->logger->critical(
+             'user id = '. $current_user_id
+        );
         $data["sender"] = $jsonData->user_sender_id;
         $data["reciever"] = $jsonData->user_reciever_id;
         $data["content"] = $jsonData->body;
-        $data["type"] = $jsonData->type; 
+        $data["type"] = $jsonData->msg_type;
         try {
             $this->messageService->sendMessage($data);
         } catch (ServiceException $e) {

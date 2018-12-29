@@ -11,6 +11,36 @@ $app = new Micro();
 //$eventsManager->attach('micro', new CORSMiddleware());
 //$app->after(new CORSMiddleware());
 
+$routes = require __DIR__ . '/routerLoader.php';
+
+foreach ($routes as $key => $value) {
+    $collection = new \Phalcon\Mvc\Micro\Collection();
+    $collection->setHandler($key, true);
+    $collection->setPrefix($value['prefix']);
+    $resources = $value['resources'];
+    foreach ($resources as $value) {
+        switch ($value['type']) {
+            case 'post' :
+                $collection->post($value['path'], $value['action']);
+                $collection->Options($value['path'], $value['action']);
+                break;
+            case 'put' :
+                $collection->put($value['path'], $value['action']);
+                $collection->Options($value['path'], $value['action']);
+                break;
+            case 'delete' :
+                $collection->delete($value['path'], $value['action']);
+                $collection->Options($value['path'], $value['action']);
+                break;
+            case 'get' :
+                $collection->get($value['path'], $value['action']);
+                break;
+        }
+    }
+    $app->mount($collection);
+}
+
+/*
 // Handler user
 $usersCollection = new \Phalcon\Mvc\Micro\Collection();
 $usersCollection->setHandler('\App\Controllers\UserController', true);
@@ -89,15 +119,12 @@ foreach ($routes as $key => $value) {
 
 // not found URLs
 $app->notFound(
-  function () use ($app) {
-      $exception =
-        new \App\Controllers\HttpExceptions\Http404Exception(
-          _('URI not found or error in request.'),
-          \App\Controllers\AbstractController::ERROR_NOT_FOUND,
-          new \Exception('URI not found: ' . $app->request->getMethod() . ' ' . $app->request->getURI())
-        );
-      throw $exception;
-  }
+        function () use ($app) {
+    $exception = new \App\Controllers\HttpExceptions\Http404Exception(
+            _('URI not found or error in request.'), \App\Controllers\AbstractController::ERROR_NOT_FOUND, new \Exception('URI not found: ' . $app->request->getMethod() . ' ' . $app->request->getURI())
+    );
+    throw $exception;
+}
 );
 
 $router->handle();

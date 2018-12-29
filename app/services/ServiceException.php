@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use Phalcon\DI\FactoryDefault as DI;
 
 /**
  * Class ServiceException
@@ -12,9 +13,10 @@ namespace App\Services;
 class ServiceException extends \RuntimeException
 {
     public function __construct(string $message = '', int $code = 0,\Throwable $e = null, $logger = null) {
-        // $logger->critical(
-        //                 $code. ' '. $message
-        //         );
+        $di = DI::getDefault();
+        $di->getLogger()->critical(
+        $code. ' '. $message
+                 );
         return parent::__construct($message, $code,$e);
     }
 }

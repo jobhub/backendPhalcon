@@ -21,7 +21,8 @@ class MessageService extends AbstractService {
     /**
      * Send message
      *
-     * @param boolean $success
+     * @param array $data
+     * @return boolean $success
      */
     public function sendMessage($data) {
         try {
@@ -42,25 +43,26 @@ class MessageService extends AbstractService {
     /**
      * Send message
      *
-     * @param array of message
+     * @param array $data
+     * @return array $messages
      */
     public function getMessages($data) {
         try {
 
-            $chatHitory = $this->privateChatService->getChatHistory($data['sender'], $data['reciever']);
+            $chatHistory = $this->privateChatService->getChatHistory($data['sender'], $data['reciever']);
 
-            if (!$chatHitory) {
+            if (!$chatHistory) {
                 return [];
             }
 
-            $msgs = $chatHitory->getRelated('messages', [ 
+            $messages = $chatHistory->getRelated('messages', [
                 'order' => 'creationDate ASC',
                 //'limit' => 2,
                 'where' => 'id > 30',
                 'offset' => $data['page'], // offset of result
                 'count' => 'id'
             ]);
-            $result = $msgs->toArray(); 
+            $result = $messages->toArray();
             return $result;
         } catch (\PDOException $e) {
             $this->logger->critical(

@@ -37,7 +37,7 @@ try {
 
     // get jwt config
     $jwt_conf = require __DIR__ . '/../app/config/jwtConfig.php';
-    // AUTH MICRO
+    /*// AUTH MICRO
     $auth = new AuthMicro($app, $jwt_conf);
 
     $auth->onUnauthorized(function($authMicro, $app) {
@@ -51,7 +51,7 @@ try {
 
         // return false to stop the execution
         return false;
-    });
+    });*/
 
     // Setting up routing
     require __DIR__ . '/../app/config/router.php';
