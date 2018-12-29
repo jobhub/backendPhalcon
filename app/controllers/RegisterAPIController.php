@@ -467,6 +467,7 @@ class RegisterAPIController extends AbstractController
     public function changePasswordAction()
     {
         $data = json_decode($this->request->getRawBody(), true);
+
         try {
             $user = $this->userService->getUserByLogin($data['login']);
 
@@ -480,13 +481,12 @@ class RegisterAPIController extends AbstractController
             }
 
             if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
-
                 $this->userService->setPasswordForUser($user,$data['password']);
+                $this->resetPasswordService->deletePasswordResetCode($user->getUserId());
                 return self::successResponse('Password was changed successfully');
             }
 
             throw new Http500Exception(_('Internal Server Error'));
-
         } catch(ServiceExtendedException $e){
             switch ($e->getCode()) {
                 case UserService::ERROR_UNABLE_CHANGE_USER:

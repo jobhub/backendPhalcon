@@ -140,7 +140,24 @@ $routes = [
                 'action' => 'changePasswordAction'
             ],
         ]
-    ]
+    ],
+    /**
+     * Авторизует пользователя в системе
+     *
+     * @method POST
+     * @params login (это может быть его email или номер телефона), password
+     * @return string json array [status, allForUser => [user, userinfo, settings], token, lifetime]
+     */
+    '\App\Controllers\SessionAPIController' => [
+        'prefix' => '/authorization',
+        'resources' => [
+            [
+                'type' => 'post',
+                'path' => '/login',
+                'action' => 'indexAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

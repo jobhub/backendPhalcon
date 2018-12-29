@@ -20,7 +20,7 @@ class Users extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
@@ -34,7 +34,7 @@ class Users extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", nullable=false)
      */
-    protected $phoneid;
+    protected $phone_id;
 
     /**
      *
@@ -55,7 +55,7 @@ class Users extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $issocial;
+    protected $is_social;
 
     /**
      *
@@ -69,24 +69,18 @@ class Users extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $dateregistration;
+    protected $date_registration;
 
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=false)
-     */
-    protected $activationcode;
 
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -107,12 +101,12 @@ class Users extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneid
+     * @param integer $phone_id
      * @return $this
      */
-    public function setPhoneId($phoneid)
+    public function setPhoneId($phone_id)
     {
-        $this->phoneid = $phoneid;
+        $this->phone_id = $phone_id;
 
         return $this;
     }
@@ -151,7 +145,7 @@ class Users extends NotDeletedModelWithCascade
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -171,7 +165,7 @@ class Users extends NotDeletedModelWithCascade
      */
     public function getPhoneId()
     {
-        return $this->phoneid;
+        return $this->phone_id;
     }
 
     /**
@@ -196,12 +190,12 @@ class Users extends NotDeletedModelWithCascade
 
     public function getDateRegistration()
     {
-        return $this->dateregistration;
+        return $this->date_registration;
     }
 
-    public function setIsSocial($issocial)
+    public function setIsSocial($is_social)
     {
-        $this->issocial = $issocial;
+        $this->is_social = $is_social;
 
         return $this;
     }
@@ -215,7 +209,7 @@ class Users extends NotDeletedModelWithCascade
 
     public function getIsSocial()
     {
-        return $this->issocial;
+        return $this->is_social;
     }
 
     public function getActivated()
@@ -231,7 +225,7 @@ class Users extends NotDeletedModelWithCascade
         $phoneObj = Phones::findFirstByPhone($formatPhone);
         $user = Users::findFirst(
             [
-                "(email = :email: OR phoneid = :phoneId:)",
+                "(email = :email: OR phone_id = :phoneId:)",
                 "bind" => [
                     "email" => $email,
                     "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
@@ -250,26 +244,6 @@ class Users extends NotDeletedModelWithCascade
     {
         $validator = new Validation();
 
-
-        /*$validator->add(
-            'issocial',
-            new Callback(
-                [
-                    "message" => "Для пользователя не найдена привязанная социальная сеть",
-                    "callback" => function ($user) {
-                        if (!$user->getIsSocial())
-                            return true;
-
-                        $socialuser = Userssocial::findFirstByUserid($user->getIsSocial());
-
-                        if ($socialuser)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );*/
-
         if (!$this->getIsSocial() && $this->getPhoneId() == null)
             $validator->add(
                 'email',
@@ -283,12 +257,12 @@ class Users extends NotDeletedModelWithCascade
 
         if (!$this->getIsSocial() && $this->getEmail() == null)
             $validator->add(
-                'phoneid',
+                'phone_id',
                 new Callback(
                     [
                         "message" => "Необходимо указать либо номер телефона, либо email",
                         "callback" => function ($user) {
-                            $phone = Phones::findFirstByPhoneid($user->getPhoneId());
+                            $phone = Phones::findFirstByPhoneId($user->getPhoneId());
                             if ($phone)
                                 return true;
                             return false;
@@ -316,10 +290,8 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasMany('userid', 'FavoriteCategories', 'userid', ['alias' => 'FavoriteCategories']);
-        $this->hasMany('userid', 'Logs', 'userid', ['alias' => 'Logs']);
-        $this->hasOne('userid', 'Userinfo', 'userid', ['alias' => 'Userinfo']);
-        $this->belongsTo('phoneid', 'Phones', 'phoneid', ['alias' => 'Phones']);
+        $this->hasOne('user_id', 'Userinfo', 'user_id', ['alias' => 'Userinfo']);
+        $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
     /**

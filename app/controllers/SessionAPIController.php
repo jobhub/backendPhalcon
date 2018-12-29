@@ -11,6 +11,16 @@ use App\Models\Phones;
 use App\Models\Accesstokens;
 use App\Models\Users;
 
+use App\Services\UserService;
+use App\Services\AuthService;
+
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use ULogin\Auth;
@@ -21,148 +31,48 @@ use ULogin\Auth;
  * А именно, методы для авторизации пользователя, разрыва сессии, получение роли текущего пользователя
  * и авторизация через соц. сеть (которая по совместительству и регистрация).
  */
-class SessionAPIController extends Controller
+class SessionAPIController extends AbstractController
 {
-    public function _registerSession($user)
-    {
-        $this->session->set(
-            "auth",
-            [
-                "id" => $user->getUserId(),
-                "email" => $user->getEmail(),
-                "role" => $user->getRole()
-            ]
-        );
-    }
-
-    public function _registerSessionByData($data)
-    {
-        $this->session->set(
-            "auth",
-            [
-                "id" => $data['userId'],
-                "login" => $data['login'],
-                "role" => $data['role']
-            ]
-        );
-    }
-
     /**
      * Разрывает сессию пользователя
      * @method POST
      *
      * @return string - json array Status
      */
-    public function endAction()
+    /*public function endAction()
     {
-        if ($this->request->isPost()) {
-            return $this->destroySession();
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }
-
-    public function destroySession()
-    {
-        $response = new Response();
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-
-        $tokenRecieved = SecurityPlugin::getTokenFromHeader();
-        $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
-            'bind' => ['userId' => $userId,
-                'token' => sha1($tokenRecieved)]]);
-
-        if ($token) {
-            $token->delete();
-        }
-
-        $this->session->remove('auth');
-        $this->session->destroy();
-        $response->setJsonContent(
-            [
-                "status" => STATUS_OK
-            ]
-        );
-
-        return $response;
-    }
-
-    public function createSession($user){
-        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера '. $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
-        $response = new Response();
-        $lifetime = date('Y-m-d H:i:s',time() + 604800);
-        $token = Accesstokens::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
-            $user->getRole(), $lifetime);
-        SupportClass::writeMessageInLogFile('ID юзера при этом - '. $user->getUserId());
-
-        /*$accToken = new Accesstokens();
-
-        $accToken->setUserid($user->getUserId());
-        $accToken->setToken($token);
-        $accToken->setLifetime();
-
-        if ($accToken->save() == false) {
-            SupportClass::writeMessageInLogFile('Не смог создать токен по указанной причине');
-            $this->session->destroy();
-            $errors = [];
-            foreach ($accToken->getMessages() as $message) {
-                $errors[] = $message->getMessage();
-            }
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => $errors
-                ]
-            );
-            return $response;
-        }*/
-
-        $this->_registerSession($user);
-
-        $response->setJsonContent(
-            [
-                "status" => STATUS_OK,
-                'token' => $token,
-                'lifetime' => $lifetime
-            ]
-        );
-        return $response;
-    }
+        return $this->destroySession();
+    }*/
 
     /**
      * Выдает текущую роль пользователя.
      * @access public
      * @method POST
-     *
-     * @return string - json array - [status, role]
      */
-    public function getCurrentRoleAction(){
-        if ($this->request->isPost()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
+    public function getCurrentRoleAction()
+    {
+        $auth = $this->session->get('auth');
 
-            if($auth == null){
+        try {
+            if ($auth == null) {
                 $role = ROLE_GUEST;
-            } else{
+            } else {
                 $userId = $auth['id'];
 
-                $user = Users::findFirstByUserid($userId);
+                $user = $this->userService->getUserById($userId);
 
                 $role = $user->getRole();
             }
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'role' => $role
-            ]);
-
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('', ['role' => $role]);
     }
 
     /**
@@ -174,77 +84,36 @@ class SessionAPIController extends Controller
      */
     public function indexAction()
     {
-        if ($this->request->isPost()) {
-            $login = $this->request->getPost("login");
-            $password = $this->request->getPost("password");
+        $data = json_decode($this->request->getRawBody(), true);
 
-            //$hash =  $this->security->hash($password);
-
-            // Производим поиск в базе данных
-            $var = Phones::formatPhone($login);
-            $phone = Phones::findFirstByPhone($var);
-
-            SupportClass::writeMessageInLogFile('var в SessionAPIController '. $var);
-
-            $res = false;
-            if ($phone) {
-                SupportClass::writeMessageInLogFile('логин это телефон');
-                $user = Users::findFirst(
-                    [
-                        "phoneid = :phoneId: AND issocial=false",
-                        "bind" => [
-                            "phoneId" => $phone->getPhoneId()
-                        ]
-                    ]
-                );
-                if ($user) {
-                    SupportClass::writeMessageInLogFile('Юзер найден в бд');
-                    $res = $this->security->checkHash($password, $user->getPassword());
-                }
-            } else {
-                SupportClass::writeMessageInLogFile('логин это email');
-                $user = Users::findFirst(
-                    [
-                        "email = :login: AND issocial=false",
-                        "bind" => [
-                            "login" => $login
-                        ]
-                    ]
-                );
-                if ($user) {
-                    SupportClass::writeMessageInLogFile('Юзер найден в бд');
-                    $res = $this->security->checkHash($password, $user->getPassword());
-                }
+        try {
+            $user = $this->userService->getUserByLogin($data['login']);
+            SupportClass::writeMessageInLogFile('Юзер найден в бд');
+            $this->authService->checkPassword($user, $data['password']);
+            $result = $this->authService->createSession($user);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                case AuthService::ERROR_INCORRECT_PASSWORD:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-            // Формируем ответ
-            if ($user && $res) {
-
-                $result = $this->createSession($user);
-
-                $result = json_decode($result->getContent(),true);
-                $result['role'] = $user->getRole();
-            } else {
-                $result = [
-                        "status" => STATUS_WRONG,
-                        'errors' => ['Неверные логин или пароль']
-                    ];
-            }
-
-            return $result;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        $result['role'] = $user->getRole();
+        return self::successResponse('Successfully login',$result);
     }
 
     /**
      * Авторизация через соц. сеть
      * Должен автоматически вызываться компонентом uLogin.
-     * 
+     *
      * @method GET
      * @return string - json array в формате Status
      */
-    public function authWithSocialAction()
+    public
+    function authWithSocialAction()
     {
         if ($this->request->isGet()) {
             $ulogin = new Auth(array(

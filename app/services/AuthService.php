@@ -34,11 +34,13 @@ class AuthService extends AbstractService
     const ERROR_NO_TIME_TO_RESEND = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 6 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 7 + self::ADDED_CODE_NUMBER;
+    const ERROR_INCORRECT_PASSWORD = 8 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
     const WRONG_PASSWORD_RESET_CODE = 1;
     const RIGHT_DEACTIVATE_PASSWORD_RESET_CODE = 2;
+
     /**
      * Check login.
      *
@@ -62,6 +64,23 @@ class AuthService extends AbstractService
         }
 
         return self::LOGIN_DO_NOT_EXISTS;
+    }
+
+    /**
+     * Check password for user.
+     *
+     * @param Users $user
+     * @param string $password
+     * @return bool
+     */
+    public function checkPassword(Users $user, string $password)
+    {
+        $res = $this->security->checkHash($password, $user->getPassword());
+        // Формируем ответ
+        if (!($user && $res))
+            throw new ServiceException('Incorrect password or login', self::ERROR_INCORRECT_PASSWORD);
+
+        return true;
     }
 
     /**
@@ -139,7 +158,7 @@ class AuthService extends AbstractService
         $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword());
-        return $hash[12].$hash[7].$hash[9].$hash[53];
+        return $hash[12] . $hash[7] . $hash[9] . $hash[53];
     }
 
     /**
@@ -152,15 +171,15 @@ class AuthService extends AbstractService
         $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword() . '-no');
-        return $hash[12].$hash[7].$hash[9].$hash[53];
+        return $hash[12] . $hash[7] . $hash[9] . $hash[53];
     }
 
     public function sendMailForActivation(ActivationCodes $activationCode, string $email)
     {
-        $this->sendMail('hello_world','emails/hello_world',
+        $this->sendMail('hello_world', 'emails/hello_world',
             ['activation' => $activationCode->getActivation(),
-            'deactivation' => $activationCode->getDeactivation(),
-            'email' => $email],'Подтвердите регистрацию в нашем замечательном сервисе');
+                'deactivation' => $activationCode->getDeactivation(),
+                'email' => $email], 'Подтвердите регистрацию в нашем замечательном сервисе');
     }
 
     public function _registerSession($user)
@@ -248,4 +267,36 @@ class AuthService extends AbstractService
         else
             return false;
     }
+
+
+    //Сессия
+
+    /**
+     * @return Response
+     */
+    /*public function destroySession()
+    {
+        $response = new Response();
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+
+        $tokenRecieved = SecurityPlugin::getTokenFromHeader();
+        $token = Accesstokens::findFirst(['userid = :userId: AND token = :token:',
+            'bind' => ['userId' => $userId,
+                'token' => sha1($tokenRecieved)]]);
+
+        if ($token) {
+            $token->delete();
+        }
+
+        $this->session->remove('auth');
+        $this->session->destroy();
+        $response->setJsonContent(
+            [
+                "status" => STATUS_OK
+            ]
+        );
+
+        return $response;
+    }*/
 }
