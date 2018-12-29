@@ -5,3 +5,6 @@
 **/public/images/
 **/public/img/
 /nbproject/private/
+.idea/*
+privkey.pem
+pubkey.pub
