@@ -1,6 +1,10 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+
 class Categories extends \Phalcon\Mvc\Model
 {
     /**
@@ -197,5 +201,32 @@ class Categories extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function findAllCategories(){
+        return self::find(['categoryid > 20','order' => 'parentid DESC']);
+    }
+
+    public static function findCategoriesForSite(){
+        $categories = Categories::find(['categoryid > 20', 'order' => 'parentid DESC']);
+
+        $categories2 = [];
+        foreach ($categories as $category) {
+            if ($category->getParentId() == null) {
+                $categories2[] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
+                    'description' => $category->getDescription(), 'img' => $category->getImg(),
+                    'child' => []];
+            } else {
+                for ($i = 0; $i < count($categories2); $i++)
+                    if ($categories2[$i]['id'] == $category->getParentId()) {
+                        $categories2[$i]['child'][] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
+                            'description' => $category->getDescription(), 'img' => $category->getImg(),
+                            'child' => [], 'check' => false];
+                        break;
+                    }
+            }
+        }
+
+        return $categories2;
     }
 }

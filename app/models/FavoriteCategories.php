@@ -1,10 +1,12 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
 class FavoriteCategories extends \Phalcon\Mvc\Model
 {
-
     /**
      *
      * @var integer

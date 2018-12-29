@@ -7,6 +7,7 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\Categories;
 /**
  * Контроллер для работы с категориями.
  * Здесь методы для получения категорий и для работы с подписками
@@ -16,20 +17,6 @@ use Phalcon\Mvc\Dispatcher;
 class CategoriesAPIController extends Controller
 {
     /**
-     * Index action
-     */
-    public function indexAction()
-    {
-        if ($this->request->isPost() || $this->request->isGet()) {
-            $categories = Categories::find();
-            return json_encode($categories);
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }
-
-    /**
      * Возвращает категории
      *
      * @method GET
@@ -38,20 +25,19 @@ class CategoriesAPIController extends Controller
      */
     public function getCategoriesAction()
     {
-        if ($this->request->isGet()) {
+        return Categories::findAllCategories();
+    }
 
-            $categories = Categories::find(['categoryid > 20','order' => 'parentid DESC']);
-
-            $response = new Response();
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'categories' => $categories
-            ]);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+    /**
+     * Возвращает категории в удобном для сайта виде
+     *
+     * @method GET
+     *
+     * @return string - json array с категориями
+     */
+    public function getCategoriesForSiteAction()
+    {
+        return Categories::findCategoriesForSite();
     }
 
     /**
@@ -242,55 +228,6 @@ class CategoriesAPIController extends Controller
         }
     }
 
-    /**
-     * Возвращает категории в удобном для сайта виде
-     *
-     * @method GET
-     *
-     * @return string - json array с категориями
-     */
-    public function getCategoriesForSiteAction()
-    {
-        if ($this->request->isGet()) {
-
-            $categories = Categories::find(['categoryid > 20','order' => 'parentid DESC']);
-
-            $categories2 = [];
-            foreach ($categories as $category) {
-                /*if ($category->getParentId() == null) {
-                    $categories2[$category->getCategoryId()] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
-                        'description' => $category->getDescription(), 'img' => $category->getImg(),
-                        'child' => []];
-                } else{
-                    $categories2[$category->getParentId()]['child'][] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
-                        'description' => $category->getDescription(), 'img' => $category->getImg(),
-                        'child' => []];
-                }*/
-                if ($category->getParentId() == null) {
-                    $categories2[] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
-                        'description' => $category->getDescription(), 'img' => $category->getImg(),
-                        'child' => []];
-                } else {
-                    for ($i = 0; $i < count($categories2); $i++)
-                        if ($categories2[$i]['id'] == $category->getParentId()) {
-                            $categories2[$i]['child'][] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
-                                'description' => $category->getDescription(), 'img' => $category->getImg(),
-                                'child' => [], 'check' => false];
-                            break;
-                        }
-                }
-            }
-            $response = new Response();
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'categories' => $categories2]);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }
-
     public function editCategoryAction()
     {
         if ($this->request->isPost()) {
@@ -336,40 +273,40 @@ class CategoriesAPIController extends Controller
         if ($this->request->isPost()) {
             $response = new Response();
 
-            $categories = [['name' => 'Питание', 'child' => ['Рестораны', 'Бары, пабы', 'Столовые','Кофейни','Кондитерские, торты на заказ',
-                'Быстрое питание', 'Доставка еды, воды', 'Кейтеринг', 'Другое'],'img' => '/images/categories/питание.jpg'],
+            $categories = [['name' => 'Питание', 'child' => ['Рестораны', 'Бары, пабы', 'Столовые', 'Кофейни', 'Кондитерские, торты на заказ',
+                'Быстрое питание', 'Доставка еды, воды', 'Кейтеринг', 'Другое'], 'img' => '/images/categories/питание.jpg'],
                 ['name' => 'Развлечения и отдых', 'child' => [], 'img' => '/images/categories/развлечения-и-отдых.jpg'],
                 ['name' => 'Авто и перевозки', 'child' => [], 'img' => '/images/categories/авто-и-перевозки.jpg'],
                 ['name' => 'Красота', 'child' => [], 'img' => '/images/categories/красота.jpg'],
-                ['name' =>'Спорт','child' => [],'img' => '/images/categories/спорт.jpg'],
-                ['name' =>'Медицина','child' => [],'img' => '/images/categories/медицина.jpg'],
-                ['name' =>'Недвижимость','child' => [],'img' => '/images/categories/недвижимость.jpg'],
-                ['name' =>'Ремонт и строительство','child' => [],'img' => '/images/categories/ремонт-и-строительство.jpg'],
-                ['name' =>'IT, интернет, телеком','child' => [],'img' => '/images/categories/интернет-и-it.jpg'],
-                ['name' =>'Деловые услуги','child' => [],'img' => '/images/categories/деловые услуги.jpg'],
-                ['name' =>'Курьерские поручения','child' => ['Курьерские услуги', 'Почтовые услуги', 'Доставка цветов',
-                    'Другое'],'img' => '/images/categories/курьерские-поручения.jpg'],
-                ['name' =>'Бытовые услуги','child' => [],'img' => '/images/categories/бытовые услуги.jpg'],
-                ['name' =>'Клининг','child' => [],'img' => '/images/categories/клининг.jpg'],
-                ['name' =>'Обучение','child' => [],'img' => '/images/categories/обучение.jpg'],
-                ['name' =>'Праздники, мероприятия','child' => [],'img' => '/images/categories/праздники.jpg'],
-                ['name' =>'Животные','child' => [],'img' => '/images/categories/животные.jpg'],
-                ['name' =>'Реклама, полиграфия','child' => [],'img' => '/images/categories/реклама.jpg'],
-                ['name' =>'Сад, благоустройство','child' => [],'img' => '/images/categories/сад.jpg'],
-                ['name' =>'Охрана, безопасность','child' => [],'img' => '/images/categories/охрана.jpg'],
-                ['name' =>'Патронажн, уход','child' => [],'img' => '/images/categories/уход.jpg'],
-                ['name' =>'Друг на час','child' => [],'img' => '/images/categories/друг-на-час.jpg'],
-                ['name' =>'Благотворительность','child' => [],'img' => '/images/categories/благотвортельность.jpg'],
-                ['name' =>'Ритуальные услуги','child' => [],'img' => '/images/categories/ритуальные-услуги.jpg'],
+                ['name' => 'Спорт', 'child' => [], 'img' => '/images/categories/спорт.jpg'],
+                ['name' => 'Медицина', 'child' => [], 'img' => '/images/categories/медицина.jpg'],
+                ['name' => 'Недвижимость', 'child' => [], 'img' => '/images/categories/недвижимость.jpg'],
+                ['name' => 'Ремонт и строительство', 'child' => [], 'img' => '/images/categories/ремонт-и-строительство.jpg'],
+                ['name' => 'IT, интернет, телеком', 'child' => [], 'img' => '/images/categories/интернет-и-it.jpg'],
+                ['name' => 'Деловые услуги', 'child' => [], 'img' => '/images/categories/деловые услуги.jpg'],
+                ['name' => 'Курьерские поручения', 'child' => ['Курьерские услуги', 'Почтовые услуги', 'Доставка цветов',
+                    'Другое'], 'img' => '/images/categories/курьерские-поручения.jpg'],
+                ['name' => 'Бытовые услуги', 'child' => [], 'img' => '/images/categories/бытовые услуги.jpg'],
+                ['name' => 'Клининг', 'child' => [], 'img' => '/images/categories/клининг.jpg'],
+                ['name' => 'Обучение', 'child' => [], 'img' => '/images/categories/обучение.jpg'],
+                ['name' => 'Праздники, мероприятия', 'child' => [], 'img' => '/images/categories/праздники.jpg'],
+                ['name' => 'Животные', 'child' => [], 'img' => '/images/categories/животные.jpg'],
+                ['name' => 'Реклама, полиграфия', 'child' => [], 'img' => '/images/categories/реклама.jpg'],
+                ['name' => 'Сад, благоустройство', 'child' => [], 'img' => '/images/categories/сад.jpg'],
+                ['name' => 'Охрана, безопасность', 'child' => [], 'img' => '/images/categories/охрана.jpg'],
+                ['name' => 'Патронажн, уход', 'child' => [], 'img' => '/images/categories/уход.jpg'],
+                ['name' => 'Друг на час', 'child' => [], 'img' => '/images/categories/друг-на-час.jpg'],
+                ['name' => 'Благотворительность', 'child' => [], 'img' => '/images/categories/благотвортельность.jpg'],
+                ['name' => 'Ритуальные услуги', 'child' => [], 'img' => '/images/categories/ритуальные-услуги.jpg'],
             ];
 
             $this->db->begin();
-            foreach ($categories as $category){
+            foreach ($categories as $category) {
                 $categoryObj = new Categories();
                 $categoryObj->setCategoryName($category['name']);
                 $categoryObj->setImg($category['img']);
 
-                if(!$categoryObj->save()){
+                if (!$categoryObj->save()) {
                     $this->db->rollback();
                     $errors = [];
                     foreach ($categoryObj->getMessages() as $message) {
@@ -384,12 +321,12 @@ class CategoriesAPIController extends Controller
                     return $response;
                 }
 
-                foreach($category['child'] as $child){
+                foreach ($category['child'] as $child) {
                     $categoryObj2 = new Categories();
                     $categoryObj2->setCategoryName($child);
                     $categoryObj2->setParentId($categoryObj->getCategoryId());
 
-                    if(!$categoryObj2->save()){
+                    if (!$categoryObj2->save()) {
                         $this->db->rollback();
                         $errors = [];
                         foreach ($categoryObj2->getMessages() as $message) {
