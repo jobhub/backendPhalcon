@@ -27,10 +27,10 @@ class JWTMiddleware implements MiddlewareInterface
      */
     public function beforeHandleRoute(Event $event, Micro $application)
     {
-        //$this->convertRequestBody();
-        $tokenRecieved = self::getTokenFromHeader();
-        $info = json_decode(Accesstokens::checkToken($tokenRecieved), true);
         $di = DI::getDefault();
+        $tokenRecieved = self::getTokenFromHeader();
+        $info = json_decode($di->getAuthService()->checkToken($tokenRecieved), true);
+
         if (!$info) {
             //$this->session->remove('auth');
             SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
@@ -38,7 +38,7 @@ class JWTMiddleware implements MiddlewareInterface
             if (strtotime($info['lifetime']) <= time()) {
                 SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
             } else {
-                $di->getSessionAPI()->_registerSessionByData($info,$application);
+                $di->getAuthService()->_registerSessionByData($info,$application);
             }
         }
 

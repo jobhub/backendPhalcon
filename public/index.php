@@ -64,7 +64,7 @@ try {
 
         if (is_array($return)) {
             // Transforming arrays to JSON
-            $app->response->setContent(json_encode($return));
+            $app->response->setJsonContent($return);
         } elseif (!strlen($return)) {
             // Successful response without any content
             $app->response->setStatusCode('204', 'No Content');

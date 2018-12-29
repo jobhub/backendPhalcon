@@ -1,4 +1,5 @@
 <?php
+namespace App\Models;
 
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
@@ -96,30 +97,6 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
     public function setResetCodePhone($reset_code_phone)
     {
         $this->reset_code_phone = $reset_code_phone;
-
-        return $this;
-    }
-
-    public function generateResetCodePhone($userId)
-    {
-        $hash = hash('sha256',$userId . time() . rand());
-        $this->reset_code_phone = substr($hash,5,10);
-
-        return $this;
-    }
-
-    public function generateResetCode($userId)
-    {
-        $hash = hash('sha256',$userId . time() . rand());
-        $this->reset_code = $hash;
-
-        return $this;
-    }
-
-    public function generateDeactivateResetCode($userId)
-    {
-        $hash = hash('sha256',$userId . time() . rand(). '-no');
-        $this->deactivate_code = $hash;
 
         return $this;
     }

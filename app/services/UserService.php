@@ -2,25 +2,41 @@
 
 namespace App\Services;
 
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Models\ActivationCodes;
 use App\Models\Users;
 use App\Models\Group;
+use App\Models\Phones;
+
+use App\Libs\SupportClass;
 
 /**
  * business logic for users
  *
  * Class UsersService
  */
-class UserService extends AbstractService {
+class UserService extends AbstractService
+{
+
+    const WRONG_ACTIVATION_CODE = 1;
+    const RIGHT_ACTIVATION_CODE = 0;
+    const RIGHT_DEACTIVATION_CODE = 2;
+
+    const ADDED_CODE_NUMBER = 5000;
 
     /** Unable to create user */
-    const ERROR_UNABLE_CREATE_USER = 11001;
+    const ERROR_UNABLE_CREATE_USER = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CHANGE_USER = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_FOUND = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_USER = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_ACTIVATION_CODE = 5 + self::ADDED_CODE_NUMBER;
 
     /**
      * Creating a new user
      *
      * @param array $userData
      */
-    public function createUser(array $userData) {
+    /*public function createUser(array $userData) {
         try {
             $user = new Users();
             $result = $user->setEmail($userData['email'])
@@ -40,23 +56,254 @@ class UserService extends AbstractService {
                 throw new ServiceException($e->getMessage(), $e->getCode(), $e);
             }
         }
+    }*/
+
+    /**
+     * Creating a new user
+     *
+     * @param array $userData
+     * @return Users. If all ok, return Users object
+     */
+    public function createUser(array $userData)
+    {
+        try {
+            $user = new Users();
+
+            if (Phones::isValidPhone($userData['login'])) {
+                $result = $this->phoneService->createPhone($userData['login']);
+                if ($result['status'] != STATUS_OK)
+                    return $result;
+
+            } else {
+                $user->setEmail($userData['login']);
+            }
+
+            $user->setPassword($userData['password']);
+            $user->setRole(ROLE_GUEST);
+            $user->setIsSocial(false);
+            $user->setActivated(false);
+
+            if ($user->save() == false) {
+                $errors = SupportClass::getArrayWithErrors($user);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('unable to create user',
+                        self::ERROR_UNABLE_CREATE_USER, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('unable to create user',
+                        self::ERROR_UNABLE_CREATE_USER);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        return $user;
     }
 
+    /**
+     * Setting a new password for user
+     *
+     * @param Users $user
+     * @param string $password
+     */
+    public function setPasswordForUser(Users $user, string $password)
+    {
+        try {
+            $user->setPassword($password);
+            if ($user->update() == false) {
+                $errors = SupportClass::getArrayWithErrors($user);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to change password of user',
+                        self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to change password of user',
+                        self::ERROR_UNABLE_CHANGE_USER);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Setting a new role for user
+     *
+     * @param Users $user
+     * @param string $role
+     */
+    public function setNewRoleForUser(Users $user, string $role)
+    {
+        try {
+            $user->setRole($role);
+            if ($user->update() == false) {
+                $errors = SupportClass::getArrayWithErrors($user);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to change role of user',
+                        self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to change role of user',
+                        self::ERROR_UNABLE_CHANGE_USER);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function changeUser(Users $user, array $userData){
+        if(!empty(trim($userData['email']))){
+            $user->setEmail($userData['email']);
+        }
+
+        if(!empty(trim($userData['phoneId']))){
+            $user->setPhoneId($userData['phoneId']);
+        }
+
+        if(!empty(trim($userData['role']))){
+            $user->setRole($userData['role']);
+        }
+
+        if(!empty(trim($userData['password']))){
+            $user->setPassword($userData['password']);
+        }
+
+        if(!empty(trim($userData['activated']))){
+            $user->setActivated($userData['activated']);
+        }
+
+        if(!empty(trim($userData['isSocial']))){
+            $user->setIsSocial($userData['isSocial']);
+        }
+
+        if (!$user->update()) {
+            $errors = SupportClass::getArrayWithErrors($user);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to update user',
+                    self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to update user',
+                    self::ERROR_UNABLE_CHANGE_USER);
+            }
+        }
+    }
+
+    /**
+     * Delete an existing user
+     *
+     * @param int $userId
+     */
+    public function deleteUser($userId)
+    {
+        try {
+            $user = Users::findFirstByUserid($userId);
+
+            if (!$user) {
+                throw new ServiceException("User not found", self::ERROR_USER_NOT_FOUND);
+            }
+
+            $result = $user->delete();
+
+            if (!$result) {
+                $errors = SupportClass::getArrayWithErrors($user);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete user',
+                        self::ERROR_UNABLE_DELETE_USER, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete user',
+                        self::ERROR_UNABLE_DELETE_USER);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+
+    /**
+     * Deleting activation code of user
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteActivationCode(int $userId)
+    {
+        try {
+            $code = ActivationCodes::findFirstByUserid($userId);
+
+            if (!$code) {
+                return true;
+            }
+
+            if (!$code->delete()) {
+                $errors = SupportClass::getArrayWithErrors($code);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function checkActivationCode(string $code, int $userId)
+    {
+        $activationCode = ActivationCodes::findFirstByUserid($userId);
+
+        if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > ActivationCodes::TIME_LIFE)) {
+            return self::WRONG_ACTIVATION_CODE;
+        }
+
+        if ($activationCode->getActivation() != $code) {
+            if ($activationCode->getDeactivation() != $code) {
+                return self::WRONG_ACTIVATION_CODE;
+            } else {
+                return self::RIGHT_DEACTIVATION_CODE;
+            }
+        } else {
+            return self::RIGHT_ACTIVATION_CODE;
+        }
+    }
+
+    public function getUserByLogin(string $login){
+        $user = Users::findByLogin($login);
+
+        if (!$user || $user == null) {
+            throw new ServiceException('Invalid login', self::ERROR_USER_NOT_FOUND);
+        }
+        return $user;
+    }
+
+    /**
+     * @param int $userId
+     * @return mixed
+     */
+    public function getUserById(int $userId){
+        $user = Users::findFirstByUserid($userId);
+
+        if (!$user || $user == null) {
+            throw new ServiceException('User don\'t exists', self::ERROR_USER_NOT_FOUND);
+        }
+        return $user;
+    }
     /**
      * Updating an existing user
      *
      * @param array $userData
      */
-    public function findOnByEmail($email) {
+    public function findOnByEmail($email)
+    {
         try {
             $user = User::findFirst(
-                            [
-                                'conditions' => 'email = :email:',
-                                'bind' => [
-                                    'email' => $email
-                                ],
-                                'columns' => "id, email, first_name, last_name, lastconnexion, status",
-                            ]
+                [
+                    'conditions' => 'email = :email:',
+                    'bind' => [
+                        'email' => $email
+                    ],
+                    'columns' => "id, email, first_name, last_name, lastconnexion, status",
+                ]
             );
 
             if (!$user) {
@@ -69,7 +316,8 @@ class UserService extends AbstractService {
         }
     }
 
-    public function createGroup(array $data) {
+    public function createGroup(array $data)
+    {
         try {
             $group = new Group();
             $chatHis = $this->chatHistoryService->createChatHistory();
@@ -77,7 +325,7 @@ class UserService extends AbstractService {
             $group->setChatHistId($chatHis->getId());
             $result = $group->save();
             $this->logger->critical(
-                    $result . '===' . $result
+                $result . '===' . $result
             );
             if (!$result) {
                 throw new ServiceException('Unable to create Groupe', self::ERROR_UNABLE_CREATE_USER, '', $this->logger);
@@ -96,15 +344,16 @@ class UserService extends AbstractService {
      *
      * @param array $userData
      */
-    public function updateUser(array $userData) {
+    public function updateUser(array $userData)
+    {
         try {
             $user = Users::findFirst(
-                            [
-                                'conditions' => 'id = :id:',
-                                'bind' => [
-                                    'id' => $userData['id']
-                                ]
-                            ]
+                [
+                    'conditions' => 'id = :id:',
+                    'bind' => [
+                        'id' => $userData['id']
+                    ]
+                ]
             );
 
             $userData['email'] = (is_null($userData['email'])) ? $user->getemail() : $userData['email'];
@@ -113,10 +362,10 @@ class UserService extends AbstractService {
             $userData['last_name'] = (is_null($userData['last_name'])) ? $user->getLastName() : $userData['last_name'];
 
             $result = $user->setemail($userData['email'])
-                    ->setPass($userData['password'])
-                    ->setFirstName($userData['first_name'])
-                    ->setLastName($userData['last_name'])
-                    ->update();
+                ->setPass($userData['password'])
+                ->setFirstName($userData['first_name'])
+                ->setLastName($userData['last_name'])
+                ->update();
 
             if (!$result) {
                 throw new ServiceException('Unable to update user', self::ERROR_UNABLE_UPDATE_USER);
@@ -131,7 +380,7 @@ class UserService extends AbstractService {
      *
      * @param int $userId
      */
-    public function deleteUser($userId) {
+    /*public function deleteUser($userId) {
         try {
             $user = User::findFirst(
                             [
@@ -154,25 +403,27 @@ class UserService extends AbstractService {
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
-    }
+    }*/
+
 
     /**
      * Returns user list
      *
      * @return array
      */
-    public function getUserList($currentUserId) {
+    public function getUserList($currentUserId)
+    {
         try {
-            
+
             $users = Users::find(
-                            [
-                        'conditions' => 'userid != :id:',
-                        'bind' => ['id' => $currentUserId],
-                            ], false
+                [
+                    'conditions' => 'userid != :id:',
+                    'bind' => ['id' => $currentUserId],
+                ], false
             );
 
             $this->logger->critical(
-                    ' Internal Server Error '
+                ' Internal Server Error '
             );
 
             if (!$users) {
@@ -182,7 +433,7 @@ class UserService extends AbstractService {
             return $users->toArray();
         } catch (\PDOException $e) {
             $this->logger->critical(
-                    $e->getMessage() . ' ' . $e->getCode()
+                $e->getMessage() . ' ' . $e->getCode()
             );
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }

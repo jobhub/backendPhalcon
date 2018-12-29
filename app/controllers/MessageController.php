@@ -47,11 +47,11 @@ class MessageController extends AbstractController {
         $data["page"] =  $jsonData->page;  
        
         try {
-           $reponse = $this->messageService->getMessages($data); 
+           $response = $this->messageService->getMessages($data);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
-        return parent::chatResponce('',$reponse);
+        return parent::chatResponce('',$response);
     }
 
     /**
@@ -67,11 +67,11 @@ class MessageController extends AbstractController {
         $data["reciever"] = $jsonData->reciever;     
        
         try {
-           $reponse = $this->privateChatService->setAllMessageToReaded($data["sender"], $data["reciever"]); 
+           $response = $this->privateChatService->setAllMessageToReaded($data["sender"], $data["reciever"]);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
-        return parent::chatResponce('',$reponse);
+        return parent::chatResponce('',$response);
     }
  
 
