@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
@@ -764,7 +766,7 @@ class Companies extends NotDeletedModelWithCascade
         return 'companies';
     }
 
-    public static function checkUserHavePermission($userId, $companyId, $right = null)
+   /* public static function checkUserHavePermission($userId, $companyId, $right = null)
     {
         $managerRights = ['edit', 'addService', 'editService'];
 
@@ -795,7 +797,7 @@ class Companies extends NotDeletedModelWithCascade
             }
         }
         return false;
-    }
+    }*/
 
     public function beforeSave()
     {
@@ -803,5 +805,15 @@ class Companies extends NotDeletedModelWithCascade
             $this->setRatingClient(5);
         if ($this->getRatingExecutor() == null)
             $this->setRatingExecutor(5);
+    }
+
+    public static function findUserInfoById(int $companyId, array $columns = null){
+        if($columns == null)
+            return self::findFirst(['company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]);
+        else{
+            return self::findFirst(['columns' => $columns,'company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]);
+        }
     }
 }

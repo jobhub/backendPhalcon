@@ -15,14 +15,14 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
-    protected $firstname;
+    protected $first_name;
 
     /**
      *
@@ -36,7 +36,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=30, nullable=false)
      */
-    protected $lastname;
+    protected $last_name;
 
     /**
      *
@@ -77,35 +77,36 @@ class Userinfo extends \Phalcon\Mvc\Model
      * @var integer
      * @Column(type="tyniint", length=4, nullable=false)
      */
-    protected $ratingexecutor;
-    protected $ratingclient;
-    protected $pathtophoto;
+    protected $rating_executor;
+    protected $rating_client;
+    protected $path_to_photo;
 
-    protected $lasttime;
+    protected $last_time;
 
     protected $email;
 
     protected $phones;
 
-    const publicColumns = ['userid', 'firstname', 'lastname', 'patronymic',
-        'birthday', 'male', 'address', 'about', 'status', 'ratingexecutor', 'ratingclient', 'pathtophoto', 'lasttime'];
+    const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
+        'birthday', 'male', 'address', 'about', 'status', 'rating_executor', 'rating_client',
+        'path_to_photo', 'last_time'];
 
-    const publicColumnsInStr = 'userid, firstname, lastname, patronymic,
-        birthday, male, address, about, status, ratingexecutor, ratingclient, pathtophoto, lasttime';
+    const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
+        birthday, male, address, about, status, rating_executor, rating_client, path_to_photo, last_time';
 
-    const shortColumns = ['userid', 'firstname', 'lastname', 'pathtophoto'];
+    const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 
-    const shortColumnsInStr = 'userid, firstname, lastname, pathtophoto';
+    const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
 
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -113,12 +114,12 @@ class Userinfo extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field firstname
      *
-     * @param string $firstname
+     * @param string $first_name
      * @return $this
      */
-    public function setFirstname($firstname)
+    public function setFirstName($first_name)
     {
-        $this->firstname = $firstname;
+        $this->first_name = $first_name;
 
         return $this;
     }
@@ -157,12 +158,12 @@ class Userinfo extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field lastname
      *
-     * @param string $lastname
+     * @param string $last_name
      * @return $this
      */
-    public function setLastname($lastname)
+    public function setLastName($last_name)
     {
-        $this->lastname = $lastname;
+        $this->last_name = $last_name;
 
         return $this;
     }
@@ -240,23 +241,23 @@ class Userinfo extends \Phalcon\Mvc\Model
     }
 
 
-    public function setRatingExecutor($ratingexecutor)
+    public function setRatingExecutor($rating_executor)
     {
-        $this->ratingexecutor = $ratingexecutor;
+        $this->rating_executor = $rating_executor;
 
         return $this;
     }
 
-    public function setRatingClient($ratingclient)
+    public function setRatingClient($rating_client)
     {
-        $this->ratingclient = $ratingclient;
+        $this->rating_client = $rating_client;
 
         return $this;
     }
 
-    public function setPathToPhoto($pathtophoto)
+    public function setPathToPhoto($path_to_photo)
     {
-        $this->pathtophoto = $pathtophoto;
+        $this->path_to_photo = $path_to_photo;
 
         return $this;
     }
@@ -268,7 +269,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -286,9 +287,9 @@ class Userinfo extends \Phalcon\Mvc\Model
      *
      * @return string
      */
-    public function getFirstname()
+    public function getFirstName()
     {
-        return $this->firstname;
+        return $this->first_name;
     }
 
     /**
@@ -306,15 +307,15 @@ class Userinfo extends \Phalcon\Mvc\Model
      *
      * @return string
      */
-    public function getLastname()
+    public function getLastName()
     {
-        return $this->lastname;
+        return $this->last_name;
     }
 
 
     public function getFIO()
     {
-        return "$this->lastname $this->firstname $this->patronymic";
+        return "$this->last_name $this->first_name $this->patronymic";
     }
 
     /**
@@ -361,31 +362,31 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     public function getRatingExecutor()
     {
-        return $this->ratingexecutor;
+        return $this->rating_executor;
     }
     public function getRatingClient()
     {
-        return $this->ratingclient;
+        return $this->rating_client;
     }
     public function getPathToPhoto()
     {
-        return $this->pathtophoto;
+        return $this->path_to_photo;
     }
 
     /**
      * @return mixed
      */
-    public function getLasttime()
+    public function getLastTime()
     {
-        return $this->lasttime;
+        return $this->last_time;
     }
 
     /**
-     * @param mixed $lasttime
+     * @param mixed $last_time
      */
-    public function setLasttime($lasttime)
+    public function setLastTime($last_time)
     {
-        $this->lasttime = $lasttime;
+        $this->last_time = $last_time;
     }
 
     /**
@@ -404,14 +405,6 @@ class Userinfo extends \Phalcon\Mvc\Model
         $this->email = $email;
     }
 
-
-    //Поля не из базы
-
-
-
-
-
-
     /**
      * Validations and business logic
      *
@@ -422,7 +415,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'firstname',
+            'first_name',
             new PresenceOf(
                 [
                     "message" => "Требуется указать имя пользователя",
@@ -431,7 +424,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'lastname',
+            'last_name',
             new PresenceOf(
                 [
                     "message" => "Требуется указать фамилию пользователя",
@@ -450,7 +443,7 @@ class Userinfo extends \Phalcon\Mvc\Model
 
         if($this->getPathToPhoto() != null)
             $validator->add(
-                'pathtophoto',
+                'path_to_photo',
                 new Callback(
                     [
                         "message" => "Формат картинки не поддерживается",
@@ -492,7 +485,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', '\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -527,11 +520,35 @@ class Userinfo extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public function beforeSave()
-    {
-        /*if($this->getRatingClient() == null)
-            $this->setRatingClient(5);
-        if($this->getRatingExecutor() == null)
-            $this->setRatingExecutor(5);*/
+    public static function findUserInfoById(int $userId, array $columns = null){
+        if($columns == null)
+            return self::findFirst(['user_id = :userId:',
+                'bind' => ['userId' => $userId]]);
+        else{
+            return self::findFirst(['columns' => $columns,'user_id = :userId:',
+                'bind' => ['userId' => $userId]]);
+        }
+    }
+
+    public static function handleUserInfo(Userinfo $userInfo){
+
+        $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
+        $images = ImagesUsers::getImages($userInfo->getUserId());
+
+        $countNews = count(News::findByAccount(
+            Accounts::findForUserDefaultAccount($userInfo->getUserId())->getId()
+        ));
+        $countSubscribers = count(FavoriteUsers::findByUserObject($userInfo->getUserId()));
+        $countSubscriptions = count(FavoriteUsers::findByUserSubject($userInfo->getUserId()))
+            + count(FavoriteCompanies::findByUserId($userInfo->getUserId()));
+
+        return [
+            'user_info' => $userInfo,
+            'phones' => $phones,
+            'images' => $images,
+            'countNews' => $countNews,
+            'countSubscribers' => $countSubscribers,
+            'countSubscriptions' => $countSubscriptions,
+        ];
     }
 }

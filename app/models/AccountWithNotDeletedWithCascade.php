@@ -5,7 +5,7 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class AccountWithNotDeleted extends NotDeletedModel
+class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
 {
     /**
      *
@@ -57,11 +57,11 @@ class AccountWithNotDeleted extends NotDeletedModel
     {
         if($columns == null)
             return parent::find(['account_id = :accountId:',
-                'bind' => ['account_id' => $accountId],
+                'bind' => ['accountId' => $accountId],
                 'order' => $order]);
         else{
             return parent::find(['columns' => $columns,'account_id = :accountId:',
-                'bind' => ['account_id' => $accountId],
+                'bind' => ['accountId' => $accountId],
                 'order' => $order]);
         }
     }

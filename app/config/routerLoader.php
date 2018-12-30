@@ -272,6 +272,101 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\UserinfoAPIController'=>[
+        'prefix' => '/user/info',
+        'resources' => [
+            /**
+             * Устанавливает одну из фотографий пользователя, как основную.
+             * @access private
+             * @method POST
+             * @params image_id
+             * @return Response - json array в формате Status.
+             */
+            [
+                'type' => 'post',
+                'path' => '/set-photo',
+                'action' => 'setPhotoAction'
+            ],
+
+            /**
+             * Возвращает публичные данные о пользователе.
+             * Публичный метод.
+             *
+             * @method GET
+             *
+             * @param $user_id
+             *
+             * @return array [userinfo, [phones], [images], countNews, countSubscribers,
+             *          countSubscriptions];
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getUserInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{user_id}',
+                'action' => 'getUserInfoAction'
+            ],
+
+            /**
+             * Меняет данные текущего пользоваателя.
+             * Приватный метод.
+             *
+             * @method PUT
+             *
+             * @params first_name
+             * @params last_name
+             * @params patronymic
+             * @params birthday
+             * @params male
+             * @params status
+             * @params about
+             * @params address
+             *
+             * @return string - json array - результат операции
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editUserInfoAction'
+            ],
+
+            /**
+             * Добавляет все прикрепленные изображения к пользователю. Но суммарно изображений не больше 10.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/images',
+                'action' => 'addImagesAction'
+            ],
+
+            /**
+             * Удаляет картинку из списка фотографий пользователя
+             *
+             * @method DELETE
+             *
+             * @param $image_id integer id изображения
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/image/{image_id}',
+                'action' => 'deleteImageAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

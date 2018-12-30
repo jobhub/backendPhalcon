@@ -14,7 +14,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $usersubject;
+    protected $user_subject;
 
     /**
      *
@@ -22,17 +22,17 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $userobject;
+    protected $user_object;
 
     /**
      * Method to set the value of field userSubject
      *
-     * @param integer $usersubject
+     * @param integer $user_subject
      * @return $this
      */
-    public function setUserSubject($usersubject)
+    public function setUserSubject($user_subject)
     {
-        $this->usersubject = $usersubject;
+        $this->user_subject = $user_subject;
 
         return $this;
     }
@@ -40,12 +40,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userObject
      *
-     * @param integer $userobject
+     * @param integer $user_object
      * @return $this
      */
-    public function setUserObject($userobject)
+    public function setUserObject($user_object)
     {
-        $this->userobject = $userobject;
+        $this->user_object = $user_object;
 
         return $this;
     }
@@ -57,7 +57,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function getUserSubject()
     {
-        return $this->usersubject;
+        return $this->user_subject;
     }
 
     /**
@@ -67,7 +67,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function getUserObject()
     {
-        return $this->userobject;
+        return $this->user_object;
     }
 
     /**
@@ -80,12 +80,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userobject',
+            'user_object',
             new Callback(
                 [
                     "message" => "Пользователь для подписки не существует",
-                    "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserid($favCompany->getUserObject());
+                    "callback" => function($favUser) {
+                        $user = Users::findFirstByUserId($favUser->getUserObject());
 
                         if($user)
                             return true;
@@ -96,12 +96,12 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'usersubject',
+            'user_subject',
             new Callback(
                 [
                     "message" => "Пользователь подписчик не существует",
-                    "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserid($favCompany->getUserSubject());
+                    "callback" => function($favUser) {
+                        $user = Users::findFirstByUserId($favUser->getUserSubject());
 
                         if($user)
                             return true;
@@ -119,10 +119,10 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("service_services");
+        $this->setSchema("public");
         $this->setSource("favoriteUsers");
-        $this->belongsTo('userobject', '\Users', 'userid', ['alias' => 'Users']);
-        $this->belongsTo('usersubject', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_object', '\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('user_subject', '\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -159,7 +159,7 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
 
     public static function findByIds($userIdObject,$userIdSubject)
     {
-        return Favoriteusers::findFirst(["userobject = :userIdObject: AND usersubject = :userIdSubject:",
+        return FavoriteUsers::findFirst(["user_object = :userIdObject: AND user_subject = :userIdSubject:",
             "bind" => [
                 "userIdObject" => $userIdObject,
                 "userIdSubject" => $userIdSubject,

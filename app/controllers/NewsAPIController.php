@@ -7,6 +7,23 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\Userinfo;
+use App\Models\PhonesUsers;
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\FavoriteUsers;
+use App\Models\FavoriteCompanies;
+
+use App\Services\ImageService;
+use App\Services\UserInfoService;
+use App\Services\UserService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Контроллер для работы с новостями.
  * Реализует CRUD для новостей, позволяет просматривать новости тех, на кого подписан текущий пользователь.
@@ -25,36 +42,9 @@ class NewsAPIController extends Controller
      */
     public function getNewsAction()
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            /*$favCompanies = FavoriteCompanies::findByUserid($userId);
-            $favUsers = Favoriteusers::findByUsersubject($userId);
-
-            $query = '';
-            foreach ($favCompanies as $favCompany){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favCompany->getCompanyId() . ' AND subjecttype = 1)';
-            }
-
-            foreach ($favUsers as $favUser){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favUser->getUserObject() . ' AND subjecttype = 0)';
-            }
-
-            $news = News::find([$query, "order" => "News.date DESC"]);*/
-            $news = News::getNewsForCurrentUser($userId);
-
-            $response->setJsonContent($news);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        return News::getNewsForCurrentUser($userId);
     }
 
     /**
@@ -99,6 +89,7 @@ class NewsAPIController extends Controller
             throw $exception;
         }
     }
+
     /**
      * Создает новость компании или пользователя (в зависимости от subjectType).
      * Если прикрепить изображения, они будут добавлены к новости.

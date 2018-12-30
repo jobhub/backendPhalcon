@@ -1,6 +1,10 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+
 class LikesCommentsImagesUsers extends AccountModel
 {
 
@@ -50,18 +54,6 @@ class LikesCommentsImagesUsers extends AccountModel
                 [
                     "message" => "Компания может оставить только один лайк, независимо от количества менеджеров",
                     "callback" => function ($likesModel) {
-                        /*$modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
-                        $account = Accounts::findFirstById($likesModel->getAccountId());
-                        if(!$account)
-                            return false;
-                        $result = $modelsManager->createBuilder()
-                            ->from(["a" => "Accounts"])
-                            ->join('LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
-                            ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
-                                ['companyId' => $account->getCompanyId(),
-                                  'commentId' => $likesModel->getCommentId()])
-                            ->getQuery()
-                            ->execute();*/
                         $result = self::findCommentLikedByCompany($likesModel->getAccountId(),$likesModel->getCommentId());
 
                         if (count($result)>0)

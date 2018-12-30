@@ -281,7 +281,7 @@ class UserService extends AbstractService
      * @return mixed
      */
     public function getUserById(int $userId){
-        $user = Users::findFirstByUserid($userId);
+        $user = Users::findFirstByUserId($userId);
 
         if (!$user || $user == null) {
             throw new ServiceException('User don\'t exists', self::ERROR_USER_NOT_FOUND);

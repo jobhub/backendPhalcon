@@ -8,7 +8,7 @@ use Phalcon\Validation\Validator\Callback;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
-class News extends SubjectsWithNotDeletedWithCascade
+class News extends AccountWithNotDeletedWithCascade
 {
 
     /**
@@ -18,21 +18,21 @@ class News extends SubjectsWithNotDeletedWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newsid;
+    protected $news_id;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $publishdate;
+    protected $publish_date;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $newstext;
+    protected $news_text;
 
     /**
      *
@@ -41,19 +41,19 @@ class News extends SubjectsWithNotDeletedWithCascade
      */
     protected $title;
 
-    const publicColumns = ['newsid', 'publishdate', 'newstext', 'title'];
+    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title'];
 
-    const publicColumnsInStr = 'newsid, publishdate, newstext, title';
+    const publicColumnsInStr = 'news_id, publish_date, news_text, title';
 
     /**
      * Method to set the value of field newId
      *
-     * @param integer $newsid
+     * @param integer $news_id
      * @return $this
      */
-    public function setNewsId($newsid)
+    public function setNewsId($news_id)
     {
-        $this->newsid = $newsid;
+        $this->news_id = $news_id;
 
         return $this;
     }
@@ -61,12 +61,12 @@ class News extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field date
      *
-     * @param string $publishdate
+     * @param string $publish_date
      * @return $this
      */
-    public function setPublishDate($publishdate)
+    public function setPublishDate($publish_date)
     {
-        $this->publishdate = $publishdate;
+        $this->publish_date = $publish_date;
 
         return $this;
     }
@@ -74,12 +74,12 @@ class News extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field newText
      *
-     * @param string $newstext
+     * @param string $news_text
      * @return $this
      */
-    public function setNewsText($newstext)
+    public function setNewsText($news_text)
     {
-        $this->newstext = $newstext;
+        $this->news_text = $news_text;
 
         return $this;
     }
@@ -91,7 +91,7 @@ class News extends SubjectsWithNotDeletedWithCascade
      */
     public function getNewsId()
     {
-        return $this->newsid;
+        return $this->news_id;
     }
 
     /**
@@ -101,7 +101,7 @@ class News extends SubjectsWithNotDeletedWithCascade
      */
     public function getPublishDate()
     {
-        return $this->publishdate;
+        return $this->publish_date;
     }
 
     /**
@@ -111,7 +111,7 @@ class News extends SubjectsWithNotDeletedWithCascade
      */
     public function getNewsText()
     {
-        return $this->newstext;
+        return $this->news_text;
     }
 
     /**
@@ -181,7 +181,7 @@ class News extends SubjectsWithNotDeletedWithCascade
                 // Запрос транзакции
                 $transaction = $manager->get();
                 $this->setTransaction($transaction);
-                $images = ImagesNews::findByNewsid($this->getNewsId());
+                $images = ImagesNews::findByNewsId($this->getNewsId());
 
                 foreach ($images as $image) {
                     $image->setTransaction($transaction);
@@ -220,16 +220,20 @@ class News extends SubjectsWithNotDeletedWithCascade
             $str .= $column . ", ";
         }
 
-        $str .= "subjectid, subjecttype";
+        $str .= "account_id";
 
-        $str .= " FROM ((SELECT * FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
-                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
-                    WHERE favc.userid = :userId)
+        $str .= " FROM ((SELECT * FROM public.news n 
+                    INNER JOIN public.accounts a ON (n.account_id = a.id)
+                    INNER JOIN public.\"favoriteCompanies\" favc ON 
+                                (a.company_id = favc.company_id)
+                    WHERE favc.user_id = :userId)
                     UNION
-                    (SELECT * FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
-                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
-                    WHERE favu.usersubject = :userId)) as foo
-                    ORDER BY foo.publishdate desc";
+                    (SELECT * FROM public.news n 
+                    INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
+                    INNER JOIN public.\"favoriteUsers\" favu
+                    ON (a.user_id = favu.user_object)
+                    WHERE favu.user_subject = :userId)) as foo
+                    ORDER BY foo.publish_date desc";
 
         $query = $db->prepare($str);
         $result = $query->execute([
@@ -275,87 +279,43 @@ class News extends SubjectsWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function getNewsForSubject($subjectId, $subjecttype)
+    public static function getNewsForAccount($accountId)
     {
-        $news = News::findBySubject($subjectId, $subjecttype, 'News.publishdate DESC',
-            News::publicColumnsInStr . ', subjectid, subjecttype');
-
-        $news = json_encode($news);
-        $news = json_decode($news, true);
+        $news = News::findByAccount($accountId, 'News.publish_date DESC',
+            News::publicColumnsInStr . ', account_id');
 
         return News::handleNewsFromArray($news);
     }
 
-    private static function handleNewsFromArray($news)
+    private static function handleNewsFromArray(array $news)
     {
         $newsWithAll = [];
         foreach ($news as $newsElement) {
-            $newsWithAllElement = $newsElement;
-            if ($newsElement['subjecttype'] == 0) {
-                $user = Userinfo::findFirst(
-                    ['conditions' => 'userid = :subjectid:',
-                        'columns' => Userinfo::publicColumnsInStr,
-                        'bind' => ['subjectid' => $newsElement['subjectid']]]);
-
-                $user = json_encode($user);
-                $user = json_decode($user, true);
-                $newsWithAllElement['publisherUser'] = $user;
-                $phones = PhonesUserinfo::getUserPhones($newsElement['subjectid']);
-                //$newsWithAllElement['publisherUser']->setPhones($phones);
-                $newsWithAllElement['publisherUser']['phones'] = $phones;
-            } else {
-                $company = Companies::findFirst(
-                    ['conditions' => 'companyid = :subjectid:',
-                        'columns' => Companies::publicColumnsInStr,
-                        'bind' => ['subjectid' => $newsElement['subjectid']]]);
-
-                $company = json_encode($company);
-                $company = json_decode($company, true);
-
-                $newsWithAllElement['publisherCompany'] = $company;
-                $phones = PhonesCompanies::getCompanyPhones($newsWithAllElement['publisherCompany']['companyid']);
-                $newsWithAllElement['publisherCompany']['phones'] = $phones;
+            $newsWithAllElement = $newsElement/*->toArray()*/;
+            if($newsElement->getAccountId()!= null) {
+                $account = Accounts::findFirstByAccountId($newsElement['account_id']);
+                if ($account->getCompanyId() == null) {
+                    $user = Userinfo::findUserInfoById($account->getUserId(),Userinfo::shortColumnsInStr);
+                    $newsWithAllElement['publisherUser'] = $user;
+                } else {
+                    $company = Companies::findUserInfoById($account->getCompanyId(),
+                        Companies::shortColumnsInStr);
+                    $newsWithAllElement['publisherCompany'] = $company;
+                }
             }
 
             $newsWithAllElement['stats'] = new Stats();
 
             $newsWithAllElement['liked'] = rand() % 2 == 0 ? true : false;
 
-            $imagesNews = ImagesNews::findByNewsid($newsWithAllElement['newsid']);
+            $imagesNews = ImagesNews::findImagesForNews($newsElement['news_id']);
 
             $newsWithAllElement['images'] = [];
             foreach ($imagesNews as $image) {
                 $newsWithAllElement['images'][] = $image->getImagePath();
             }
 
-            /*$comments = [];
-            for ($i = 0; $i < $newsWithAllElement['stats']->getComments(); $i++) {
-                $type = rand(0, 2);
-                if ($type == 0) {
-                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать трам парам там там там пам',
-                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
-                    ];
-                } else if ($type == 1) {
-                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать НУ ПРЯМ ХОЧУ НЕ МОГУ',
-                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
-                    ];
-                } else if ($type == 2) {
-                    $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать ОТПУСТИТЕ МЕНЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ',
-                        'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
-                    ];
-                }
-
-                $comment['publisherUser'] = ['userid' => '9', 'email' => 'eenotova@mail.ru',
-                    'phone' => '+7 954 352-65-75', 'firstname' => 'Екатерина',
-                    'lastname' => 'Енотова', 'patronymic' => "Васильевна",
-                    'lasttime' => '2019-09-08 16:00:30+00', 'male' => '0',
-                    'birthday' => '1997-05-25 00:00:00+00', 'pathtophoto' => 'images/profile/user/1.jpg',
-                    'status' => null];
-
-                $comments[] = $comment;
-            }*/
-
-            $newsWithAllElement['comments'] = CommentsNews::getComments($newsWithAllElement['newsid']);
+            $newsWithAllElement['comments'] = CommentsNews::getComments($newsElement['news_id']);
 
             $newsWithAllElement['stats']->setComments(count($newsWithAllElement['comments']));
             $newsWithAll[] = $newsWithAllElement;
@@ -450,7 +410,6 @@ class News extends SubjectsWithNotDeletedWithCascade
 
         $this->sendPushToUser($new, $userIds, $listNew);
     }
-
 
     private function sendPushToUser($new, $userIds, $newInfo)
     {

@@ -24,8 +24,10 @@ class UserInfoService extends AbstractService {
     /** Unable to create user */
     const ERROR_UNABLE_CREATE_USER_INFO = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CREATE_SETTINGS = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_INFO_NOT_FOUND = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CHANGE_USER_INFO = 4 + self::ADDED_CODE_NUMBER;
 
-    public function CreateUserInfo(array $userInfoData){
+    public function createUserInfo(array $userInfoData){
         $userInfo = new Userinfo();
         $userInfo->setUserId($userInfoData['userId']);
 
@@ -44,11 +46,26 @@ class UserInfoService extends AbstractService {
         return $userInfo;
     }
 
-    public function fillUserInfo(Userinfo $userInfo, array $data){
-        if(!empty(trim($data['firstname'])))
-            $userInfo->setFirstname($data['firstname']);
-        if(!empty(trim($data['lastname'])))
-            $userInfo->setLastname($data['lastname']);
+    public function changeUserInfo(Userinfo $userInfo, array $userInfoData){
+        $this->fillUserInfo($userInfo,$userInfoData);
+        if ($userInfo->update() == false) {
+            $errors = SupportClass::getArrayWithErrors($userInfo);
+            if(count($errors)>0)
+                throw new ServiceExtendedException('Unable change info for user',
+                    self::ERROR_UNABLE_CHANGE_USER_INFO,null,null,$errors);
+            else{
+                throw new ServiceExtendedException('Unable change info for user',
+                    self::ERROR_UNABLE_CHANGE_USER_INFO);
+            }
+        }
+        return $userInfo;
+    }
+
+    private function fillUserInfo(Userinfo $userInfo, array $data){
+        if(!empty(trim($data['first_name'])))
+            $userInfo->setFirstName($data['first_name']);
+        if(!empty(trim($data['last_name'])))
+            $userInfo->setLastName($data['last_name']);
         if(!empty(trim($data['patronymic'])))
             $userInfo->setPatronymic($data['patronymic']);
         if(!empty(trim($data['male'])))
@@ -63,13 +80,15 @@ class UserInfoService extends AbstractService {
             $userInfo->setStatus($data['status']);
         if(!empty(trim($data['email'])))
             $userInfo->setEmail($data['email']);
+        if(!empty(trim($data['path_to_photo'])))
+            $userInfo->setPathToPhoto($data['path_to_photo']);
     }
 
     public function CreateSettings(int $userId){
         $setting = new Settings();
         $setting->setUserId($userId);
 
-        if ($setting->save() == false) {
+        if ($setting->create() == false) {
             $errors = SupportClass::getArrayWithErrors($setting);
             if(count($errors)>0)
                 throw new ServiceExtendedException('Unable create settings',
@@ -81,5 +100,24 @@ class UserInfoService extends AbstractService {
         }
 
         return $setting;
+    }
+
+    public function getUserInfoById(int $userId){
+        $user = Userinfo::findFirstByUserId($userId);
+
+        if (!$user || $user == null) {
+            throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
+        }
+        return $user;
+    }
+
+    public function getHandledUserInfoById(int $userId){
+        $userInfo = Userinfo::findUserInfoById($userId);
+
+        if (!$userInfo || $userInfo == null) {
+            throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
+        }
+
+        return Userinfo::handleUserInfo($userInfo);
     }
 }

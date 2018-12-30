@@ -9,6 +9,10 @@ use App\Models\News;
 use App\Models\FavoriteUsers;
 use App\Models\FavoriteCompanies;
 
+use App\Services\ImageService;
+use App\Services\UserInfoService;
+use App\Services\UserService;
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Http\Response;
@@ -16,6 +20,11 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
 
 /**
  * Class UserinfoAPIController
@@ -24,9 +33,9 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
  *
  * Методы без документации старые и неактуальные, но могут пригодиться в дальнейшем.
  */
-class UserinfoAPIController extends Controller
+class UserinfoAPIController extends AbstractController
 {
-    public function indexAction()
+    /*public function indexAction()
     {
         $auth = $this->session->get("auth");
         if ($this->request->isGet()) {
@@ -114,9 +123,9 @@ class UserinfoAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
-    }
+    }*/
 
-    public function aboutAction()
+    /*public function aboutAction()
     {
         $auth = $this->session->get("auth");
 
@@ -192,21 +201,6 @@ class UserinfoAPIController extends Controller
             if (isset($_POST["notificationPush"]))
                 $settings->setNotificationPush($this->request->getPost("notificationPush"));
 
-            /*if($settings->getNotificationEmail())
-                $settings->setNotificationEmail(1);
-            else
-                $settings->setNotificationEmail(0);
-
-            if($settings->getNotificationSms())
-                $settings->setNotificationSms(1);
-            else
-                $settings->setNotificationSms(0);
-
-            if($settings->getNotificationPush())
-                $settings->setNotificationPush(1);
-            else
-                $settings->setNotificationPush(0);*/
-
 
             if (!$settings->save()) {
 
@@ -232,9 +226,9 @@ class UserinfoAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
-    }
+    }*/
 
-    public function handlerAction()
+    /*public function handlerAction()
     {
         $response = new Response();
         include('../library/SimpleImage.php');
@@ -311,110 +305,52 @@ class UserinfoAPIController extends Controller
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      * Устанавливает одну из фотографий пользователя, как основную.
      * @access private
      * @method POST
-     * @params imageId
+     * @params image_id
      * @return Response - json array в формате Status.
      */
     public function setPhotoAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
+        $data = json_decode($this->request->getRawBody(), true);
+        try {
             $userId = $this->session->get('auth')['id'];
-            $image = ImagesUsers::findFirstByImageid($this->request->getPost('imageId'));
 
-            if (!$image || $image->getUserId() != $userId) {
-                $response->setJsonContent([
-                    'status' => STATUS_WRONG,
-                    'errors' => ['Фотография не существует']
-                ]);
-                return $response;
+            $image = $this->imageService->getImageById($data['image_id'], ImageService::TYPE_USER);
+
+            if ($image->getUserId() != $userId) {
+                throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
             }
 
-            $userinfo = Userinfo::findFirstByUserid($userId);
+            $userinfo = $this->userInfoService->getUserInfoById($userId);
 
-            $userinfo->setPathToPhoto($image->getImagePath());
-
-            if (!$userinfo->update()) {
-                return SupportClass::getResponseWithErrors($userinfo);
+            $this->userInfoService->changeUserInfo($userinfo, ['path_to_photo' => $image->getImagePath()]);
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_UNABLE_CHANGE_USER_INFO:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-
-            $response->setJsonContent([
-                'status' => STATUS_OK
-            ]);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                case ImageService::ERROR_IMAGE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Photo successfully changed');
     }
-
-    /*public function setPhotoAction()
-    {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
-            if ($this->request->hasFiles()) {
-                $auth = $this->session->get('auth');
-                $userId = $auth['id'];
-                $userinfo = Userinfo::findFirstByUserid($userId);
-
-                $file = $this->request->getUploadedFiles();
-                $file = $file[0];
-                if ($userinfo) {
-                    $format = pathinfo($file->getName(), PATHINFO_EXTENSION);
-
-                    $filename = ImageLoader::formFullImageName('users', $format, $userId, 0);
-                    $userinfo->setPathToPhoto($filename);
-
-                    if (!$userinfo->update()) {
-                        $errors = [];
-                        foreach ($userinfo->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "errors" => $errors,
-                                "status" => STATUS_WRONG
-                            ]);
-
-                        return $response;
-                    }
-
-                    ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),110, $userId);
-
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_OK
-                        ]
-                    );
-                    return $response;
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Пользователя не существует (или он не активирован)']
-                    ]
-                );
-                return $response;
-            }
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => ['Файл не отправлен']
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }*/
 
     /**
      * Удаляет пользователя
@@ -425,7 +361,7 @@ class UserinfoAPIController extends Controller
      *
      * @return string - json array - объект Status - результат операции
      */
-    public function deleteUserAction($userId)
+    /*public function deleteUserAction($userId)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
@@ -469,7 +405,7 @@ class UserinfoAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Восстанавливает пользователя
@@ -480,7 +416,7 @@ class UserinfoAPIController extends Controller
      *
      * @return string - json array - объект Status - результат операции
      */
-    public function restoreUserAction()
+    /*public function restoreUserAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
@@ -525,7 +461,7 @@ class UserinfoAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Возвращает публичные данные о пользователе.
@@ -533,59 +469,29 @@ class UserinfoAPIController extends Controller
      *
      * @method GET
      *
-     * @param $userid
+     * @param $user_id
      *
      * @return array [userinfo, [phones], [images], countNews, countSubscribers,
      *          countSubscriptions];
      */
-    public function getUserinfoAction($userid = null)
+    public function getUserInfoAction($user_id = null)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
+        try{
+            $currentUserId = $this->session->get('auth')['id'];
 
-            if ($userid == null) {
-                $auth = $this->session->get('auth');
-                if ($auth != null) {
-                    $userid = $auth['id'];
-                } else{
-                    $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-                    throw $exception;
-                }
+            $res_user_id = $user_id == null?$currentUserId:$user_id;
+
+            $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id);
+
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $userinfo = Userinfo::findFirstByUserid($userid);
-
-
-            if (!$userinfo) {
-
-                return [
-                        'status' => STATUS_WRONG,
-                        'errors' => ['Пользователь с таким id не существует']
-                    ];
-            }
-
-
-            $phones = PhonesUsers::getUserPhones($userid);
-            $images = ImagesUsers::getImages($userid);
-
-            $countNews = count(News::findBySubject($userid, 0));
-            $countSubscribers = count(FavoriteUsers::findByUserobject($userid));
-            $countSubscriptions = count(FavoriteUsers::findByUsersubject($userid)) + count(FavoriteCompanies::findByUserid($userid));
-
-            /*$response->setJsonContent(*/$result = [
-                'userinfo' => $userinfo,
-                'phones' => $phones,
-                'images' => $images,
-                'countNews' => $countNews,
-                'countSubscribers' => $countSubscribers,
-                'countSubscriptions' => $countSubscriptions,
-            ];
-
-            return $result;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('',$userInfo);
     }
 
     /**
@@ -605,65 +511,39 @@ class UserinfoAPIController extends Controller
      *
      * @return string - json array - результат операции
      */
-    public function editUserinfoAction()
+    public function editUserInfoAction()
     {
-        if ($this->request->isPut()) {
+        $data = json_decode($this->request->getRawBody(), true);
+
+        if(!isset($data['path_to_photo']))
+            unset($data['path_to_photo']);
+
+        try{
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $response = new Response();
+            $userInfo = $this->userInfoService->getUserInfoById($userId);
 
-            $userinfo = Userinfo::findFirstByUserid($userId);
-            if (!$userinfo) {
-                $response->setJsonContent(
-                    [
-                        'status' => STATUS_WRONG,
-                        'errors' => ['Пользователь с таким id не существует']
-                    ]);
-                return $response;
+            $userInfo = $this->userInfoService->changeUserInfo($userInfo, $data);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_UNABLE_CHANGE_USER_INFO:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if ($this->request->getPut('firstname'))
-                $userinfo->setFirstname($this->request->getPut('firstname'));
-            if ($this->request->getPut('lastname'))
-                $userinfo->setLastname($this->request->getPut('lastname'));
-            if ($this->request->getPut('patronymic'))
-                $userinfo->setPatronymic($this->request->getPut('patronymic'));
-            if ($this->request->getPut('address'))
-                $userinfo->setAddress($this->request->getPut("address"));
-            if ($this->request->getPut('birthday'))
-                $userinfo->setBirthday(date('Y-m-d H:m', strtotime($this->request->getPut("birthday"))));
-            if ($this->request->getPut('male'))
-                $userinfo->setMale($this->request->getPut("male"));
-
-            if ($this->request->getPut('status'))
-                $userinfo->setStatus($this->request->getPut("status"));
-            if ($this->request->getPut('about'))
-                $userinfo->setAbout($this->request->getPut("about"));
-
-            if (!$userinfo->update()) {
-                $errors = [];
-                foreach ($userinfo->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent([
-                'userinfo' => $userinfo,
-            ]);
-
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('User\'s info successfully changed',$userInfo);
     }
 
     /**
@@ -679,21 +559,44 @@ class UserinfoAPIController extends Controller
      */
     public function addImagesAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-
-            $response = new Response();
+        try{
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $result = $this->addImagesHandler($userId);
+            $user = $this->userService->getUserById($userId);
 
-            return $result;
+            //$result = $this->imageService->addImagesToUser($this->request->getUploadedFiles(),$user);
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            $this->db->begin();
 
-            throw $exception;
+            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(),$user);
+
+            $this->imageService->saveImagesToUser($this->request->getUploadedFiles(),$user,$ids);
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+        $this->db->commit();
+
+        return self::successResponse('Images were successfully saved');
     }
 
     /**
@@ -704,9 +607,8 @@ class UserinfoAPIController extends Controller
      * @param $userId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($userId)
+    /*public function addImagesHandler($userId)
     {
-        include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
         if ($this->request->hasFiles()) {
             $files = $this->request->getUploadedFiles();
@@ -812,78 +714,54 @@ class UserinfoAPIController extends Controller
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      * Удаляет картинку из списка фотографий пользователя
      *
      * @method DELETE
      *
-     * @param $imageId integer id изображения
+     * @param $image_id integer id изображения
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageAction($imageId)
+    public function deleteImageAction($image_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
+        try{
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = ImagesUsers::findFirstByImageid($imageId);
+            $image = $this->imageService->getImageById($image_id,ImageService::TYPE_USER);
 
-            if (!$image) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный идентификатор картинки'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if ($image->getUserId() != $userId) {
+                throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
             }
 
-            $user = Users::findFirstByUserid($image->getUserId());
+            $this->imageService->deleteImage($image);
 
-            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $user->getUserId(),
-                    0, 'deleteImage')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_DELETE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$image->delete()) {
-                $errors = [];
-                foreach ($image->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_IMAGE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Image was be successfully deleted');
     }
 
-    public function addUsersAction()
+    /*public function addUsersAction()
     {
         if ($this->request->isPost() && $this->session->get('auth')) {
 
@@ -976,5 +854,5 @@ class UserinfoAPIController extends Controller
 
             throw $exception;
         }
-    }
+    }*/
 }

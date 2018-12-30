@@ -1,85 +1,36 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class ImagesServices extends \Phalcon\Mvc\Model
+class ImagesServices extends ImagesModel
 {
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Identity
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $imageid;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=256, nullable=true)
-     */
-    protected $imagepath;
+    protected $service_id;
 
     const MAX_IMAGES = 10;
 
     /**
-     * Method to set the value of field imageid
-     *
-     * @param integer $imageid
-     * @return $this
-     */
-    public function setImageId($imageid)
-    {
-        $this->imageid = $imageid;
-
-        return $this;
-    }
-
-    /**
      * Method to set the value of field serviceid
      *
-     * @param integer $serviceid
+     * @param integer $service_id
      * @return $this
      */
-    public function setServiceId($serviceid)
+    public function setServiceId($service_id)
     {
-        $this->serviceid = $serviceid;
+        $this->service_id = $service_id;
 
         return $this;
-    }
-
-    /**
-     * Method to set the value of field imagepath
-     *
-     * @param string $imagepath
-     * @return $this
-     */
-    public function setImagePath($imagepath)
-    {
-        $this->imagepath = $imagepath;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field imageid
-     *
-     * @return integer
-     */
-    public function getImageId()
-    {
-        return $this->imageid;
     }
 
     /**
@@ -89,17 +40,7 @@ class ImagesServices extends \Phalcon\Mvc\Model
      */
     public function getServiceId()
     {
-        return $this->serviceid;
-    }
-
-    /**
-     * Returns the value of field imagepath
-     *
-     * @return string
-     */
-    public function getImagePath()
-    {
-        return $this->imagepath;
+        return $this->service_id;
     }
 
     /**
@@ -112,12 +53,12 @@ class ImagesServices extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'serviceid',
+            'service_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $service = Services::findFirstByServiceid($image->getServiceId());
+                        $service = Services::findFirstByServiceId($image->getServiceId());
                         if ($service)
                             return true;
                         return false;
@@ -127,30 +68,7 @@ class ImagesServices extends \Phalcon\Mvc\Model
         );
 
 
-        $validator->add(
-            'imagepath',
-            new Callback(
-                [
-                    "message" => "Формат не поддерживается",
-                    "callback" => function ($image) {
-                        $format = pathinfo($image->getImagePath(), PATHINFO_EXTENSION);
-
-                        if ($format == 'jpeg' || 'jpg')
-                            return true;
-                        elseif ($format == 'png')
-                            return true;
-                        elseif ($format == 'gif')
-                            return true;
-                        else {
-                            return false;
-                        }
-                    }
-                ]
-            )
-        );
-
-
-        return $this->validate($validator);
+        return parent::validation()&&$this->validate($validator);
     }
 
     /**
@@ -158,9 +76,9 @@ class ImagesServices extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("imagesservices");
-        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
+        $this->belongsTo('service_id', '\Services', 'service_id', ['alias' => 'Services']);
     }
 
     /**
@@ -201,15 +119,12 @@ class ImagesServices extends \Phalcon\Mvc\Model
         return $result;
     }
 
-    public function delete($data = null, $whiteList = null)
-    {
-        $path = $this->getImagePath();
-
-        $result = parent::delete($data, $whiteList);
-
-        if ($result && $path != null) {
-            ImageLoader::delete($path);
-        }
-        return $result;
+    /**
+     * return non formatted images objects
+     * @param $serviceId
+     * @return mixed
+     */
+    public static function findImagesForService($serviceId){
+        return self::findByServiceId($serviceId);
     }
 }
