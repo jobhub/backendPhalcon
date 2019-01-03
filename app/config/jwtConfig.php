@@ -1,13 +1,17 @@
 <?php
 // SETUP THE CONFIG
 $authConfig = [
-    'secretKey' => '923753F2317FC1EE5B52DF23951B1',
-    'payload' => [
-            'exp' => 1440,
-            'iss' => 'phalcon-jwt-auth'
-        ],
-     'ignoreUri' => [   
-        ]
+    'public' => [
+        '^public/'
+    ],
+    'access_control' => [
+        ['path' => '^/admin', 'role' => 'ROLE_ADMIN'],
+        ['path' => '^/private', 'role' => 'ROLE_USER'],
+        ['path' => '^/guest', 'role' => 'ROLE_GUEST']
+    ],
+    'roles_inheritance' => [
+        'ROLE_ADMIN' => ['ROLE_USER', 'ROLE_GUEST']
+    ]
 ];
 
 return $authConfig;

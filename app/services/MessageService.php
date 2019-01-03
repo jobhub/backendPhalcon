@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
 use App\Models\Message;
 use App\Models\ChatHistory;
 
@@ -16,7 +18,7 @@ class MessageService extends AbstractService {
     const ERROR_UNABLE_GET_DATA = 11001;
     
     /** Unable to send message */
-    const ERROR_UNABLE_SEND_MSG = 11001;
+    const ERROR_UNABLE_SEND_MSG = 11002;
 
     /**
      * Send message
@@ -26,16 +28,27 @@ class MessageService extends AbstractService {
      */
     public function sendMessage($data) {
         try {
-
-            $chatHitory = $this->privateChatService->getChatHistory($data['sender'], $data['reciever'], true);
+            if(is_null($data["sender"]) || is_null($data["body"])) {
+                throw new Http400Exception(_('Bad request content'), Http500Exception::BAD_REQUEST_CONTENT);
+            }
+            if(!is_null($data["message_id"])){
+                $chatHistory = $this->chatHistoryService->getChat($data['message_id']);
+            }elseif(!is_null($data["user_reciever_id"])){
+                $chatHistory = $this->privateChatService->getChatHistory($data['sender'], $data['user_reciever_id'], true);
+            }else{
+                throw new Http400Exception(_('Bad request content : missing reciever'), Http500Exception::BAD_REQUEST_CONTENT);
+            }
+            if(is_null($chatHistory)){
+                throw new Http400Exception('unable to get service : missing id', self::ERROR_UNABLE_SEND_MSG);
+            }
             $msg = new Message();
-            $msg->setSender($data["sender"])
-                    ->setContent($data["content"])
-                    ->setChatHistId($chatHitory->getId())
+            $msg->setSenderId($data["sender"])
+                    ->setContent($data["body"])
+                    ->setChatHistId($chatHistory->getId())
                     ->setMessageType($data["type"])
                     ->create();
         } catch (\PDOException $e) {
-            throw new ServiceException($e->getMessage(), $e->getCode(), $e, $this->logger);
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return true;
     }
@@ -48,26 +61,24 @@ class MessageService extends AbstractService {
      */
     public function getMessages($data) {
         try {
-
+            if(is_null($data["sender"]) || is_null($data["reciever"])) {
+                throw new Http500Exception(_('Bad request content'), Http500Exception::BAD_REQUEST_CONTENT);
+            }
             $chatHistory = $this->privateChatService->getChatHistory($data['sender'], $data['reciever']);
 
             if (!$chatHistory) {
                 return [];
             }
 
-            $messages = $chatHistory->getRelated('messages', [
-                'order' => 'creationDate ASC',
-                //'limit' => 2,
-                'where' => 'id > 30',
+            $messages = $chatHistory->getRelated('Messages', [
+                'order' => 'create_at ASC',
+                'limit' => 12,
+                //'where' => 'id > 30',
                 'offset' => $data['page'], // offset of result
-                'count' => 'id'
             ]);
             $result = $messages->toArray();
             return $result;
         } catch (\PDOException $e) {
-            $this->logger->critical(
-                    $e->getMessage() . ' ' . $e->getCode()
-            );
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return true;

@@ -290,7 +290,7 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasOne('user_id', 'Userinfo', 'user_id', ['alias' => 'Userinfo']);
+        $this->hasOne('user_id', 'App\Models\Userinfo', 'userid', ['alias' => 'Userinfo']);
         $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
@@ -302,6 +302,10 @@ class Users extends NotDeletedModelWithCascade
     public function getSource()
     {
         return 'users';
+    }
+
+    public function getSequenceName() {
+        return "\"users_userid_seq\"";
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)

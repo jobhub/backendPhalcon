@@ -1,6 +1,84 @@
-[Sat, 29 Dec 18 12:51:18 +0300][CRITICAL] user id = 
-[Sat, 29 Dec 18 12:52:26 +0300][CRITICAL] user id = 
-[Sat, 29 Dec 18 12:52:35 +0300][CRITICAL] user id = 
-[Sat, 29 Dec 18 12:56:12 +0300][CRITICAL] user id = 
-[Sat, 29 Dec 18 12:56:26 +0300][CRITICAL] user id = 
-[Sat, 29 Dec 18 12:56:34 +0300][CRITICAL] user id = 
+[Wed, 02 Jan 19 03:14:26 +0300][CRITICAL] 42 SQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "users_user_id_seq" does not exist
+[Wed, 02 Jan 19 03:16:34 +0300][CRITICAL] 100003 Unable to send email
+[Wed, 02 Jan 19 12:04:27 +0300][CRITICAL] 11002 unable to get service
+[Wed, 02 Jan 19 12:05:40 +0300][CRITICAL] 11002 unable to get service
+[Wed, 02 Jan 19 12:06:02 +0300][CRITICAL] 11002 unable to get service
+[Wed, 02 Jan 19 12:14:27 +0300][CRITICAL] **************** 
+[Wed, 02 Jan 19 12:14:27 +0300][CRITICAL] 11002 unable to get service
+[Wed, 02 Jan 19 12:15:35 +0300][CRITICAL] **************** 
+[Wed, 02 Jan 19 12:16:17 +0300][CRITICAL] 11002 unable to get service : missing id
+[Wed, 02 Jan 19 12:16:39 +0300][CRITICAL] 11002 unable to get service : missing id
+[Wed, 02 Jan 19 12:17:15 +0300][CRITICAL] 11002 unable to get service : missing id
+[Wed, 02 Jan 19 12:55:41 +0300][CRITICAL] 11002 unable to get service : missing id
+[Wed, 02 Jan 19 13:05:26 +0300][CRITICAL] 11002 unable to get service : missing id
+[Wed, 02 Jan 19 13:24:48 +0300][CRITICAL] Création du chathystory 34
+[Wed, 02 Jan 19 13:24:48 +0300][DEBUG] user 316 send message to user 313
+[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 14
+[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 15
+[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 18
+[Wed, 02 Jan 19 13:25:41 +0300][DEBUG] chat id 17
+[Wed, 02 Jan 19 13:47:04 +0300][DEBUG] chat id 17
+[Wed, 02 Jan 19 13:48:25 +0300][DEBUG] chat id 17
+[Wed, 02 Jan 19 14:13:20 +0300][DEBUG] chat id 17
+[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 14
+[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 15
+[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 18
+[Wed, 02 Jan 19 14:16:56 +0300][DEBUG] user 313 send message to user 316
+[Wed, 02 Jan 19 14:17:57 +0300][DEBUG] user 313 send message to user 9
+[Wed, 02 Jan 19 14:18:11 +0300][CRITICAL] Création du chathystory 35
+[Wed, 02 Jan 19 14:18:11 +0300][DEBUG] user 313 send message to user 10
+[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 14
+[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 15
+[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 18
+[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 19
+[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 14
+[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 15
+[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 18
+[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 14
+[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 15
+[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 18
+[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 14:45:59 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 14:46:59 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 15:46:01 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 15:48:22 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 16:16:23 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 16:16:29 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 16:23:26 +0300][DEBUG] chat id 15
+[Thu, 03 Jan 19 16:23:37 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 16:23:47 +0300][DEBUG] chat id 18
+[Thu, 03 Jan 19 16:23:47 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 16:24:16 +0300][DEBUG] chat id 19
+[Thu, 03 Jan 19 16:24:22 +0300][DEBUG] chat id 14
+[Thu, 03 Jan 19 16:24:22 +0300][DEBUG] chat id 18

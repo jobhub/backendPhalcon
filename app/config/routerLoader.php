@@ -13,8 +13,29 @@ $routes = [
                 'action' => 'getUserByAction'
             ], 
             ['type' => 'get', // post; options, get, 
-                'path' => '/chanels/{idUser}',
-                'action' => 'getUserChanelAction'
+                'path' => '/messaging', //get all user discussions
+                'action' => 'getUserPrivateChatAction'
+            ],
+            ['type' => 'get',
+                'path' => '/messaging/spam', //get all spam user discussions
+                'action' => 'getUserSpamPrivateChatAction'
+            ],
+            ['type' => 'get',
+                'path' => '/messaging/hidden', //get all spam user discussions
+                'action' => 'getUserHiddenPrivateChatAction'
+            ]
+        ]
+    ],
+    '\App\Controllers\PrivateChatController' => [
+        'prefix' => '/user',
+        'resources' => [
+            ['type' => 'put',
+                'path' => '/messaging/spam', //toggle hidden user discussions @param messaging_id
+                'action' => 'spamTogglePrivateChatAction'
+            ],
+            ['type' => 'put',
+                'path' => '/messaging/hidden', //toggle hidden user discussions @param messaging_id
+                'action' => 'hiddenTogglePrivateChatAction'
             ]
         ]
     ],

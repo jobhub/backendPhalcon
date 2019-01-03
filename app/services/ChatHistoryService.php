@@ -38,9 +38,10 @@ class ChatHistoryService extends AbstractService {
         }
     }
 
-    public function get($id) {
+    public function getChat($id) {
         $chatHist = ChatHistory::findFirst($id);
-
+        if(!$chatHist)
+            return null;
         return $chatHist;
     }
 
