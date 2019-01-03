@@ -20,6 +20,7 @@ class AccountService extends AbstractService {
     const ADDED_CODE_NUMBER = 1000;
 
     const ERROR_UNABLE_CREATE_ACCOUNT = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_ACCOUNT_DO_NOT_FOUND = 2 + self::ADDED_CODE_NUMBER;
     /**
      * create account
      *
@@ -45,5 +46,13 @@ class AccountService extends AbstractService {
         }
 
         return $account->getId();
+    }
+
+    public function getForUserDefaultAccount($userId){
+        $account = Accounts::findForUserDefaultAccount($userId);
+
+        if(!$account)
+            throw new ServiceException('Account for user don\'t found',self::ERROR_ACCOUNT_DO_NOT_FOUND);
+        return $account;
     }
 }

@@ -74,6 +74,7 @@ $di->setShared('userInfoService', '\App\Services\UserInfoService');
 $di->setShared('resetPasswordService', '\App\Services\ResetPasswordService');
 $di->setShared('categoryService', '\App\Services\CategoryService');
 $di->setShared('imageService', '\App\Services\ImageService');
+$di->setShared('newsService', '\App\Services\NewsService');
 
 $di->setShared(
     "TradePointsAPI",

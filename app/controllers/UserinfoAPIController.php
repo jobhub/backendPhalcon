@@ -758,7 +758,7 @@ class UserinfoAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Image was be successfully deleted');
+        return self::successResponse('Image was successfully deleted');
     }
 
     /*public function addUsersAction()

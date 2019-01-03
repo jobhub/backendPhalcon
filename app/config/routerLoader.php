@@ -367,6 +367,166 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\NewsAPIController'=>[
+        'prefix' => '/news',
+        'resources' => [
+            /**
+             * Возвращает новости для ленты текущего пользователя
+             * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             * @access private
+             *
+             * @method GET
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getNewsAction'
+            ],
+            /**
+             * Возвращает все новости юзера и новости тех, на кого он подписан.
+             * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             *
+             * @access private
+             * @method GET
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/all',
+                'action' => 'getAllNewsAction'
+            ],
+
+            /**
+             * Создает новость компании или пользователя.
+             * Если прикрепить изображения, они будут добавлены к новости.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
+             * @params string news_text
+             * @params string title
+             * @params файлы изображений.
+             * @return string - json array объекта Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addNewsAction'
+            ],
+
+            /**
+             * Удаляет указанную новость
+             *
+             * @method DELETE
+             *
+             * @param $news_id
+             *
+             * @return string - json array объекта Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{news_id}',
+                'action' => 'deleteNewsAction'
+            ],
+
+            /**
+             * Редактирует новость.
+             * Дата устанавливается текущая (на сервере).
+             *
+             * @method PUT
+             *
+             * @params int news_id, string news_text, title
+             *
+             * @return string - json array объекта Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editNewsAction'
+            ],
+
+            /**
+             * Возвращает новости текущего пользователя/указанной компании пользователя.
+             *
+             * @method GET
+             *
+             * @param $companyId
+             *
+             * @return string - json array объектов news или Status, если ошибка
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own',
+                'action' => 'getOwnNewsAction'
+            ],
+
+            /**
+             * Возвращает новости указанного объекта
+             *
+             * @method GET
+             *
+             * @param $id
+             * @param $is_company (Можно не указывать, значение по умолчанию false)
+             *
+             * @return string - json array объектов news или Status, если ошибка
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+
+            /**
+             * Добавляет все прикрепленные изображения к новости. Но суммарно изображений не больше некоторого количества.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params news_id
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/images',
+                'action' => 'addImagesAction'
+            ],
+
+            /**
+             * Удаляет картинку из списка изображений новости
+             * @access private
+             *
+             * @method DELETE
+             *
+             * @param $image_id id изображения
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/image/{image_id}',
+                'action' => 'deleteImageByIdAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

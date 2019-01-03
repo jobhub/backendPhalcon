@@ -13,6 +13,7 @@ use App\Models\ImagesUsers;
 use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
 use App\Models\Users;
+use App\Models\News;
 use function Couchbase\defaultDecoder;
 
 //other
@@ -115,16 +116,49 @@ class ImageService extends AbstractService
     }*/
 
     public function createImagesToUser($files, Users $user){
+        return $this->createImagesToObject($files,$user,self::TYPE_USER);
+    }
+
+    public function createImagesToNews($files, News $news){
+        return $this->createImagesToObject($files,$news,self::TYPE_NEWS);
+    }
+
+    private function createImagesToObject($files, $some_object, $type){
+
+        switch ($type) {
+            case self::TYPE_USER:
+                $id = $some_object->getUserId();
+                $path = 'users';
+                break;
+            case self::TYPE_NEWS:
+                $id = $some_object->getNewsId();
+                $path = 'news';
+                break;
+            case self::TYPE_REVIEW:
+                $id = $some_object->getReviewId();
+                $path = 'reviews';
+                break;
+            case self::TYPE_SERVICE:
+                $id = $some_object->getServiceId();
+                $path = 'services';
+                break;
+            default:
+                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+        }
+
         $imagesIds = [];
         foreach ($files as $file) {
-            $newImage = $this->createImage($user->getUserId(),'magic_string',self::TYPE_USER);
+            $newImage = $this->createImage($id,'magic_string',$type);
 
-            $imagesIds[] = $newImage->getImageId();
+            if($type == self::TYPE_NEWS && $file->getKey() == 'title')
+                $imagesIds[] =  $file->getKey();
+            else
+                $imagesIds[] = $newImage->getImageId();
 
             $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
 
-            $filename = ImageLoader::formFullImageName('users', $imageFormat,
-                $user->getUserId(), $newImage->getImageId());
+            $filename = ImageLoader::formFullImageName($path, $imageFormat,
+                $id, $imagesIds[count($imagesIds)-1]);
 
             $this->changePathToImage($newImage,$filename);
         }
@@ -132,10 +166,36 @@ class ImageService extends AbstractService
     }
 
     public function saveImagesToUser($files, Users $user,array $imagesIds){
+        return $this->saveImagesToObject($files,$user,$imagesIds,self::TYPE_USER);
+    }
+
+    public function saveImagesToNews($files, News $news,array $imagesIds){
+        return $this->saveImagesToObject($files,$news,$imagesIds,self::TYPE_NEWS);
+    }
+
+    private function saveImagesToObject($files, $some_object, array $imagesIds, int $type){
         $i = 0;
         foreach ($files as $file) {
-            $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
-                $user->getUserId(), $imagesIds[$i]);
+            switch ($type) {
+                case self::TYPE_USER:
+                    $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
+                        $some_object->getUserId(), $imagesIds[$i]);
+                    break;
+                case self::TYPE_NEWS:
+                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                        $some_object->getNewsId(), $imagesIds[$i]);
+                    break;
+                case self::TYPE_REVIEW:
+                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                        $some_object->getReviewId(), $imagesIds[$i]);
+                    break;
+                case self::TYPE_SERVICE:
+                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                        $some_object->getServiceId(), $imagesIds[$i]);
+                    break;
+                default:
+                    throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+            }
             $i++;
             if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                 if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {

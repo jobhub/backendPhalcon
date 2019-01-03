@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
@@ -211,9 +213,9 @@ class News extends AccountWithNotDeletedWithCascade
         return $result;
     }
 
-    public static function getNewsForCurrentUser($userId)
+    public static function findNewsForCurrentUser($userId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $str = "SELECT ";
         foreach (News::publicColumns as $column) {
@@ -245,29 +247,38 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function getAllNewsForCurrentUser($userId)
+    public static function findAllNewsForCurrentUser($userId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $str = "SELECT ";
+        $columns ='';
         foreach (News::publicColumns as $column) {
             $str .= $column . ", ";
+            $columns.=$column . ", ";
         }
 
-        $str .= "subjectid, subjecttype";
+        $str .= "account_id";
+        $columns.="account_id";
 
-        $str .= " FROM ((SELECT n.* FROM public.news n INNER JOIN public.\"favoriteCompanies\" favc
-                    ON (n.subjectid = favc.companyid AND n.subjecttype = 1)
-                    WHERE favc.userid = :userId)
+        $str .= " FROM ((SELECT " .$columns." FROM public.news n 
+                    INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
+                    INNER JOIN public.\"favoriteCompanies\" favc ON 
+                                (a.company_id = favc.company_id)
+                    WHERE favc.user_id = :userId)
                     UNION
-                    (SELECT n.* FROM public.news n INNER JOIN public.\"favoriteUsers\" favu
-                    ON (n.subjectid = favu.userobject AND n.subjecttype = 0)
-                    WHERE favu.usersubject = :userId)
+                    (SELECT " .$columns." FROM public.news n 
+                    INNER JOIN public.accounts a ON 
+                    (n.account_id = a.id AND a.company_id is null and n.deleted = false)
+                    INNER JOIN public.\"favoriteUsers\" favu
+                    ON (a.user_id = favu.user_object)
+                    WHERE favu.user_subject = :userId)
                     UNION
-                    (SELECT * FROM public.news 
-                    WHERE subjectid = :userId and subjecttype = 0)
+                    (SELECT " .$columns." FROM public.news n
+                    INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
+                    WHERE a.user_id = :userId and a.company_id is null)
                     ) as foo
-                    ORDER BY foo.publishdate desc";
+                    ORDER BY foo.publish_date desc";
 
         $query = $db->prepare($str);
         $result = $query->execute([
@@ -279,7 +290,7 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function getNewsForAccount($accountId)
+    public static function findNewsByAccount($accountId)
     {
         $news = News::findByAccount($accountId, 'News.publish_date DESC',
             News::publicColumnsInStr . ', account_id');
@@ -287,19 +298,47 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
+    public static function findNewsByCompany($companyId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["n" => "App\Models\News"])
+            ->join('App\Models\Accounts', 'n.account_id = a.id', 'a')
+            ->where('a.company_id = :companyId: and n.deleted = false', ['companyId' => $companyId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleNewsFromArray($result->toArray());
+    }
+
+    public static function findNewsByUser($userId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["n" => "App\Models\News"])
+            ->join('App\Models\Accounts', 'n.account_id = a.id and a.company_id is null', 'a')
+            ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleNewsFromArray($result->toArray());
+    }
+
     private static function handleNewsFromArray(array $news)
     {
         $newsWithAll = [];
         foreach ($news as $newsElement) {
             $newsWithAllElement = $newsElement/*->toArray()*/;
-            if($newsElement->getAccountId()!= null) {
-                $account = Accounts::findFirstByAccountId($newsElement['account_id']);
+            if ($newsElement['account_id']!= null) {
+                $account = Accounts::findFirstById($newsElement['account_id']);
                 if ($account->getCompanyId() == null) {
-                    $user = Userinfo::findUserInfoById($account->getUserId(),Userinfo::shortColumnsInStr);
+                    $user = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
                     $newsWithAllElement['publisherUser'] = $user;
                 } else {
                     $company = Companies::findUserInfoById($account->getCompanyId(),
-                        Companies::shortColumnsInStr);
+                        Companies::shortColumns);
                     $newsWithAllElement['publisherCompany'] = $company;
                 }
             }

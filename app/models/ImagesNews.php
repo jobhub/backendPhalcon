@@ -74,7 +74,7 @@ class ImagesNews extends ImagesModel
     {
         $this->setSchema("public");
         $this->setSource("imagesnews");
-        $this->belongsTo('news_id', '\News', 'news_id', ['alias' => 'News']);
+        $this->belongsTo('news_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
     }
 
     /**
