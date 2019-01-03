@@ -1,10 +1,14 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Callback;
 
-class Services extends SubjectsWithNotDeletedWithCascade
+class Services extends AccountWithNotDeletedWithCascade
 {
     /**
      *
@@ -12,7 +16,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
+    protected $service_id;
 
     /**
      *
@@ -26,28 +30,28 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $datepublication;
+    protected $date_publication;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $pricemin;
+    protected $price_min;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $pricemax;
+    protected $price_max;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionid;
+    protected $region_id;
 
 
     /**
@@ -75,25 +79,25 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $numberofdisplay;
+    protected $number_of_display;
 
     protected $rating;
 
-    const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
-        'regionid', 'name', 'rating'];
+    const publicColumns = ['service_id', 'description', 'date_publication', 'price_min', 'price_max',
+        'region_id', 'name', 'rating'];
 
-    const publicColumnsInStr = 'serviceid, description, datepublication, pricemin, pricemax,
-        regionid, name, rating';
+    const publicColumnsInStr = 'service_id, description, date_publication, price_min, price_max,
+        region_id, name, rating';
 
     /**
      * Method to set the value of field serviceId
      *
-     * @param integer $serviceid
+     * @param integer $service_id
      * @return $this
      */
-    public function setServiceId($serviceid)
+    public function setServiceId($service_id)
     {
-        $this->serviceid = $serviceid;
+        $this->service_id = $service_id;
 
         return $this;
     }
@@ -127,12 +131,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field datePublication
      *
-     * @param string $datepublication
+     * @param string $date_publication
      * @return $this
      */
-    public function setDatePublication($datepublication)
+    public function setDatePublication($date_publication)
     {
-        $this->datepublication = $datepublication;
+        $this->date_publication = $date_publication;
 
         return $this;
     }
@@ -140,12 +144,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field priceMin
      *
-     * @param integer $pricemin
+     * @param integer $price_min
      * @return $this
      */
-    public function setPriceMin($pricemin)
+    public function setPriceMin($price_min)
     {
-        $this->pricemin = $pricemin;
+        $this->price_min = $price_min;
 
         return $this;
     }
@@ -153,12 +157,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field priceMax
      *
-     * @param integer $pricemax
+     * @param integer $price_min
      * @return $this
      */
-    public function setPriceMax($pricemax)
+    public function setPriceMax($price_min)
     {
-        $this->pricemax = $pricemax;
+        $this->price_min = $price_min;
 
         return $this;
     }
@@ -166,12 +170,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionid
+     * @param integer $region_id
      * @return $this
      */
-    public function setRegionId($regionid)
+    public function setRegionId($region_id)
     {
-        $this->regionid = $regionid;
+        $this->region_id = $region_id;
 
         return $this;
     }
@@ -217,7 +221,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function setNumberOfDisplay($numberOfDisplay)
     {
-        $this->numberofdisplay = $numberOfDisplay;
+        $this->number_of_display = $numberOfDisplay;
         return $this;
     }
 
@@ -228,7 +232,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionid;
+        return $this->region_id;
     }
 
     /**
@@ -238,7 +242,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getServiceId()
     {
-        return $this->serviceid;
+        return $this->service_id;
     }
 
     /**
@@ -258,7 +262,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getDatePublication()
     {
-        return $this->datepublication;
+        return $this->date_publication;
     }
 
     /**
@@ -268,7 +272,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getPriceMin()
     {
-        return $this->pricemin;
+        return $this->price_min;
     }
 
     public function getRating()
@@ -283,7 +287,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getPriceMax()
     {
-        return $this->pricemax;
+        return $this->price_max;
     }
 
     /**
@@ -323,7 +327,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getNumberOfDisplay()
     {
-        return $this->numberofdisplay;
+        return $this->number_of_display;
     }
 
     /**
@@ -336,7 +340,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'pricemin',
+            'price_min',
             new Callback(
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
@@ -355,12 +359,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
         );
 
         $validator->add(
-            'regionid',
+            'region_id',
             new Callback(
                 [
                     "message" => "Для услуги должен быть указан регион",
                     "callback" => function ($service) {
-                        $region = Regions::findFirstByRegionid($service->getRegionId());
+                        $region = Regions::findFirstByRegionId($service->getRegionId());
                         if ($region)
                             return true;
                         return false;
@@ -370,7 +374,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
         );
 
         $validator->add(
-            "datepublication",
+            "date_publication",
             new PresenceOf(
                 [
                     "message" => "Не указана дата опубликования услуги",
@@ -416,8 +420,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         if ($delete) {
-            $images = ImagesServices::findByServiceid($this->getServiceId());
-
+            $images = ImagesServices::findByServiceId($this->getServiceId());
             foreach ($images as $image) {
                 if (!$image->delete()) {
                     return false;
@@ -434,10 +437,11 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        parent::initialize();
+        $this->setSchema("public");
         $this->setSource("services");
-        $this->hasMany('serviceid', 'ServicesPoints', 'serviceid', ['alias' => 'ServicesPoints']);
-        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
+        $this->hasMany('service_id', 'App\Models\ServicesPoints', 'service_id', ['alias' => 'ServicesPoints']);
+        $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
     }
 
     /**
@@ -1407,5 +1411,71 @@ class Services extends SubjectsWithNotDeletedWithCascade
         unset($service['deletedcascade']);
         unset($service['numberofdisplay']);
         return $service;
+    }
+
+    public static function findServicesByUserId($userId){
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\Accounts', 'a.id = s.account_id and a.company_id is null', 'a')
+            ->where('a.user_id = :userId: and s.deleted = false', ['userId' => $userId])
+            ->getQuery()
+            ->execute();
+
+        return $result->toArray();
+    }
+
+    public static function handleServiceFromArray(array $services){
+        $servicesAll = [];
+        foreach ($services as $service) {
+            $serviceAll = $service;
+
+            $account = Accounts::findFirstById($service['account_id']);
+
+            if($account){
+                if($account->getCompanyId()!=null){
+                    $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());
+                    $publisher = Companies::findFirst(
+                        ['conditions' => 'companyid = :companyId:',
+                            'columns' => Companies::publicColumnsInStr,
+                            'bind' => ['companyId' => $account->getCompanyId()]])->toArray();
+
+
+                    $phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisherCompany'] = $publisher;
+                } else{
+                    $categories = UsersCategories::getCategoriesByUser($account->getUserId());
+                    $publisher = Userinfo::findFirst(
+                        ['conditions' => 'userid = :userId:',
+                            'columns' => Userinfo::publicColumnsInStr,
+                            'bind' => ['userId' => $account->getUserId()]])->toArray();
+                    $phones = PhonesUsers::getUserPhones($account->getUserId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisherUser'] = $publisher;
+                }
+
+                $serviceAll['categories'] = $categories;
+            }
+
+            $images = ImagesServices::findByServiceId($service['service_id']);
+            $serviceAll['images'] = [];
+            foreach ($images as $image) {
+                $serviceAll['images'][] = $image->getImagePath();
+            }
+
+            $points = Services::getPointsForService($service['service_id']);
+            $serviceAll['point'] = count($points) > 0 ?
+                $points[0] : [];
+
+            $tags = Services::getTagsForService($service['service_id']);
+            $serviceAll['tags'] = count($tags) > 0 ?
+                $tags : [];
+
+            $servicesAll[] = $serviceAll;
+        }
+        return $servicesAll;
     }
 }

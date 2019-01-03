@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 class CompaniesCategories extends \Phalcon\Mvc\Model
 {
 
@@ -9,7 +13,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyid;
+    protected $company_id;
 
     /**
      *
@@ -17,17 +21,17 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryid;
+    protected $category_id;
 
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyid
+     * @param integer $company_id
      * @return $this
      */
-    public function setCompanyId($companyid)
+    public function setCompanyId($company_id)
     {
-        $this->companyid = $companyid;
+        $this->company_id = $company_id;
 
         return $this;
     }
@@ -35,12 +39,12 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryid
+     * @param integer $category_id
      * @return $this
      */
-    public function setCategoryId($categoryid)
+    public function setCategoryId($category_id)
     {
-        $this->categoryid = $categoryid;
+        $this->category_id = $category_id;
 
         return $this;
     }
@@ -52,7 +56,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      */
     public function getCompanyId()
     {
-        return $this->companyid;
+        return $this->company_id;
     }
 
     /**
@@ -62,7 +66,7 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
      */
     public function getCategoryId()
     {
-        return $this->categoryid;
+        return $this->category_id;
     }
 
     /**
@@ -72,6 +76,8 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("companiesCategories");
+        $this->belongsTo('category_id', 'App\Models\Categories', 'category_id', ['alias' => 'Categories']);
+        $this->belongsTo('company_id', 'App\Models\Companies', 'company_id', ['alias' => 'Companies']);
     }
 
     /**
@@ -108,10 +114,10 @@ class CompaniesCategories extends \Phalcon\Mvc\Model
 
     public static function getCategoriesByCompany($companyId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $query = $db->prepare('SELECT c.* FROM categories c INNER JOIN "companiesCategories" c_c  
-            USING(categoryid) where c_c.companyid = :companyId'
+            USING(category_id) where c_c.company_id = :companyId'
         );
 
         $query->execute([

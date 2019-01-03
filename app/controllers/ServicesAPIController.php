@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -8,38 +10,40 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\Services;
+
+use App\Services\ImageService;
+use App\Services\NewsService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Class ServicesAPIController
  * Контроллер для работы с услугами.
  * Содержит методы для поиска услуг, CRUD для услуг.
  * Методы для связывания/отвязывания услуг и точек оказания услуг.
  */
-class ServicesAPIController extends Controller
+class ServicesAPIController extends AbstractController
 {
     /**
      * Возвращает все услуги заданной компании
      *
      * @method GET
      *
-     * @param $subjectId
-     * @param $subjectType
+     * @param $id
+     * @param $is_company
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getServicesForSubjectAction($subjectId, $subjectType)
+    public function getServicesForSubjectAction($id, $is_company)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $services = Services::getServicesForSubject($subjectId, $subjectType);
-            $response->setJsonContent($services);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
+        //return Services::getServicesForSubject($subjectId, $subjectType);
     }
 
     /**
@@ -47,37 +51,30 @@ class ServicesAPIController extends Controller
      *
      * @method GET
      *
-     * @params $companyId - если не указан, то будут возвращены
+     * @params $company_id - если не указан, то будут возвращены
      *
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getOwnServicesAction($companyId = null)
+    public function getOwnServicesAction($company_id = null)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            if($companyId == null){
-                $services = Services::getServicesForSubject($userId, 0);
-            } else{
-                if(!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$companyId,1,'getServices')){
-                    $response->setJsonContent([
-                        'status' => STATUS_WRONG,
-                        'errors' => ['permission denied']
-                    ]);
-                    return $response;
-                }
-                $services = Services::getServicesForSubject($companyId, 1);
-            }
-            $response->setJsonContent($services);
-            return $response;
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        if ($company_id == null) {
+            $services = Services::getServicesForSubject($userId, 0);
         } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $companyId, 1, 'getServices')) {
+                $response->setJsonContent([
+                    'status' => STATUS_WRONG,
+                    'errors' => ['permission denied']
+                ]);
+                return $response;
+            }
+            $services = Services::getServicesForSubject($companyId, 1);
         }
+        $response->setJsonContent($services);
     }
 
     /**
@@ -157,7 +154,7 @@ class ServicesAPIController extends Controller
                 if ($this->request->getPost('type') == 'category') {
                     $categoriesId = $this->request->getPost('id');
 
-                    if(is_array($categoriesId)) {
+                    if (is_array($categoriesId)) {
                         $allCategories = [];
                         foreach ($categoriesId as $categoryId) {
                             $allCategories[] = $categoryId;
@@ -166,7 +163,7 @@ class ServicesAPIController extends Controller
                                 $allCategories[] = $childCategory->getCategoryId();
                             }
                         }
-                    } else{
+                    } else {
                         $allCategories[] = $categoriesId;
                         $childCategories = Categories::findByParentid($categoriesId);
                         foreach ($childCategories as $childCategory) {
@@ -196,7 +193,7 @@ class ServicesAPIController extends Controller
 
                 $categoriesId = $this->request->getPost('categoriesId');
 
-                if(is_array($categoriesId)) {
+                if (is_array($categoriesId)) {
                     $allCategories = [];
                     foreach ($categoriesId as $categoryId) {
                         $allCategories[] = $categoryId;
@@ -205,7 +202,7 @@ class ServicesAPIController extends Controller
                             $allCategories[] = $childCategory->getCategoryId();
                         }
                     }
-                } else{
+                } else {
                     $allCategories[] = $categoriesId;
                     $childCategories = Categories::findByParentid($categoriesId);
                     foreach ($childCategories as $childCategory) {
@@ -233,11 +230,11 @@ class ServicesAPIController extends Controller
                     'services' => $result
                 ]);
                 return $response;
-            } elseif($this->request->getPost('typeQuery') == 5){
+            } elseif ($this->request->getPost('typeQuery') == 5) {
 
                 $categoriesId = $this->request->getPost('categoriesId');
 
-                if(is_array($categoriesId)) {
+                if (is_array($categoriesId)) {
                     $allCategories = [];
                     foreach ($categoriesId as $categoryId) {
                         $allCategories[] = $categoryId;
@@ -246,7 +243,7 @@ class ServicesAPIController extends Controller
                             $allCategories[] = $childCategory->getCategoryId();
                         }
                     }
-                } else{
+                } else {
                     $allCategories[] = $categoriesId;
                     $childCategories = Categories::findByParentid($categoriesId);
                     foreach ($childCategories as $childCategory) {
@@ -256,14 +253,14 @@ class ServicesAPIController extends Controller
 
                 $result = Services::getServicesWithFilters($this->request->getPost('userQuery'),
                     $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'),$categoriesId,$this->request->getPost('priceMin'),
-                    $this->request->getPost('priceMax'),$this->request->getPost('ratingMin'));
+                    $this->request->getPost('regionsId'), $categoriesId, $this->request->getPost('priceMin'),
+                    $this->request->getPost('priceMax'), $this->request->getPost('ratingMin'));
                 $response->setJsonContent([
                     'status' => STATUS_OK,
                     'services' => $result
                 ]);
                 return $response;
-            } elseif($this->request->getPost('typeQuery') == 6){
+            } elseif ($this->request->getPost('typeQuery') == 6) {
                 if (strlen($this->request->getPost('userQuery')) < 3) {
                     $response->setJsonContent([
                         'status' => STATUS_WRONG,
@@ -416,21 +413,21 @@ class ServicesAPIController extends Controller
                 $service->setSubjectType(0);
             }
 
-            if($this->request->getPut("description"))
+            if ($this->request->getPut("description"))
                 $service->setDescription($this->request->getPut("description"));
-            if($this->request->getPut("name"))
+            if ($this->request->getPut("name"))
                 $service->setName($this->request->getPut("name"));
 
             if ($this->request->getPut("price")) {
                 $service->setPriceMin($this->request->getPut("price"));
                 $service->setPriceMax($this->request->getPut("price"));
             } else {
-                if($this->request->getPut("priceMin"))
+                if ($this->request->getPut("priceMin"))
                     $service->setPriceMin($this->request->getPut("priceMin"));
-                if($this->request->getPut("priceMax"))
+                if ($this->request->getPut("priceMax"))
                     $service->setPriceMax($this->request->getPut("priceMax"));
             }
-            if($this->request->getPut("regionId"))
+            if ($this->request->getPut("regionId"))
                 $service->setRegionId($this->request->getPut("regionId"));
 
             $this->db->begin();
@@ -441,15 +438,15 @@ class ServicesAPIController extends Controller
 
             $deletedTags = $this->request->getPut("deletedTags");
 
-            foreach ($deletedTags as $tagId){
+            foreach ($deletedTags as $tagId) {
                 $serviceTag = ServicesTags::findByIds($service->getServiceId(), $tagId);
-                if(!$serviceTag) {
+                if (!$serviceTag) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrorsFromArray(
                         ["Услуга не связана с указанным якобы удаляемым тегом."]);
                 }
 
-                if(!$serviceTag->delete()){
+                if (!$serviceTag->delete()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
@@ -457,11 +454,11 @@ class ServicesAPIController extends Controller
 
             $addedTags = $this->request->getPut("addedTags");
 
-            foreach($addedTags as $tag){
+            foreach ($addedTags as $tag) {
                 $tagObject = new Tags();
                 $tagObject->setTag($tag);
 
-                if(!$tagObject->save()){
+                if (!$tagObject->save()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($tagObject);
                 }
@@ -470,7 +467,7 @@ class ServicesAPIController extends Controller
                 $serviceTag->setServiceId($service->getServiceId());
                 $serviceTag->setTagId($tagObject->getTagId());
 
-                if(!$serviceTag->save()){
+                if (!$serviceTag->save()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
@@ -745,11 +742,11 @@ class ServicesAPIController extends Controller
             //С точками разобрались, теперь надо добавить теги
             $tags = $this->request->getPost("tags");
 
-            foreach($tags as $tag){
+            foreach ($tags as $tag) {
                 $tagObject = new Tags();
                 $tagObject->setTag($tag);
 
-                if(!$tagObject->save()){
+                if (!$tagObject->save()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($tagObject);
                 }
@@ -758,7 +755,7 @@ class ServicesAPIController extends Controller
                 $serviceTag->setServiceId($service->getServiceId());
                 $serviceTag->setTagId($tagObject->getTagId());
 
-                if(!$serviceTag->save()){
+                if (!$serviceTag->save()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($serviceTag);
                 }
@@ -769,10 +766,10 @@ class ServicesAPIController extends Controller
                 $result = $this->addImagesHandler($service->getServiceId());
 
                 $resultContent = json_decode($result->getContent(), true);
-                if($resultContent['status'] != STATUS_OK){
+                if ($resultContent['status'] != STATUS_OK) {
                     //$service->delete(true);
                     $this->db->rollback();
-                } else{
+                } else {
                     $this->db->commit();
                     $resultContent['serviceId'] = $service->getServiceId();
                     $result->setJsonContent($resultContent);

@@ -1,9 +1,21 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+
 class PhonesCompanies extends \Phalcon\Mvc\Model
 {
+    /**
+     *
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    protected $phone_id;
 
     /**
      *
@@ -11,25 +23,17 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $phoneid;
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    protected $companyid;
+    protected $company_id;
 
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneid
+     * @param integer $phone_id
      * @return $this
      */
-    public function setPhoneId($phoneid)
+    public function setPhoneId($phone_id)
     {
-        $this->phoneid = $phoneid;
+        $this->phone_id = $phone_id;
 
         return $this;
     }
@@ -37,12 +41,12 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyid
+     * @param integer $company_id
      * @return $this
      */
-    public function setCompanyId($companyid)
+    public function setCompanyId($company_id)
     {
-        $this->companyid = $companyid;
+        $this->company_id = $company_id;
 
         return $this;
     }
@@ -54,7 +58,7 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneid;
+        return $this->phone_id;
     }
 
     /**
@@ -64,7 +68,7 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
      */
     public function getCompanyId()
     {
-        return $this->companyid;
+        return $this->company_id;
     }
 
     /**
@@ -77,12 +81,12 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'phoneid',
+            'phone_id',
             new Callback(
                 [
                     "message" => "Телефон не был создан",
                     "callback" => function($phoneCompany) {
-                        $phone = Phones::findFirstByPhoneid($phoneCompany->getPhoneId());
+                        $phone = Phones::findFirstByPhoneId($phoneCompany->getPhoneId());
 
                         if($phone)
                             return true;
@@ -93,12 +97,12 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'companyid',
+            'company_id',
             new Callback(
                 [
                     "message" => "Такая компания не существует",
                     "callback" => function($phoneCompany) {
-                        $phone = Companies::findFirstByCompanyid($phoneCompany->getCompanyId());
+                        $phone = Companies::findFirstByCompanyId($phoneCompany->getCompanyId());
 
                         if($phone)
                             return true;
@@ -118,8 +122,8 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("job");
         $this->setSource("phonesCompanies");
-        $this->belongsTo('companyid', '\Companies', 'companyid', ['alias' => 'Companies']);
-        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
+        $this->belongsTo('company_id', 'App\Models\Companies', 'company_id', ['alias' => 'Companies']);
+        $this->belongsTo('phone_id', 'App\Models\Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
     /**
@@ -146,7 +150,7 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
 
     public static function findByIds($companyId, $phoneId)
     {
-        return PhonesCompanies::findFirst(["companyid = :companyId: AND phoneid = :phoneId:",
+        return PhonesCompanies::findFirst(["company_id = :companyId: AND phone_id = :phoneId:",
             'bind' =>
                 ['companyId' => $companyId,
                     'phoneId' => $phoneId
@@ -155,10 +159,10 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
 
     public static function getCompanyPhones($companyId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $query = $db->prepare('SELECT p.phone FROM "phonesCompanies" p_c INNER JOIN phones p ON 
-            (p_c.phoneid = p.phoneid) where p_c.companyid = :companyId'
+            (p_c.phone_id = p.phone_id) where p_c.company_id = :companyId'
         );
 
         $query->execute([

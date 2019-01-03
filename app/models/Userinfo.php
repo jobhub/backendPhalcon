@@ -531,7 +531,6 @@ class Userinfo extends \Phalcon\Mvc\Model
     }
 
     public static function handleUserInfo(Userinfo $userInfo){
-
         $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
         $images = ImagesUsers::getImages($userInfo->getUserId());
 

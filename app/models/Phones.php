@@ -16,7 +16,7 @@ class Phones extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $phoneid;
+    protected $phone_id;
 
     /**
      *
@@ -25,18 +25,18 @@ class Phones extends \Phalcon\Mvc\Model
      */
     protected $phone;
 
-    const publicColumns = ['phoneid', 'phone'];
+    const publicColumns = ['phone_id', 'phone'];
 
 
     /**
      * Method to set the value of field phoneId
      *
-     * @param integer $phoneid
+     * @param integer $phone_id
      * @return $this
      */
-    public function setPhoneId($phoneid)
+    public function setPhoneId($phone_id)
     {
-        $this->phoneid = $phoneid;
+        $this->phone_id = $phone_id;
 
         return $this;
     }
@@ -61,7 +61,7 @@ class Phones extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneid;
+        return $this->phone_id;
     }
 
     /**
@@ -105,8 +105,9 @@ class Phones extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("phones");
-        $this->hasMany('phoneid', 'Phonescompanies', 'phoneid', ['alias' => 'Phonescompanies']);
-        $this->hasMany('phoneid', 'Phonespoints', 'phoneid', ['alias' => 'Phonespoints']);
+        $this->hasMany('phone_id', 'App\Models\PhonesCompanies', 'phone_id', ['alias' => 'PhonesCompanies']);
+        $this->hasMany('phone_id', 'App\Models\PhonesPoints', 'phone_id', ['alias' => 'PhonesPoints']);
+        $this->hasMany('phone_id', 'App\Models\PhonesUsers', 'phone_id', ['alias' => 'PhonesUsers']);
     }
 
 
@@ -119,6 +120,11 @@ class Phones extends \Phalcon\Mvc\Model
     function getSource()
     {
         return 'phones';
+    }
+
+    public function getSequenceName()
+    {
+        return "regions_phoneid_seq";
     }
 
     /**
@@ -205,8 +211,8 @@ class Phones extends \Phalcon\Mvc\Model
      */
     public function countOfReferences(){
         $phonesPoints = PhonesPoints::findByPhoneid($this->getPhoneId());
-        $phonesCompanies = PhonesCompanies::findByPhoneid($this->getPhoneId());
-        $phonesUsers = PhonesUsers::findByPhoneid($this->getPhoneId());
+        $phonesCompanies = PhonesCompanies::findByPhoneId($this->getPhoneId());
+        $phonesUsers = PhonesUsers::findByPhoneId($this->getPhoneId());
 
         return $phonesCompanies->count() + $phonesPoints->count() + $phonesUsers->count();
     }

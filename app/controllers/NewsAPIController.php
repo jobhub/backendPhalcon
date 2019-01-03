@@ -17,13 +17,11 @@ use App\Models\Accounts;
 use App\Services\ImageService;
 use App\Services\NewsService;
 
-
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
-use PHPMailer\PHPMailer\Exception;
 
 /**
  * Контроллер для работы с новостями.

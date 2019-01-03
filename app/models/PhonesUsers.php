@@ -3,6 +3,9 @@
 namespace App\Models;
 use Phalcon\DI\FactoryDefault as DI;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class PhonesUsers extends \Phalcon\Mvc\Model
 {
 
@@ -12,7 +15,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $phoneid;
+    protected $phone_id;
 
     /**
      *
@@ -20,17 +23,17 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      * Method to set the value of field phoneid
      *
-     * @param integer $phoneid
+     * @param integer $phone_id
      * @return $this
      */
-    public function setPhoneId($phoneid)
+    public function setPhoneId($phone_id)
     {
-        $this->phoneid = $phoneid;
+        $this->phone_id = $phone_id;
 
         return $this;
     }
@@ -38,12 +41,12 @@ class PhonesUsers extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -55,7 +58,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneid;
+        return $this->phone_id;
     }
 
     /**
@@ -65,7 +68,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -75,8 +78,8 @@ class PhonesUsers extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("phones_users");
-        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('phone_id', 'App\Models\Phones', 'phone_id', ['alias' => 'Phones']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -89,12 +92,12 @@ class PhonesUsers extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'phoneid',
+            'phone_id',
             new Callback(
                 [
                     "message" => "Телефон не был создан",
                     "callback" => function($phoneUser) {
-                        $phone = Phones::findFirstByPhoneid($phoneUser->getPhoneId());
+                        $phone = Phones::findFirstByPhoneId($phoneUser->getPhoneId());
 
                         if($phone)
                             return true;
@@ -105,12 +108,12 @@ class PhonesUsers extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Такой пользователь не существует",
                     "callback" => function($phoneUser) {
-                        $phone = Users::findFirstByUserid($phoneUser->getUserId());
+                        $phone = Users::findFirstByUserId($phoneUser->getUserId());
 
                         if($phone)
                             return true;
@@ -170,7 +173,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
         $db = DI::getDefault()->getDb();
 
         $query = $db->prepare("SELECT p.phone FROM phones_users p_u INNER JOIN phones p ON 
-            (p_u.phoneid = p.phoneid) where p_u.userid = :userId"
+            (p_u.phone_id = p.phone_id) where p_u.user_id = :userId"
         );
 
         $query->execute([
