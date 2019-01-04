@@ -114,6 +114,7 @@ class SessionAPIController extends Controller
 
         $response->setJsonContent(
             [
+                "user_id"=>$user->getUserId(),
                 "status" => STATUS_OK,
                 'token' => $token,
                 'lifetime' => $lifetime

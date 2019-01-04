@@ -1273,3 +1273,230 @@
 Дата: 2018-12-26 14:34:39 - Сессия есть, роль Moderator
 Дата: 2018-12-26 14:44:44 - Контроллер: index action: index
 Дата: 2018-12-26 14:44:44 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:48:30 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:48:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:48:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:48:31 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:48:31 - Прошел проверку на метод
+Дата: 2018-12-27 16:48:31 - Проверил юзера
+Дата: 2018-12-27 16:48:31 - Дошел до создания сессии
+Дата: 2018-12-27 16:48:31 - testUser5454323@mal.we
+Дата: 2018-12-27 16:48:31 - ID юзера при этом - 401
+Дата: 2018-12-27 16:48:31 - Дошел до отправки кода активации
+Дата: 2018-12-27 16:48:31 - Отправил код активации
+Дата: 2018-12-27 16:49:32 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:49:32 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:49:32 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:49:32 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:49:32 - Прошел проверку на метод
+Дата: 2018-12-27 16:49:32 - Проверил юзера
+Дата: 2018-12-27 16:49:32 - Дошел до создания сессии
+Дата: 2018-12-27 16:49:32 - testUser5454323@mal.we
+Дата: 2018-12-27 16:49:32 - ID юзера при этом - 402
+Дата: 2018-12-27 16:49:32 - Дошел до отправки кода активации
+Дата: 2018-12-27 16:49:32 - Отправил код активации
+Дата: 2018-12-27 16:49:44 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:49:44 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:49:44 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:49:44 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:49:44 - Прошел проверку на метод
+Дата: 2018-12-27 16:49:52 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:49:52 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:49:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:49:52 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:49:52 - Прошел проверку на метод
+Дата: 2018-12-27 16:49:52 - Проверил юзера
+Дата: 2018-12-27 16:49:52 - Дошел до создания сессии
+Дата: 2018-12-27 16:49:52 - testUser987@mal.we
+Дата: 2018-12-27 16:49:52 - ID юзера при этом - 403
+Дата: 2018-12-27 16:49:52 - Дошел до отправки кода активации
+Дата: 2018-12-27 16:49:52 - Отправил код активации
+Дата: 2018-12-27 16:50:02 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:50:02 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:50:02 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:50:02 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:50:02 - Прошел проверку на метод
+Дата: 2018-12-27 16:50:02 - Проверил юзера
+Дата: 2018-12-27 16:50:02 - Дошел до создания сессии
+Дата: 2018-12-27 16:50:02 - test46User987@mal.we
+Дата: 2018-12-27 16:50:02 - ID юзера при этом - 404
+Дата: 2018-12-27 16:50:02 - Дошел до отправки кода активации
+Дата: 2018-12-27 16:50:02 - Отправил код активации
+Дата: 2018-12-27 16:50:07 - Контроллер: register_a_p_i action: index
+Дата: 2018-12-27 16:50:07 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-27 16:50:07 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-27 16:50:07 - Зашел в RegisterAPI
+Дата: 2018-12-27 16:50:07 - Прошел проверку на метод
+Дата: 2018-12-27 16:50:07 - Проверил юзера
+Дата: 2018-12-27 16:50:07 - Дошел до создания сессии
+Дата: 2018-12-27 16:50:07 - test4698User987@mal.we
+Дата: 2018-12-27 16:50:07 - ID юзера при этом - 405
+Дата: 2018-12-27 16:50:07 - Дошел до отправки кода активации
+Дата: 2018-12-27 16:50:07 - Отправил код активации
+Дата: 2018-12-28 11:31:41 - Контроллер: services_a_p_i action: getServices
+Дата: 2018-12-28 11:31:41 - Сессия есть, роль Moderator
+Дата: 2018-12-28 11:32:34 - Контроллер: services_a_p_i action: getServices
+Дата: 2018-12-28 11:32:34 - Сессия есть, роль Moderator
+Дата: 2018-12-28 13:54:01 - Контроллер: services_a_p_i action: getServices
+Дата: 2018-12-28 13:54:01 - Сессия есть, роль Moderator
+Дата: 2018-12-29 12:08:28 - Контроллер: session_a_p_i action: index
+Дата: 2018-12-29 12:08:28 - Не нашел токена в базе, разрушил сессию
+Дата: 2018-12-29 12:08:28 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2018-12-29 12:08:28 - var в SessionAPIController +agggr@mail.ru
+Дата: 2018-12-29 12:08:28 - логин это email
+Дата: 2018-12-29 12:08:28 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2018-12-29 12:08:28 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(201): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2018-12-29 12:08:28 - Контроллер: errors action: show500
+Дата: 2018-12-29 12:08:28 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:21:00 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 11:21:00 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 11:21:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:21:00 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 11:21:00 - логин это email
+Дата: 2019-01-04 11:21:01 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2019-01-04 11:21:01 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(202): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2019-01-04 11:21:01 - Контроллер: errors action: show500
+Дата: 2019-01-04 11:21:01 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:21:41 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 11:22:00 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 11:22:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:22:00 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 11:22:00 - логин это email
+Дата: 2019-01-04 11:22:00 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2019-01-04 11:22:00 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(202): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2019-01-04 11:22:00 - Контроллер: errors action: show500
+Дата: 2019-01-04 11:22:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:22:40 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 11:22:40 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 11:22:40 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:22:40 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 11:22:40 - логин это email
+Дата: 2019-01-04 11:22:40 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2019-01-04 11:22:40 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(202): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2019-01-04 11:22:40 - Контроллер: errors action: show500
+Дата: 2019-01-04 11:22:40 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:23:01 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 11:23:01 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 11:23:01 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:23:01 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 11:23:01 - логин это email
+Дата: 2019-01-04 11:23:01 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2019-01-04 11:23:01 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(202): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2019-01-04 11:23:01 - Контроллер: errors action: show500
+Дата: 2019-01-04 11:23:01 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:23:27 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 11:23:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 11:23:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 11:23:27 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 11:23:27 - логин это email
+Дата: 2019-01-04 11:23:27 - Exception message - Column 'issocial' doesn't belong to any of the selected models (1), when preparing: SELECT [Users].* FROM [Users] WHERE email = :login: AND issocial=false AND deleted != true LIMIT :APL0:
+Дата: 2019-01-04 11:23:27 - Exception trace - #0 [internal function]: Phalcon\Mvc\Model\Query->_getQualified(Array)
+#1 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#2 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#3 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#4 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array, true)
+#5 [internal function]: Phalcon\Mvc\Model\Query->_getExpression(Array)
+#6 [internal function]: Phalcon\Mvc\Model\Query->_prepareSelect()
+#7 [internal function]: Phalcon\Mvc\Model\Query->parse()
+#8 [internal function]: Phalcon\Mvc\Model\Query->execute()
+#9 C:\OpenServer\domains\domain\app\models\NotDeletedModelWithCascade.php(154): Phalcon\Mvc\Model::findFirst(Array)
+#10 C:\OpenServer\domains\domain\app\controllers\api\SessionAPIController.php(202): NotDeletedModelWithCascade::findFirst(Array)
+#11 [internal function]: SessionAPIController->indexAction()
+#12 [internal function]: Phalcon\Dispatcher->callActionMethod(Object(SessionAPIController), 'indexAction', Array)
+#13 [internal function]: Phalcon\Dispatcher->dispatch()
+#14 C:\OpenServer\domains\domain\public\index.php(42): Phalcon\Mvc\Application->handle()
+#15 {main}
+Дата: 2019-01-04 15:02:37 - Контроллер: session_a_p_i action: index
+Дата: 2019-01-04 15:02:38 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 15:02:38 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 15:02:38 - var в SessionAPIController +agggr@mail.ru
+Дата: 2019-01-04 15:02:38 - логин это email
+Дата: 2019-01-04 15:02:38 - Юзер найден в бд
+Дата: 2019-01-04 15:02:38 - agggr@mail.ru
+Дата: 2019-01-04 15:02:38 - ID юзера при этом - 6
+Дата: 2019-01-04 15:03:46 - Контроллер: register_a_p_i action: index
+Дата: 2019-01-04 15:03:46 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-01-04 15:03:46 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-01-04 15:03:46 - Зашел в RegisterAPI
+Дата: 2019-01-04 15:03:46 - Прошел проверку на метод
+Дата: 2019-01-04 15:03:46 - Проверил юзера
+Дата: 2019-01-04 15:03:46 - Дошел до создания сессии
+Дата: 2019-01-04 15:03:46 - testuser@mail.cin
+Дата: 2019-01-04 15:03:46 - ID юзера при этом - 258
+Дата: 2019-01-04 15:03:46 - Дошел до отправки кода активации
+Дата: 2019-01-04 15:03:46 - Отправил код активации

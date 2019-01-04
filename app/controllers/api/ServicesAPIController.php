@@ -488,7 +488,6 @@ class ServicesAPIController extends Controller
                 ]
             );
             return $response;
-
         } else {
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
