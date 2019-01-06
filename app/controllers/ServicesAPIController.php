@@ -28,7 +28,6 @@ use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
-use Pimple\Tests\Service;
 
 /**
  * Class ServicesAPIController
@@ -567,7 +566,7 @@ class ServicesAPIController extends AbstractController
         } catch (ServiceException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
-                case AccountService::ERROR_ACCOUNT_DO_NOT_FOUND:
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                 case ServiceService::ERROR_SERVICE_NOT_FOUND:
                 case TagService::ERROR_TAG_NOT_FOUND:
                 case PointService::ERROR_POINT_NOT_FOUND:

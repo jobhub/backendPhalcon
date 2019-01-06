@@ -778,6 +778,126 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\CompaniesAPIController'=>[
+        'prefix' => '/company',
+        'resources' => [
+            /**
+             * Возвращает компании текущего пользователя
+             *
+             * @param $with_points
+             *
+             * @method GET
+             * @return array - json array компаний
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getCompaniesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{with_points}',
+                'action' => 'getCompaniesAction'
+            ],
+
+            /**
+             * Создает компанию.
+             *
+             * @method POST
+             * @params (Обязательные)name, full_name
+             * @params (необязательные) tin, region_id, website, email, description
+             * @return int company_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addCompanyAction'
+            ],
+
+            /**
+             * Удаляет указанную компанию
+             * @method DELETE
+             *
+             * @param $company_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{company_id}',
+                'action' => 'deleteCompanyAction'
+            ],
+
+            /**
+             * Редактирует данные компании
+             * @method PUT
+             * @params company_id, name, full_name, tin, region_id, website, email, description
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editCompanyAction'
+            ],
+
+            /**
+             * Устанавливает логотип для компании. Сам логотип должен быть передан в файлах. ($_FILES)
+             * @method POST
+             * @params company_id
+             * @return Response
+             */
+            [
+                'type' => 'post',
+                'path' => '/set/logotype',
+                'action' => 'setCompanyLogotypeAction'
+            ],
+
+            /**
+             * Делает указанного пользователя менеджером компании
+             *
+             * @method POST
+             *
+             * @params user_id, company_id
+             *
+             * @return int account_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/manager',
+                'action' => 'setManagerAction'
+            ],
+
+            /**
+             * Удаляет пользователя из менеджеров компании
+             *
+             * @method DELETE
+             *
+             * @param $user_id
+             * @param $company_id
+             *
+             * @return string message. Just message.
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/manager/{company_id}/{user_id}',
+                'action' => 'deleteManagerAction'
+            ],
+
+            /**
+             * Возвращает публичную информацию о компании.
+             * Публичный доступ
+             *
+             * @method GET
+             *
+             * @param $company_id
+             * @return string - json array компаний
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{company_id}',
+                'action' => 'getCompanyInfoAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

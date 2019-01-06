@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+
+
 
 class TradePoints extends AccountWithNotDeletedWithCascade
 {
@@ -436,7 +440,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         return "tradepoints_pointid_seq";
     }
 
-    public static function getServicesForPoint($pointId)
+    public static function findServicesForPoint($pointId)
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
@@ -445,6 +449,42 @@ class TradePoints extends AccountWithNotDeletedWithCascade
             ->join('App\Models\ServicesPoints','s.service_id = sp.service_id','sp')
             ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
             ->where('p.point_id = :pointId:',['pointId'=>$pointId])
+            ->getQuery()
+            ->execute();
+
+        return $result;
+    }
+
+    public static function findPointsByCompany($companyId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $columns = [];
+        foreach (self::publicColumns as $publicColumn) {
+            $columns[] = 'tp.' . $publicColumn;
+        }
+        try {
+            $result = $modelsManager->createBuilder()
+                ->columns($columns)
+                ->from(["tp" => "App\Models\TradePoints"])
+                ->join('App\Models\Accounts', 'tp.account_id = a.id', 'a')
+                ->where('a.company_id = :companyId: and tp.deleted = false', ['companyId' => $companyId])
+                ->getQuery()
+                ->execute();
+        }catch(\Exception $e){
+            echo $e;
+        }
+
+        return $result;
+    }
+
+    public static function findPointsByUser($userId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["tp" => "App\Models\TradePoints"])
+            ->join('App\Models\Accounts', 'tp.account_id = a.id and a.company_id is null', 'a')
+            ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
             ->getQuery()
             ->execute();
 

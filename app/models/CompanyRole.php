@@ -1,9 +1,12 @@
 <?php
 
+namespace App\Models;
+
 class CompanyRole extends \Phalcon\Mvc\Model
 {
 
     const ROLE_OWNER_ID = 1;
+    const ROLE_MANAGER_ID = 2;
 
     /**
      *

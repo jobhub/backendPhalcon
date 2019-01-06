@@ -7,6 +7,7 @@ use App\Libs\SupportClass;
 use App\Libs\ImageLoader;
 
 //models
+use App\Models\Companies;
 use App\Models\ImagesModel;
 use App\Models\ImagesNews;
 use App\Models\ImagesUsers;
@@ -31,6 +32,7 @@ class ImageService extends AbstractService
     const TYPE_NEWS = 1;
     const TYPE_REVIEW = 2;
     const TYPE_SERVICE = 3;
+    const TYPE_COMPANY = 4;
 
     const ADDED_CODE_NUMBER = 7000;
 
@@ -181,6 +183,10 @@ class ImageService extends AbstractService
         return $this->saveImagesToObject($files,$service,$imagesIds,self::TYPE_SERVICE);
     }
 
+    public function saveImagesToCompany($files, Companies $company,array $imagesIds){
+        return $this->saveImagesToObject($files,$company,$imagesIds,self::TYPE_COMPANY);
+    }
+
     private function saveImagesToObject($files, $some_object, array $imagesIds, int $type){
         $i = 0;
         foreach ($files as $file) {
@@ -200,6 +206,10 @@ class ImageService extends AbstractService
                 case self::TYPE_SERVICE:
                     $result = ImageLoader::loadServiceImage($file->getTempName(), $file->getName(),
                         $some_object->getServiceId(), $imagesIds[$i]);
+                    break;
+                case self::TYPE_COMPANY:
+                    $result = ImageLoader::loadCompanyLogotype($file->getTempName(), $file->getName(),
+                        $some_object->getCompanyId(), $imagesIds[$i]);
                     break;
                 default:
                     throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
@@ -290,5 +300,20 @@ class ImageService extends AbstractService
         }
 
         return $image;
+    }
+
+    public function setCompanyLogotype(Companies $company, $file){
+        $this->saveImagesToCompany([$file],$company,[$company->getCompanyId()]);
+
+        $format = pathinfo($file->getName(),PATHINFO_EXTENSION);
+
+        $logotype = ImageLoader::formFullImageName('companies',$format,
+            $company->getCompanyId(),$company->getCompanyId());
+
+        $di = DI::getDefault();
+
+        $di->companyService->changeCompany($company,['logotype'=>$logotype]);
+
+        return $logotype;
     }
 }
