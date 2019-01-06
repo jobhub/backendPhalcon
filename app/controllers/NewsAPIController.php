@@ -341,7 +341,7 @@ class NewsAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Image successfully added to news');
+        return self::successResponse('Image was successfully added to news');
     }
 
     /**

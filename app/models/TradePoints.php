@@ -1,21 +1,22 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class TradePoints extends SubjectsWithNotDeletedWithCascade
+class TradePoints extends AccountWithNotDeletedWithCascade
 {
-
     /**
      *
      * @var integer
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $pointid;
+    protected $point_id;
 
     /**
      *
@@ -64,7 +65,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $usermanager;
+    protected $user_manager;
 
     /**
      *
@@ -85,10 +86,10 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $positionvariable;
+    protected $position_variable;
 
-    const publicColumns = ['pointid','name', 'longitude', 'latitude', 'time',
-        'email', 'usermanager', 'website', 'address', 'positionvariable'];
+    const publicColumns = ['point_id','name', 'longitude', 'latitude', 'time',
+        'email', 'user_manager', 'website', 'address', 'position_variable'];
 
     /**
      * Method to set the value of field pointId
@@ -98,7 +99,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function setPointId($pointid)
     {
-        $this->pointid = $pointid;
+        $this->point_id = $pointid;
 
         return $this;
     }
@@ -189,7 +190,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function setUserManager($usermanager)
     {
-        $this->usermanager = $usermanager;
+        $this->user_manager = $usermanager;
 
         return $this;
     }
@@ -215,7 +216,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function setPositionVariable($positionvariable)
     {
-        $this->positionvariable = $positionvariable;
+        $this->position_variable = $positionvariable;
 
         return $this;
     }
@@ -240,7 +241,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function getPointId()
     {
-        return $this->pointid;
+        return $this->point_id;
     }
 
     /**
@@ -310,7 +311,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function getPositionVariable()
     {
-        return $this->positionvariable;
+        return $this->position_variable;
     }
 
     /**
@@ -320,7 +321,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
      */
     public function getUserManager()
     {
-        return $this->usermanager;
+        return $this->user_manager;
     }
 
     /**
@@ -364,7 +365,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
             );
         if ($this->getWebSite() != null)
             $validator->add(
-                'webSite',
+                'website',
                 new UrlValidator(
                     [
                         'model' => $this,
@@ -375,7 +376,7 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
 
         if ($this->getUserManager() != null) {
             $validator->add(
-                'userManager',
+                'user_manager',
                 new Callback(
                     [
                         "message" => "Такого пользователя не существует",
@@ -416,8 +417,8 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
     public function initialize()
     {
         $this->setSource("tradePoints");
-        $this->hasMany('pointid', 'PhonesPoints', 'pointid', ['alias' => 'PhonesPoints']);
-        $this->belongsTo('usermanager', '\Users', 'userid', ['alias' => 'Users']);
+        $this->hasMany('point_id', 'App\Models\PhonesPoints', 'point_id', ['alias' => 'PhonesPoints']);
+        $this->belongsTo('user_manager', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -430,27 +431,23 @@ class TradePoints extends SubjectsWithNotDeletedWithCascade
         return 'tradePoints';
     }
 
+    public function getSequenceName()
+    {
+        return "tradepoints_pointid_seq";
+    }
+
     public static function getServicesForPoint($pointId)
     {
-        //$db = Phalcon\DI::getDefault()->getDb();
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
-            ->from(["s" => "services"])
-            ->join('servicespoints','s.serviceid = sp.serviceid','sp')
-            ->join('tradepoints', 'sp.pointid = p.pointid', 'p')
-            ->where('p.pointid = :pointId:',['pointId'=>$pointId])
+            ->columns(self::publicColumns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\ServicesPoints','s.service_id = sp.service_id','sp')
+            ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
+            ->where('p.point_id = :pointId:',['pointId'=>$pointId])
             ->getQuery()
             ->execute();
 
         return $result;
-    }
-
-    public function clipToPublic(){
-        $point = $this;
-        $point = json_encode($point);
-        $point = json_decode($point,true);
-        unset($point['deleted']);
-        unset($point['deletedcascade']);
-        return $point;
     }
 }

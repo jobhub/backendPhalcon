@@ -1,9 +1,19 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 class PhonesPoints extends \Phalcon\Mvc\Model
 {
+    /**
+     *
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=11, nullable=false)
+     */
+    protected $phone_id;
 
     /**
      *
@@ -11,15 +21,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=11, nullable=false)
      */
-    protected $phoneid;
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=11, nullable=false)
-     */
-    protected $pointid;
+    protected $point_id;
 
     /**
      * Method to set the value of field phoneId
@@ -29,7 +31,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function setPhoneId($phoneid)
     {
-        $this->phoneid = $phoneid;
+        $this->phone_id = $phoneid;
 
         return $this;
     }
@@ -42,7 +44,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function setPointId($pointid)
     {
-        $this->pointid = $pointid;
+        $this->point_id = $pointid;
 
         return $this;
     }
@@ -54,7 +56,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function getPhoneId()
     {
-        return $this->phoneid;
+        return $this->phone_id;
     }
 
     /**
@@ -64,7 +66,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function getPointId()
     {
-        return $this->pointid;
+        return $this->point_id;
     }
 
     /**
@@ -77,12 +79,12 @@ class PhonesPoints extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'phoneid',
+            'phone_id',
             new Callback(
                 [
                     "message" => "Телефон не был создан",
                     "callback" => function($phoneCompany) {
-                        $phone = Phones::findFirstByPhoneid($phoneCompany->getPhoneId());
+                        $phone = Phones::findFirstByPhoneId($phoneCompany->getPhoneId());
 
                         if($phone)
                             return true;
@@ -93,12 +95,12 @@ class PhonesPoints extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'pointid',
+            'point_id',
             new Callback(
                 [
                     "message" => "Такая точка оказания услуг не существует",
                     "callback" => function($phonePoint) {
-                        $point = TradePoints::findFirstByPointid($phonePoint->getPointId());
+                        $point = TradePoints::findFirstByPointId($phonePoint->getPointId());
 
                         if($point)
                             return true;
@@ -116,10 +118,10 @@ class PhonesPoints extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("job");
+        $this->setSchema("public");
         $this->setSource("phonesPoints");
-        $this->belongsTo('phoneid', '\Phones', 'phoneid', ['alias' => 'Phones']);
-        $this->belongsTo('pointid', '\TradePoints', 'pointid', ['alias' => 'TradePoints']);
+        $this->belongsTo('phone_id', 'App\Models\Phones', 'phone_id', ['alias' => 'Phones']);
+        $this->belongsTo('point_id', 'App\Models\TradePoints', 'point_id', ['alias' => 'TradePoints']);
     }
 
     /**
@@ -156,7 +158,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
 
     public static function findByIds($pointId,$phoneId)
     {
-        return PhonesPoints::findFirst(["pointid = :pointId: AND phoneid = :phoneId:",
+        return PhonesPoints::findFirst(["point_id = :pointId: AND phone_id = :phoneId:",
             'bind' =>
                 ['pointId' => $pointId,
                     'phoneId' => $phoneId
@@ -167,29 +169,29 @@ class PhonesPoints extends \Phalcon\Mvc\Model
     {
         $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
-            ->from(["p" => "Phones"])
-            ->join('PhonesPoints','p.phoneid = pp.phoneid','pp')
-            ->join('TradePoints', 'pp.pointid = tp.pointid', 'tp')
-            ->where('tp.pointid = :pointId:',['pointId'=>$pointId])
+            ->from(["p" => "App\Models\Phones"])
+            ->join('App\Models\PhonesPoints','p.phone_id = pp.phone_id','pp')
+            ->join('App\Models\TradePoints', 'pp.point_id = tp.point_id', 'tp')
+            ->where('tp.point_id = :pointId:',['pointId'=>$pointId])
             ->getQuery()
             ->execute();
 
         if(count($result) == 0){
-            $point = TradePoints::findFirstByPointid($pointId);
-            if($point->getSubjectType() == 1) {
+            $point = TradePoints::findFirstByPointId($pointId);
+            if($point->accounts->getCompanyId()!=null) {
 
                 $result = $modelsManager->createBuilder()
-                    ->from(["p" => "Phones"])
-                    ->join('PhonesCompanies', 'p.phoneid = pc.phoneid', 'pc')
-                    ->join('Companies', 'pc.companyid = c.companyid', 'c')
-                    ->where('c.companyid = :companyId:', ['companyId' => $point->getSubjectId()])
+                    ->from(["p" => "App\Models\Phones"])
+                    ->join('App\Models\PhonesCompanies', 'p.phone_id = pc.phone_id', 'pc')
+                    ->join('App\Models\Companies', 'pc.company_id = c.company_id', 'c')
+                    ->where('c.company_id = :companyId:', ['companyId' => $point->accounts->getCompanyId()])
                     ->getQuery()
                     ->execute();
-            } else if($point->getSubjectType() == 0){
+            } else {
                 $result = $modelsManager->createBuilder()
-                    ->from(["p" => "Phones"])
-                    ->join('Users', 'p.phoneid = u.phoneid', 'u')
-                    ->where('u.userid = :userId:', ['userId' => $point->getSubjectId()])
+                    ->from(["p" => "App\Models\Phones"])
+                    ->join('App\Models\Users', 'p.phone_id = u.phone_id', 'u')
+                    ->where('u.user_id = :userId:', ['userId' => $point->accounts->getUserId()])
                     ->getQuery()
                     ->execute();
             }

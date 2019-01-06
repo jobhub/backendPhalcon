@@ -13,3 +13,15 @@ s
 [Thu, 03 Jan 19 14:29:33 +0300][CRITICAL] 8002 News don't exists
 [Thu, 03 Jan 19 14:30:05 +0300][CRITICAL] 8002 News don't exists
 [Thu, 03 Jan 19 14:31:08 +0300][CRITICAL] 8002 News don't exists
+[Fri, 04 Jan 19 16:04:23 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:05:03 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:05:53 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:07:56 +0300][CRITICAL] 9004 Unable create service
+[Sat, 05 Jan 19 12:33:49 +0300][CRITICAL] 10003 Unable create tag for service
+[Sat, 05 Jan 19 12:34:20 +0300][CRITICAL] 10003 Unable create tag for service
+[Sat, 05 Jan 19 13:41:03 +0300][CRITICAL] 7002 Image not found
+[Sat, 05 Jan 19 13:41:51 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:00 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:05 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:12 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:56:52 +0300][CRITICAL] 10003 Unable create tag for service

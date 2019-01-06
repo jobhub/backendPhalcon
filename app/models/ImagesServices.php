@@ -76,9 +76,10 @@ class ImagesServices extends ImagesModel
      */
     public function initialize()
     {
+        parent::initialize();
         $this->setSchema("public");
         $this->setSource("imagesservices");
-        $this->belongsTo('service_id', '\Services', 'service_id', ['alias' => 'Services']);
+        $this->belongsTo('service_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
     }
 
     /**
@@ -89,6 +90,11 @@ class ImagesServices extends ImagesModel
     public function getSource()
     {
         return 'imagesservices';
+    }
+
+    public function getSequenceName()
+    {
+        return "imagesservices_imageid_seq";
     }
 
     /**

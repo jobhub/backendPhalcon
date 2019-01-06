@@ -1,10 +1,12 @@
 <?php
 
+namespace App\Models;
+
 class Binders
 {
     public static function checkUserHavePermission($userId, $binderId, $binderType, $executor, $right = null)
     {
-        $user = Users::findFirstByUserid($userId);
+        $user = Users::findFirstByUserId($userId);
 
         if (!$user)
             return false;
@@ -12,13 +14,13 @@ class Binders
         if ($binderType == 'task') {
             //связующий объект - заказ (task)
 
-            $task = Tasks::findFirstByTaskid($binderId);
+            $task = Tasks::findFirstByTaskId($binderId);
             if(!$task)
                 return false;
 
             if($executor)
             {
-                $binder = Offers::findFirst(['taskid = :taskId: AND selected = true',
+                $binder = Offers::findFirst(['task_id = :taskId: AND selected = true',
                     'bind' => ['taskId' => $task->getTaskId()]]);
                 if(!$binder){
                     return false;

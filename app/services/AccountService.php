@@ -55,4 +55,12 @@ class AccountService extends AbstractService {
             throw new ServiceException('Account for user don\'t found',self::ERROR_ACCOUNT_DO_NOT_FOUND);
         return $account;
     }
+
+    public function getAccountById($accountId){
+        $account = Accounts::findFirstById($accountId);
+
+        if(!$account)
+            throw new ServiceException('Account for user don\'t found',self::ERROR_ACCOUNT_DO_NOT_FOUND);
+        return $account;
+    }
 }

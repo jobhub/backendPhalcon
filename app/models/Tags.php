@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\StringLength as StringLength;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
@@ -17,7 +19,7 @@ class Tags extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $tagid;
+    protected $tag_id;
 
     /**
      *
@@ -34,7 +36,7 @@ class Tags extends \Phalcon\Mvc\Model
      */
     public function setTagId($tagid)
     {
-        $this->tagid = $tagid;
+        $this->tag_id = $tagid;
 
         return $this;
     }
@@ -59,7 +61,7 @@ class Tags extends \Phalcon\Mvc\Model
      */
     public function getTagId()
     {
-        return $this->tagid;
+        return $this->tag_id;
     }
 
     /**
@@ -93,15 +95,15 @@ class Tags extends \Phalcon\Mvc\Model
             )
         );
 
-        /*$validator->add(
+        $validator->add(
             "tag",
             new AlphaValidator(
                 [
                     "message" => ":field must contain only letters",
                 ]
             )
-        );*/
-        $validator->add(
+        );
+        /*$validator->add(
             'tin',
             new Regex(
                 [
@@ -109,7 +111,7 @@ class Tags extends \Phalcon\Mvc\Model
                     "message" => "Введите корректный ИНН",
                 ]
             )
-        );
+        );*/
 
         $validator->add(
             "tag",
@@ -131,7 +133,7 @@ class Tags extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("tags");
-        $this->hasMany('tagid', 'ServicesTags', 'tagid', ['alias' => 'ServicesTags']);
+        $this->hasMany('tag_id', 'App\Models\ServicesTags', 'tag_id', ['alias' => 'ServicesTags']);
     }
 
     /**
@@ -142,6 +144,11 @@ class Tags extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'tags';
+    }
+
+    public function getSequenceName()
+    {
+        return "tags_tagid_seq";
     }
 
     public function save($data = null, $whiteList = null)

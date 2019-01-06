@@ -52,7 +52,7 @@ class ImageLoader
         }
     }
 
-    public static function loadService($tempname, $name, $serviceId, $imageId)
+    public static function loadServiceImage($tempname, $name, $serviceId, $imageId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
         $filename =  ImageLoader::formImageName($imageFormat,$imageId);
@@ -91,7 +91,7 @@ class ImageLoader
             $filename,$reviewId,750);
     }
 
-    public static function loadNewImage($tempname, $name,$newId,$imageId)
+    public static function loadNewsImage($tempname, $name, $newId, $imageId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
         $filename =  ImageLoader::formImageName($imageFormat,$imageId);

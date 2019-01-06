@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Libs\SupportClass;
 
 use App\Models\FavoriteCategories;
+use App\Models\Categories;
+use App\Models\CompaniesCategories;
+use App\Models\UsersCategories;
 
 /**
  * business logic for users
@@ -20,6 +23,9 @@ class CategoryService extends AbstractService
     const ERROR_UNABlE_SUBSCRIBE = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABlE_CHANGE_RADIUS = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABlE_UNSUBSCRIBE = 5 + self::ADDED_CODE_NUMBER;
+    const ERROR_CATEGORY_NOT_FOUND = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY = 7 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_LINK_CATEGORY_WITH_USER = 8 + self::ADDED_CODE_NUMBER;
 
     public function setFavourite(int $userId, int $categoryId, $radius)
     {
@@ -93,114 +99,52 @@ class CategoryService extends AbstractService
         return true;
     }
 
-    /**
-     * Creating a new user
-     *
-     * @param array $userData
-     * @return Users. If all ok, return Users object
-     */
-    public function createUser(array $userData)
-    {
-        try {
-            $user = new Users();
+    public function linkCompanyWithCategory($categoryId, $companyId){
+        $category = $this->getCategoryById($categoryId);
 
-            if (Phones::isValidPhone($userData['login'])) {
-                $result = $this->phoneService->createPhone($userData['login']);
-                if ($result['status'] != STATUS_OK)
-                    return $result;
+        $companyCategory = new CompaniesCategories();
+        $companyCategory->setCompanyId($companyId);
+        $companyCategory->setCategoryId($category->getCategoryId());
 
-            } else {
-                $user->setEmail($userData['login']);
-            }
-
-            $user->setPassword($userData['password']);
-            $user->setRole(ROLE_GUEST);
-            $user->setIsSocial(false);
-            $user->setActivated(false);
-
-            if ($user->save() == false) {
-                $errors = SupportClass::getArrayWithErrors($user);
-                if (count($errors) > 0)
-                    throw new ServiceExtendedException('unable to create user',
-                        self::ERROR_UNABLE_CREATE_USER, null, null, $errors);
-                else {
-                    throw new ServiceExtendedException('unable to create user',
-                        self::ERROR_UNABLE_CREATE_USER);
-                }
-            }
-        } catch (\PDOException $e) {
-            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        return $user;
-    }
-
-    public function changeUser(Users $user, array $userData)
-    {
-        if (!empty(trim($userData['email']))) {
-            $user->setEmail($userData['email']);
-        }
-
-        if (!empty(trim($userData['phoneId']))) {
-            $user->setPhoneId($userData['phoneId']);
-        }
-
-        if (!empty(trim($userData['role']))) {
-            $user->setRole($userData['role']);
-        }
-
-        if (!empty(trim($userData['password']))) {
-            $user->setPassword($userData['password']);
-        }
-
-        if (!empty(trim($userData['activated']))) {
-            $user->setActivated($userData['activated']);
-        }
-
-        if (!empty(trim($userData['isSocial']))) {
-            $user->setIsSocial($userData['isSocial']);
-        }
-
-        if (!$user->update()) {
-            $errors = SupportClass::getArrayWithErrors($user);
+        if (!$companyCategory->create()) {
+            $errors = SupportClass::getArrayWithErrors($companyCategory);
             if (count($errors) > 0)
-                throw new ServiceExtendedException('Unable to update user',
-                    self::ERROR_UNABLE_CHANGE_USER, null, null, $errors);
+                throw new ServiceExtendedException('Unable to link company with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY, null, null, $errors);
             else {
-                throw new ServiceExtendedException('Unable to update user',
-                    self::ERROR_UNABLE_CHANGE_USER);
+                throw new ServiceExtendedException('Unable to link company with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY);
             }
         }
+        return $companyCategory;
     }
 
-    /**
-     * Delete an existing user
-     *
-     * @param int $userId
-     */
-    public function deleteUser($userId)
-    {
-        try {
-            $user = Users::findFirstByUserid($userId);
+    public function linkUserWithCategory($categoryId, $userId){
+        $category = $this->getCategoryById($categoryId);
 
-            if (!$user) {
-                throw new ServiceException("User not found", self::ERROR_USER_NOT_FOUND);
+        $userCategory = new UsersCategories();
+        $userCategory->setUserId($userId);
+        $userCategory->setCategoryId($category->getCategoryId());
+
+        if (!$userCategory->create()) {
+            $errors = SupportClass::getArrayWithErrors($userCategory);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to link user with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_USER, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to link user with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_USER);
             }
-
-            $result = $user->delete();
-
-            if (!$result) {
-                $errors = SupportClass::getArrayWithErrors($user);
-                if (count($errors) > 0)
-                    throw new ServiceExtendedException('Unable to delete user',
-                        self::ERROR_UNABLE_DELETE_USER, null, null, $errors);
-                else {
-                    throw new ServiceExtendedException('Unable to delete user',
-                        self::ERROR_UNABLE_DELETE_USER);
-                }
-            }
-        } catch (\PDOException $e) {
-            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
+        return $userCategory;
+    }
+
+    public function getCategoryById(int $categoryId){
+        $category = Categories::findFirstByCategoryId($categoryId);
+
+        if (!$category || $category == null) {
+            throw new ServiceException('Category don\'t exists', self::ERROR_CATEGORY_NOT_FOUND);
+        }
+        return $category;
     }
 }

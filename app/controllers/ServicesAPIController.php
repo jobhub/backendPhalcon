@@ -2,6 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Models\Accounts;
+use App\Services\AccountService;
+use App\Services\CategoryService;
+use App\Services\PhoneService;
+use App\Services\PointService;
+use App\Services\ServiceService;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -14,12 +21,14 @@ use App\Models\Services;
 
 use App\Services\ImageService;
 use App\Services\NewsService;
+use App\Services\TagService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
+use Pimple\Tests\Service;
 
 /**
  * Class ServicesAPIController
@@ -43,15 +52,21 @@ class ServicesAPIController extends AbstractController
      */
     public function getServicesForSubjectAction($id, $is_company)
     {
-        //return Services::getServicesForSubject($subjectId, $subjectType);
+        if ($is_company && strtolower($is_company) != "false") {
+            $services = Services::findServicesByCompanyId($id);
+        } else {
+            $services = Services::findServicesByUserId($id);
+        }
+        return $services;
     }
 
     /**
-     * Возвращает все услуги данного юзера (или его компании)
+     * Возвращает все услуги данного юзера (или его компании).
      *
      * @method GET
      *
-     * @params $company_id - если не указан, то будут возвращены
+     * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
+     *        Иначе компании, в которой он должен быть хотя бы менеджером.
      *
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
@@ -63,25 +78,21 @@ class ServicesAPIController extends AbstractController
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
         if ($company_id == null) {
-            $services = Services::getServicesForSubject($userId, 0);
+            $services = Services::findServicesByUserId($userId);
         } else {
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $companyId, 1, 'getServices')) {
-                $response->setJsonContent([
-                    'status' => STATUS_WRONG,
-                    'errors' => ['permission denied']
-                ]);
-                return $response;
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getServices')) {
+                throw new Http403Exception('Permission error');
             }
-            $services = Services::getServicesForSubject($companyId, 1);
+            $services = Services::findServicesByCompanyId($company_id);
         }
-        $response->setJsonContent($services);
+        return $services;
     }
 
     /**
-     * Возвращает услуги. Во-первых, принимает тип запроса в параметре typeQuery:
-     * 0 - принимает строку userQuery, центральную точку для поиска - center => [longitude => ..., latitude =>  ...],
+     * Возвращает услуги. Во-первых, принимает тип запроса в параметре type_query:
+     * 0 - принимает строку user_query, центральную точку для поиска - center => [longitude => ..., latitude =>  ...],
      * крайнюю точку для определения радиуса - diagonal => [longitude => ..., latitude =>  ...],
-     * массив регионов (id-шников) (regionsId). возвращает
+     * массив регионов (id-шников) (regions_id). возвращает
      * список услуг и всего им соответствующего;
      * 1 - запрос на получение элементов интеллектуального поиска. Принимает те же данные, что и в 0-вом запросе.
      * Возвращает массив с типом элемента (строкой - 'company', 'service' и 'category'), id элемента и его названием для отображения в строке
@@ -93,205 +104,141 @@ class ServicesAPIController extends AbstractController
      * 4 - запрос для поиска по области. Центральная точка, крайняя точка, массив регионов, которые попадут в область.
      * Возвращает массив услуг, как везде.
      * 5 - запрос для поиска с фильтрами. Принимает центральную, диагональные точки, массив категорий,
-     * минимальную и максимальную цены (priceMin, priceMax) и минимальный рейтинг (ratingMin)
+     * минимальную и максимальную цены (price_min, price_max) и минимальный рейтинг (rating_min)
      *
      * @access public
      *
      * @method POST
      *
-     * @params int typeQuery (обязательно)
+     * @params int type_query (обязательно)
      * @params array center (необязательно) [longitude, latiitude]
      * @params array diagonal (необязательно) [longitude, latiitude]
      * @params string type (необязательно) 'company', 'service', 'category'.
      * @params int id (необязательно)
-     * @params string userQuery (необязательно)
-     * @params array regionsId (необязательно) массив регионов,
-     * @params array categoriesId (необязательно) массив категорий,
-     * @params priceMin
-     * @params priceMax
-     * @params ratingMin
+     * @params string user_query (необязательно)
+     * @params array regions_id (необязательно) массив регионов,
+     * @params array categories_id (необязательно) массив категорий,
+     * @params price_min
+     * @params price_max
+     * @params rating_min
      *
-     * @return string json массив [status, service, company/userinfo,[categories],[tradepoints],[images]] или
+     * @return string json массив [status, service, company/user_info,[categories],[trade_points],[images]] или
      *   json массив [status, [{type : ..., id : ..., name : ...}, {...}]].
      */
     public function getServicesAction()
     {
-        if ($this->request->isPost() || $this->request->isGet()) {
-            $response = new Response();
-
-            if ($this->request->getPost('typeQuery') == 0) {
-                if (strlen($this->request->getPost('userQuery')) < 3) {
-                    $response->setJsonContent([
-                        'status' => STATUS_WRONG,
-                        'errors' => ['Слишком маленькая длина запроса']
-                    ]);
-                    return $response;
-                }
-
-                $result = Services::getServicesByQuery($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
-
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
-
-            } elseif ($this->request->getPost('typeQuery') == 1) {
-                $results = Services::getAutocompleteByQuery($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'autocomplete' => $results,
-                ]);
-                return $response;
-            } elseif ($this->request->getPost('typeQuery') == 2) {
-
-                if ($this->request->getPost('type') == 'category') {
-                    $categoriesId = $this->request->getPost('id');
-
-                    if (is_array($categoriesId)) {
-                        $allCategories = [];
-                        foreach ($categoriesId as $categoryId) {
-                            $allCategories[] = $categoryId;
-                            $childCategories = Categories::findByParentid($categoryId);
-                            foreach ($childCategories as $childCategory) {
-                                $allCategories[] = $childCategory->getCategoryId();
-                            }
-                        }
-                    } else {
-                        $allCategories[] = $categoriesId;
-                        $childCategories = Categories::findByParentid($categoriesId);
-                        foreach ($childCategories as $childCategory) {
-                            $allCategories[] = $childCategory->getCategoryId();
-                        }
-                    }
-
-                    $result = Services::getServicesByElement($this->request->getPost('type'),
-                        $allCategories,
-                        $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                        $this->request->getPost('regionsId'));
-
-                } else {
-                    $result = Services::getServicesByElement($this->request->getPost('type'),
-                        array($this->request->getPost('id')),
-                        $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                        $this->request->getPost('regionsId'));
-                }
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
-
-            } elseif ($this->request->getPost('typeQuery') == 3) {
-
-                $categoriesId = $this->request->getPost('categoriesId');
-
-                if (is_array($categoriesId)) {
-                    $allCategories = [];
-                    foreach ($categoriesId as $categoryId) {
-                        $allCategories[] = $categoryId;
-                        $childCategories = Categories::findByParentid($categoryId);
-                        foreach ($childCategories as $childCategory) {
-                            $allCategories[] = $childCategory->getCategoryId();
-                        }
-                    }
-                } else {
-                    $allCategories[] = $categoriesId;
-                    $childCategories = Categories::findByParentid($categoriesId);
-                    foreach ($childCategories as $childCategory) {
-                        $allCategories[] = $childCategory->getCategoryId();
-                    }
-                }
-
-                $result = Services::getServicesByElement('category',
-                    $allCategories,
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
-            } elseif ($this->request->getPost('typeQuery') == 4) {
-                $result = Services::getServicesByQuery($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
-            } elseif ($this->request->getPost('typeQuery') == 5) {
-
-                $categoriesId = $this->request->getPost('categoriesId');
-
-                if (is_array($categoriesId)) {
-                    $allCategories = [];
-                    foreach ($categoriesId as $categoryId) {
-                        $allCategories[] = $categoryId;
-                        $childCategories = Categories::findByParentid($categoryId);
-                        foreach ($childCategories as $childCategory) {
-                            $allCategories[] = $childCategory->getCategoryId();
-                        }
-                    }
-                } else {
-                    $allCategories[] = $categoriesId;
-                    $childCategories = Categories::findByParentid($categoriesId);
-                    foreach ($childCategories as $childCategory) {
-                        $allCategories[] = $childCategory->getCategoryId();
-                    }
-                }
-
-                $result = Services::getServicesWithFilters($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'), $categoriesId, $this->request->getPost('priceMin'),
-                    $this->request->getPost('priceMax'), $this->request->getPost('ratingMin'));
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
-            } elseif ($this->request->getPost('typeQuery') == 6) {
-                if (strlen($this->request->getPost('userQuery')) < 3) {
-                    $response->setJsonContent([
-                        'status' => STATUS_WRONG,
-                        'errors' => ['Слишком маленькая длина запроса']
-                    ]);
-                    return $response;
-                }
-
-                $result = Services::getServicesByQueryByTags($this->request->getPost('userQuery'),
-                    $this->request->getPost('center'), $this->request->getPost('diagonal'),
-                    $this->request->getPost('regionsId'));
-
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'services' => $result
-                ]);
-                return $response;
+        $data = json_decode($this->request->getRawBody(), true);
+        if ($data['type_query'] == 0) {
+            if (strlen($data['user_query']) < 3) {
+                $exception = new Http400Exception('Invalid some parameters');
+                throw $exception->addErrorDetails(['user_query' => 'user query must contain at least 3 characters']);
             }
 
-            $response->setJsonContent([
-                'status' => STATUS_WRONG,
-                'errors' => ['Неправильно указан тип запроса']
-            ]);
+            $result['services'] = Services::getServicesByQuery($data['user_query'], $data['center'],
+                $data['diagonal'], $data['regionsId']);
 
-            return $response;
+        } elseif ($data['type_query'] == 1) {
+            $results['autocomplete'] = Services::getAutocompleteByQuery($data['user_query'],
+                $data['center'], $data['diagonal'], $data['regions_id']);
+
+        } elseif ($data['type_query'] == 2) {
+
+            if ($data['type'] == 'category') {
+                $categoriesId = $data['id'];
+
+                if (is_array($categoriesId)) {
+                    $allCategories = [];
+                    foreach ($categoriesId as $categoryId) {
+                        $allCategories[] = $categoryId;
+                        $childCategories = Categories::findByParentid($categoryId);
+                        foreach ($childCategories as $childCategory) {
+                            $allCategories[] = $childCategory->getCategoryId();
+                        }
+                    }
+                } else {
+                    $allCategories[] = $categoriesId;
+                    $childCategories = Categories::findByParentid($categoriesId);
+                    foreach ($childCategories as $childCategory) {
+                        $allCategories[] = $childCategory->getCategoryId();
+                    }
+                }
+
+                $result['services'] = Services::getServicesByElement($data['type'],
+                    $allCategories,
+                    $data['center'], $data['diagonal'], $data['regions_id']);
+
+            } else {
+                $result['services'] = Services::getServicesByElement($data['type'], array($data['id']),
+                    $data['center'], $data['diagonal'], $data['regions_id']);
+            }
+
+        } elseif ($data['type_query'] == 3) {
+            $categoriesId = $data['categories_id'];
+
+            if (is_array($categoriesId)) {
+                $allCategories = [];
+                foreach ($categoriesId as $categoryId) {
+                    $allCategories[] = $categoryId;
+                    $childCategories = Categories::findByParentid($categoryId);
+                    foreach ($childCategories as $childCategory) {
+                        $allCategories[] = $childCategory->getCategoryId();
+                    }
+                }
+            } else {
+                $allCategories[] = $categoriesId;
+                $childCategories = Categories::findByParentid($categoriesId);
+                foreach ($childCategories as $childCategory) {
+                    $allCategories[] = $childCategory->getCategoryId();
+                }
+            }
+
+            $result['services'] = Services::getServicesByElement('category',
+                $allCategories,
+                $data['center'], $data['diagonal'], $data['regions_id']);
+
+        } elseif ($data['type_query'] == 4) {
+            $result['services'] = Services::getServicesByQuery($data['user_query'],
+                $data['center'], $data['diagonal'], $data['regions_id']);
+
+        } elseif ($data['type_query'] == 5) {
+
+            $categoriesId = $data['categories_id'];
+
+            if (is_array($categoriesId)) {
+                $allCategories = [];
+                foreach ($categoriesId as $categoryId) {
+                    $allCategories[] = $categoryId;
+                    $childCategories = Categories::findByParentid($categoryId);
+                    foreach ($childCategories as $childCategory) {
+                        $allCategories[] = $childCategory->getCategoryId();
+                    }
+                }
+            } else {
+                $allCategories[] = $categoriesId;
+                $childCategories = Categories::findByParentid($categoriesId);
+                foreach ($childCategories as $childCategory) {
+                    $allCategories[] = $childCategory->getCategoryId();
+                }
+            }
+
+            $result['services'] = Services::getServicesWithFilters($data['user_query'],
+                $data['center'], $data['diagonal'], $data['regions_id'], $categoriesId, $data['price_min'],
+                $data['price_max'], $data['rating_min']);
+
+        } elseif ($data['type_query'] == 6) {
+            if (strlen($data['user_query']) < 3) {
+                $exception = new Http400Exception('Invalid some parameters');
+                throw $exception->addErrorDetails(['user_query' => 'user query must contain at least 3 characters']);
+            }
+
+            $result['services'] = Services::getServicesByQueryByTags($data['user_query'],
+                $data['center'], $data['diagonal'], $data['regions_id']);
         } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+            $exception = new Http400Exception('Invalid some parameters');
+            throw $exception->addErrorDetails(['type_query' => 'user query must contain at least 3 characters']);
         }
+
+        return self::successResponse('', $result);
     }
 
     /**
@@ -300,64 +247,41 @@ class ServicesAPIController extends AbstractController
      *
      * @method DELETE
      *
-     * @param $serviceId
+     * @param $service_id
      * @return Response - с json массивом в формате Status
      */
-    public function deleteServiceAction($serviceId)
+    public function deleteServiceAction($service_id)
     {
-        if ($this->request->isDelete()) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceid($serviceId);
+            $service = $this->serviceService->getServiceById($service_id);
 
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $service->getAccountId(), 'deleteNews')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'deleteService')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->serviceService->deleteService($service);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_DELETE_SERVICE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$service->delete()) {
-                $errors = [];
-                foreach ($service->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Service was successfully deleted');
     }
 
     /**
@@ -366,126 +290,94 @@ class ServicesAPIController extends AbstractController
      *
      * @method PUT
      *
-     * @params serviceId
+     * @params service_id
      * @params description
      * @params name
-     * @params priceMin, priceMax (или же вместо них просто price)
-     * @params regionId
-     * @params deletedTags - массив int-ов - id удаленных тегов
-     * @params addedTags - массив строк
-     * @params (необязательные) companyId или userId.
+     * @params price_min, price_max (или же вместо них просто price)
+     * @params region_id
+     * @params deleted_tags - массив int-ов - id удаленных тегов
+     * @params added_tags - массив строк
      * @return Response - с json массивом в формате Status
      */
     public function editServiceAction()
     {
-        if ($this->request->isPut() && $this->session->get('auth')) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
+        $data['description'] = $inputData->description;
+        $data['name'] = $inputData->name;
+        $data['price_min'] = $inputData->price_min;
+        $data['price_max'] = $inputData->price_max;
+        $data['price'] = $inputData->price;
+        $data['region_id'] = $inputData->region_id;
+        $data['deleted_tags'] = $inputData->deleted_tags;
+        $data['added_tags'] = $inputData->added_tags;
+
+        try {
+            //validation
+            if (empty(trim($data['service_id']))) {
+                $errors['service_id'] = 'Missing required parameter "service_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
+            $service = $this->serviceService->getServiceById($data['service_id']);
 
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $service->getAccountId(), 'editService')) {
+                throw new Http403Exception('Permission error');
             }
-
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
-            }
-
-            if ($this->request->getPut("companyId")) {
-                $service->setSubjectId($this->request->getPut("companyId"));
-                $service->setSubjectType(1);
-            } else if ($this->request->getPost("userId")) {
-                $service->setSubjectId($this->request->getPut("userId"));
-                $service->setSubjectType(0);
-            }
-
-            if ($this->request->getPut("description"))
-                $service->setDescription($this->request->getPut("description"));
-            if ($this->request->getPut("name"))
-                $service->setName($this->request->getPut("name"));
-
-            if ($this->request->getPut("price")) {
-                $service->setPriceMin($this->request->getPut("price"));
-                $service->setPriceMax($this->request->getPut("price"));
-            } else {
-                if ($this->request->getPut("priceMin"))
-                    $service->setPriceMin($this->request->getPut("priceMin"));
-                if ($this->request->getPut("priceMax"))
-                    $service->setPriceMax($this->request->getPut("priceMax"));
-            }
-            if ($this->request->getPut("regionId"))
-                $service->setRegionId($this->request->getPut("regionId"));
 
             $this->db->begin();
-            if (!$service->save()) {
-                $this->db->rollback();
-                return SupportClass::getResponseWithErrors($service);
+
+
+            if (!empty(trim($data['price']))) {
+                $data['price_min'] = $data['price'];
+                $data['price_max'] = $data['price'];
             }
 
-            $deletedTags = $this->request->getPut("deletedTags");
+            $service = $this->serviceService->changeService($service, $data);
 
-            foreach ($deletedTags as $tagId) {
-                $serviceTag = ServicesTags::findByIds($service->getServiceId(), $tagId);
-                if (!$serviceTag) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrorsFromArray(
-                        ["Услуга не связана с указанным якобы удаляемым тегом."]);
-                }
-
-                if (!$serviceTag->delete()) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrors($serviceTag);
-                }
+            if($data['deleted_tags']!=null)
+            foreach ($data['deleted_tags'] as $tagId) {
+                $serviceTag = $this->tagService->getTagForService($tagId, $service->getServiceId());
+                $this->tagService->deleteTagFromService($serviceTag);
             }
 
-            $addedTags = $this->request->getPut("addedTags");
-
-            foreach ($addedTags as $tag) {
-                $tagObject = new Tags();
-                $tagObject->setTag($tag);
-
-                if (!$tagObject->save()) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrors($tagObject);
-                }
-
-                $serviceTag = new ServicesTags();
-                $serviceTag->setServiceId($service->getServiceId());
-                $serviceTag->setTagId($tagObject->getTagId());
-
-                if (!$serviceTag->save()) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrors($serviceTag);
-                }
+            if($data['added_tags']!=null)
+            foreach ($data['added_tags'] as $tag) {
+                $this->tagService->addTagToService($tag, $service->getServiceId());
             }
 
-            $this->db->commit();
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_CHANGE_SERVICE:
+                case TagService::ERROR_UNABLE_CREATE_TAG:
+                case TagService::ERROR_UNABLE_DELETE_TAG:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                case TagService::ERROR_TAG_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        $this->db->commit();
+        return self::successResponse('Service was successfully changed');
     }
 
     /**
@@ -553,245 +445,143 @@ class ServicesAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params (необязательные) массив oldPoints - массив id tradePoint-ов,
-     * (необязательные) массив newPoints - массив объектов TradePoints
-     * @params (необязательные) companyId, description, name, priceMin, priceMax (или же вместо них просто price)
-     *           (обязательно) regionId,
+     * @params (необязательные) массив old_points - массив id tradePoint-ов,
+     * (необязательные) массив new_points - массив объектов TradePoints
+     * @params (необязательные) account_id, description, name, price_min, price_max (или же вместо них просто price)
+     *           (обязательно) region_id,
      *           (необязательно) longitude, latitude
      *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
      * @params массив строк tags с тегами.
      * @params прикрепленные изображения. Именование роли не играет.
      *
-     * @return string - json array. Если все успешно - [status, serviceId], иначе [status, errors => <массив ошибок>].
+     * @return string - json array. Если все успешно - [status, service_id], иначе [status, errors => <массив ошибок>].
      */
     public function addServiceAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['account_id'] = $inputData->account_id;
+        $data['description'] = $inputData->description;
+        $data['name'] = $inputData->name;
+        $data['price_min'] = $inputData->price_min;
+        $data['price_max'] = $inputData->price_max;
+        $data['price'] = $inputData->price;
+        $data['region_id'] = $inputData->region_id;
+        $data['tags'] = $inputData->tags;
+        $data['old_points'] = $inputData->old_points;
+        $data['new_points'] = $inputData->new_points;
+
+        try {
+            //validation
+            /*if(empty(trim($data['service_id']))) {
+                $errors['service_id'] = 'Missing required parameter "service_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }*/
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $service = new Services();
 
-            if ($this->request->getPost("companyId")) {
-                if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
-                    'addService')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $service->setSubjectId($this->request->getPost("companyId"));
-                $service->setSubjectType(1);
-
-            } else {
-                $service->setSubjectId($userId);
-                $service->setSubjectType(0);
-            }
-            $description = $this->request->getPost("description");
-
-            if ($this->request->getPost("video"))
-                $description .= "\n\rВидео: " . $this->request->getPost("video");
-
-            $service->setDescription($description);
-            $service->setName($this->request->getPost("name"));
-
-            if ($this->request->getPost("price")) {
-                $service->setPriceMin($this->request->getPost("price"));
-                $service->setPriceMax($this->request->getPost("price"));
-            } else {
-                $service->setPriceMin($this->request->getPost("priceMin"));
-                $service->setPriceMax($this->request->getPost("priceMax"));
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $service->setLongitude($this->request->getPost("longitude"));
-            $service->setLatitude($this->request->getPost("latitude"));
-
-            $service->setDatePublication(date('Y-m-d H:i:s'));
-
-            if (!$this->request->getPost("regionId") &&
-                !($this->request->getPost("oldPoints") && count($this->request->getPost("oldPoints")) != 0)
-                && !($this->request->getPost("newPoints") && count($this->request->getPost("newPoints")) != 0)) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Услуга должна быть связана либо с регионом, либо с точками оказания услуг']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $service->setRegionId($this->request->getPost("regionId"));
-            //$service->setRegionId(1);
             $this->db->begin();
 
-            if (!$service->save()) {
-                $this->db->rollback();
-                $errors = [];
-                foreach ($service->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!empty(trim($data['price']))) {
+                $data['price_min'] = $data['price'];
+                $data['price_max'] = $data['price'];
             }
 
-            //
-            if ($this->request->getPost("oldPoints")) {
-                $points = $this->request->getPost("oldPoints");
-                foreach ($points as $point) {
-                    $servicePoint = new ServicesPoints();
-                    $servicePoint->setServiceId($service->getServiceId());
-                    $servicePoint->setPointId($point);
+            $data['date_publication'] = date('Y-m-d H:i:s');
 
-                    if (!$servicePoint->save()) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($servicePoint->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
+            $service = $this->serviceService->createService($data);
+
+            if($data['tags']!=null)
+            foreach ($data['tags'] as $tag) {
+                $this->tagService->addTagToService($tag, $service->getServiceId());
+            }
+
+            if($data['old_points']!=null)
+            foreach ($data['old_points'] as $old_point_id) {
+                $point = $this->pointService->getPointById($old_point_id);
+                $this->pointService->addPointToService($point->getPointId(), $service->getServiceId());
+            }
+
+            if($data['new_points']!=null)
+            foreach ($data['new_points'] as $new_point_info) {
+                $clipped_point_info = $this->pointService->clipDataForCreation($new_point_info);
+                $point = $this->pointService->createPoint($clipped_point_info);
+                $this->pointService->addPointToService($point->getPointId(), $service->getServiceId());
+
+                foreach ($new_point_info['new_phones'] as $phone) {
+                    $this->phoneService->addPhoneToPoint($phone, $point->getPointId());
                 }
             }
 
-            if ($this->request->getPost("newPoints")) {
-                $points = $this->request->getPost("newPoints");
+            $account = $this->accountService->getAccountById($data['account_id']);
 
-                foreach ($points as $point) {
-                    $result = $this->TradePointsAPI->addTradePoint($point);
-                    $result = json_decode($result->getContent());
-
-                    if ($result->status != STATUS_OK) {
-                        $this->db->rollback();
-                        $response->setJsonContent($result);
-                        return $response;
-                    }
-                    foreach ($point->newPhones as $phone) {
-                        $_POST['phone'] = $phone;
-                        $_POST['pointId'] = $result->pointId;
-                        $result2 = $this->PhonesAPI->addPhoneToTradePointAction();
-                        $result2 = json_decode($result2->getContent());
-
-                        if ($result2->status != STATUS_OK) {
-                            $this->db->rollback();
-                            $response->setJsonContent($result2);
-                            return $response;
-                        }
-                    }
-
-                    $servicePoint = new ServicesPoints();
-                    $servicePoint->setServiceId($service->getServiceId());
-                    $servicePoint->setPointId($result->pointId);
-
-                    if (!$servicePoint->save()) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($servicePoint->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
+            if ($account->getCompanyId() == null) {
+                if($data['categories']!=null)
+                foreach ($data['categories'] as $categoryId) {
+                    $this->categoryService->linkUserWithCategory($categoryId, $account->getUserId());
+                }
+            } else {
+                if($data['categories']!=null)
+                foreach ($data['categories'] as $categoryId) {
+                    $this->categoryService->linkCompanyWithCategory($categoryId, $account->getCompanyId());
                 }
             }
 
-            if (!$this->request->getPost("companyId")) {
-                $categories = $this->request->getPost("categories");
-
-                foreach ($categories as $categoryId) {
-                    $userCategory = new UsersCategories();
-                    $userCategory->setUserId($userId);
-                    $userCategory->setCategoryId($categoryId);
-
-                    if (!$userCategory->save()) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($userCategory->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-                }
+            if (count($this->request->getUploadedFiles()) > 0) {
+                $ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(), $service);
+                $this->imageService->saveImagesToNews($this->request->getUploadedFiles(), $service, $ids);
             }
 
-            //С точками разобрались, теперь надо добавить теги
-            $tags = $this->request->getPost("tags");
-
-            foreach ($tags as $tag) {
-                $tagObject = new Tags();
-                $tagObject->setTag($tag);
-
-                if (!$tagObject->save()) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrors($tagObject);
-                }
-
-                $serviceTag = new ServicesTags();
-                $serviceTag->setServiceId($service->getServiceId());
-                $serviceTag->setTagId($tagObject->getTagId());
-
-                if (!$serviceTag->save()) {
-                    $this->db->rollback();
-                    return SupportClass::getResponseWithErrors($serviceTag);
-                }
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_CREATE_SERVICE:
+                case TagService::ERROR_UNABLE_CREATE_TAG:
+                case PointService::ERROR_UNABLE_CREATE_POINT:
+                case PointService::ERROR_UNABLE_ADD_POINT_TO_SERVICE:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_POINT:
+                case CategoryService::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY:
+                case CategoryService::ERROR_UNABlE_LINK_CATEGORY_WITH_USER:
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            //Добавление изображений
-            if ($this->request->hasFiles()) {
-                $result = $this->addImagesHandler($service->getServiceId());
-
-                $resultContent = json_decode($result->getContent(), true);
-                if ($resultContent['status'] != STATUS_OK) {
-                    //$service->delete(true);
-                    $this->db->rollback();
-                } else {
-                    $this->db->commit();
-                    $resultContent['serviceId'] = $service->getServiceId();
-                    $result->setJsonContent($resultContent);
-                }
-                return $result;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_DO_NOT_FOUND:
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                case TagService::ERROR_TAG_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                case CategoryService::ERROR_CATEGORY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $this->db->commit();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    'serviceId' => $service->getServiceId()
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        $this->db->commit();
+        return self::successResponse('Service was successfully created',['service_id'=>$service->getServiceId()]);
     }
 
     /**
@@ -799,50 +589,59 @@ class ServicesAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params (обязательно) serviceId
+     * @params (обязательно) service_id
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addImagesAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        try {
+            /*$sender = $this->request->getJsonRawBody();
 
-            $response = new Response();
+            $data['news_id'] = $sender->news_id;*/
+
+            $data['service_id'] = $this->request->getPost('service_id');
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceid($this->request->getPost('serviceId'));
+            $service = $this->serviceService->getServiceById($data['service_id']);
 
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный идентификатор услуги'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $service->getAccountId(), 'editService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
-                $service->getSubjectType(), 'editService')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $this->db->begin();
+
+            $ids = $this->imageService->createImagesToService($this->request->getUploadedFiles(), $service);
+
+            $this->imageService->saveImagesToService($this->request->getUploadedFiles(), $service, $ids);
+
+            $this->db->commit();
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $result = $this->addImagesHandler($service->getServiceId());
-
-            return $result;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Image was successfully added to service');
     }
 
     /**
@@ -850,69 +649,44 @@ class ServicesAPIController extends AbstractController
      *
      * @method DELETE
      *
-     * @param $imageId integer id изображения
+     * @param $image_id integer id изображения
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageAction($imageId)
+    public function deleteImageAction($image_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = ImagesServices::findFirstByImageid($imageId);
+            $image = $this->imageService->getImageById($image_id, ImageService::TYPE_SERVICE);
 
-            if (!$image) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный идентификатор картинки'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $image->Services->getAccountId(), 'editService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $service = Services::findFirstByServiceid($image->getServiceId());
+            $this->imageService->deleteImage($image);
 
-            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
-                    $service->getSubjectType(), 'editService')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_DELETE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$image->delete()) {
-                $errors = [];
-                foreach ($image->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_IMAGE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Image was successfully deleted');
     }
 
     /**
@@ -925,7 +699,7 @@ class ServicesAPIController extends AbstractController
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageByNameAction($serviceId, $imageName)
+    /*public function deleteImageByNameAction($serviceId, $imageName)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
 
@@ -985,78 +759,63 @@ class ServicesAPIController extends AbstractController
 
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Связывает услугу с точкой оказания услуг
      *
      * @method POST
      *
-     * @params (обязательные) serviceId, pointId
+     * @params (обязательные) service_id, point_id
      *
      * @return string - json array в формате Status - результат операции
      */
     public function linkServiceWithPointAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
+        $data['point_id'] = $inputData->point_id;
 
-            $response = new Response();
+        try {
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceid($this->request->getPost("serviceId"));
+            $service = $this->serviceService->getServiceById($data['service_id']);
 
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
+            $point = $this->pointService->getPointById($data['point_id']);
+
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'changeService')
+                || !Accounts::checkUserHavePermission($userId, $service->AccountId(), 'changeService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
-                'linkServiceWithPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->pointService->addPointToService($point->getPointId(), $service->getServiceId());
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_ADD_POINT_TO_SERVICE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $servicePoint = new ServicesPoints();
-            $servicePoint->setPointId($this->request->getPost("pointId"));
-            $servicePoint->setServiceId($this->request->getPost("serviceId"));
-
-            if (!$servicePoint->save()) {
-                $errors = [];
-                foreach ($servicePoint->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        $this->db->commit();
+        return self::successResponse('All ok');
     }
 
     /**
@@ -1064,79 +823,57 @@ class ServicesAPIController extends AbstractController
      *
      * @method DELETE
      *
-     * @param $serviceId
-     * @param $pointId
+     * @param $service_id
+     * @param $point_id
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function unlinkServiceAndPointAction($serviceId, $pointId)
+    public function unlinkServiceAndPointAction($service_id, $point_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $service_id;
+        $data['point_id'] = $point_id;
+
+        try {
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $service = Services::findFirstByServiceid($serviceId);
+            $service = $this->serviceService->getServiceById($data['service_id']);
 
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
+            $point = $this->pointService->getPointById($data['point_id']);
+
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'changeService')
+                || !Accounts::checkUserHavePermission($userId, $service->AccountId(), 'changeService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(),
-                'unlinkServiceWithPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->pointService->deletePointFromService($point->getPointId(), $service->getServiceId());
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_DELETE_POINT_FROM_SERVICE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $servicePoint = ServicesPoints::findByIds($serviceId, $pointId);
-
-            if (!$servicePoint) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Услуга не связана с точкой оказания услуг']
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$servicePoint->delete()) {
-                $errors = [];
-                foreach ($servicePoint->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
-            }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        $this->db->commit();
+        return self::successResponse('All ok');
     }
 
     /**
@@ -1288,8 +1025,7 @@ class ServicesAPIController extends AbstractController
      *
      * @return string - json array в формате Status
      */
-    public
-    function rejectRequestAction()
+    public function rejectRequestAction()
     {
         if ($this->request->isPut() && $this->session->get('auth')) {
             $response = new Response();
@@ -1469,7 +1205,7 @@ class ServicesAPIController extends AbstractController
      * @param $serviceId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($serviceId)
+    /*public function addImagesHandler($serviceId)
     {
         include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
@@ -1578,59 +1314,61 @@ class ServicesAPIController extends AbstractController
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      * Увеличивает на 1 счетчик числа просмотров услуги.
      * @method PUT
-     * @params $serviceId
+     * @params service_id
      * @return string - json array в формате Status
      */
-    public
-    function incrementNumberOfDisplayForServiceAction()
+    public function incrementNumberOfDisplayForServiceAction()
     {
-        if ($this->request->isPut()) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
 
-            $service = Services::findFirstByServiceid($this->request->getPut("serviceId"));
-
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
+        try {
+            //validation
+            if (empty(trim($data['service_id']))) {
+                $errors['service_id'] = 'Missing required parameter "service_id"';
             }
 
-            $service->setNumberOfDisplay($service->getNumberOfDisplay() + 1);
-
-            if (!$service->update()) {
-                $errors = [];
-                foreach ($service->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
+            $auth = $this->session->get('auth');
+            $userId = $auth['id'];
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $service = $this->serviceService->getServiceById($data['service_id']);
+
+            if (!Accounts::checkUserHavePermission($userId, $service->getAccountId(), 'editService')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $this->serviceService->changeService($service,
+                ['number_of_display' => $service->getNumberOfDisplay() + 1]);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_CHANGE_SERVICE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Service was successfully changed');
     }
 
     /**
@@ -1639,42 +1377,29 @@ class ServicesAPIController extends AbstractController
      *
      * @method GET
      *
-     * @param $serviceId
+     * @param $service_id
      * @return string - json array tasks
      */
-    public
-    function getTasksForService($serviceId)
+    public function getTasksForService($service_id)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $service = Services::findFirstByServiceid($serviceId);
 
-            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
-                    $service->getSubjectType(), 'getTasksForSubject')) {
+            $service = $this->serviceService->getServiceById($service_id);
 
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $service->getAccountId(), 'getTasksForService')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $result = Services::getTasksForService($serviceId);
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'services' => $result
-            ]);
-
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+            return Services::getTasksForService($service_id);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 
@@ -1684,117 +1409,89 @@ class ServicesAPIController extends AbstractController
      *
      * @method GET
      *
-     * @param $serviceId
+     * @param $service_id
      *
      * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
      */
-    public
-    function getServiceInfoAction($serviceId)
+    public function getServiceInfoAction($service_id)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
+        $service = Services::findServiceById($service_id);
 
-            $service = Services::findFirstByServiceid($serviceId);
-
-            if (!$service) {
-                $response->setJsonContent([
-                    'status' => STATUS_WRONG,
-                    'errors' => ['Услуга не существует']
-                ]);
-
-                return $response;
-            }
-
-            $service = $service->clipToPublic();
-
-            $points = Services::getPointsForService($serviceId);
-
-            $images = ImagesServices::findByServiceid($serviceId);
-
-            $points2 = [];
-            foreach ($points as $point) {
-                $points2[] = ['point' => $point,
-                    'phones' => PhonesPoints::getPhonesForPoint($point['pointid'])];
-            }
-
-            $reviews = Reviews::getReviewsForService2($serviceId, 2);
-
-            //$reviews = Reviews::getReviewsForService2($serviceId);
-
-            $reviews2_ar = [];
-            foreach ($reviews as $review) {
-                $reviews2['review'] = json_decode($review['review'], true);
-
-                unset($reviews2['review']['deleted']);
-                unset($reviews2['review']['deletedcascade']);
-                unset($reviews2['review']['fake']);
-                unset($reviews2['review']['subjectid']);
-                unset($reviews2['review']['subjecttype']);
-                unset($reviews2['review']['objectid']);
-                unset($reviews2['review']['objecttype']);
-
-                unset($reviews2['review']['userid']);
-                $subject = json_decode($review['subject'], true);
-                if (isset($subject['reviewid'])) {
-                    $userinfo = new Userinfo();
-                    $userinfo->setFirstname($reviews2['review']['fakename']);
-                    //$reviews2['userinfo'] = $userinfo;
-                    $reviews2['userinfo']['firstname'] = $userinfo->getFirstname();
-                    $reviews2['userinfo']['lastname'] = $userinfo->getLastname();
-                    $reviews2['userinfo']['pathtophoto'] = $userinfo->getPathToPhoto();
-                    $reviews2['userinfo']['userid'] = $userinfo->getUserId();
-                } else if (isset($subject['companyid'])) {
-                    //$reviews2['company'] = $subject;
-                    /*unset($reviews2['company']['deleted']);
-                    unset($reviews2['company']['deletedcascade']);
-                    unset($reviews2['company']['ismaster']);
-                    unset($reviews2['company']['yandexMapPages']);*/
-
-                    $reviews2['company']['name'] = $subject['name'];
-                    $reviews2['company']['fullname'] = $subject['fullname'];
-                    $reviews2['company']['logotype'] = $subject['logotype'];
-                    $reviews2['company']['companyid'] = $subject['companyid'];
-                } else {
-                    //$reviews2['userinfo'] = $subject;
-                    $reviews2['userinfo']['firstname'] = $subject['firstname'];
-                    $reviews2['userinfo']['lastname'] = $subject['lastname'];
-                    $reviews2['userinfo']['pathtophoto'] = $subject['pathtophoto'];
-                    $reviews2['userinfo']['userid'] = $subject['userid'];
-                }
-                unset($reviews2['review']['fakename']);
-
-                $reviews2_ar[] = $reviews2;
-            }
-
-            if ($service['subjecttype'] == 1) {
-                $str = 'company';
-                $binder = Companies::findFirstByCompanyid($service['subjectid']);
-            } else {
-                $str = 'user';
-                $binder = Userinfo::findFirstByUserid($service['subjectid']);
-            }
-            //test
-            /*$str = 'user';
-            $binder = Userinfo::findFirstByUserid(6);*/
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'service' => $service,
-                'points' => $points2,
-                'images' => $images,
-                'reviews' => $reviews2_ar,
-                $str => $binder
-            ]);
-
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        if (!$service) {
+            throw new Http400Exception('Service not found', ServiceService::ERROR_SERVICE_NOT_FOUND);
         }
+
+        return Services::handleServiceFromArray([$service]);
+        //$reviews = Reviews::getReviewsForService2($service_id, 2);
+
+        //$reviews = Reviews::getReviewsForService2($serviceId);
+
+        $reviews2_ar = [];
+        foreach ($reviews as $review) {
+            $reviews2['review'] = json_decode($review['review'], true);
+
+            unset($reviews2['review']['deleted']);
+            unset($reviews2['review']['deletedcascade']);
+            unset($reviews2['review']['fake']);
+            unset($reviews2['review']['subjectid']);
+            unset($reviews2['review']['subjecttype']);
+            unset($reviews2['review']['objectid']);
+            unset($reviews2['review']['objecttype']);
+
+            unset($reviews2['review']['userid']);
+            $subject = json_decode($review['subject'], true);
+            if (isset($subject['reviewid'])) {
+                $userinfo = new Userinfo();
+                $userinfo->setFirstname($reviews2['review']['fakename']);
+                //$reviews2['userinfo'] = $userinfo;
+                $reviews2['userinfo']['firstname'] = $userinfo->getFirstname();
+                $reviews2['userinfo']['lastname'] = $userinfo->getLastname();
+                $reviews2['userinfo']['pathtophoto'] = $userinfo->getPathToPhoto();
+                $reviews2['userinfo']['userid'] = $userinfo->getUserId();
+            } else if (isset($subject['companyid'])) {
+                //$reviews2['company'] = $subject;
+                /*unset($reviews2['company']['deleted']);
+                unset($reviews2['company']['deletedcascade']);
+                unset($reviews2['company']['ismaster']);
+                unset($reviews2['company']['yandexMapPages']);*/
+
+                $reviews2['company']['name'] = $subject['name'];
+                $reviews2['company']['fullname'] = $subject['fullname'];
+                $reviews2['company']['logotype'] = $subject['logotype'];
+                $reviews2['company']['companyid'] = $subject['companyid'];
+            } else {
+                //$reviews2['userinfo'] = $subject;
+                $reviews2['userinfo']['firstname'] = $subject['firstname'];
+                $reviews2['userinfo']['lastname'] = $subject['lastname'];
+                $reviews2['userinfo']['pathtophoto'] = $subject['pathtophoto'];
+                $reviews2['userinfo']['userid'] = $subject['userid'];
+            }
+            unset($reviews2['review']['fakename']);
+
+            $reviews2_ar[] = $reviews2;
+        }
+
+        if ($service['subjecttype'] == 1) {
+            $str = 'company';
+            $binder = Companies::findFirstByCompanyid($service['subjectid']);
+        } else {
+            $str = 'user';
+            $binder = Userinfo::findFirstByUserid($service['subjectid']);
+        }
+
+        $response->setJsonContent([
+            'status' => STATUS_OK,
+            'service' => $service,
+            'points' => $points2,
+            'images' => $images,
+            'reviews' => $reviews2_ar,
+            $str => $binder
+        ]);
+
+        return $response;
     }
 
-    public
+    /*public
     function addImagesToAllServicesAction()
     {
         if ($this->request->isPost()) {
@@ -1874,5 +1571,5 @@ class ServicesAPIController extends AbstractController
 
             throw $exception;
         }
-    }
+    }*/
 }

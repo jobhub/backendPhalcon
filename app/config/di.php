@@ -75,33 +75,10 @@ $di->setShared('resetPasswordService', '\App\Services\ResetPasswordService');
 $di->setShared('categoryService', '\App\Services\CategoryService');
 $di->setShared('imageService', '\App\Services\ImageService');
 $di->setShared('newsService', '\App\Services\NewsService');
+$di->setShared('serviceService', '\App\Services\ServiceService');
+$di->setShared('tagService', '\App\Services\TagService');
+$di->setShared('pointService', '\App\Services\PointService');
 
-$di->setShared(
-    "TradePointsAPI",
-    function () {
-        $tradePointsAPI = new TradePointsAPIController();
-
-        return $tradePointsAPI;
-    }
-);
-
-$di->setShared(
-    "CompaniesAPI",
-    function () {
-        $companiesAPI = new CompaniesAPIController();
-
-        return $companiesAPI;
-    }
-);
-
-$di->setShared(
-    "ContactDetailsCompanyCompanyAPI",
-    function () {
-        $contactDetailsAPI = new ContactDetailsCompanyAPIController();
-
-        return $contactDetailsAPI;
-    }
-);
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];

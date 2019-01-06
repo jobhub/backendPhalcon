@@ -14,7 +14,7 @@ use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
 use App\Models\Users;
 use App\Models\News;
-use function Couchbase\defaultDecoder;
+use App\Models\Services;
 
 //other
 use Phalcon\DI\FactoryDefault as DI;
@@ -123,6 +123,10 @@ class ImageService extends AbstractService
         return $this->createImagesToObject($files,$news,self::TYPE_NEWS);
     }
 
+    public function createImagesToService($files, Services $service){
+        return $this->createImagesToObject($files,$service,self::TYPE_SERVICE);
+    }
+
     private function createImagesToObject($files, $some_object, $type){
 
         switch ($type) {
@@ -173,6 +177,10 @@ class ImageService extends AbstractService
         return $this->saveImagesToObject($files,$news,$imagesIds,self::TYPE_NEWS);
     }
 
+    public function saveImagesToService($files, Services $service,array $imagesIds){
+        return $this->saveImagesToObject($files,$service,$imagesIds,self::TYPE_SERVICE);
+    }
+
     private function saveImagesToObject($files, $some_object, array $imagesIds, int $type){
         $i = 0;
         foreach ($files as $file) {
@@ -182,15 +190,15 @@ class ImageService extends AbstractService
                         $some_object->getUserId(), $imagesIds[$i]);
                     break;
                 case self::TYPE_NEWS:
-                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                    $result = ImageLoader::loadNewsImage($file->getTempName(), $file->getName(),
                         $some_object->getNewsId(), $imagesIds[$i]);
                     break;
                 case self::TYPE_REVIEW:
-                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                    $result = ImageLoader::loadReviewImage($file->getTempName(), $file->getName(),
                         $some_object->getReviewId(), $imagesIds[$i]);
                     break;
                 case self::TYPE_SERVICE:
-                    $result = ImageLoader::loadNewImage($file->getTempName(), $file->getName(),
+                    $result = ImageLoader::loadServiceImage($file->getTempName(), $file->getName(),
                         $some_object->getServiceId(), $imagesIds[$i]);
                     break;
                 default:

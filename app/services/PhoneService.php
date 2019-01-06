@@ -4,6 +4,9 @@ namespace App\Services;
 
 //Models
 use App\Models\Phones;
+use App\Models\PhonesPoints;
+
+use App\Libs\SupportClass;
 
 /**
  * business and other logic for authentication. Maybe just creation simple objects.
@@ -12,12 +15,15 @@ use App\Models\Phones;
  */
 class PhoneService extends AbstractService {
 
-    //const ERROR_UNABLE_CREATE_PHONE = 11001;
+    const ADDED_CODE_NUMBER = 12000;
+
+    const ERROR_UNABLE_CREATE_PHONE = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_ADD_PHONE_TO_POINT = 2 + + self::ADDED_CODE_NUMBER;
     /**
      * Create phone if it don't exists.
      *
      * @param $phone
-     * @return array. If all ok - return id of new (or old) phone. Else return array of the errors.
+     * @return Phones. If all ok - return id of new (or old) phone. Else return array of the errors.
      */
     public function createPhone($phone)
     {
@@ -26,20 +32,37 @@ class PhoneService extends AbstractService {
         $phoneObject->setPhone($phone);
 
         if ($phoneObject->save() == false) {
-            $this->db->rollback();
-            $errors = [];
-            foreach ($phoneObject->getMessages() as $message) {
-                $errors[] = $message->getMessage();
+            $errors = SupportClass::getArrayWithErrors($phoneObject);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable add phone',
+                    self::ERROR_UNABLE_CREATE_PHONE, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable add phone',
+                    self::ERROR_UNABLE_CREATE_PHONE);
             }
-            return
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => $errors
-                ];
         }
-        return [
-            'status' => STATUS_OK,
-            'data' => $phoneObject->getPhoneId()
-            ];
+        return $phoneObject;
+    }
+
+    public function addPhoneToPoint(string $phone, int $pointId)
+    {
+        $phoneObject = $this->createPhone($phone);
+
+        $phonePoint = new PhonesPoints();
+        $phonePoint->setPhoneId($phoneObject->getPhoneId());
+        $phonePoint->setPointId($pointId);
+
+        if (!$phonePoint->create()) {
+            $errors = SupportClass::getArrayWithErrors($phonePoint);
+            if(count($errors)>0)
+                throw new ServiceExtendedException('Unable add phone to point',
+                    self::ERROR_UNABLE_ADD_PHONE_TO_POINT,null,null,$errors);
+            else{
+                throw new ServiceExtendedException('Unable add phone to point',
+                    self::ERROR_UNABLE_ADD_PHONE_TO_POINT);
+            }
+        }
+
+        return $phonePoint;
     }
 }

@@ -24,62 +24,67 @@ class ServiceService extends AbstractService {
 
     /** Unable to create user */
     const ERROR_SERVICE_NOT_FOUND = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_SERVICE = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CHANGE_SERVICE = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CREATE_SERVICE = 4 + self::ADDED_CODE_NUMBER;
 
-    public function createUserInfo(array $userInfoData){
-        $userInfo = new Userinfo();
-        $userInfo->setUserId($userInfoData['userId']);
+    public function createService(array $serviceData){
+        $service = new Services();
 
-        $this->fillUserInfo($userInfo,$userInfoData);
+        $this->fillService($service,$serviceData);
 
-        if ($userInfo->save() == false) {
-            $errors = SupportClass::getArrayWithErrors($userInfo);
+        if ($service->save() == false) {
+            $errors = SupportClass::getArrayWithErrors($service);
             if(count($errors)>0)
-                throw new ServiceExtendedException('Unable create info for user',
-                    self::ERROR_UNABLE_CREATE_USER_INFO,null,null,$errors);
+                throw new ServiceExtendedException('Unable create service',
+                    self::ERROR_UNABLE_CREATE_SERVICE,null,null,$errors);
             else{
-                throw new ServiceExtendedException('Unable create info for user',
-                    self::ERROR_UNABLE_CREATE_USER_INFO);
+                throw new ServiceExtendedException('Unable create service',
+                    self::ERROR_UNABLE_CREATE_SERVICE);
             }
         }
-        return $userInfo;
+
+        return $service;
     }
 
-    public function changeUserInfo(Userinfo $userInfo, array $userInfoData){
-        $this->fillUserInfo($userInfo,$userInfoData);
-        if ($userInfo->update() == false) {
-            $errors = SupportClass::getArrayWithErrors($userInfo);
+    public function changeService(Services $service, array $serviceData){
+        $this->fillService($service,$serviceData);
+        if ($service->update() == false) {
+            $errors = SupportClass::getArrayWithErrors($service);
             if(count($errors)>0)
-                throw new ServiceExtendedException('Unable change info for user',
-                    self::ERROR_UNABLE_CHANGE_USER_INFO,null,null,$errors);
+                throw new ServiceExtendedException('Unable change service',
+                    self::ERROR_UNABLE_CHANGE_SERVICE,null,null,$errors);
             else{
-                throw new ServiceExtendedException('Unable change info for user',
-                    self::ERROR_UNABLE_CHANGE_USER_INFO);
+                throw new ServiceExtendedException('Unable change service',
+                    self::ERROR_UNABLE_CHANGE_SERVICE);
             }
         }
-        return $userInfo;
+        return $service;
     }
 
-    private function fillUserInfo(Userinfo $userInfo, array $data){
-        if(!empty(trim($data['first_name'])))
-            $userInfo->setFirstName($data['first_name']);
-        if(!empty(trim($data['last_name'])))
-            $userInfo->setLastName($data['last_name']);
-        if(!empty(trim($data['patronymic'])))
-            $userInfo->setPatronymic($data['patronymic']);
-        if(!empty(trim($data['male'])))
-            $userInfo->setMale($data['male']);
-        if(!empty(trim($data['address'])))
-            $userInfo->setAddress($data['address']);
-        if(!empty(trim($data['birthday'])))
-            $userInfo->setBirthday(date('Y-m-d H:m', strtotime($data['birthday'])));
-        if(!empty(trim($data['about'])))
-            $userInfo->setAbout($data['about']);
-        if(!empty(trim($data['status'])))
-            $userInfo->setStatus($data['status']);
-        if(!empty(trim($data['email'])))
-            $userInfo->setEmail($data['email']);
-        if(!empty(trim($data['path_to_photo'])))
-            $userInfo->setPathToPhoto($data['path_to_photo']);
+    private function fillService(Services $service, array $data){
+        if(!empty(trim($data['name'])))
+            $service->setName($data['name']);
+        if(!empty(trim($data['description'])))
+            $service->setDescription($data['description']);
+        if(!empty(trim($data['date_publication'])))
+            $service->setDatePublication(date('Y-m-d H:m', strtotime($data['date_publication'])));
+        if(!empty(trim($data['price_min'])))
+            $service->setPriceMin($data['price_min']);
+        if(!empty(trim($data['price_max'])))
+            $service->setPriceMax($data['price_max']);
+        if(!empty(trim($data['region_id'])))
+            $service->setRegionId($data['region_id']);
+        if(!empty(trim($data['longitude'])))
+            $service->setLongitude($data['longitude']);
+        if(!empty(trim($data['latitude'])))
+            $service->setLatitude($data['latitude']);
+        if(!empty(trim($data['number_of_display'])))
+            $service->setNumberOfDisplay($data['number_of_display']);
+        if(!empty(trim($data['rating'])))
+            $service->setRating($data['rating']);
+        if(!empty(trim($data['account_id'])))
+            $service->setAccountId($data['account_id']);
     }
 
     public function getServiceById(int $serviceId){
@@ -91,13 +96,16 @@ class ServiceService extends AbstractService {
         return $service;
     }
 
-    public function getHandledUserInfoById(int $userId){
-        $userInfo = Userinfo::findUserInfoById($userId);
-
-        if (!$userInfo || $userInfo == null) {
-            throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
+    public function deleteService(Services $service){
+        if (!$service->delete()) {
+            $errors = SupportClass::getArrayWithErrors($service);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to delete service',
+                    self::ERROR_UNABLE_DELETE_SERVICE, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to delete service',
+                    self::ERROR_UNABLE_DELETE_SERVICE);
+            }
         }
-
-        return Userinfo::handleUserInfo($userInfo);
     }
 }
