@@ -103,25 +103,26 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
     public function generateResetCodePhone($userId)
     {
         $hash = hash('sha256',$userId . time() . rand());
-        $this->reset_code_phone = substr($hash,5,10);
+        $this->reset_code_phone = $hash[12].$hash[7].$hash[9].$hash[53];
 
-        return $this;
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     public function generateResetCode($userId)
     {
         $hash = hash('sha256',$userId . time() . rand());
-        $this->reset_code = $hash;
 
-        return $this;
+        $this->reset_code = $hash[12].$hash[7].$hash[9].$hash[53];
+
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     public function generateDeactivateResetCode($userId)
     {
         $hash = hash('sha256',$userId . time() . rand(). '-no');
-        $this->deactivate_code = $hash;
+        $this->deactivate_code = $hash[12].$hash[7].$hash[9].$hash[53];
 
-        return $this;
+        return $hash[12].$hash[7].$hash[9].$hash[53];
     }
 
     /**

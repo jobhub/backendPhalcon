@@ -111,11 +111,11 @@ class RegisterAPIController extends Controller
             $tokens = json_decode($tokens->getContent(), true);
 
             SupportClass::writeMessageInLogFile("Дошел до отправки кода активации");
-            //$res = $this->sendActivationCode($user);
-             $response->setJsonContent([
+            $res = $this->sendActivationCode($user);
+            /* $response->setJsonContent([
                 'status' => STATUS_OK
             ]);
-            $res = $response;
+            $res = $response;*/
             SupportClass::writeMessageInLogFile("Отправил код активации");
             $res = json_decode($res->getContent(), true);
 
@@ -707,8 +707,8 @@ class RegisterAPIController extends Controller
                 ['activation' => $activationCode->getActivation(),
                     'deactivation' => $activationCode->getDeactivation(),
                     'email' => $user->getEmail()])
-                ->to(/*$user->getEmail()*/
-                    $newTo)
+                ->to($user->getEmail()
+                    /*$newTo*/)
                 ->subject('Подтвердить регистрацию в нашем замечательном сервисе.')
                 ->send();
 
@@ -834,8 +834,8 @@ class RegisterAPIController extends Controller
                 }
 
                 $mailer = new PHPMailerApp($this->config['mail']);
-                $newTo = $this->config['mail']['from']['email'];
-
+                //$newTo = $this->config['mail']['from']['email'];
+                $newTo = "titow.german@yandex.ru";
                 $res = $mailer->createMessageFromView('emails/reset_code_letter', 'reset_code_letter',
                     ['resetcode' => $resetCode->getResetCode(),
                         'deactivate' => $resetCode->getDeactivateCode(),
