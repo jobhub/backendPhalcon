@@ -50,7 +50,7 @@ class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
     }
 
     public function initialize(){
-        $this->belongsTo('account_id', '\Accounts', 'id', ['alias' => 'accounts']);
+        $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'accounts']);
     }
 
     public static function findByAccount($accountId, $order = null, $columns = null)

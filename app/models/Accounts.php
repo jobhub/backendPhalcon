@@ -135,13 +135,9 @@ class Accounts extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("accounts");
-        $this->hasMany('id', 'CommentsImagesusers', 'account_id', ['alias' => 'CommentsImagesusers']);
-        $this->hasMany('id', 'GroupsAccounts', 'account_id', ['alias' => 'GroupsAccounts']);
-        $this->hasMany('id', 'Privatechat', 'user1', ['alias' => 'Privatechat']);
-        $this->hasMany('id', 'Privatechat', 'user2', ['alias' => 'Privatechat']);
-        $this->belongsTo('company_id', '\Companies', 'companyid', ['alias' => 'Companies']);
-        $this->belongsTo('company_role_id', '\CompanyRole', 'id', ['alias' => 'CompanyRole']);
-        $this->belongsTo('user_id', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('company_id', 'App\Models\Companies', 'company_id', ['alias' => 'Companies']);
+        $this->belongsTo('company_role_id', 'App\Models\CompanyRole', 'id', ['alias' => 'CompanyRole']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**

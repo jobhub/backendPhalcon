@@ -1206,6 +1206,27 @@ class Services extends AccountWithNotDeletedWithCascade
         return $result;
     }
 
+    public static function findServicesForPoint($pointId)
+    {
+        $modelsManager =DI::getDefault()->get('modelsManager');
+
+        $columns = [];
+        foreach (self::publicColumns as $col){
+            $columns[] = 's.'.$col;
+        }
+
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\ServicesPoints', 's.service_id = sp.service_id', 'sp')
+            ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
+            ->where('p.point_id = :pointId:', ['pointId' => $pointId])
+            ->getQuery()
+            ->execute();
+
+        return $result;
+    }
+
     public function clipToPublic()
     {
         $service = $this;

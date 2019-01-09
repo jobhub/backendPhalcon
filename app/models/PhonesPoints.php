@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+
 class PhonesPoints extends \Phalcon\Mvc\Model
 {
     /**
@@ -83,10 +86,10 @@ class PhonesPoints extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Телефон не был создан",
-                    "callback" => function($phoneCompany) {
+                    "callback" => function ($phoneCompany) {
                         $phone = Phones::findFirstByPhoneId($phoneCompany->getPhoneId());
 
-                        if($phone)
+                        if ($phone)
                             return true;
                         return false;
                     }
@@ -99,10 +102,10 @@ class PhonesPoints extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Такая точка оказания услуг не существует",
-                    "callback" => function($phonePoint) {
+                    "callback" => function ($phonePoint) {
                         $point = TradePoints::findFirstByPointId($phonePoint->getPointId());
 
-                        if($point)
+                        if ($point)
                             return true;
                         return false;
                     }
@@ -156,7 +159,7 @@ class PhonesPoints extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($pointId,$phoneId)
+    public static function findByIds($pointId, $phoneId)
     {
         return PhonesPoints::findFirst(["point_id = :pointId: AND phone_id = :phoneId:",
             'bind' =>
@@ -165,20 +168,21 @@ class PhonesPoints extends \Phalcon\Mvc\Model
                 ]]);
     }
 
-    public static function getPhonesForPoint($pointId)
+    public static function findPhonesForPoint($pointId)
     {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
         $result = $modelsManager->createBuilder()
             ->from(["p" => "App\Models\Phones"])
-            ->join('App\Models\PhonesPoints','p.phone_id = pp.phone_id','pp')
+            ->join('App\Models\PhonesPoints', 'p.phone_id = pp.phone_id', 'pp')
             ->join('App\Models\TradePoints', 'pp.point_id = tp.point_id', 'tp')
-            ->where('tp.point_id = :pointId:',['pointId'=>$pointId])
+            ->where('tp.point_id = :pointId:', ['pointId' => $pointId])
             ->getQuery()
             ->execute();
 
-        if(count($result) == 0){
+        if (count($result) == 0) {
             $point = TradePoints::findFirstByPointId($pointId);
-            if($point->accounts->getCompanyId()!=null) {
+            if ($point->accounts->getCompanyId() != null) {
 
                 $result = $modelsManager->createBuilder()
                     ->from(["p" => "App\Models\Phones"])

@@ -11,7 +11,6 @@ use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
 
-
 class TradePoints extends AccountWithNotDeletedWithCascade
 {
     /**
@@ -92,8 +91,11 @@ class TradePoints extends AccountWithNotDeletedWithCascade
      */
     protected $position_variable;
 
-    const publicColumns = ['point_id','name', 'longitude', 'latitude', 'time',
+    const publicColumns = ['point_id', 'name', 'longitude', 'latitude', 'time',
         'email', 'user_manager', 'website', 'address', 'position_variable'];
+
+    const publicColumnsInStr = ['point_id, name, longitude, latitude, time,
+        email, user_manager, website, address, position_variable'];
 
     /**
      * Method to set the value of field pointId
@@ -367,7 +369,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                     ]
                 )
             );
-        if ($this->getWebSite() != null)
+        /*if ($this->getWebSite() != null)
             $validator->add(
                 'website',
                 new UrlValidator(
@@ -376,7 +378,20 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                         'message' => 'Введите, пожалуйста, корректный URL',
                     ]
                 )
+            );*/
+
+        //Предположим, что это правильная регулярка.
+        if ($this->getWebSite() != null)
+            $validator->add(
+                'website',
+                new Regex(
+                    [
+                        "pattern" => "/^((https?|ftp)\:\/\/)?([a-z0-9]{1})((\.[a-z0-9-_])|([a-z0-9-_]))*\.([a-z]{2,6})(\/?)$/",
+                        "message" => "Введите, пожалуйста, корректный URL",
+                    ]
+                )
             );
+
 
         if ($this->getUserManager() != null) {
             $validator->add(
@@ -420,6 +435,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
      */
     public function initialize()
     {
+        parent::initialize();
         $this->setSource("tradePoints");
         $this->hasMany('point_id', 'App\Models\PhonesPoints', 'point_id', ['alias' => 'PhonesPoints']);
         $this->belongsTo('user_manager', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
@@ -440,21 +456,6 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         return "tradepoints_pointid_seq";
     }
 
-    public static function findServicesForPoint($pointId)
-    {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
-        $result = $modelsManager->createBuilder()
-            ->columns(self::publicColumns)
-            ->from(["s" => "App\Models\Services"])
-            ->join('App\Models\ServicesPoints','s.service_id = sp.service_id','sp')
-            ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
-            ->where('p.point_id = :pointId:',['pointId'=>$pointId])
-            ->getQuery()
-            ->execute();
-
-        return $result;
-    }
-
     public static function findPointsByCompany($companyId)
     {
         $modelsManager = DI::getDefault()->get('modelsManager');
@@ -462,31 +463,69 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         foreach (self::publicColumns as $publicColumn) {
             $columns[] = 'tp.' . $publicColumn;
         }
-        try {
-            $result = $modelsManager->createBuilder()
-                ->columns($columns)
-                ->from(["tp" => "App\Models\TradePoints"])
-                ->join('App\Models\Accounts', 'tp.account_id = a.id', 'a')
-                ->where('a.company_id = :companyId: and tp.deleted = false', ['companyId' => $companyId])
-                ->getQuery()
-                ->execute();
-        }catch(\Exception $e){
-            echo $e;
-        }
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["tp" => "App\Models\TradePoints"])
+            ->join('App\Models\Accounts', 'tp.account_id = a.id', 'a')
+            ->where('a.company_id = :companyId: and tp.deleted = false', ['companyId' => $companyId])
+            ->getQuery()
+            ->execute();
 
-        return $result;
+        return self::handlePointsFromArray($result->toArray());
     }
 
     public static function findPointsByUser($userId)
     {
         $modelsManager = DI::getDefault()->get('modelsManager');
-        $result = $modelsManager->createBuilder()
-            ->columns(self::publicColumns)
-            ->from(["tp" => "App\Models\TradePoints"])
-            ->join('App\Models\Accounts', 'tp.account_id = a.id and a.company_id is null', 'a')
-            ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
-            ->getQuery()
-            ->execute();
+            $result = $modelsManager->createBuilder()
+                ->columns(self::publicColumns)
+                ->from(["tp" => "App\Models\TradePoints"])
+                ->join('App\Models\Accounts', 'tp.account_id = a.id and a.company_id is null', 'a')
+                ->where('a.user_id = :userId: and tp.deleted = false', ['userId' => $userId])
+                ->getQuery()
+                ->execute();
+
+        return self::handlePointsFromArray($result->toArray());
+    }
+
+    public static function findPointById($point_id){
+        return self::findFirst(['columns'=>self::publicColumns,'conditions'=>'point_id = :pointId:','bind'=>[
+            'pointId'=>$point_id
+        ]]);
+    }
+
+    public static function handlePointsFromArray(array $points)
+    {
+        $result = [];
+        foreach ($points as $point) {
+            $point['phones'] = PhonesPoints::findPhonesForPoint($point['point_id']);
+            $result[] = $point;
+
+            if($point['email'] == null || $point['website'] == null){
+                $account = Accounts::findFirstById($point['account_id']);
+
+                if($account){
+                    if($account->getCompanyId()!=null){
+                        $company = Companies::findFirstByCompanyId($account->getCompanyId());
+
+                        if(!$company)
+                            continue;
+
+                        if($point['email'] == null)
+                            $point['email'] =$company->getEmail();
+                        if($point['website'] == null)
+                            $point['website'] =$company->getWebsite();
+                    }else {
+                        $user = Users::findFirstByUserId($account->getUserId());
+
+                        if (!$user)
+                            continue;
+                        if($point['email'] == null)
+                            $point['email'] = $user->getEmail();
+                    }
+                }
+            }
+        }
 
         return $result;
     }

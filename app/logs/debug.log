@@ -26,3 +26,28 @@ s
 [Sat, 05 Jan 19 13:42:12 +0300][CRITICAL] 9001 Service don't exists
 [Sat, 05 Jan 19 13:56:52 +0300][CRITICAL] 10003 Unable create tag for service
 [Sun, 06 Jan 19 17:45:33 +0300][CRITICAL] 1001 Unable to create account
+[Wed, 09 Jan 19 11:33:02 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:33:23 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:04 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:18 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:33 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:50 +0300][CRITICAL] 12003 Unable change company
+[Wed, 09 Jan 19 11:35:00 +0300][CRITICAL] 12003 Unable change company
+[Wed, 09 Jan 19 16:22:10 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:22:30 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:22:42 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:23:09 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:23:59 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:37:08 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:37:24 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:40:11 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:40:50 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:48:44 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:49:40 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:49:57 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:39 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:46 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:53 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:57 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:52:00 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:52:13 +0300][CRITICAL] 11006 Unable change trade point

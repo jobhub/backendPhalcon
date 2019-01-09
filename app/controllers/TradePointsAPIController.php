@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\Accounts;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -7,185 +10,120 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+use App\Models\Companies;
+use App\Models\TradePoints;
+use App\Models\Services;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
+use App\Services\PointService;
+
 /**
  * Class TradePointsAPIController
  * Контроллер для работы с точками оказания услуг.
  * Реализует CRUD для точек оказания услуг.
  */
-class TradePointsAPIController extends Controller
+class TradePointsAPIController extends AbstractController
 {
     /**
-     * Возвращает точки предоставления услуг для пользователя или для указанной компании пользоваателя.
-     *
+     * Возвращает точки предоставления услуг для пользователя или для указанной компании пользователя.
+     * @access private
      * @method GET
-     * @param integer $companyId
+     * @param integer $company_id
      * @return string - json array of [status, [TradePoint, phones]], если все успешно,
      * или json array в формате Status в ином случае
      */
-    public function getPointsAction($companyId = null)
+    public function getPointsAction($company_id = null)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
 
-            if ($companyId != null) {
-                if (!Companies::checkUserHavePermission($userId, $companyId, 'getPoints')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
+        if ($company_id != null) {
 
-                $subjectId = $companyId;
-                $subjectType = 1;
-            } else {
-                $subjectId = $userId;
-                $subjectType = 0;
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getPoints')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $tradePoints = TradePoints::findBySubject($subjectId, $subjectType);
-
-
-            $pointsWithPhones = [];
-
-            if ($companyId != null) {
-                $company = Companies::findFirstByCompanyid($companyId);
-                foreach ($tradePoints as $tradePoint) {
-                    if ($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == "") {
-                        $tradePoint->setWebSite($company->getWebSite());
-                    }
-
-                    if ($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "") {
-                        $tradePoint->setEmail($company->getEmail());
-                    }
-
-                    $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
-                    if ($phones->count() == 0) {
-                        $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
-                    }
-                    $phones2 = [];
-                    foreach ($phones as $phone) {
-                        $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
-                    }
-
-                    $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones2];
-                }
-            } else {
-                $user = Users::findFirstByUserid($userId);
-                foreach ($tradePoints as $tradePoint) {
-                    if (($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "")
-                        && $user->getEmail() != null) {
-                        $tradePoint->setEmail($user->getEmail());
-                    }
-
-                    $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
-                    if ($phones->count() == 0 && $user->getPhoneId() != null) {
-                        $phone = $user->phones;
-                        $phones = [];
-                        $phones[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->getPhone()];
-                    }
-
-
-                    $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones];
-                }
-            }
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'points' => $pointsWithPhones,
-            ]);
-            return $response;
-
+            return TradePoints::findPointsByCompany($company_id);
         } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return TradePoints::findPointsByUser($userId);
         }
     }
 
     /**
      * Возвращает точки предоставления услуг назначенные текущему пользователю
-     *
+     * @access private
      * @method GET
-     * @param  int $userIdManager
+     * @param  int $manager_user_id
      * @return string - json array of [TradePoint, phones]
      */
-    public function getPointsForUserManagerAction($userIdManager = null)
+    public function getPointsForUserManagerAction($manager_user_id = null)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
 
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-
-            if ($userIdManager == null || $userIdManager == $userId) {
-                $tradePoints = TradePoints::findByUsermanager($userId);
-            } else {
-                $trades = TradePoints::findByUsermanager($userIdManager);
-                $tradePoints = [];
-                foreach ($trades as $point) {
-                    if ($point->companies->getUserId() == $userId) {
-                        $tradePoints[] = $point;
-                    }
-                }
-            }
-
-            $pointsWithPhones = [];
-
-            foreach ($tradePoints as $tradePoint) {
-
-                $company = $tradePoint->companies;
-                if ($tradePoint->getWebSite() == null || trim($tradePoint->getWebSite()) == "") {
-                    $tradePoint->setWebSite($company->getWebSite());
-                }
-
-                if ($tradePoint->getEmail() == null || trim($tradePoint->getEmail()) == "") {
-                    $tradePoint->setEmail($company->getEmail());
-                }
-
-                $phones = PhonesPoints::findByPointid($tradePoint->getPointId());
-                if ($phones->count() == 0) {
-                    $phones = PhonesCompanies::findByCompanyid($company->getCompanyId());
-                }
-                $phones2 = [];
-                foreach ($phones as $phone) {
-                    $phones2[] = ['phoneId' => $phone->getPhoneId(), 'phone' => $phone->phones->getPhone()];
-                }
-
-                $pointsWithPhones[] = ['tradePoint' => $tradePoint, 'phones' => $phones2];
-            }
-
-            return json_encode($pointsWithPhones);
-
+        if ($manager_user_id == null) {
+            return TradePoints::handlePointsFromArray(TradePoints::find(['columns' => TradePoints::publicColumnsInStr,
+                'conditions' => 'user_manager = :userId:', 'bind' => ['userId' => $userId]])->toArray());
         } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return TradePoints::handlePointsFromArray(TradePoints::find(['columns' => TradePoints::publicColumnsInStr,
+                'conditions' => 'user_manager = :userId:', 'bind' => ['userId' => $manager_user_id]])->toArray());
         }
     }
 
+
     /**
      * Добавляет точку оказания услуг к компании
-     *
+     * @access private
      * @method POST
      *
-     * @params (Обязательные)   string name, double latitude, double longitude,
-     * @params (Необязательные) string email, string webSite, string address, string fax,
-     * @params (Необязательные) (int userManagerId, int companyId) - парой
-     * @return Phalcon\Http\Response с json массивом в формате Status
+     * @params (Обязательные)   string name, double latitude, double longitude, int account_id
+     * @params (Необязательные) string email, string website, string address, string fax,
+     * @params (Необязательные) (int manager_user_id, int company_id) - парой
+     * @return array с point_id
      */
     public function addTradePointAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['name'] = $inputData->name;
+        $data['latitude'] = $inputData->latitude;
+        $data['longitude'] = $inputData->longitude;
+        $data['address'] = $inputData->address;
+        $data['website'] = $inputData->website;
+        $data['email'] = $inputData->email;
+        $data['fax'] = $inputData->fax;
+        $data['manager_user_id'] = $inputData->manager_user_id;
+        $data['company_id'] = $inputData->company_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
-            return $this->TradePointsAPI->addTradePoint($_POST);
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+
+            if (empty(trim($data['account_id'])))
+                $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
+
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'createTradePoint'))
+                throw new Http403Exception('Permission error');
+
+            $point = $this->pointService->createPoint($data);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_CREATE_POINT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Trade point was successfully created', ['point_id' => $point->getPointId()]);
     }
 
     /**
@@ -201,7 +139,7 @@ class TradePointsAPIController extends Controller
      *
      * @return string - json array в формате Status. Если успешно, то еще и id созданной точки.
      */
-    public function addTradePoint($params)
+    /*public function addTradePoint($params)
     {
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
@@ -268,84 +206,75 @@ class TradePointsAPIController extends Controller
         );
 
         return $response;
-    }
+    }*/
 
     /**
      * Редактирует указанную точку оказания услуг
      *
      * @method PUT
      *
-     * @param (Обязательные)   int pointId string name, double latitude, double longitude,
-     *        (Необязательные) string email, string webSite, string address, string fax, string time, int userId, int subjectId, int subjectType,
-     *        Точно будут изменены - name, latitude, longitude, email, webSite, address, fax, time
+     * @param (Обязательные)   int point_id string name, double latitude, double longitude,
+     *        (Необязательные) string email, string website, string address, string fax, string time, int manager_user_id.
+     *
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
     public function editTradePointAction()
     {
-        if ($this->request->isPut() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['point_id'] = $inputData->point_id;
+        $data['name'] = $inputData->name;
+        $data['latitude'] = $inputData->latitude;
+        $data['longitude'] = $inputData->longitude;
+        $data['region_id'] = $inputData->region_id;
+        $data['website'] = $inputData->website;
+        $data['email'] = $inputData->email;
+        $data['fax'] = $inputData->fax;
+        $data['time'] = $inputData->time;
+        $data['address'] = $inputData->address;
+        $data['manager_user_id'] = $inputData->manager_user_id;
+
+        try {
+
+            //validation
+            if (empty(trim($data['point_id']))) {
+                $errors['point_id'] = 'Missing required parameter "point_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
+            $point = $this->pointService->getPointById($data['point_id']);
 
-            if (!$point ||
-                !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(),
-                    $point->getSubjectType(), 'editPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'editTradePoint')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if ($this->request->getPut("subjectId") && $this->request->getPut("subjectType")) {
-                //Меняем владельца. Не знаю, зачем это может понадобиться
-                $point->setSubjectId($this->request->getPut("subjectId"));
-                $point->setSubjectType($this->request->getPut("subjectType"));
+            $this->pointService->changePoint($point, $data);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_CHANGE_POINT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $point->setName($this->request->getPut("name"));
-            $point->setEmail($this->request->getPut("email"));
-            $point->setWebSite($this->request->getPut("webSite"));
-            $point->setLatitude($this->request->getPut("latitude"));
-            $point->setLongitude($this->request->getPut("longitude"));
-            $point->setAddress($this->request->getPut("address"));
-            $point->setPositionVariable($this->request->getPut("positionvariable"));
-            $point->setFax($this->request->getPut("fax"));
-            $point->setTime($this->request->getPut("time"));
-
-            if ($this->request->getPut("userId") && $point->getSubjectType() != 0)
-                $point->setUserManager($this->request->getPut("userId"));
-
-            if (!$point->update()) {
-
-                foreach ($point->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('Trade point was successfully changed');
     }
 
 
@@ -354,112 +283,63 @@ class TradePointsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param (Обязательные) $pointId
+     * @param (Обязательные) $point_id
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
-    public function deleteTradePointAction($pointId)
+    public function deleteTradePointAction($point_id)
     {
-        if ($this->request->isDelete()) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $point = TradePoints::findFirstByPointid($pointId);
+            $point = $this->pointService->getPointById($point_id);
 
-            if (!$point) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая точка оказания услуг не существует']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'deletePoint')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'deletePoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->pointService->deletePoint($point);
+
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_DELETE_POINT:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$point->delete()) {
-                $errors = [];
-                foreach ($point->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('Trade point was successfully deleted');
     }
 
     /**
      * Возвращает публичную информацию об указанной точке оказания услуг.
      * Публичный доступ.
      *
+     * @access public
      * @method GET
      *
-     * @param $pointId
-     * @return string - json array {status,point,[services],[phones]}
+     * @param $point_id
+     * @return array - {point,[services]}
      */
-    public function getPointInfoAction($pointId){
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+    public function getPointInfoAction($point_id)
+    {
+        $point = TradePoints::findPointById($point_id);
 
-            $point = TradePoints::findFirstByPointid($pointId);
-
-            if(!$point){
-                $response->setJsonContent([
-                    'status' => STATUS_WRONG,
-                    'errors' => ['Точка оказания услуг не существует'],
-                ]);
-                return $response;
-            }
-
-            $point2 = $point->clipToPublic();
-
-            $services = TradePoints::getServicesForPoint($point->getPointId());
-            $services2 = [];
-            foreach($services as $service){
-                $services2[] = $service->clipToPublic();
-            }
-
-            $phones = PhonesPoints::getPhonesForPoint($point->getPointId());
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'point' => $point2,
-                'services' => $services2,
-                'phones' => $phones,
-            ]);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        if (!$point) {
+            throw new Http400Exception('Trade point don\'t exists', PointService::ERROR_POINT_NOT_FOUND);
         }
+
+        $point = TradePoints::handlePointsFromArray([$point->toArray()]);
+        return ['point' => $point, 'services' => Services::findServicesForPoint($point_id)];
     }
 }

@@ -898,6 +898,110 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\TradePointsAPIController'=>[
+        'prefix' => '/trade-point',
+        'resources' => [
+            /**
+             * Возвращает точки предоставления услуг для пользователя или для указанной компании пользователя.
+             * @access private
+             * @method GET
+             * @param integer $company_id
+             * @return string - json array of [status, [TradePoint, phones]], если все успешно,
+             * или json array в формате Status в ином случае
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getPointsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{company_id}',
+                'action' => 'getPointsAction'
+            ],
+
+            /**
+             * Возвращает точки предоставления услуг назначенные текущему пользователю
+             * @access private
+             * @method GET
+             * @param  int $manager_user_id
+             * @return string - json array of [TradePoint, phones]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-manager',
+                'action' => 'getPointsForUserManagerAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-manager/{manager_user_id}',
+                'action' => 'getPointsForUserManagerAction'
+            ],
+
+            /**
+             * Добавляет точку оказания услуг к компании
+             * @access private
+             * @method POST
+             *
+             * @params (Обязательные)   string name, double latitude, double longitude
+             * @params (Необязательные) string email, string website, string address, string fax, int account_id
+             * @params (Необязательные) (int manager_user_id, int company_id) - парой
+             * @return array с point_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addTradePointAction'
+            ],
+
+            /**
+             * Редактирует указанную точку оказания услуг
+             *
+             * @method PUT
+             *
+             * @param (Обязательные)   int point_id string name, double latitude, double longitude,
+             *        (Необязательные) string email, string website, string address, string fax, string time, int manager_user_id.
+             *
+             * @return Phalcon\Http\Response с json массивом в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editTradePointAction'
+            ],
+
+            /**
+             * Удаляет указанную точку оказания услуг
+             *
+             * @method DELETE
+             *
+             * @param (Обязательные) $point_id
+             * @return Phalcon\Http\Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{point_id}',
+                'action' => 'deleteTradePointAction'
+            ],
+
+            /**
+             * Возвращает публичную информацию об указанной точке оказания услуг.
+             * Публичный доступ.
+             *
+             * @access public
+             * @method GET
+             *
+             * @param $point_id
+             * @return array - {point,[services]}
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{point_id}',
+                'action' => 'getPointInfoAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

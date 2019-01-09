@@ -53,6 +53,6 @@ abstract class AccountModel extends \Phalcon\Mvc\Model
     }
 
     public function initialize(){
-        $this->belongsTo('account_id', '\Accounts', 'id', ['alias' => 'accounts']);
+        $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'Accounts']);
     }
 }

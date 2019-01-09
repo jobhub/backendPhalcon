@@ -20,7 +20,8 @@ use App\Models\Tags;
  *
  * Class UsersService
  */
-class PointService extends AbstractService {
+class PointService extends AbstractService
+{
 
     const ADDED_CODE_NUMBER = 11000;
 
@@ -29,18 +30,20 @@ class PointService extends AbstractService {
     const ERROR_UNABLE_CREATE_POINT = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_ADD_POINT_TO_SERVICE = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_POINT_FROM_SERVICE = 5 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CHANGE_POINT = 6 + self::ADDED_CODE_NUMBER;
 
-    public function addPointToService(int $pointId, int $serviceId){
+    public function addPointToService(int $pointId, int $serviceId)
+    {
         $servicePoint = new ServicesPoints();
         $servicePoint->setServiceId($serviceId);
         $servicePoint->setPointId($pointId);
 
         if (!$servicePoint->create()) {
             $errors = SupportClass::getArrayWithErrors($servicePoint);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable add point to service',
-                    self::ERROR_UNABLE_ADD_POINT_TO_SERVICE,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_ADD_POINT_TO_SERVICE, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable add point to service',
                     self::ERROR_UNABLE_ADD_POINT_TO_SERVICE);
             }
@@ -49,15 +52,16 @@ class PointService extends AbstractService {
         return $servicePoint;
     }
 
-    public function deletePointFromService(int $pointId, int $serviceId){
-        $servicePoint = ServicesPoints::findByIds($serviceId,$pointId);
+    public function deletePointFromService(int $pointId, int $serviceId)
+    {
+        $servicePoint = ServicesPoints::findByIds($serviceId, $pointId);
 
         if (!$servicePoint->delete()) {
             $errors = SupportClass::getArrayWithErrors($servicePoint);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable to delete point from service',
-                    self::ERROR_UNABLE_DELETE_POINT_FROM_SERVICE,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_DELETE_POINT_FROM_SERVICE, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable to delete point from service',
                     self::ERROR_UNABLE_DELETE_POINT_FROM_SERVICE);
             }
@@ -66,7 +70,8 @@ class PointService extends AbstractService {
         return $servicePoint;
     }
 
-    public function getPointById(int $pointId){
+    public function getPointById(int $pointId)
+    {
         $point = TradePoints::findFirstByPointId($pointId);
         if (!$point) {
             throw new ServiceException('Trade point don\'t exists', self::ERROR_POINT_NOT_FOUND);
@@ -74,17 +79,18 @@ class PointService extends AbstractService {
         return $point;
     }
 
-    public function createPoint($data){
+    public function createPoint($data)
+    {
         $point = new TradePoints();
 
-        $this->fillPoint($point,$data);
+        $this->fillPoint($point, $data);
 
         if ($point->save() == false) {
             $errors = SupportClass::getArrayWithErrors($point);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable create trade point',
-                    self::ERROR_UNABLE_CREATE_POINT,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_CREATE_POINT, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable create trade point',
                     self::ERROR_UNABLE_CREATE_POINT);
             }
@@ -93,30 +99,65 @@ class PointService extends AbstractService {
         return $point;
     }
 
-    private function fillPoint(TradePoints $point, array $data){
-        if(!empty(trim($data['name'])))
-            $point->setName($data['name']);
-        if(!empty(trim($data['longitude'])))
-            $point->setLongitude($data['longitude']);
-        if(!empty(trim($data['latitude'])))
-            $point->setLatitude($data['latitude']);
-        if(!empty(trim($data['fax'])))
-            $point->setFax($data['fax']);
-        if(!empty(trim($data['time'])))
-            $point->setTime($data['time']);
-        if(!empty(trim($data['email'])))
-            $point->setEmail($data['email']);
-        if(!empty(trim($data['user_manager'])))
-            $point->setUserManager($data['user_manager']);
-        if(!empty(trim($data['website'])))
-            $point->setWebSite($data['website']);
-        if(!empty(trim($data['address'])))
-            $point->setWebSite($data['address']);
-        if(!empty(trim($data['position_variable'])))
-            $point->setPositionVariable($data['position_variable']);
+    public function changePoint(TradePoints $point, $data)
+    {
+        $this->fillPoint($point, $data);
+        if ($point->update() == false) {
+            $errors = SupportClass::getArrayWithErrors($point);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable change trade point',
+                    self::ERROR_UNABLE_CHANGE_POINT, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable change trade point',
+                    self::ERROR_UNABLE_CHANGE_POINT);
+            }
+        }
+
+        return $point;
     }
 
-    private function clipDataForCreation($data){
+    private function fillPoint(TradePoints $point, array $data)
+    {
+        if (!empty(trim($data['name'])))
+            $point->setName($data['name']);
+        if (!empty(trim($data['longitude'])))
+            $point->setLongitude($data['longitude']);
+        if (!empty(trim($data['latitude'])))
+            $point->setLatitude($data['latitude']);
+        if (!empty(trim($data['fax'])))
+            $point->setFax($data['fax']);
+        if (!empty(trim($data['time'])))
+            $point->setTime($data['time']);
+        if (!empty(trim($data['email'])))
+            $point->setEmail($data['email']);
+        if (!empty(trim($data['user_manager'])))
+            $point->setUserManager($data['user_manager']);
+        if (!empty(trim($data['website'])))
+            $point->setWebSite($data['website']);
+        if (!empty(trim($data['address'])))
+            $point->setWebSite($data['address']);
+        if (!empty(trim($data['position_variable'])))
+            $point->setPositionVariable($data['position_variable']);
+        if (!empty(trim($data['account_id'])))
+            $point->setAccountId($data['account_id']);
+    }
+
+    public function deletePoint(TradePoints $point)
+    {
+        if (!$point->delete()) {
+            $errors = SupportClass::getArrayWithErrors($point);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to delete trade point',
+                    self::ERROR_UNABLE_DELETE_POINT, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to delete trade point',
+                    self::ERROR_UNABLE_DELETE_POINT);
+            }
+        }
+    }
+
+    private function clipDataForCreation($data)
+    {
         $new_data['name'] = $data['name'];
         $new_data['longitude'] = $data['longitude'];
         $new_data['latitude'] = $data['latitude'];
