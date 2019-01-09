@@ -502,7 +502,7 @@ class Companies extends NotDeletedModelWithCascade
             );
 
 
-        return $this->validate($validator) && parent::validation();
+        return $this->validate($validator);
     }
 
     /**

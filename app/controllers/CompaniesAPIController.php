@@ -45,11 +45,11 @@ class CompaniesAPIController extends AbstractController
 
         $result['companies'] = Companies::findCompaniesByUserOwner($userId)->toArray();
 
-        if($with_points && $with_points!='false'){
+        if ($with_points && $with_points != 'false') {
             $result2 = [];
-            foreach ($result['companies'] as $company){
+            foreach ($result['companies'] as $company) {
                 $points = TradePoints::findPointsByCompany($company['company_id'])->toArray();
-                $result2[] = ['company' => $company, 'points'=>$points];
+                $result2[] = ['company' => $company, 'points' => $points];
             }
 
             return $result2;
@@ -82,12 +82,12 @@ class CompaniesAPIController extends AbstractController
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $company = $this->companyService->createCompany($data,$userId);
+            $company = $this->companyService->createCompany($data, $userId);
 
             $this->accountService->createAccount([
-                'user_id'=>$userId,
-                'company_id'=>$company->getCompanyId(),
-                'company_role_id'=>CompanyRole::ROLE_OWNER_ID
+                'user_id' => $userId,
+                'company_id' => $company->getCompanyId(),
+                'company_role_id' => CompanyRole::ROLE_OWNER_ID
             ]);
 
         } catch (ServiceExtendedException $e) {
@@ -103,7 +103,7 @@ class CompaniesAPIController extends AbstractController
         }
         $this->db->commit();
 
-        return self::successResponse('Company was successfully created',['company_id'=>$company->getCompanyId()]);
+        return self::successResponse('Company was successfully created', ['company_id' => $company->getCompanyId()]);
     }
 
     /**
@@ -126,6 +126,7 @@ class CompaniesAPIController extends AbstractController
             }
 
             $this->companyService->deleteCompany($company);
+
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -167,7 +168,7 @@ class CompaniesAPIController extends AbstractController
         try {
 
             //validation
-            if(empty(trim($data['company_id']))) {
+            if (empty(trim($data['company_id']))) {
                 $errors['company_id'] = 'Missing required parameter "company_id"';
             }
 
@@ -191,7 +192,6 @@ class CompaniesAPIController extends AbstractController
             $this->companyService->changeCompany($company, $data);
 
         } catch (ServiceExtendedException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case CompanyService::ERROR_UNABLE_CHANGE_COMPANY:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -200,10 +200,9 @@ class CompaniesAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case CompanyService::ERROR_COMPANY_NOT_FOUND:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
@@ -225,20 +224,31 @@ class CompaniesAPIController extends AbstractController
 
             $data['news_id'] = $sender->news_id;*/
 
-            $data['news_id'] = $this->request->getPost('company_id');
+            $data['company_id'] = $this->request->getPost('company_id');
 
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
+            //validation
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $company = $this->companyService->getCompanyById($data['company_id']);
 
-            if (!Accounts::checkUserHavePermission($userId, $company->getCompanyId(), 'editCompany')) {
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'editCompany')) {
                 throw new Http403Exception('Permission error');
             }
 
             $this->db->begin();
 
-            $this->imageService->setCompanyLogotype($company,$this->request->getUploadedFiles());
+            $this->imageService->setCompanyLogotype($company, $this->request->getUploadedFiles()[0]);
 
             $this->db->commit();
         } catch (ServiceExtendedException $e) {
@@ -282,11 +292,11 @@ class CompaniesAPIController extends AbstractController
         $data['company_id'] = $inputData->company_id;
 
         //validation
-        if(empty(trim($data['user_id']))) {
+        if (empty(trim($data['user_id']))) {
             $errors['user_id'] = 'Missing required parameter "user_id"';
         }
 
-        if(empty(trim($data['company_id']))) {
+        if (empty(trim($data['company_id']))) {
             $errors['company_id'] = 'Missing required parameter "company_id"';
         }
 
@@ -318,7 +328,7 @@ class CompaniesAPIController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        }catch (ServiceException $e) {
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case CompanyService::ERROR_COMPANY_NOT_FOUND:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
@@ -327,7 +337,7 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Manager wa successfully added',['account_id'=>$account_id]);
+        return self::successResponse('Manager wa successfully added', ['account_id' => $account_id]);
     }
 
     /**
@@ -352,7 +362,7 @@ class CompaniesAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $account = $this->accountService->getAccountByIds($company_id,$user_id);
+            $account = $this->accountService->getAccountByIds($company_id, $user_id);
 
             $this->accountService->deleteAccount($account);
 
@@ -364,7 +374,7 @@ class CompaniesAPIController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        }catch (ServiceException $e) {
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case CompanyService::ERROR_COMPANY_NOT_FOUND:
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
@@ -503,6 +513,6 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return Companies::handleCompanyFromArray($company->toArray());
+        return Companies::handleCompanyFromArray([$company->toArray()]);
     }
 }

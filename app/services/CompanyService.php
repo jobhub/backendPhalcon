@@ -12,6 +12,7 @@ use App\Libs\ImageLoader;
 //models
 use App\Models\Userinfo;
 use App\Models\Settings;
+use App\Controllers\HttpExceptions\Http500Exception;
 
 /**
  * business logic for users
@@ -97,6 +98,7 @@ class CompanyService extends AbstractService {
     }
 
     public function deleteCompany(Companies $company){
+        try{
         if (!$company->delete()) {
             $errors = SupportClass::getArrayWithErrors($company);
             if (count($errors) > 0)
@@ -106,6 +108,9 @@ class CompanyService extends AbstractService {
                 throw new ServiceExtendedException('Unable to delete company',
                     self::ERROR_UNABLE_DELETE_COMPANY);
             }
+        }
+        }catch(\PDOException $e){
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
     }
 }

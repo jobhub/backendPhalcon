@@ -312,7 +312,7 @@ class ImageService extends AbstractService
 
         $di = DI::getDefault();
 
-        $di->companyService->changeCompany($company,['logotype'=>$logotype]);
+        $di->getCompanyService()->changeCompany($company,['logotype'=>$logotype]);
 
         return $logotype;
     }
