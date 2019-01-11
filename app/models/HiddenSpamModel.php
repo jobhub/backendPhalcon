@@ -68,6 +68,7 @@ class HiddenSpamModel extends NotDeletedModel
     /**
      * Toggle discussion to spam
      *
+     * @param $value boolean
      * @return string
      */
     public function spam($value = null)
@@ -87,6 +88,7 @@ class HiddenSpamModel extends NotDeletedModel
     /**
      * Toggle discussion to spam
      *
+     * @param $value boolean
      * @return string
      */
     public function hidden($value = null)

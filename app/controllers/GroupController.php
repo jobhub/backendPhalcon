@@ -12,6 +12,69 @@ use App\Services\UserService;
 
 class GroupController extends AbstractController {
 
+
+    public function newAction(){
+        $user_id = $this->getUserid();
+        $data = json_decode($this->request->getRawBody(), true);
+        try {
+           $group = $this->groupService->create($user_id, $data);
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        return parent::successResponse('Group successfully created', $group);
+    }
+
+    public function sendMessageAction(){
+        $user_id = $this->getUserid();
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $user_id;
+        try {
+            $this->messageService->sendMessage($data, true); // using same message service with private chat
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        return parent::successResponse('Message successfully send');
+    }
+
+    public function messageAction(){
+        $user_id = $this->getUserid();
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $user_id;
+        $action = $data['action'];
+        try {
+            if(method_exists($this->messageService, $action))
+                $response = $this->messageService->$action($data, true); // using same message service with private chat
+            else
+            {
+                throw new Http400Exception(_('Action not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        if(is_bool($response))
+            return parent::successResponse('Successfully done');
+        return $response;
+    }
+
+    public function mainAction(){
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["user_id"] = $this->getUserid();;
+        $action = $data['action'];
+        try {
+            if(method_exists($this->groupService, $action))
+                $response = $this->groupService->$action($data); // using same message service with private chat
+            else
+            {
+                throw new Http400Exception(_('Action not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        if(is_bool($response))
+            return parent::successResponse('Successfully done');
+        return $response;
+    }
+
     /**
      * Adding group
      */

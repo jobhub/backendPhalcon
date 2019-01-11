@@ -573,5 +573,33 @@ class Users extends NotDeletedModelWithCascade
         );
         $avg = $avg[0]['a'];
         return $avg;
-    } 
+    }
+
+    /**
+     * @return array
+     */
+    public function getUserShortInfo(){
+        $userInfo = $this->getRelated('Userinfo', [
+            'columns' => Userinfo::shortColumns
+        ]);
+
+        if($userInfo)
+            return $userInfo->toArray();
+
+        return [
+                'userid' => $this->user_id ,
+                'email' => $this->email
+            ];
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public static function isUserExist($id){
+        $user = parent::findFirst($id);
+        if(!$user)
+            return false;
+        return true;
+    }
 }

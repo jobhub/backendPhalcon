@@ -13,7 +13,6 @@ use App\Controllers\AbstractHttpException;
  */
 class Http500Exception extends AbstractHttpException
 {
-    const  BAD_REQUEST_CONTENT = 10002;
     protected $httpCode = 500;
     protected $httpMessage = 'Internal Server Error';
 }

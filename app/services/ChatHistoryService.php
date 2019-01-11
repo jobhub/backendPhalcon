@@ -3,46 +3,69 @@
 namespace App\Services;
 
 use App\Models\ChatHistory;
+use App\Models\Groups;
 
 /**
  * business logic for users
  *
  * Class UsersService
  */
-class ChatHistoryService extends AbstractService {
+class ChatHistoryService extends AbstractService
+{
 
     /** Unable to create user */
     const ERROR_UNABLE_TO_FIND_CHAT = 11001;
 
     /**
      * Returns users chat history
-     *
+     * @param  $transaction db transaction
      * @return array
      */
-    public function createChatHistory() {
+    public function createChatHistory($transaction = null)
+    {
         try {
             $chatHist = new ChatHistory();
-            //$chatHist->save(); 
-            if ($chatHist->save() === false) {
-                $this->logger->critical(
-                        '"Umh, We can\'t store robots right now:" '
-                );
-            } 
-            $this->logger->critical(
-                    'Création du chathystory '.    $chatHist->getId()
-                );
+            if ($transaction != null) {
+                $chatHist->setTransaction($transaction);
+                if ($chatHist->save() === false) {
+                    $transaction->rollback(
+                        'Cannot save Group'
+                    );
+                }
+            } else
+                $chatHist->save();
+
+            $this->logger->log(
+                'creation of chat history id =' . $chatHist->getId()
+            );
             return $chatHist;
         } catch (\PDOException $e) {
-
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function getChat($id) {
+    public function getChat($id)
+    {
         $chatHist = ChatHistory::findFirst($id);
-        if(!$chatHist)
+        if (!$chatHist)
             return null;
         return $chatHist;
+    }
+
+    /**
+     * Get chat history from group_id
+     *
+     * @param $group_id
+     * @return ChatHistory|null
+     */
+    public function getChatHistoryFromGroup($group_id){
+        $group = Groups::findFirst($group_id);
+        if (!$group)
+            return null;
+        $chatHist = $group->getRelated('Chathistory');
+        if (!$chatHist)
+            return null;
+       return $chatHist;
     }
 
 }

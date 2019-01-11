@@ -1,84 +1,61 @@
-[Wed, 02 Jan 19 03:14:26 +0300][CRITICAL] 42 SQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "users_user_id_seq" does not exist
-[Wed, 02 Jan 19 03:16:34 +0300][CRITICAL] 100003 Unable to send email
-[Wed, 02 Jan 19 12:04:27 +0300][CRITICAL] 11002 unable to get service
-[Wed, 02 Jan 19 12:05:40 +0300][CRITICAL] 11002 unable to get service
-[Wed, 02 Jan 19 12:06:02 +0300][CRITICAL] 11002 unable to get service
-[Wed, 02 Jan 19 12:14:27 +0300][CRITICAL] **************** 
-[Wed, 02 Jan 19 12:14:27 +0300][CRITICAL] 11002 unable to get service
-[Wed, 02 Jan 19 12:15:35 +0300][CRITICAL] **************** 
-[Wed, 02 Jan 19 12:16:17 +0300][CRITICAL] 11002 unable to get service : missing id
-[Wed, 02 Jan 19 12:16:39 +0300][CRITICAL] 11002 unable to get service : missing id
-[Wed, 02 Jan 19 12:17:15 +0300][CRITICAL] 11002 unable to get service : missing id
-[Wed, 02 Jan 19 12:55:41 +0300][CRITICAL] 11002 unable to get service : missing id
-[Wed, 02 Jan 19 13:05:26 +0300][CRITICAL] 11002 unable to get service : missing id
-[Wed, 02 Jan 19 13:24:48 +0300][CRITICAL] Création du chathystory 34
-[Wed, 02 Jan 19 13:24:48 +0300][DEBUG] user 316 send message to user 313
-[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 14
-[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 15
-[Wed, 02 Jan 19 13:25:17 +0300][DEBUG] chat id 18
-[Wed, 02 Jan 19 13:25:41 +0300][DEBUG] chat id 17
-[Wed, 02 Jan 19 13:47:04 +0300][DEBUG] chat id 17
-[Wed, 02 Jan 19 13:48:25 +0300][DEBUG] chat id 17
-[Wed, 02 Jan 19 14:13:20 +0300][DEBUG] chat id 17
-[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 14
-[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 15
-[Wed, 02 Jan 19 14:15:28 +0300][DEBUG] chat id 18
-[Wed, 02 Jan 19 14:16:56 +0300][DEBUG] user 313 send message to user 316
-[Wed, 02 Jan 19 14:17:57 +0300][DEBUG] user 313 send message to user 9
-[Wed, 02 Jan 19 14:18:11 +0300][CRITICAL] Création du chathystory 35
-[Wed, 02 Jan 19 14:18:11 +0300][DEBUG] user 313 send message to user 10
-[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 14
-[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 15
-[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 18
-[Wed, 02 Jan 19 14:18:35 +0300][DEBUG] chat id 19
-[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 14
-[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 15
-[Wed, 02 Jan 19 14:19:07 +0300][DEBUG] chat id 18
-[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 14
-[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 15
-[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 18
-[Wed, 02 Jan 19 14:19:47 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 02:34:56 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 13:15:05 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 14:44:51 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 14:45:59 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 14:46:07 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 14:46:32 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 14:46:59 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 15:36:01 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 15:42:18 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 15:42:54 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 15:46:01 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 15:48:22 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 16:16:23 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 16:16:29 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 16:23:26 +0300][DEBUG] chat id 15
-[Thu, 03 Jan 19 16:23:37 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 16:23:47 +0300][DEBUG] chat id 18
-[Thu, 03 Jan 19 16:23:47 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 16:24:16 +0300][DEBUG] chat id 19
-[Thu, 03 Jan 19 16:24:22 +0300][DEBUG] chat id 14
-[Thu, 03 Jan 19 16:24:22 +0300][DEBUG] chat id 18
+[Fri, 11 Jan 19 01:31:09 +0300][DEBUG] 
+[Fri, 11 Jan 19 01:32:05 +0300][NOTICE] 
+[Fri, 11 Jan 19 01:32:05 +0300][DEBUG] 
+[Fri, 11 Jan 19 01:33:57 +0300][DEBUG]  sddqsd 5
+[Fri, 11 Jan 19 01:33:57 +0300][DEBUG] 
+[Fri, 11 Jan 19 01:34:25 +0300][DEBUG] ssqdsqd 313
+[Fri, 11 Jan 19 01:34:25 +0300][DEBUG] ssqdsqd 316
+[Fri, 11 Jan 19 01:34:25 +0300][DEBUG] ssqdsqd 317
+[Fri, 11 Jan 19 01:34:25 +0300][DEBUG] ssqdsqd 330
+[Fri, 11 Jan 19 01:34:25 +0300][DEBUG] ssqdsqd 7
+[Fri, 11 Jan 19 01:35:39 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:37:58 +0300][DEBUG] user 1
+[Fri, 11 Jan 19 01:37:58 +0300][DEBUG] user 1
+[Fri, 11 Jan 19 01:37:58 +0300][DEBUG] user 1
+[Fri, 11 Jan 19 01:37:58 +0300][DEBUG] user 
+[Fri, 11 Jan 19 01:37:58 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:39:56 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:40:11 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:41:31 +0300][DEBUG] dsd 
+[Fri, 11 Jan 19 01:41:31 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:42:01 +0300][DEBUG] dsd 
+[Fri, 11 Jan 19 01:42:01 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:43:06 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:43:06 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:43:06 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:43:06 +0300][DEBUG] dsd ** 
+[Fri, 11 Jan 19 01:43:06 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:46:59 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:46:59 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:46:59 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:46:59 +0300][DEBUG] dsd ** 
+[Fri, 11 Jan 19 01:46:59 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:47:20 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:47:20 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:47:20 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:47:20 +0300][DEBUG] dsd ** 
+[Fri, 11 Jan 19 01:47:20 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 313
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dehors ** 
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 316
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dehors ** 
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 317
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dehors ** 
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 1
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 330
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dedans ** 
+[Fri, 11 Jan 19 01:48:50 +0300][DEBUG] dsd ** 
+[Fri, 11 Jan 19 01:48:50 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "user_chat_groups" violates foreign key constraint "user_chat_groups_user_id_fkey"
+DETAIL:  Key (user_id)=(330) is not present in table "users".
+[Fri, 11 Jan 19 02:09:00 +0300][DEBUG] creation of chat history id =59

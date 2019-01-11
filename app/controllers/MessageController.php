@@ -43,7 +43,7 @@ class MessageController extends AbstractController {
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
-        return parent::chatResponce('',$response);
+        return $response;
     }
 
     /**

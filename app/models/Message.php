@@ -4,7 +4,10 @@ namespace App\Models;
 
 class Message extends \Phalcon\Mvc\Model
 {
-    const PUBLIC_COLUMNS = ['id', 'create_at', 'chat_hist_id', 'sender_id', 'content', 'received_users', 'readed_users'];
+
+    const DEFAULT_RESULT_PER_PAGE = 12;
+
+    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users'];
 
     /**
      *

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Group extends \Phalcon\Mvc\Model
+class QuickAnswers extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -15,13 +15,13 @@ class Group extends \Phalcon\Mvc\Model
      *
      * @var string
      */
-    protected $name;
+    protected $text;
 
     /**
      *
      * @var integer
      */
-    protected $chat_hist_id;
+    protected $user_id;
 
     /**
      * Method to set the value of field id
@@ -37,27 +37,27 @@ class Group extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field name
+     * Method to set the value of field text
      *
-     * @param string $name
+     * @param string $text
      * @return $this
      */
-    public function setName($name)
+    public function setText($text)
     {
-        $this->name = $name;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field chat_hist_id
+     * Method to set the value of field user_id
      *
-     * @param integer $chat_hist_id
+     * @param integer $user_id
      * @return $this
      */
-    public function setChatHistId($chat_hist_id)
+    public function setUserId($user_id)
     {
-        $this->chat_hist_id = $chat_hist_id;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -73,23 +73,23 @@ class Group extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field name
+     * Returns the value of field text
      *
      * @return string
      */
-    public function getName()
+    public function getText()
     {
-        return $this->name;
+        return $this->text;
     }
 
     /**
-     * Returns the value of field chat_hist_id
+     * Returns the value of field user_id
      *
      * @return integer
      */
-    public function getChatHistId()
+    public function getUserId()
     {
-        return $this->chat_hist_id;
+        return $this->user_id;
     }
 
     /**
@@ -98,9 +98,8 @@ class Group extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("group");
-        $this->hasMany('id', 'App\Models\GroupsAccounts', 'group_id', ['alias' => 'GroupsAccounts']);
-        $this->belongsTo('chat_hist_id', 'App\Models\ChatHistory', 'id', ['alias' => 'Chathistory']);
+        $this->setSource("quickAnswers");
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'User']);
     }
 
     /**
@@ -110,14 +109,14 @@ class Group extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'group';
+        return 'quickAnswers';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Group[]|Group|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return QuickAnswers[]|QuickAnswers|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -128,7 +127,7 @@ class Group extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Group|\Phalcon\Mvc\Model\ResultInterface
+     * @return QuickAnswers|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

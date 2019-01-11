@@ -19,6 +19,7 @@ abstract class AbstractHttpException extends \RuntimeException
     const KEY_CODE = 'error';
     const KEY_DETAILS = 'details';
     const KEY_MESSAGE = 'error_description';
+    const BAD_REQUEST_CONTENT = 10002;
 
     /**
      * http result code
