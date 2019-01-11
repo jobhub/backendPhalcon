@@ -1002,6 +1002,143 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\CommentsAPIController'=>[
+        'prefix' => '/comment',
+        'resources' => [
+            /**
+             * Возвращает комментарии к указанной фотографии пользователя
+             *
+             * @method GET
+             *
+             * @param $image_id
+             *
+             * @return string - json array массив комментариев
+             */
+            [
+                'type' => 'get',
+                'path' => '/images-users/get/{image_id}',
+                'action' => 'getCommentsForImageAction'
+            ],
+
+            /**
+             * Возвращает комментарии к указанной новости
+             *
+             * @method GET
+             *
+             * @param $news_id
+             *
+             * @return string - json array массив комментариев
+             */
+            [
+                'type' => 'get',
+                'path' => '/news/get/{news_id}',
+                'action' => 'getCommentsForNewsAction'
+            ],
+
+            /**
+             * Добавляет комментарий к фотографии пользователя
+             * @access private
+             *
+             * @method POST
+             *
+             * @params object_id - id изображения
+             * @params comment_text - текст комментария
+             * @params reply_id (не обязательное) - id комментария, на который оставляется ответ.
+             * @params account_id (не обязательное) - если не указано, значит от имени пользователя - аккаунта по умолчанию.
+             *
+             * @return string - json array в формате Status + id созданного комментария
+             */
+            [
+                'type' => 'post',
+                'path' => '/images-users/add',
+                'action' => 'addCommentForImageAction'
+            ],
+
+            /**
+             * Удаляет комментарий, оставленный к фотографии пользователя
+             *
+             * @method DELETE
+             *
+             * @param $comment_id int id комментария
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/images-users/delete/{comment_id}',
+                'action' => 'deleteCommentForImageAction'
+            ],
+
+            /**
+             * Добавляет комментарий к новости
+             * @access private
+             *
+             * @method POST
+             *
+             * @params object_id - id новости
+             * @params comment_text - текст комментария
+             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
+             * Если не указан, то от имени текущего пользователя по умолчанию.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/news/add',
+                'action' => 'addCommentForNewsAction'
+            ],
+
+            /**
+             * Удаляет комментарий, оставленный к фотографии пользователя
+             *
+             * @method DELETE
+             *
+             * @param $comment_id int id комментария
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/news/delete/{comment_id}',
+                'action' => 'deleteCommentForNewsAction'
+            ],
+
+            /**
+             * Меняет лайкнутость текущим пользователем указанного комментария.
+             *
+             * @method POST
+             *
+             * @params comment_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            [
+                'type' => 'post',
+                'path' => '/images-users/like/toggle',
+                'action' => 'toggleLikeCommentForImageAction'
+            ],
+
+            /**
+             * Меняет лайкнутость текущим пользователем указанного комментария.
+             *
+             * @method POST
+             *
+             * @params comment_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            [
+                'type' => 'post',
+                'path' => '/news/like/toggle',
+                'action' => 'toggleLikeCommentForNewsAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

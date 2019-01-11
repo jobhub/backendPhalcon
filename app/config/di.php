@@ -79,6 +79,8 @@ $di->setShared('serviceService', '\App\Services\ServiceService');
 $di->setShared('tagService', '\App\Services\TagService');
 $di->setShared('pointService', '\App\Services\PointService');
 $di->setShared('companyService', '\App\Services\CompanyService');
+$di->setShared('commentService', '\App\Services\CommentService');
+$di->setShared('likeService', '\App\Services\LikeService');
 
 
 $di['mailer'] = function() {

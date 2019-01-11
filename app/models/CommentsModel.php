@@ -14,28 +14,28 @@ abstract class CommentsModel extends AccountWithNotDeleted
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $commentid;
+    protected $comment_id;
 
     /**
      *
      * @var string
      * @Column(type="string", length=1000, nullable=false)
      */
-    protected $commenttext;
+    protected $comment_text;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $commentdate;
+    protected $comment_date;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $replyid;
+    protected $reply_id;
 
     /**
      * Method to set the value of field commentid
@@ -45,7 +45,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function setCommentId($commentid)
     {
-        $this->commentid = $commentid;
+        $this->comment_id = $commentid;
 
         return $this;
     }
@@ -58,7 +58,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function setCommentText($commenttext)
     {
-        $this->commenttext = $commenttext;
+        $this->comment_text = $commenttext;
 
         return $this;
     }
@@ -71,7 +71,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function setCommentDate($commentdate)
     {
-        $this->commentdate = $commentdate;
+        $this->comment_date = $commentdate;
 
         return $this;
     }
@@ -84,7 +84,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function setReplyId($replyid)
     {
-        $this->replyid = $replyid;
+        $this->reply_id = $replyid;
 
         return $this;
     }
@@ -96,7 +96,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function getCommentId()
     {
-        return $this->commentid;
+        return $this->comment_id;
     }
 
     /**
@@ -106,7 +106,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function getCommentText()
     {
-        return $this->commenttext;
+        return $this->comment_text;
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function getCommentDate()
     {
-        return $this->commentdate;
+        return $this->comment_date;
     }
 
     /**
@@ -126,7 +126,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
      */
     public function getReplyId()
     {
-        return $this->replyid;
+        return $this->reply_id;
     }
 
     /**
@@ -140,40 +140,42 @@ abstract class CommentsModel extends AccountWithNotDeleted
 
     /**
      * @param $comments - CommentsModel[], как массив объектов.
-     * @return array $handledComments в виде массива с полями [deleted, commentdate, commentid, replyid, commenttext,
-     *      publisherUser|publisherCompany]. commenttext и publisher могут отсутствовать, если deleted = true.
+     * @return array $handledComments в виде массива с полями [deleted, comment_date, comment_id, reply_id, comment_text,
+     *      publisher_user|publisher_company]. comment_text и publisher могут отсутствовать, если deleted = true.
      */
-    public static function handleComments($comments){
+    public static function handleComments(array $comments){
         $handledComments = [];
         foreach ($comments as $comment){
             $handledComment = [
-                'commentdate' => $comment->getCommentDate(),
-                'commentid' => $comment->getCommentId(),
-                'replyid' => $comment->getReplyId()];
+                'comment_date' => $comment['comment_date'],
+                'comment_id' => $comment['comment_id'],
+                'reply_id' => $comment['reply_id']];
 
-            if(!$comment->getDeleted()){
-                $handledComment['commenttext'] = $comment->getCommentText();
+            if(!$comment['deleted']){
+                $handledComment['comment_text'] = $comment['comment_text'];
 
-                if($comment->getAccountId()!= null) {
-                    if ($comment->accounts->getCompanyId() == null) {
+                if($comment['account_id']!= null) {
+                    $account = Accounts::findFirstById($comment['account_id']);
+
+                    if ($account && $account->getCompanyId() == null) {
                         /*$user = Userinfo::findFirst(
                             ['conditions' => 'user_id = :userId:',
                                 'columns' => Userinfo::shortColumnsInStr,
                                 'bind' => ['userId' => $comment->accounts->getUserId()]]);*/
-                        $user = Userinfo::findUserInfoById($comment->accounts->getUserId(),Userinfo::shortColumnsInStr);
-                        $handledComment['publisherUser'] = $user;
+                        $user = Userinfo::findUserInfoById($account->getUserId(),Userinfo::shortColumnsInStr);
+                        $handledComment['publisher_user'] = $user;
                     } else {
-                        $company = Companies::findFirst(
+                        /*$company = Companies::findFirst(
                             ['conditions' => 'company_id = :companyId:',
                                 'columns' => Companies::shortColumnsInStr,
-                                'bind' => ['companyId' => $comment->accounts->getCompanyId()]]);
-                        $company = Companies::findUserInfoById($comment->accounts->getCompanyId(),
+                                'bind' => ['companyId' => $comment->accounts->getCompanyId()]]);*/
+                        $company = Companies::findCompanyById($account->getCompanyId(),
                             Companies::shortColumnsInStr);
-                        $handledComment['publisherCompany'] = $company;
+                        $handledComment['publisher_company'] = $company;
                     }
                 }
             } else{
-                $handledComment['deleted'] = $comment->getDeleted();
+                $handledComment['deleted'] = $comment['deleted'];
             }
 
             //$handledComment['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comment->getCommentId()));

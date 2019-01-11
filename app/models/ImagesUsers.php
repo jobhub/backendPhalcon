@@ -152,8 +152,8 @@ class ImagesUsers extends ImagesModel
         $handledImages = [];
         foreach ($images as $image) {
             $handledImage = [
-                'imageid' => $image->getImageId(),
-                'imagepath' => $image->getImagePath()];
+                'image_id' => $image->getImageId(),
+                'image_path' => $image->getImagePath()];
 
             $handledImage['stats'] = new Stats();
             $handledImage['comments'] = CommentsImagesUsers::getComments($image->getImageId());

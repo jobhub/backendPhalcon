@@ -12,7 +12,7 @@ class CommentsNews extends CommentsModel
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newsid;
+    protected $news_id;
 
     /**
      * Method to set the value of field newsid
@@ -20,9 +20,9 @@ class CommentsNews extends CommentsModel
      * @param integer $newsid
      * @return $this
      */
-    public function setNewsid($newsid)
+    public function setNewsId($newsid)
     {
-        $this->newsid = $newsid;
+        $this->news_id = $newsid;
 
         return $this;
     }
@@ -32,9 +32,9 @@ class CommentsNews extends CommentsModel
      *
      * @return integer
      */
-    public function getNewsid()
+    public function getNewsId()
     {
-        return $this->newsid;
+        return $this->news_id;
     }
 
     /**
@@ -48,13 +48,13 @@ class CommentsNews extends CommentsModel
 
         if($this->getReplyId()!=null)
             $validator->add(
-                'replyid',
+                'reply_id',
                 new Callback(
                     [
                         "message" => "Попытка оставить комментарий на несуществующий комментарий была неуспешна",
                         "callback" => function ($comment) {
-                            $replycomment = CommentsNews::findFirst(['commentid = :commentid:',
-                                'bind' =>['commentid'=>$comment->getReplyId()]
+                            $replycomment = CommentsNews::findFirst(['comment_id = :commentId:',
+                                'bind' =>['commentId'=>$comment->getReplyId()]
                             ], false);
 
                             if ($replycomment)
@@ -76,8 +76,13 @@ class CommentsNews extends CommentsModel
         parent::initialize();
         $this->setSchema("public");
         $this->setSource("comments_news");
-        $this->hasMany('commentid', 'LikesCommentsNews', 'commentid', ['alias' => 'LikesCommentsNews']);
-        $this->belongsTo('newsid', '\News', 'newsid', ['alias' => 'News']);
+        $this->hasMany('comment_id', 'App\Models\LikesCommentsNews', 'comment_id', ['alias' => 'LikesCommentsNews']);
+        $this->belongsTo('news_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
+    }
+
+    public function getSequenceName()
+    {
+        return "comments_news_commentid_seq";
     }
 
     /**
@@ -91,12 +96,12 @@ class CommentsNews extends CommentsModel
     }
 
     public static function getComments($newsId){
-        $comments = CommentsNews::find(['newsid = :newsId:','bind' =>['newsId'=> $newsId],
-            'order' => 'commentdate DESC'],false);
+        $comments = CommentsNews::find(['news_id = :newsId:','bind' =>['newsId'=> $newsId],
+            'order' => 'comment_date DESC'],false);
 
-        $comments_arr =  CommentsModel::handleComments($comments);
+        $comments_arr =  CommentsModel::handleComments($comments->toArray());
         for($i = 0; $i < count($comments_arr);$i++){
-            $comments_arr[$i]['likes'] = count(LikesCommentsNews::findByCommentId($comments_arr[$i]['commentid']));
+            $comments_arr[$i]['likes'] = count(LikesCommentsNews::findByCommentId($comments_arr[$i]['comment_id']));
         }
         return $comments_arr;
     }

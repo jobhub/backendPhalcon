@@ -21,7 +21,7 @@ use App\Controllers\HttpExceptions\Http500Exception;
  */
 class CompanyService extends AbstractService {
 
-    const ADDED_CODE_NUMBER = 12000;
+    const ADDED_CODE_NUMBER = 13000;
 
     /** Unable to create user */
     const ERROR_COMPANY_NOT_FOUND = 1 + self::ADDED_CODE_NUMBER;

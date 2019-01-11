@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Controllers\HttpExceptions\Http403Exception;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -16,8 +15,10 @@ use App\Models\Accounts;
 
 use App\Services\ImageService;
 use App\Services\NewsService;
+use App\Services\AccountService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 use App\Services\ServiceException;
@@ -126,6 +127,9 @@ class NewsAPIController extends AbstractController
             switch ($e->getCode()) {
                 case ImageService::ERROR_INVALID_IMAGE_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }

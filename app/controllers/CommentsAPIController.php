@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Controllers;
+
+
+use App\Services\AccountService;
+use App\Services\LikeService;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Http\Response;
@@ -7,37 +12,39 @@ use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+use App\Models\CommentsNews;
+use App\Models\CommentsImagesUsers;
+use App\Models\Accounts;
+
+use App\Services\CommentService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+use PhpParser\Comment;
 
 /**
  * Class CommentsAPIController
  * Контроллер, который содержит методы для работы с комментариями.
  * Комментирии на фотографии пользователей и новости.
  */
-class CommentsAPIController extends Controller
+class CommentsAPIController extends AbstractController
 {
     /**
      * Возвращает комментарии к указанной фотографии пользователя
      *
      * @method GET
      *
-     * @param $imageId
+     * @param $image_id
      *
      * @return string - json array массив комментариев
      */
-    public function getCommentsForImageAction($imageId)
+    public function getCommentsForImageAction($image_id)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
-
-            $comments = CommentsImagesUsers::getComments($imageId);
-
-            $response->setJsonContent($comments);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        return CommentsImagesUsers::getComments($image_id);
     }
 
     /**
@@ -46,68 +53,59 @@ class CommentsAPIController extends Controller
      *
      * @method POST
      *
-     * @params objectid - id изображения
-     * @params commenttext - текст комментария
-     * @params replyid (не обязательное) - id комментария, на который оставляется ответ.
-     * @params accountid (не обязательное) - если не указано, значит от имени пользователя - аккаунта по умолчанию.
+     * @params object_id - id изображения
+     * @params comment_text - текст комментария
+     * @params reply_id (не обязательное) - id комментария, на который оставляется ответ.
+     * @params account_id (не обязательное) - если не указано, значит от имени пользователя - аккаунта по умолчанию.
      *
      * @return string - json array в формате Status + id созданного комментария
      */
     public function addCommentForImageAction()
     {
-        if ($this->request->isPost()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['image_id'] = $inputData->object_id;
+        $data['comment_text'] = $inputData->comment_text;
+        $data['reply_id'] = $inputData->reply_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
-            $comment = new CommentsImagesUsers();
-            if($this->request->getPost('accountid')!=null){
-                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountid'), 'addComment')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
 
-                $comment->setAccountId($this->request->getPost('accountid'));
-            } else{
-                $account = Accounts::findForUserDefaultAccount($userId);
-
-                if(!$account){
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_UNRESOLVED_ERROR,
-                            "errors" => ['аккаунт для указанного пользователя не создан, хотя такого быть не должно']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $comment->setAccountId($account->getId());
+            //проверки
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $comment
-                ->setCommentDate(date('Y-m-d H:i:s'))
-                ->setCommentText($this->request->getPost('commenttext'))
-                ->setImageId($this->request->getPost('objectid'))
-                ->setReplyId($this->request->getPost('replyid'));
-
-            if(!$comment->save()){
-                return SupportClass::getResponseWithErrors($comment);
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                ['status' => STATUS_OK,
-                    'commentid' => $comment->getCommentId()]
-            );
-            return $response;
+            $data['comment_date'] = date('Y-m-d H:i:s');
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $comment = $this->commentService->createComment($data, CommentService::TYPE_USER_IMAGES);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_UNABLE_CREATE_COMMENT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                case CommentService::ERROR_INVALID_COMMENT_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Comment was successfully created', ['comment' => $comment->toArray()]);
     }
 
     /**
@@ -115,138 +113,94 @@ class CommentsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $commentId int id комментария
+     * @param $comment_id int id комментария
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteCommentForImageAction($commentId)
+    public function deleteCommentForImageAction($comment_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $comment = CommentsImagesUsers::findFirstByCommentid($commentId);
+            $comment = $this->commentService->getCommentById($comment_id, CommentService::TYPE_USER_IMAGES);
 
-            if (!$comment) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный id, комментарий не существует'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'deleteComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $this->commentService->deleteComment($comment);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_UNABLE_DELETE_COMMENT:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$comment->delete()) {
-                return SupportClass::getResponseWithErrors($comment);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_COMMENT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Comment was successfully deleted');
     }
 
     /**
      * Меняет лайкнутость текущим пользователем указанного комментария.
-     * @params commentId - int id комментария
-     * @params accountId - int id аккаунта, от имени которого совершается данное действие
+     *
+     * @method POST
+     *
+     * @params comment_id - int id комментария
+     * @params account_id - int id аккаунта, от имени которого совершается данное действие
      * (если не указан, значит берется по умолчанию для пользователя)
      *
      * @return Response
      */
-    public function toggleLikeCommentForImageAction(){
-        if ($this->request->isPost()) {
-            $response = new Response();
+    public function toggleLikeCommentForImageAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['comment_id'] = $inputData->comment_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $comment = CommentsImagesUsers::findFirstByCommentid($this->request->getPost('commentId'));
-
-            if (!$comment) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный id, комментарий не существует'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
             }
 
-            if(!$this->request->getPost('accountId')){
-                $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
-            } else{
-                $accountId = $this->request->getPost('accountId');
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'deleteComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $accountId,'toggleLikes')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $liked = $this->likeService->toggleLike($data['comment_id'],$data['account_id'], LikeService::TYPE_COMMENT_USER_IMAGES);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case LikeService::ERROR_UNABLE_CREATE_LIKE:
+                case LikeService::ERROR_UNABLE_DELETE_LIKE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $like = LikesCommentsImagesUsers::findCommentLiked($accountId,
-                                                               $this->request->getPost('commentId'));
-
-            if($like){
-                if(!$like->delete()){
-                    return SupportClass::getResponseWithErrors($like);
-                }
-            } else{
-                $like = LikesCommentsImagesUsers::findCommentLikedByCompany($accountId,
-                    $this->request->getPost('commentId'));
-
-                if($like){
-                    if(!$like->delete()){
-                        return SupportClass::getResponseWithErrors($like);
-                    }
-                } else {
-
-                    $like = new LikesCommentsImagesUsers();
-                    $like->setAccountId($accountId)
-                        ->setCommentid($this->request->getPost('commentId'));
-
-                    if (!$like->save()) {
-                        return SupportClass::getResponseWithErrors($like);
-                    }
-                }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case LikeService::ERROR_INVALID_LIKE_TYPE:
+                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Like was toggled',['liked'=>$liked]);
     }
 
     /**
@@ -254,26 +208,13 @@ class CommentsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $newsId
+     * @param $news_id
      *
      * @return string - json array массив комментариев
      */
-    public function getCommentsForNewsAction($newsId)
+    public function getCommentsForNewsAction($news_id)
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            $news = CommentsNews::getComments($newsId);
-
-            $response->setJsonContent($news);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        return CommentsNews::getComments($news_id);
     }
 
     /**
@@ -282,68 +223,59 @@ class CommentsAPIController extends Controller
      *
      * @method POST
      *
-     * @params objectid - id новости
-     * @params commentText - текст комментария
-     * @params accountId - int id аккаунта, от имени которого добавляется комментарий.
+     * @params object_id - id новости
+     * @params comment_text - текст комментария
+     * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
      * Если не указан, то от имени текущего пользователя по умолчанию.
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addCommentForNewsAction()
     {
-        if ($this->request->isPost()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['news_id'] = $inputData->object_id;
+        $data['comment_text'] = $inputData->comment_text;
+        $data['reply_id'] = $inputData->reply_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
-            $comment = new CommentsNews();
-            if($this->request->getPost('accountId')!=null){
-                if (!Accounts::checkUserHavePermission($userId, $this->request->getPost('accountId'), 'addComment')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
 
-                $comment->setAccountId($this->request->getPost('accountId'));
-            } else{
-                $account = Accounts::findForUserDefaultAccount($userId);
-
-                if(!$account){
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_UNRESOLVED_ERROR,
-                            "errors" => ['аккаунт для указанного пользователя не создан, хотя такого быть не должно']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $comment->setAccountId($account->getId());
+            //проверки
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $comment
-                ->setCommentDate(date('Y-m-d H:i:s'))
-                ->setCommentText($this->request->getPost('commenttext'))
-                ->setNewsId($this->request->getPost('objectid'))
-                ->setReplyId($this->request->getPost('replyid'));
-
-            if(!$comment->save()){
-                return SupportClass::getResponseWithErrors($comment);
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                ['status' => STATUS_OK,
-                    'commentid' => $comment->getCommentId()]
-            );
-            return $response;
+            $data['comment_date'] = date('Y-m-d H:i:s');
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $comment = $this->commentService->createComment($data, CommentService::TYPE_NEWS);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_UNABLE_CREATE_COMMENT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                case CommentService::ERROR_INVALID_COMMENT_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Comment was successfully created', ['comment' => $comment->toArray()]);
     }
 
     /**
@@ -351,137 +283,93 @@ class CommentsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $commentId int id комментария
+     * @param $comment_id int id комментария
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteCommentForNewsAction($commentId)
+    public function deleteCommentForNewsAction($comment_id)
     {
-        if ($this->request->isDelete()) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $comment = CommentsNews::findFirstByCommentid($commentId);
+            $comment = $this->commentService->getCommentById($comment_id, CommentService::TYPE_NEWS);
 
-            if (!$comment) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный id, комментарий не существует'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(), 'deleteComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $comment->getAccountId(),'deleteComment')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $this->commentService->deleteComment($comment);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_UNABLE_DELETE_COMMENT:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$comment->delete()) {
-                return SupportClass::getResponseWithErrors($comment);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CommentService::ERROR_COMMENT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Comment was successfully deleted');
     }
 
     /**
      * Меняет лайкнутость текущим пользователем указанного комментария.
-     * @params commentId - int id комментария
-     * @params accountId - int id аккаунта, от имени которого совершается данное действие
+     *
+     * @method POST
+     *
+     * @params comment_id - int id комментария
+     * @params account_id - int id аккаунта, от имени которого совершается данное действие
      * (если не указан, значит берется по умолчанию для пользователя)
      *
      * @return Response
      */
-    public function toggleLikeCommentForNewsAction(){
-        if ($this->request->isPost()) {
-            $response = new Response();
+    public function toggleLikeCommentForNewsAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['comment_id'] = $inputData->comment_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $comment = CommentsNews::findFirstByCommentid($this->request->getPost('commentId'));
-
-            if (!$comment) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный id, комментарий не существует'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
             }
 
-            if(!$this->request->getPost('accountId')){
-                $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
-            } else{
-                $accountId = $this->request->getPost('accountId');
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'deleteComment')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Accounts::checkUserHavePermission($userId, $accountId,'toggleLikes')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $liked = $this->likeService->toggleLike($data['comment_id'],$data['account_id'], LikeService::TYPE_COMMENT_NEWS);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case LikeService::ERROR_UNABLE_CREATE_LIKE:
+                case LikeService::ERROR_UNABLE_DELETE_LIKE:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $like = LikesCommentsNews::findCommentLiked($accountId,
-                $this->request->getPost('commentId'));
-
-            if($like){
-                if(!$like->delete()){
-                    return SupportClass::getResponseWithErrors($like);
-                }
-            } else{
-                $like = LikesCommentsNews::findCommentLikedByCompany($accountId,
-                    $this->request->getPost('commentId'));
-
-                if($like){
-                    if(!$like->delete()){
-                        return SupportClass::getResponseWithErrors($like);
-                    }
-                } else {
-
-                    $like = new LikesCommentsNews();
-                    $like->setAccountId($accountId)
-                        ->setCommentid($this->request->getPost('commentId'));
-
-                    if (!$like->save()) {
-                        return SupportClass::getResponseWithErrors($like);
-                    }
-                }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case LikeService::ERROR_INVALID_LIKE_TYPE:
+                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Like was toggled',['liked'=>$liked]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
@@ -74,13 +76,13 @@ class LikesCommentsNews extends AccountModel
     //Если да, то возвращает объект LikesCommentsImagesUsers, иначе null.
     public static function findCommentLikedByCompany($accountId, $commentId)
     {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $modelsManager = DI::getDefault()->get('modelsManager');
         $account = Accounts::findFirstById($accountId);
         if(!$account || $account->getCompanyId() == null)
             return null;
         return $modelsManager->createBuilder()
-            ->from(["a" => "Accounts"])
-            ->join('LikesCommentsNews', 'a.id = likes.account_id', 'likes')
+            ->from(["a" => "App\Models\Accounts"])
+            ->join('App\Models\LikesCommentsNews', 'a.id = likes.account_id', 'likes')
             ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
                 ['companyId' => $account->getCompanyId(),
                     'commentId' => $commentId])
@@ -96,6 +98,31 @@ class LikesCommentsNews extends AccountModel
      * @return LikesCommentsNews|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findCommentLiked($accountId, $commentId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $account = Accounts::findFirstById($accountId);
+        if(!$account)
+            return null;
+        if($account->getCompanyId() == null)
+            return self::findFirst([
+                'account_id = :accountId: and comment_id = :commentId:',
+                'bind' => [
+                    'accountId' => $accountId,
+                    'commentId' => $commentId,
+                ]
+            ]);
+        return $modelsManager->createBuilder()
+            ->columns('likes.*')
+            ->from(["a" => "App\Models\Accounts"])
+            ->join('App\Models\LikesCommentsNews', 'a.id = likes.account_id', 'likes')
+            ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
+                ['companyId' => $account->getCompanyId(),
+                    'commentId' => $commentId])
+            ->getQuery()
+            ->execute();
+    }
+
+    public static function findCommentLikedByAccount($accountId, $commentId)
     {
         return self::findFirst([
             'account_id = :accountId: and comment_id = :commentId:',
