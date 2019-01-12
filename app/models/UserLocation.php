@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -13,7 +15,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
@@ -34,7 +36,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $lasttime;
+    protected $last_time;
 
     /**
      * Method to set the value of field userid
@@ -44,7 +46,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      */
     public function setUserId($userid)
     {
-        $this->userid = $userid;
+        $this->user_id = $userid;
 
         return $this;
     }
@@ -83,7 +85,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      */
     public function setLastTime($lasttime)
     {
-        $this->lasttime = $lasttime;
+        $this->last_time = $lasttime;
 
         return $this;
     }
@@ -95,7 +97,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -125,7 +127,7 @@ class UserLocation extends \Phalcon\Mvc\Model
      */
     public function getLastTime()
     {
-        return $this->lasttime;
+        return $this->last_time;
     }
 
     /**
@@ -138,12 +140,12 @@ class UserLocation extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Пользователь не существует или был удален",
                     "callback" => function ($userlocation) {
-                        $user = Users::findFirstByUserid($userlocation->getUserId());
+                        $user = Users::findFirstByUserId($userlocation->getUserId());
                         if ($user)
                             return true;
                         return false;
@@ -177,7 +179,7 @@ class UserLocation extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'lasttime',
+            'last_time',
             new PresenceOf([
                 "message" => "Должны быть указаны дата и время, когда местоположение было актуально"
             ])
@@ -207,7 +209,7 @@ class UserLocation extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("user_location");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -260,11 +262,11 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $str = implode(' ', $res2);
 
-        $query = $db->prepare("select userid, email, phone,
-    firstname,lastname, patronymic, longitude, latitude, lasttime,
-    male, birthday,pathtophoto,status from get_users_for_search_like(:str,:longituderh,
+        $query = $db->prepare("select user_id, email, phone,
+    first_name,last_name, patronymic, longitude, latitude, last_time,
+    male, birthday,path_to_photo,status from get_users_for_search_like(:str,:longituderh,
             :latituderh, :longitudelb, :latitudelb) 
-            where lasttime > :lasttime
+            where last_time > :last_time
             LIMIT 50");
 
         $query->execute([
@@ -273,14 +275,13 @@ class UserLocation extends \Phalcon\Mvc\Model
             'latituderh' => $latitudeRH,
             'longitudelb' => $longitudeLB,
             'latitudelb' => $latitudeLB,
-            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
+            'last_time' => date('Y-m-d H:i:s', time() + -3600),
         ]);
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
         $str = var_export($result, true);
 
         SupportClass::writeMessageInLogFile('Результат поиска по юзерам:');
         SupportClass::writeMessageInLogFile($str);
-        /*return $query->fetchAll(\PDO::FETCH_ASSOC);*/
         return $result;
     }
 

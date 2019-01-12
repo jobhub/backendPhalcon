@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Http\Response;
@@ -12,7 +14,7 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
  * Содержит методы для установления текущей позиции пользователя,
  * поиска пользователей и получения автокомплита.
  */
-class UserLocationAPIController extends Controller
+class UserLocationAPIController extends AbstractController
 {
     /**
      * Устанавливает текущее местоположение текущего пользователя.

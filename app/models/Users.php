@@ -290,8 +290,8 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasOne('user_id', 'Userinfo', 'user_id', ['alias' => 'Userinfo']);
-        $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
+        $this->hasOne('user_id', 'App\Models\Userinfo', 'user_id', ['alias' => 'Userinfo']);
+        $this->belongsTo('phone_id', 'App\Models\Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
     /**
