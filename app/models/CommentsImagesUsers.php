@@ -13,7 +13,7 @@ class CommentsImagesUsers extends CommentsModel
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $imageid;
+    protected $image_id;
 
     /**
      * Method to set the value of field imageid
@@ -23,7 +23,7 @@ class CommentsImagesUsers extends CommentsModel
      */
     public function setImageId($imageid)
     {
-        $this->imageid = $imageid;
+        $this->image_id = $imageid;
 
         return $this;
     }
@@ -35,7 +35,7 @@ class CommentsImagesUsers extends CommentsModel
      */
     public function getImageId()
     {
-        return $this->imageid;
+        return $this->image_id;
     }
 
     /**
@@ -49,13 +49,13 @@ class CommentsImagesUsers extends CommentsModel
 
         if($this->getReplyId()!=null)
         $validator->add(
-            'replyid',
+            'reply_id',
             new Callback(
                 [
                     "message" => "Попытка оставить комментарий на несуществующий комментарий была неуспешна",
                     "callback" => function ($comment) {
-                        $replycomment = CommentsImagesUsers::findFirst(['commentid = :commentid:',
-                            'bind' =>['commentid'=>$comment->getReplyId()]
+                        $replycomment = CommentsImagesUsers::findFirst(['comment_id = :commentId:',
+                            'bind' =>['commentId'=>$comment->getReplyId()]
                         ], false);
 
                         if ($replycomment)
@@ -77,8 +77,14 @@ class CommentsImagesUsers extends CommentsModel
     {
         parent::initialize();
         $this->setSource("comments_imagesusers");
-        $this->belongsTo('imageid', '\Imagesusers', 'imageid', ['alias' => 'Imagesusers']);
+        $this->belongsTo('image_id', 'App\Models\ImagesUsers', 'image_id', ['alias' => 'ImagesUsers']);
     }
+
+    public function getSequenceName()
+    {
+        return "comments_imagesusers_commentid_seq";
+    }
+
 
     /**
      * Returns table name mapped in the model.
@@ -91,12 +97,12 @@ class CommentsImagesUsers extends CommentsModel
     }
 
     public static function getComments($imageId){
-        $comments = CommentsImagesUsers::find(['imageid = :imageId:','bind' =>['imageId'=> $imageId],
-            'order' => 'commentdate DESC'],false);
+        $comments = CommentsImagesUsers::find(['image_id = :imageId:','bind' =>['imageId'=> $imageId],
+            'order' => 'comment_date DESC'],false);
 
-        $comments_arr =  CommentsModel::handleComments($comments);
+        $comments_arr =  CommentsModel::handleComments($comments->toArray());
         for($i = 0; $i < count($comments_arr);$i++){
-            $comments_arr[$i]['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comments_arr[$i]['commentid']));
+            $comments_arr[$i]['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comments_arr[$i]['comment_id']));
         }
         return $comments_arr;
     }

@@ -112,8 +112,7 @@ class SessionAPIController extends AbstractController
      * @method GET
      * @return string - json array в формате Status
      */
-    public
-    function authWithSocialAction()
+    public function authWithSocialAction()
     {
         if ($this->request->isGet()) {
             $ulogin = new Auth(array(

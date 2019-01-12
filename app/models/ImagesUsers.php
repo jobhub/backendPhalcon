@@ -6,80 +6,28 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class ImagesUsers extends \Phalcon\Mvc\Model
+class ImagesUsers extends ImagesModel
 {
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $imageid;
-
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=256, nullable=false)
-     */
-    protected $imagepath;
+    protected $user_id;
 
     const MAX_IMAGES = 10;
 
     /**
-     * Method to set the value of field imageid
-     *
-     * @param integer $imageid
-     * @return $this
-     */
-    public function setImageId($imageid)
-    {
-        $this->imageid = $imageid;
-
-        return $this;
-    }
-
-    /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
-    }
-
-    /**
-     * Method to set the value of field imagepath
-     *
-     * @param string $imagepath
-     * @return $this
-     */
-    public function setImagePath($imagepath)
-    {
-        $this->imagepath = $imagepath;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field imageid
-     *
-     * @return integer
-     */
-    public function getImageId()
-    {
-        return $this->imageid;
     }
 
     /**
@@ -89,17 +37,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
-    }
-
-    /**
-     * Returns the value of field imagepath
-     *
-     * @return string
-     */
-    public function getImagePath()
-    {
-        return $this->imagepath;
+        return $this->user_id;
     }
 
     /**
@@ -112,12 +50,12 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $user = Users::findFirstByUserid($image->getUserId());
+                        $user = Users::findFirstByUserId($image->getUserId());
                         if ($user)
                             return true;
                         return false;
@@ -126,28 +64,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
             )
         );
 
-        $validator->add(
-            'imagepath',
-            new Callback(
-                [
-                    "message" => "Формат не поддерживается",
-                    "callback" => function ($image) {
-                        $format = pathinfo($image->getImagePath(), PATHINFO_EXTENSION);
-
-                        if ($format == 'jpeg' || 'jpg')
-                            return true;
-                        elseif ($format == 'png')
-                            return true;
-                        elseif ($format == 'gif')
-                            return true;
-                        else {
-                            return false;
-                        }
-                    }
-                ]
-            )
-        );
-        return $this->validate($validator);
+        return parent::validation()&& $this->validate($validator);
     }
 
     /**
@@ -155,6 +72,7 @@ class ImagesUsers extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
+        parent::initialize();
         $this->setSchema("public");
         $this->setSource("imagesusers");
         $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
@@ -192,54 +110,16 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function getComments($imageId)
-    {
-        /*$comments = [];
-        for ($i = 0; $i < 6; $i++) {
-            $type = rand(0, 2);
-            if ($type == 0) {
-                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать трам парам там там там пам',
-                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
-                ];
-            } else if ($type == 1) {
-                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать НУ ПРЯМ ХОЧУ НЕ МОГУ',
-                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,'replyid'  => ($i-1)>0?($i-1):0
-                ];
-            } else if ($type == 2) {
-                $comment = ['commenttext' => 'оооооооооооооооооооооооочень хочу отдыхать ОТПУСТИТЕ МЕНЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯЯ',
-                    'commentdate' => '2018-09-15 10:23:54+00', 'commentid' => $i + 1,
-                ];
-            }
-            $comment['likes'] = ($i*(int)(7/5))+$i*7%6;
-
-            $comment['publisherUser'] = ['userid' => '9', 'email' => 'eenotova@mail.ru',
-                'phone' => '+7 954 352-65-75', 'firstname' => 'Екатерина',
-                'lastname' => 'Енотова', 'patronymic' => "Васильевна",
-                'lasttime' => '2019-09-08 16:00:30+00', 'male' => '0',
-                'birthday' => '1997-05-25 00:00:00+00', 'pathtophoto' => 'images/profile/user/1.jpg',
-                'status' => null];
-
-            $comments[] = $comment;
-        }*/
-
-        $comments = CommentsImagesUsers::findByImageId($imageId);
-
-        return $comments;
-    }
-
     public function delete($delete = false, $data = null, $whiteList = null)
     {
         $path = $this->getImagePath();
 
-        $result = parent::delete($delete, false, $data, $whiteList);
+        $result = parent::delete($delete, $data, $whiteList);
 
         if ($result && $path != null && $delete = true) {
-            ImageLoader::delete($path);
-
-            $userinfo = Userinfo::findFirstByUserid($this->getUserId());
+            $userinfo = Userinfo::findFirstByUserId($this->getUserId());
             if ($userinfo->getPathToPhoto() == $path) {
                 $userinfo->setPathToPhoto(null);
-
                 $userinfo->update();
             }
         }
@@ -247,10 +127,24 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         return $result;
     }
 
+    /**
+     * return formatted array with images
+     * @param $userId
+     * @return array
+     */
     public static function getImages($userId)
     {
-        $images = ImagesUsers::findByUserid($userId);
+        $images = ImagesUsers::findByUserId($userId);
         return self::handleImages($images);
+    }
+
+    /**
+     * return non formatted images objects
+     * @param $userId
+     * @return mixed
+     */
+    public static function findImagesForUser($userId){
+        return self::findByUserId($userId);
     }
 
     public static function handleImages($images)
@@ -258,8 +152,8 @@ class ImagesUsers extends \Phalcon\Mvc\Model
         $handledImages = [];
         foreach ($images as $image) {
             $handledImage = [
-                'imageid' => $image->getImageId(),
-                'imagepath' => $image->getImagePath()];
+                'image_id' => $image->getImageId(),
+                'image_path' => $image->getImagePath()];
 
             $handledImage['stats'] = new Stats();
             $handledImage['comments'] = CommentsImagesUsers::getComments($image->getImageId());

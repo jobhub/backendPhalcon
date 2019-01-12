@@ -1,6 +1,12 @@
 <?php
+
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+
 class LikesCommentsImagesUsers extends AccountModel
 {
 
@@ -50,18 +56,6 @@ class LikesCommentsImagesUsers extends AccountModel
                 [
                     "message" => "Компания может оставить только один лайк, независимо от количества менеджеров",
                     "callback" => function ($likesModel) {
-                        /*$modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
-                        $account = Accounts::findFirstById($likesModel->getAccountId());
-                        if(!$account)
-                            return false;
-                        $result = $modelsManager->createBuilder()
-                            ->from(["a" => "Accounts"])
-                            ->join('LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
-                            ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
-                                ['companyId' => $account->getCompanyId(),
-                                  'commentId' => $likesModel->getCommentId()])
-                            ->getQuery()
-                            ->execute();*/
                         $result = self::findCommentLikedByCompany($likesModel->getAccountId(),$likesModel->getCommentId());
 
                         if (count($result)>0)
@@ -80,13 +74,13 @@ class LikesCommentsImagesUsers extends AccountModel
     //Если да, то возвращает объект LikesCommentsImagesUsers, иначе null.
     public static function findCommentLikedByCompany($accountId, $commentId)
     {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $modelsManager = DI::getDefault()->get('modelsManager');
         $account = Accounts::findFirstById($accountId);
         if(!$account || $account->getCompanyId() == null)
             return null;
         return $modelsManager->createBuilder()
-            ->from(["a" => "Accounts"])
-            ->join('LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
+            ->from(["a" => "App\Models\Accounts"])
+            ->join('App\Models\LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
             ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
                 ['companyId' => $account->getCompanyId(),
                     'commentId' => $commentId])
@@ -95,6 +89,31 @@ class LikesCommentsImagesUsers extends AccountModel
     }
 
     public static function findCommentLiked($accountId, $commentId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $account = Accounts::findFirstById($accountId);
+
+        if(!$account)
+            return null;
+        if($account->getCompanyId() == null)
+            return self::findFirst([
+                'account_id = :accountId: and comment_id = :commentId:',
+                'bind' => [
+                    'accountId' => $accountId,
+                    'commentId' => $commentId,
+                ]
+            ]);
+        return $modelsManager->createBuilder()
+            ->from(["a" => "App\Models\Accounts"])
+            ->join('App\Models\LikesCommentsImagesUsers', 'a.id = likes.account_id', 'likes')
+            ->where('a.company_id = :companyId: and likes.comment_id = :commentId:',
+                ['companyId' => $account->getCompanyId(),
+                    'commentId' => $commentId])
+            ->getQuery()
+            ->execute();
+    }
+
+    public static function findCommentLikedByAccount($accountId, $commentId)
     {
         return self::findFirst([
             'account_id = :accountId: and comment_id = :commentId:',
@@ -113,7 +132,7 @@ class LikesCommentsImagesUsers extends AccountModel
         parent::initialize();
         $this->setSchema("public");
         $this->setSource("likes_comments_imagesusers");
-        $this->belongsTo('comment_id', '\CommentsImagesusers', 'commentid', ['alias' => 'CommentsImagesusers']);
+        $this->belongsTo('comment_id', 'App\Models\CommentsImagesUsers', 'commentid', ['alias' => 'CommentsImagesUsers']);
     }
 
     /**

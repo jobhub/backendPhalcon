@@ -1,10 +1,19 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
+use App\Libs\SphinxClient;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Callback;
 
-class Services extends SubjectsWithNotDeletedWithCascade
+use App\Libs\SupportClass;
+use PHPMailer\PHPMailer\Exception;
+
+class Services extends AccountWithNotDeletedWithCascade
 {
     /**
      *
@@ -12,7 +21,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
+    protected $service_id;
 
     /**
      *
@@ -26,28 +35,28 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $datepublication;
+    protected $date_publication;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $pricemin;
+    protected $price_min;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $pricemax;
+    protected $price_max;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionid;
+    protected $region_id;
 
 
     /**
@@ -75,25 +84,25 @@ class Services extends SubjectsWithNotDeletedWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $numberofdisplay;
+    protected $number_of_display;
 
     protected $rating;
 
-    const publicColumns = ['serviceid', 'description', 'datepublication', 'pricemin', 'pricemax',
-        'regionid', 'name', 'rating'];
+    const publicColumns = ['service_id', 'description', 'date_publication', 'price_min', 'price_max',
+        'region_id', 'name', 'rating'];
 
-    const publicColumnsInStr = 'serviceid, description, datepublication, pricemin, pricemax,
-        regionid, name, rating';
+    const publicColumnsInStr = 'service_id, description, date_publication, price_min, price_max,
+        region_id, name, rating';
 
     /**
      * Method to set the value of field serviceId
      *
-     * @param integer $serviceid
+     * @param integer $service_id
      * @return $this
      */
-    public function setServiceId($serviceid)
+    public function setServiceId($service_id)
     {
-        $this->serviceid = $serviceid;
+        $this->service_id = $service_id;
 
         return $this;
     }
@@ -127,12 +136,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field datePublication
      *
-     * @param string $datepublication
+     * @param string $date_publication
      * @return $this
      */
-    public function setDatePublication($datepublication)
+    public function setDatePublication($date_publication)
     {
-        $this->datepublication = $datepublication;
+        $this->date_publication = $date_publication;
 
         return $this;
     }
@@ -140,12 +149,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field priceMin
      *
-     * @param integer $pricemin
+     * @param integer $price_min
      * @return $this
      */
-    public function setPriceMin($pricemin)
+    public function setPriceMin($price_min)
     {
-        $this->pricemin = $pricemin;
+        $this->price_min = $price_min;
 
         return $this;
     }
@@ -153,12 +162,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field priceMax
      *
-     * @param integer $pricemax
+     * @param integer $price_max
      * @return $this
      */
-    public function setPriceMax($pricemax)
+    public function setPriceMax($price_max)
     {
-        $this->pricemax = $pricemax;
+        $this->price_max = $price_max;
 
         return $this;
     }
@@ -166,12 +175,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionid
+     * @param integer $region_id
      * @return $this
      */
-    public function setRegionId($regionid)
+    public function setRegionId($region_id)
     {
-        $this->regionid = $regionid;
+        $this->region_id = $region_id;
 
         return $this;
     }
@@ -217,7 +226,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function setNumberOfDisplay($numberOfDisplay)
     {
-        $this->numberofdisplay = $numberOfDisplay;
+        $this->number_of_display = $numberOfDisplay;
         return $this;
     }
 
@@ -228,7 +237,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionid;
+        return $this->region_id;
     }
 
     /**
@@ -238,7 +247,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getServiceId()
     {
-        return $this->serviceid;
+        return $this->service_id;
     }
 
     /**
@@ -258,7 +267,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getDatePublication()
     {
-        return $this->datepublication;
+        return $this->date_publication;
     }
 
     /**
@@ -268,7 +277,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getPriceMin()
     {
-        return $this->pricemin;
+        return $this->price_min;
     }
 
     public function getRating()
@@ -283,7 +292,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getPriceMax()
     {
-        return $this->pricemax;
+        return $this->price_max;
     }
 
     /**
@@ -323,7 +332,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function getNumberOfDisplay()
     {
-        return $this->numberofdisplay;
+        return $this->number_of_display;
     }
 
     /**
@@ -336,7 +345,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'pricemin',
+            'price_min',
             new Callback(
                 [
                     "message" => "Минимальная цена должна быть меньше (или равна) максимальной",
@@ -355,12 +364,12 @@ class Services extends SubjectsWithNotDeletedWithCascade
         );
 
         $validator->add(
-            'regionid',
+            'region_id',
             new Callback(
                 [
                     "message" => "Для услуги должен быть указан регион",
                     "callback" => function ($service) {
-                        $region = Regions::findFirstByRegionid($service->getRegionId());
+                        $region = Regions::findFirstByRegionId($service->getRegionId());
                         if ($region)
                             return true;
                         return false;
@@ -370,7 +379,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
         );
 
         $validator->add(
-            "datepublication",
+            "date_publication",
             new PresenceOf(
                 [
                     "message" => "Не указана дата опубликования услуги",
@@ -416,8 +425,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         if ($delete) {
-            $images = ImagesServices::findByServiceid($this->getServiceId());
-
+            $images = ImagesServices::findByServiceId($this->getServiceId());
             foreach ($images as $image) {
                 if (!$image->delete()) {
                     return false;
@@ -434,10 +442,11 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        parent::initialize();
+        $this->setSchema("public");
         $this->setSource("services");
-        $this->hasMany('serviceid', 'ServicesPoints', 'serviceid', ['alias' => 'ServicesPoints']);
-        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
+        $this->hasMany('service_id', 'App\Models\ServicesPoints', 'service_id', ['alias' => 'ServicesPoints']);
+        $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
     }
 
     /**
@@ -452,7 +461,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
 
     public static function getServices($categoriesId = null, $serviceid = null, $companyid = null)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
         if ($serviceid == null) {
             if ($companyid == null) {
                 $query = $db->prepare("SELECT * FROM (SELECT row_to_json(serv) as \"service\",
@@ -760,59 +769,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
             return ($a['weight'] > $b['weight']) ? -1 : 1;
         });
 
-        foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-            if (count($match['attrs']['pointid']) > 0) {
-                $str = '';
-
-                foreach ($match['attrs']['pointid'] as $pointid) {
-                    if ($str == '')
-                        $str .= 'pointid IN (' . $pointid;
-                    else {
-                        $str .= ', ' . $pointid;
-                    }
-                }
-                $str .= ')';
-
-                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
-
-                $service['points'] = $points;
-            }
-
-            if ($service['service']['subjecttype'] == 1) {
-                $service['companies'] = Companies::findFirst([
-                    'companyid = :companyId:',
-                    'bind' => ['companyId' => $service['service']['subjectid']],
-                    'columns' => Companies::publicColumns
-                ]);
-
-                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
-            } elseif ($service['service']['subjecttype'] == 0) {
-                $service['userinfo'] = Userinfo::findFirst([
-                    'userid = :userId:',
-                    'bind' => ['userId' => $service['service']['subjectid']],
-                    'columns' => Userinfo::publicColumns
-                ]);
-
-                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
-            }
-
-            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-
-            if (count($service['images']) == 0) {
-                $image = new ImagesServices();
-                $image->setImagePath('/images/no_image.jpg');
-                $image->setServiceId($service['service']['serviceid']);
-                $service['images'] = [$image];
-            }
-
-            $service['ratingcount'] = count(Reviews::getReviewsForService($service['service']['serviceid']));
-            $services[] = $service;
-        }
-
-
-        return $services;
+        return self::handleServiceFromArrayForSearch($allmatches);
     }
 
     public static function getAutocompleteByQuery($query, $center, $diagonal, $regions = null)
@@ -882,7 +839,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
 
         for ($i = 0; $i < 10 && $i < count($allMatches); $i++) {
             $result = $allMatches[$i];
-            $output[] = ['id' => $result['attrs']['elementid'], 'name' => $result['attrs']['name'],
+            $output[] = ['id' => $result['attrs']['element_id'], 'name' => $result['attrs']['name'],
                 'type' => $result['attrs']['type'],
             ];
         }
@@ -954,58 +911,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
             return ($a['weight'] > $b['weight']) ? -1 : 1;
         });
 
-        foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-            if (count($match['attrs']['pointid']) > 0) {
-                $str = '';
-
-                foreach ($match['attrs']['pointid'] as $pointid) {
-                    if ($str == '')
-                        $str .= 'pointid IN (' . $pointid;
-                    else {
-                        $str .= ', ' . $pointid;
-                    }
-                }
-                $str .= ')';
-
-                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
-
-                $service['points'] = $points;
-            }
-
-            if ($service['service']['subjecttype'] == 1) {
-                $service['companies'] = Companies::findFirst([
-                    'companyid = :companyId:',
-                    'bind' => ['companyId' => $service['service']['subjectid']],
-                    'columns' => Companies::publicColumns
-                ]);
-
-                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
-            } elseif ($service['service']['subjecttype'] == 0) {
-                $service['userinfo'] = Userinfo::findFirst([
-                    'userid = :userId:',
-                    'bind' => ['userId' => $service['service']['subjectid']],
-                    'columns' => Userinfo::publicColumns
-                ]);
-
-                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
-            }
-            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-
-            if (count($service['images']) == 0) {
-                $image = new ImagesServices();
-                $image->setImagePath('/images/no_image.jpg');
-                $image->setServiceId($service['service']['serviceid']);
-                $service['images'] = [$image];
-            }
-            $reviews = Reviews::getReviewsForService($service['service']['serviceid']);
-            $service['ratingcount'] = count($reviews);
-            $services[] = $service;
-        }
-
-
-        return $services;
+        return self::handleServiceFromArrayForSearch($allmatches);
     }
 
     public static function getServicesWithFilters($query, $center, $diagonal, $regions = null,
@@ -1057,58 +963,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
             return ($a['weight'] > $b['weight']) ? -1 : 1;
         });
 
-        foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-            if (count($match['attrs']['pointid']) > 0) {
-                $str = '';
-
-                foreach ($match['attrs']['pointid'] as $pointid) {
-                    if ($str == '')
-                        $str .= 'pointid IN (' . $pointid;
-                    else {
-                        $str .= ', ' . $pointid;
-                    }
-                }
-                $str .= ')';
-
-                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
-
-                $service['points'] = $points;
-            }
-
-            if ($service['service']['subjecttype'] == 1) {
-                $service['companies'] = Companies::findFirst([
-                    'companyid = :companyId:',
-                    'bind' => ['companyId' => $service['service']['subjectid']],
-                    'columns' => Companies::publicColumns
-                ]);
-
-                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
-            } elseif ($service['service']['subjecttype'] == 0) {
-                $service['userinfo'] = Userinfo::findFirst([
-                    'userid = :userId:',
-                    'bind' => ['userId' => $service['service']['subjectid']],
-                    'columns' => Userinfo::publicColumns
-                ]);
-
-                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
-            }
-            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-
-            if (count($service['images']) == 0) {
-                $image = new ImagesServices();
-                $image->setImagePath('/images/no_image.jpg');
-                $image->setServiceId($service['service']['serviceid']);
-                $service['images'] = [$image];
-            }
-            $reviews = Reviews::getReviewsForService($service['service']['serviceid']);
-            $service['ratingcount'] = count($reviews);
-            $services[] = $service;
-        }
-
-
-        return $services;
+        return self::handleServiceFromArrayForSearch($allmatches);
     }
 
     public static function getServicesByQuery2($query, $center, $diagonal, $regions = null)
@@ -1218,6 +1073,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
         $results = $cl->RunQueries();
         $services = [];
         $allmatches = [];
+        if($results!=null)
         foreach ($results as $result) {
             if ($result['total'] > 0) {
                 $allmatches = array_merge($allmatches, $result['matches']);
@@ -1231,59 +1087,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
             return ($a['weight'] > $b['weight']) ? -1 : 1;
         });
 
-        foreach ($allmatches as $match) {
-            $service['service'] = json_decode($match['attrs']['service'], true);
-            //$service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-            if (count($match['attrs']['pointid']) > 0) {
-                $str = '';
-
-                foreach ($match['attrs']['pointid'] as $pointid) {
-                    if ($str == '')
-                        $str .= 'pointid IN (' . $pointid;
-                    else {
-                        $str .= ', ' . $pointid;
-                    }
-                }
-                $str .= ')';
-
-                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
-
-                $service['points'] = $points;
-            }
-
-            if ($service['service']['subjecttype'] == 1) {
-                $service['companies'] = Companies::findFirst([
-                    'companyid = :companyId:',
-                    'bind' => ['companyId' => $service['service']['subjectid']],
-                    'columns' => Companies::publicColumns
-                ]);
-
-                $service['categories'] = CompaniesCategories::getCategoriesByCompany($service['service']['subjectid']);
-            } elseif ($service['service']['subjecttype'] == 0) {
-                $service['userinfo'] = Userinfo::findFirst([
-                    'userid = :userId:',
-                    'bind' => ['userId' => $service['service']['subjectid']],
-                    'columns' => Userinfo::publicColumns
-                ]);
-
-                $service['categories'] = UsersCategories::getCategoriesByUser($service['service']['subjectid']);
-            }
-
-            $service['images'] = ImagesServices::findByServiceid($service['service']['serviceid']);
-
-            if (count($service['images']) == 0) {
-                $image = new ImagesServices();
-                $image->setImagePath('/images/no_image.jpg');
-                $image->setServiceId($service['service']['serviceid']);
-                $service['images'] = [$image];
-            }
-
-            $service['ratingcount'] = count(Reviews::getReviewsForService($service['service']['serviceid']));
-            $services[] = $service;
-        }
-
-
-        return $services;
+        return self::handleServiceFromArrayForSearch($allmatches);
     }
 
     /**
@@ -1296,7 +1100,7 @@ class Services extends SubjectsWithNotDeletedWithCascade
      */
     public static function getServicesForSubject($subjectId, $subjectType)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $services = Services::findBySubject($subjectId, $subjectType, 'datepublication desc', Services::publicColumnsInStr);
 
@@ -1360,38 +1164,63 @@ class Services extends SubjectsWithNotDeletedWithCascade
 
     public static function getTasksForService($serviceId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
         return [];
     }
 
     public static function getPointsForService($serviceId)
     {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $modelsManager = DI::getDefault()->get('modelsManager');
         $columns = [];
         foreach (TradePoints::publicColumns as $publicColumn) {
             $columns[] = 'p.' . $publicColumn;
         }
-        $result = $modelsManager->createBuilder()
-            ->columns($columns)
-            ->from(["p" => "TradePoints"])
-            ->join('ServicesPoints', 'p.pointid = sp.pointid', 'sp')
-            ->join('Services', 'sp.serviceid = s.serviceid', 's')
-            ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
-            ->getQuery()
-            ->execute();
+        /*try {*/
+            $result = $modelsManager->createBuilder()
+                ->columns($columns)
+                ->from(["p" => "App\Models\TradePoints"])
+                ->join('App\Models\ServicesPoints', 'p.point_id = sp.point_id', 'sp')
+                ->join('App\Models\Services', 'sp.service_id = s.service_id', 's')
+                ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
+                ->getQuery()
+                ->execute();
+        /*}catch(\Exception $e){
+            echo $e;
+        }*/
 
         return $result;
     }
 
     public static function getTagsForService($serviceId)
     {
-        $modelsManager = Phalcon\DI::getDefault()->get('modelsManager');
+        $modelsManager = DI::getDefault()->get('modelsManager');
 
         $result = $modelsManager->createBuilder()
-            ->from(["t" => "Tags"])
-            ->join('ServicesTags', 't.tagid = st.tagid', 'st')
-            ->join('Services', 'st.serviceid = s.serviceid', 's')
-            ->where('s.serviceid = :serviceId:', ['serviceId' => $serviceId])
+            ->from(["t" => "App\Models\Tags"])
+            ->join('App\Models\ServicesTags', 't.tag_id = st.tag_id', 'st')
+            ->join('App\Models\Services', 'st.service_id = s.service_id', 's')
+            ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
+            ->getQuery()
+            ->execute();
+
+        return $result;
+    }
+
+    public static function findServicesForPoint($pointId)
+    {
+        $modelsManager =DI::getDefault()->get('modelsManager');
+
+        $columns = [];
+        foreach (self::publicColumns as $col){
+            $columns[] = 's.'.$col;
+        }
+
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\ServicesPoints', 's.service_id = sp.service_id', 'sp')
+            ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
+            ->where('p.point_id = :pointId:', ['pointId' => $pointId])
             ->getQuery()
             ->execute();
 
@@ -1407,5 +1236,166 @@ class Services extends SubjectsWithNotDeletedWithCascade
         unset($service['deletedcascade']);
         unset($service['numberofdisplay']);
         return $service;
+    }
+
+    public static function findServicesByUserId($userId){
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\Accounts', 'a.id = s.account_id and a.company_id is null', 'a')
+            ->where('a.user_id = :userId: and s.deleted = false', ['userId' => $userId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleServiceFromArray($result->toArray());
+    }
+
+    public static function findServicesByCompanyId($companyId){
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\Accounts', 'a.id = s.account_id', 'a')
+            ->where('a.company_id = :companyId: and s.deleted = false', ['companyId' => $companyId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleServiceFromArray($result->toArray());
+    }
+
+    public static function handleServiceFromArray(array $services){
+        $servicesAll = [];
+        foreach ($services as $service) {
+            $serviceAll = $service;
+
+            $account = Accounts::findFirstById($service['account_id']);
+
+            if($account){
+                if($account->getCompanyId()!=null){
+                    $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());
+                    $publisher = Companies::findFirst(
+                        ['conditions' => 'company_id = :companyId:',
+                            'columns' => Companies::publicColumnsInStr,
+                            'bind' => ['companyId' => $account->getCompanyId()]])->toArray();
+
+
+                    $phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisher_company'] = $publisher;
+                } else{
+                    $categories = UsersCategories::getCategoriesByUser($account->getUserId());
+                    $publisher = Userinfo::findFirst(
+                        ['conditions' => 'user_id = :userId:',
+                            'columns' => Userinfo::publicColumnsInStr,
+                            'bind' => ['userId' => $account->getUserId()]])->toArray();
+                    $phones = PhonesUsers::getUserPhones($account->getUserId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisher_user'] = $publisher;
+                }
+
+                $serviceAll['categories'] = $categories;
+            }
+
+            $images = ImagesServices::findByServiceId($service['service_id']);
+            $serviceAll['images'] = [];
+            foreach ($images as $image) {
+                $serviceAll['images'][] = $image->getImagePath();
+            }
+
+            $points = Services::getPointsForService($service['service_id']);
+            $serviceAll['point'] = count($points) > 0 ?
+                $points[0] : [];
+
+            $tags = Services::getTagsForService($service['service_id']);
+            $serviceAll['tags'] = count($tags) > 0 ?
+                $tags : [];
+           // $serviceAll['rating_count'] = count(Reviews::getReviewsForService($service['service']['service_id']));
+
+
+            $servicesAll[] = $serviceAll;
+        }
+        return $servicesAll;
+    }
+
+    public static function handleServiceFromArrayForSearch(array $matches){
+        $servicesAll = [];
+        foreach ($matches as $match) {
+            $service = json_decode($match['attrs']['service'],true);
+            $serviceAll['service'] = $service;
+
+            $account = Accounts::findFirstById($service['account_id']);
+
+            if($account){
+                if($account->getCompanyId()!=null){
+                    $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());
+                    $publisher = Companies::findFirst(
+                        ['conditions' => 'company_id = :companyId:',
+                            'columns' => Companies::publicColumnsInStr,
+                            'bind' => ['companyId' => $account->getCompanyId()]])->toArray();
+
+
+                    $phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisher_company'] = $publisher;
+                } else{
+                    $categories = UsersCategories::getCategoriesByUser($account->getUserId());
+                    $publisher = Userinfo::findFirst(
+                        ['conditions' => 'user_id = :userId:',
+                            'columns' => Userinfo::publicColumnsInStr,
+                            'bind' => ['userId' => $account->getUserId()]])->toArray();
+                    $phones = PhonesUsers::getUserPhones($account->getUserId());
+                    $publisher['phones'] = $phones;
+                    $serviceAll['publisher_user'] = $publisher;
+                }
+
+                $serviceAll['categories'] = $categories;
+            }
+
+            $images = ImagesServices::findByServiceId($service['service_id']);
+            $serviceAll['images'] = [];
+            foreach ($images as $image) {
+                $serviceAll['images'][] = $image->getImagePath();
+            }
+
+            if (count($serviceAll['images']) == 0) {
+                $image = new ImagesServices();
+                $image->setImagePath('/images/no_image.jpg');
+                $image->setServiceId($serviceAll['service']['service_id']);
+                $serviceAll['images'] = [$image];
+            }
+
+            if (count($match['attrs']['pointid']) > 0) {
+                $str = '';
+                foreach ($match['attrs']['pointid'] as $pointid) {
+                    if ($str == '')
+                        $str .= 'pointid IN (' . $pointid;
+                    else {
+                        $str .= ', ' . $pointid;
+                    }
+                }
+                $str .= ')';
+
+                $points = TradePoints::find([$str, 'columns' => TradePoints::publicColumns]);
+
+                $service['points'] = $points;
+            }
+
+            $tags = Services::getTagsForService($service['service_id']);
+            $serviceAll['tags'] = count($tags) > 0 ?
+                $tags : [];
+            //$serviceAll['rating_count'] = count(Reviews::getReviewsForService($service['service']['service_id']));
+
+
+            $servicesAll[] = $serviceAll;
+        }
+        return $servicesAll;
+    }
+
+    public static function findServiceById($serviceId){
+        return self::findFirst(['columns'=>self::publicColumns,'condition'=>'service_id = :serviceId:',
+            'bind'=>['serviceId'=>$serviceId]]);
     }
 }

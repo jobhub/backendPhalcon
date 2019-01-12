@@ -85,7 +85,7 @@ class RegisterAPIController extends AbstractController
         try {
             $resultUser = $this->userService->createUser($data);
 
-            $result = $this->accountService->createAccount(['userId' => $resultUser->getUserId()]);
+            $result = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
 
             SupportClass::writeMessageInLogFile("Дошел до создания сессии");
             $tokens = $this->authService->createSession($resultUser);

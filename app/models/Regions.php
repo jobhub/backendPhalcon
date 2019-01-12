@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 class Regions extends \Phalcon\Mvc\Model
 {
 
@@ -82,6 +84,11 @@ class Regions extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'regions';
+    }
+
+    public function getSequenceName()
+    {
+        return "regions_regionid_seq";
     }
 
     /**

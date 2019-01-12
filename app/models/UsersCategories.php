@@ -1,8 +1,13 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+
 class UsersCategories extends \Phalcon\Mvc\Model
 {
 
@@ -12,7 +17,7 @@ class UsersCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
@@ -20,17 +25,17 @@ class UsersCategories extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryid;
+    protected $category_id;
 
     /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -38,12 +43,12 @@ class UsersCategories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryid
      *
-     * @param integer $categoryid
+     * @param integer $category_id
      * @return $this
      */
-    public function setCategoryId($categoryid)
+    public function setCategoryId($category_id)
     {
-        $this->categoryid = $categoryid;
+        $this->category_id = $category_id;
 
         return $this;
     }
@@ -55,7 +60,7 @@ class UsersCategories extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -65,7 +70,7 @@ class UsersCategories extends \Phalcon\Mvc\Model
      */
     public function getCategoryId()
     {
-        return $this->categoryid;
+        return $this->category_id;
     }
 
     /**
@@ -78,12 +83,12 @@ class UsersCategories extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Пользователь не существует",
                     "callback" => function($userCat) {
-                        $user = Users::findFirstByUserid($userCat->getUserId());
+                        $user = Users::findFirstByUserId($userCat->getUserId());
                         if($user)
                             return true;
                         return false;
@@ -93,7 +98,7 @@ class UsersCategories extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'categoryid',
+            'category_id',
             new Callback(
                 [
                     "message" => "Такая категория не существует",
@@ -117,8 +122,8 @@ class UsersCategories extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("userscategories");
-        $this->belongsTo('categoryid', '\Categories', 'categoryid', ['alias' => 'Categories']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('category_id', 'App\Models\Categories', 'category_id', ['alias' => 'Categories']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -155,10 +160,10 @@ class UsersCategories extends \Phalcon\Mvc\Model
 
     public static function getCategoriesByUser($userId)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $query = $db->prepare('SELECT c.* FROM categories c INNER JOIN "userscategories" u_c  
-            USING(categoryid) where u_c.userid = :userId'
+            USING(category_id) where u_c.user_id = :userId'
         );
 
         $query->execute([

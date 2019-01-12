@@ -1,80 +1,33 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
-class ImagesReviews extends \Phalcon\Mvc\Model
+
+class ImagesReviews extends ImagesModel
 {
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $imageid;
-
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $reviewid;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=256, nullable=false)
-     */
-    protected $imagepath;
+    protected $review_id;
 
     const MAX_IMAGES = 3;
-    /**
-     * Method to set the value of field imageid
-     *
-     * @param integer $imageid
-     * @return $this
-     */
-    public function setImageId($imageid)
-    {
-        $this->imageid = $imageid;
-
-        return $this;
-    }
 
     /**
      * Method to set the value of field reviewid
      *
-     * @param integer $reviewid
+     * @param integer $review_id
      * @return $this
      */
-    public function setReviewId($reviewid)
+    public function setReviewId($review_id)
     {
-        $this->reviewid = $reviewid;
+        $this->review_id = $review_id;
 
         return $this;
-    }
-
-    /**
-     * Method to set the value of field imagepath
-     *
-     * @param string $imagepath
-     * @return $this
-     */
-    public function setImagePath($imagepath)
-    {
-        $this->imagepath = $imagepath;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field imageid
-     *
-     * @return integer
-     */
-    public function getImageId()
-    {
-        return $this->imageid;
     }
 
     /**
@@ -84,17 +37,7 @@ class ImagesReviews extends \Phalcon\Mvc\Model
      */
     public function getReviewId()
     {
-        return $this->reviewid;
-    }
-
-    /**
-     * Returns the value of field imagepath
-     *
-     * @return string
-     */
-    public function getImagePath()
-    {
-        return $this->imagepath;
+        return $this->review_id;
     }
 
     /**
@@ -107,12 +50,12 @@ class ImagesReviews extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'reviewid',
+            'review_id',
             new Callback(
                 [
                     "message" => "Такой отзыв не существует",
                     "callback" => function ($image) {
-                        $service = Reviews::findFirstByReviewid($image->getReviewId());
+                        $service = Reviews::findFirstByReviewId($image->getReviewId());
                         if ($service)
                             return true;
                         return false;
@@ -121,30 +64,7 @@ class ImagesReviews extends \Phalcon\Mvc\Model
             )
         );
 
-        $validator->add(
-            'imagepath',
-            new Callback(
-                [
-                    "message" => "Формат не поддерживается",
-                    "callback" => function ($image) {
-                        $format = pathinfo($image->getImagePath(), PATHINFO_EXTENSION);
-
-                        if ($format == 'jpeg' || 'jpg')
-                            return true;
-                        elseif ($format == 'png')
-                            return true;
-                        elseif ($format == 'gif')
-                            return true;
-                        else {
-                            return false;
-                        }
-                    }
-                ]
-            )
-        );
-
-
-        return $this->validate($validator);
+        return parent::validation()&&$this->validate($validator);
     }
 
     /**
@@ -154,7 +74,7 @@ class ImagesReviews extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("imagesreviews");
-        $this->belongsTo('reviewid', '\Reviews', 'reviewid', ['alias' => 'Reviews']);
+        $this->belongsTo('review_id', '\Reviews', 'review_id', ['alias' => 'Reviews']);
     }
 
     /**
@@ -189,15 +109,12 @@ class ImagesReviews extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
-    {
-        $path = $this->getImagePath();
-
-        $result = parent::delete($delete, false, $data, $whiteList);
-
-        if ($result && $path != null && $delete = true) {
-            ImageLoader::delete($path);
-        }
-        return $result;
+    /**
+     * return non formatted images objects
+     * @param $reviewId
+     * @return mixed
+     */
+    public static function findImagesForReview($reviewId){
+        return self::findByReviewId($reviewId);
     }
 }

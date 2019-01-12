@@ -6,7 +6,7 @@ use Phalcon\Events\Manager;
 use App\Middleware\CORSMiddleware; // for CORS origine
 use App\Middleware\JWTMiddleware;
 
-// error_reporting(E_ALL);
+//error_reporting('E_ALL');
 // define('BASE_PATH', dirname(__DIR__));
 // define('APP_PATH', BASE_PATH . '/app');
 

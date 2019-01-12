@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
@@ -12,7 +14,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
+    protected $service_id;
 
     /**
      *
@@ -20,7 +22,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $tagid;
+    protected $tag_id;
 
     /**
      * Method to set the value of field serviceid
@@ -30,7 +32,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      */
     public function setServiceId($serviceid)
     {
-        $this->serviceid = $serviceid;
+        $this->service_id = $serviceid;
 
         return $this;
     }
@@ -43,7 +45,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      */
     public function setTagId($tagid)
     {
-        $this->tagid = $tagid;
+        $this->tag_id = $tagid;
 
         return $this;
     }
@@ -55,7 +57,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      */
     public function getServiceId()
     {
-        return $this->serviceid;
+        return $this->service_id;
     }
 
     /**
@@ -65,7 +67,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
      */
     public function getTagId()
     {
-        return $this->tagid;
+        return $this->tag_id;
     }
 
     /**
@@ -78,12 +80,12 @@ class ServicesTags extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'serviceid',
+            'service_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($serviceTag) {
-                        $service = Services::findFirstByServiceid($serviceTag->getServiceId());
+                        $service = Services::findFirstByServiceId($serviceTag->getServiceId());
 
                         if ($service)
                             return true;
@@ -94,12 +96,12 @@ class ServicesTags extends \Phalcon\Mvc\Model
         );
 
         $validator->add(
-            'tagid',
+            'tag_id',
             new Callback(
                 [
                     "message" => "Тег не создан",
                     "callback" => function ($serviceTag) {
-                        $tag = Tags::findFirstByTagid($serviceTag->getTagId());
+                        $tag = Tags::findFirstByTagId($serviceTag->getTagId());
                         if ($tag)
                             return true;
                         return false;
@@ -118,8 +120,8 @@ class ServicesTags extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("services_tags");
-        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
-        $this->belongsTo('tagid', '\Tags', 'tagid', ['alias' => 'Tags']);
+        $this->belongsTo('service_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
+        $this->belongsTo('tag_id', 'App\Models\Tags', 'tag_id', ['alias' => 'Tags']);
     }
 
     /**
@@ -156,7 +158,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
 
     public static function findByIds($serviceId, $tagId)
     {
-        return ServicesTags::findFirst(['serviceid = :serviceId: AND tagid = :tagId:',
-            'bind' => ['serviceId' => $serviceId, 'tagId' => $tagId]]);;
+        return ServicesTags::findFirst(['service_id = :serviceId: AND tag_id = :tagId:',
+            'bind' => ['serviceId' => $serviceId, 'tagId' => $tagId]]);
     }
 }

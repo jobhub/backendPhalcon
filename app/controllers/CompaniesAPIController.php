@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\CompanyRole;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -7,357 +10,270 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+use App\Models\Companies;
+use App\Models\TradePoints;
+use App\Models\Accounts;
+use App\Services\CompanyService;
+use App\Services\AccountService;
+use App\Services\ImageService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Контроллер для работы с компаниями.
  * Реализует CRUD для компаний, содержит методы для настройки менеджеров.
  */
-class CompaniesAPIController extends Controller
+class CompaniesAPIController extends AbstractController
 {
     /**
      * Возвращает компании текущего пользователя
      *
+     * @param $with_points
+     *
      * @method GET
-     * @return string - json array компаний
+     * @return array - json array компаний
      */
-    public function getCompaniesAction($withPoints = false)
+    public function getCompaniesAction($with_points = false)
     {
-        if (($this->request->isGet() && $this->session->get('auth'))) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-            $companies = Companies::findByUserid($userId);
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
 
-            if($withPoints){
-                $companies2 = [];
-                foreach($companies as $company) {
-                    $points = TradePoints::findBySubject($company->getCompanyId(),1);
-                    $companies2[] = ['company' => $company, 'points' => $points];
-                }
-                $response->setJsonContent([
-                    'status' => STATUS_OK,
-                    'companies' => $companies2
-                ]);
-                return $response;
+        $result['companies'] = Companies::findCompaniesByUserOwner($userId);
+
+        if ($with_points && $with_points != 'false') {
+            $result2 = [];
+            foreach ($result['companies'] as $company) {
+                $points = TradePoints::findPointsByCompany($company['company_id']);
+                $result2[] = ['company' => $company, 'points' => $points];
             }
 
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'companies' => $companies
-            ]);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return $result2;
         }
+
+        return $result;
     }
 
     /**
      * Создает компанию.
      *
      * @method POST
-     * @params (Обязательные)name, fullName
-     * @params (необязательные) TIN, regionId, webSite, email, description
-     * @params (для модератора) isMaster - если true, то еще и userId - кому будет принадлежать
-     * @return Response
+     * @params (Обязательные)name, full_name
+     * @params (необязательные) tin, region_id, website, email, description
+     * @return int company_id
      */
     public function addCompanyAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['name'] = $inputData->name;
+        $data['full_name'] = $inputData->full_name;
+        $data['tin'] = $inputData->tin;
+        $data['region_id'] = $inputData->region_id;
+        $data['website'] = $inputData->website;
+        $data['email'] = $inputData->email;
+        $data['description'] = $inputData->description;
+
+        $this->db->begin();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $company = new Companies();
-            $company->setName($this->request->getPost("name"));
-            $company->setFullname($this->request->getPost("fullName"));
-            $company->setTin($this->request->getPost("TIN"));
-            $company->setRegionId($this->request->getPost("regionId"));
-            $company->setWebSite($this->request->getPost("webSite"));
-            $company->setEmail($this->request->getPost("email"));
-            $company->setDescription($this->request->getPost("description"));
+            $company = $this->companyService->createCompany($data, $userId);
 
-            if ($this->request->getPost("isMaster") && $this->request->getPost("isMaster") != 0) {
-                if ($auth['role'] != ROLE_MODERATOR) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Ошибка доступа']
-                        ]
-                    );
-                    return $response;
-                }
+            $this->accountService->createAccount([
+                'user_id' => $userId,
+                'company_id' => $company->getCompanyId(),
+                'company_role_id' => CompanyRole::ROLE_OWNER_ID
+            ]);
 
-                $company->setIsMaster(true);
-
-                if ($this->request->getPost("userId"))
-                    $company->setUserid($this->request->getPost("userId"));
-            } else {
-                $company->setIsMaster(0);
-                $company->setUserid($userId);
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_CREATE_COMPANY:
+                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$company->save()) {
-                $errors = [];
-                foreach ($company->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
-            }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+        $this->db->commit();
+
+        return self::successResponse('Company was successfully created', ['company_id' => $company->getCompanyId()]);
     }
 
     /**
      * Удаляет указанную компанию
      * @method DELETE
      *
-     * @param $companyId
+     * @param $company_id
      * @return string - json array Status
      */
-    public function deleteCompanyAction($companyId)
+    public function deleteCompanyAction($company_id)
     {
-        if ($this->request->isDelete()) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            if (!Companies::checkUserHavePermission($userId, $companyId, 'deleteCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $company = $this->companyService->getCompanyById($company_id);
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'deleteCompany')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $company = Companies::findFirstByCompanyid($companyId);
-            if (!$company->delete()) {
-                $errors = [];
-                foreach ($company->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $this->companyService->deleteCompany($company);
+
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_DELETE_COMPANY:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Company was successfully deleted');
     }
 
     /**
      * Редактирует данные компании
      * @method PUT
-     * @params companyId, name, fullName,TIN, regionId, webSite, email, description
-     * @params isMaster - если true, то еще и userId - кому будет принадлежать
-     * @return Response
+     * @params company_id, name, full_name, tin, region_id, website, email, description
      */
     public function editCompanyAction()
     {
-        if ($this->request->isPut() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
+        $data['name'] = $inputData->name;
+        $data['full_name'] = $inputData->full_name;
+        $data['tin'] = $inputData->tin;
+        $data['region_id'] = $inputData->region_id;
+        $data['website'] = $inputData->website;
+        $data['email'] = $inputData->email;
+        $data['description'] = $inputData->description;
+
+        try {
+
+            //validation
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            if (!Companies::checkUserHavePermission($userId, $this->request->getPut("companyId"),
-                'editCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $company = $this->companyService->getCompanyById($data['company_id']);
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'editCompany')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $company = Companies::findFirstByCompanyid($this->request->getPut("companyId"));
+            unset($data['company_id']);
 
-            $company->setName($this->request->getPut("name"));
-            $company->setFullname($this->request->getPut("fullName"));
-            $company->setTin($this->request->getPut("TIN"));
-            $company->setRegionId($this->request->getPut("regionId"));
-            $company->setWebSite($this->request->getPut("webSite"));
-            $company->setEmail($this->request->getPut("email"));
-            $company->setDescription($this->request->getPut("description"));
+            $this->companyService->changeCompany($company, $data);
 
-            if ($this->request->getPut("isMaster") && $this->request->getPut("isMaster") != 0) {
-
-                if ($auth['role'] != ROLE_MODERATOR) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Ошибка доступа']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $company->setIsMaster(true);
-
-                if ($this->request->getPut("userId"))
-                    $company->setUserid($this->request->getPut("userId"));
-            } else {
-                $company->setIsMaster(0);
-                $company->setUserid($userId);
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_CHANGE_COMPANY:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$company->save()) {
-                $errors = [];
-                foreach ($company->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('Company was successfully changed');
     }
 
     /**
      * Устанавливает логотип для компании. Сам логотип должен быть передан в файлах. ($_FILES)
      * @method POST
-     * @params companyId
+     * @params company_id
      * @return Response
      */
     public function setCompanyLogotypeAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        try {
+            /*$sender = $this->request->getJsonRawBody();
+
+            $data['news_id'] = $sender->news_id;*/
+
+            $data['company_id'] = $this->request->getPost('company_id');
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
-                'editCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            //validation
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
             }
 
-            if (!$this->request->hasFiles()) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Логотип не был загружен']
-                    ]
-                );
-                return $response;
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
             }
-            $files = $this->request->getUploadedFiles();
 
-            $file = $files[0];
+            $company = $this->companyService->getCompanyById($data['company_id']);
 
-            $format = pathinfo($file->getName(),PATHINFO_EXTENSION);
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'editCompany')) {
+                throw new Http403Exception('Permission error');
+            }
 
-            $logotype = ImageLoader::formFullImageName('companies',$format,
-                $this->request->getPost("companyId"),$this->request->getPost("companyId"));
-
-            $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
-
-            $company->setLogotype($logotype);
             $this->db->begin();
-            if (!$company->update()) {
-                $this->db->rollback();
-                $errors = [];
-                foreach ($company->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
-            }
 
-            $result = ImageLoader::loadCompanyLogotype($file->getTempName(),$file->getName(),$company->getCompanyId(),$company->getCompanyId());
-
-            if($result != ImageLoader::RESULT_ALL_OK || $result === null){
-                if($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED){
-                    $error = 'Формат одного из изображений не поддерживается';
-                } elseif($result == ImageLoader::RESULT_ERROR_NOT_SAVED){
-                    $error = 'Не удалось сохранить изображение';
-                }
-                else{
-                    $error = 'Ошибка при загрузке изображения';
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => [$error]
-                    ]
-                );
-                return $response;
-            }
+            $this->imageService->setCompanyLogotype($company, $this->request->getUploadedFiles()[0]);
 
             $this->db->commit();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                case CompanyService::ERROR_UNABLE_CHANGE_COMPANY:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('All ok');
     }
 
     /**
@@ -365,59 +281,63 @@ class CompaniesAPIController extends Controller
      *
      * @method POST
      *
-     * @params userId, companyId
+     * @params user_id, company_id
      *
-     * @return string - json array - объект Status
+     * @return int account_id
      */
     public function setManagerAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['user_id'] = $inputData->user_id;
+        $data['company_id'] = $inputData->company_id;
+
+        //validation
+        if (empty(trim($data['user_id']))) {
+            $errors['user_id'] = 'Missing required parameter "user_id"';
+        }
+
+        if (empty(trim($data['company_id']))) {
+            $errors['company_id'] = 'Missing required parameter "company_id"';
+        }
+
+        if (!is_null($errors)) {
+            $errors['errors'] = true;
+            $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+            throw $exception->addErrorDetails($errors);
+        }
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            if (!Companies::checkUserHavePermission($userId, $this->request->getPost('companyId'),
-                'addManager')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $company = $this->companyService->getCompanyById($data['company_id']);
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'addManager')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $companyManager = new CompaniesManagers();
-            $companyManager->setUserId($this->request->getPost('userId'));
-            $companyManager->setCompanyId($this->request->getPost('companyId'));
+            $data['company_role_id'] = CompanyRole::ROLE_MANAGER_ID;
 
+            $account_id = $this->accountService->createAccount($data);
 
-            if (!$companyManager->save()) {
-                $errors = [];
-                foreach ($companyManager->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Manager wa successfully added', ['account_id' => $account_id]);
     }
 
     /**
@@ -425,67 +345,46 @@ class CompaniesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $userManagerId
-     * @param $companyId
+     * @param $user_id
+     * @param $company_id
      *
-     * @return string - json array - объект Status
+     * @return string message. Just message.
      */
-    public function deleteManagerAction($companyId, $userManagerId)
+    public function deleteManagerAction($company_id, $user_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            if (!Companies::checkUserHavePermission($userId, $companyId, 'deleteManager')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $company = $this->companyService->getCompanyById($company_id);
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'deleteManager')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $companyManager = CompaniesManagers::findByIds($companyId, $userManagerId);
+            $account = $this->accountService->getAccountByIds($company_id, $user_id);
 
-            if (!$companyManager) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Пользователь не является менеджером компании']
-                    ]
-                );
-                return $response;
+            $this->accountService->deleteAccount($account);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_UNABLE_DELETE_ACCOUNT:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-
-            if (!$companyManager->delete()) {
-                $errors = [];
-                foreach ($companyManager->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('Manager wa successfully deleted');
     }
 
     /**
@@ -499,6 +398,7 @@ class CompaniesAPIController extends Controller
      */
     public function restoreCompanyAction()
     {
+        //TODO Необходимо сделать восстановление компании, когда будут переделаны все основные контроллеры (и модели).
         if ($this->request->isPost() && $this->session->get('auth')) {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -544,7 +444,7 @@ class CompaniesAPIController extends Controller
         }
     }
 
-    public function deleteCompanyTestAction($companyId)
+    /*public function deleteCompanyTestAction($companyId)
     {
         if ($this->request->isDelete()) {
             $auth = $this->session->get('auth');
@@ -589,7 +489,7 @@ class CompaniesAPIController extends Controller
             $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Возвращает публичную информацию о компании.
@@ -597,42 +497,22 @@ class CompaniesAPIController extends Controller
      *
      * @method GET
      *
-     * @param $companyId
+     * @param $company_id
      * @return string - json array компаний
      */
-    public function getCompanyInfoAction($companyId)
+    public function getCompanyInfoAction($company_id)
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $response = new Response();
-
-            $company = Companies::findFirst(['companyid = :companyId:',
-                'bind'=>['companyId' => $companyId],
-            'columns' => Companies::publicColumns]);
-
-            if(!$company){
-                $response->setJsonContent([
-                    'status' => STATUS_WRONG,
-                    'errors' => ['Компания не существует']
-                ]);
-                return $response;
+        try {
+            $company = $this->companyService->getCompanyById($company_id);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $company = json_encode($company);
-            $company = json_decode($company,true);
-
-            $phones = PhonesCompanies::getCompanyPhones($companyId);
-
-            $response->setJsonContent([
-                'status' => STATUS_OK,
-                'company' => $company,
-                'phones' => $phones,
-            ]);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return Companies::handleCompanyFromArray([$company->toArray()]);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -13,21 +17,21 @@ class Reviews extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $reviewid;
+    protected $review_id;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $textreview;
+    protected $text_review;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=false)
      */
-    protected $reviewdate;
+    protected $review_date;
 
     /**
      *
@@ -48,14 +52,14 @@ class Reviews extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $binderid;
+    protected $binder_id;
 
     /**
      *
      * @var integer
      * @Column(type="string", length=10, nullable=false)
      */
-    protected $bindertype;
+    protected $binder_type;
 
     /**
      *
@@ -69,14 +73,14 @@ class Reviews extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
      * @var string
      * @Column(type="string", length = 180, nullable=true)
      */
-    protected $fakename;
+    protected $fake_name;
 
     //куча костылей для того, чтобы можно было писать фейковые отзывы. Жесть
     protected $subjectid;
@@ -84,8 +88,8 @@ class Reviews extends NotDeletedModelWithCascade
     protected $objectid;
     protected $objecttype;
 
-    const publicColumns = ['reviewid', 'textreview', 'reviewdate', 'rating', 'binderid',
-        'bindertype', 'executor', 'fakename',];
+    const publicColumns = ['review_id', 'text_review', 'review_date', 'rating', 'binder_id',
+        'binder_type', 'executor', 'fake_name',];
 
     /**
      * Методы-костыли
@@ -119,9 +123,9 @@ class Reviews extends NotDeletedModelWithCascade
         return $this;
     }
 
-    public function setFakeName($fakename)
+    public function setFakeName($fake_name)
     {
-        $this->fakename = $fakename;
+        $this->fake_name = $fake_name;
         return $this;
     }
 
@@ -142,7 +146,7 @@ class Reviews extends NotDeletedModelWithCascade
 
     public function getFakeName()
     {
-        return $this->fakename;
+        return $this->fake_name;
     }
 
     public function getObjectType()
@@ -158,7 +162,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setReviewId($reviewid)
     {
-        $this->reviewid = $reviewid;
+        $this->review_id = $reviewid;
 
         return $this;
     }
@@ -171,7 +175,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setTextReview($textreview)
     {
-        $this->textreview = $textreview;
+        $this->text_review = $textreview;
 
         return $this;
     }
@@ -184,7 +188,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setReviewDate($reviewdate)
     {
-        $this->reviewdate = $reviewdate;
+        $this->review_date = $reviewdate;
 
         return $this;
     }
@@ -223,7 +227,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setBinderId($binderid)
     {
-        $this->binderid = $binderid;
+        $this->binder_id = $binderid;
 
         return $this;
     }
@@ -237,10 +241,10 @@ class Reviews extends NotDeletedModelWithCascade
     public function setBinderType($bindertype)
     {
         if ($bindertype == 0)
-            $this->bindertype = 'task';
+            $this->binder_type = 'task';
         else if ($bindertype == 1)
-            $this->bindertype = 'request';
-        $this->bindertype = $bindertype;
+            $this->binder_type = 'request';
+        $this->binder_type = $bindertype;
         return $this;
     }
 
@@ -265,7 +269,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setUserId($userid)
     {
-        $this->userid = $userid;
+        $this->user_id = $userid;
 
         return $this;
     }
@@ -277,7 +281,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getReviewId()
     {
-        return $this->reviewid;
+        return $this->review_id;
     }
 
     /**
@@ -287,7 +291,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getTextReview()
     {
-        return $this->textreview;
+        return $this->text_review;
     }
 
     /**
@@ -297,7 +301,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getReviewDate()
     {
-        return $this->reviewdate;
+        return $this->review_date;
     }
 
     /**
@@ -327,7 +331,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getBinderId()
     {
-        return $this->binderid;
+        return $this->binder_id;
     }
 
     /**
@@ -337,7 +341,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getBinderType()
     {
-        return $this->bindertype;
+        return $this->binder_type;
     }
 
     /**
@@ -357,7 +361,7 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -371,7 +375,7 @@ class Reviews extends NotDeletedModelWithCascade
 
         if ($this->getFake() == null || !$this->getFake())
             $validator->add(
-                'binderid',
+                'binder_id',
                 new Callback(
                     [
                         "message" => "Такой объект не существует",
@@ -395,7 +399,7 @@ class Reviews extends NotDeletedModelWithCascade
 
         if ($this->getFake() == null || !$this->getFake())
             $validator->add(
-                'userid',
+                'user_id',
                 new Callback(
                     [
                         "message" => "Такой пользователь не существует",
@@ -409,7 +413,7 @@ class Reviews extends NotDeletedModelWithCascade
             );
 
         $validator->add(
-            'reviewdate',
+            'review_date',
             new Callback(
                 [
                     "message" => "Время написания отзыва должно быть раньше текущего",
@@ -430,9 +434,9 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("reviews");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     public function save($data = null, $whiteList = null)
@@ -473,14 +477,14 @@ class Reviews extends NotDeletedModelWithCascade
 
         $query = $db->prepare("Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
-              (SELECT reviews.reviewId as id,
-              reviews.textReview as text,
-              reviews.reviewdate as date,
+              (SELECT reviews.review_id as id,
+              reviews.text_review as text,
+              reviews.review_date as date,
               reviews.rating as rating,
               reviews.executor as executor
               FROM reviews inner join tasks 
-              ON (reviews.binderid= tasks.taskId AND reviews.bindertype = 'task' AND reviews.executor = true)
-              WHERE tasks.subjectId = :subjectId AND tasks.subjectType = :subjectType)
+              ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = 'task' AND reviews.executor = true)
+              WHERE tasks.subject_id = :subjectId AND tasks.subject_type = :subjectType)
               UNION
               --Отзывы оставленные на предложения данного субъекта
               (SELECT reviews.reviewId as id, 
@@ -537,7 +541,7 @@ class Reviews extends NotDeletedModelWithCascade
     }
 
     public static function getReviewsForService($serviceId, $limit = null){
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $str = "Select * FROM (
               --Отзывы оставленные на услуги
@@ -546,9 +550,9 @@ class Reviews extends NotDeletedModelWithCascade
             $str .= 'reviews.'.$column . ',';
         }
         $str[strlen($str)-1] = ' ';
-        $str .= "FROM services inner join requests ON (requests.serviceId = services.serviceId)
+        $str .= "FROM services inner join requests ON (requests.service_id = services.service_id)
               inner join reviews
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+              ON (reviews.binder_id = requests.request_id AND reviews.binderType = 'request'
                   AND reviews.executor = false)
               WHERE services.serviceId = :serviceId
               )

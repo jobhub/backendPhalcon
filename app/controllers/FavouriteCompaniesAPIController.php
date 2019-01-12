@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Services\UserInfoService;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -7,70 +10,70 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\FavoriteCompanies;
+use App\Models\TradePoints;
+use App\Models\Accounts;
+use App\Services\CompanyService;
+use App\Services\AccountService;
+use App\Services\ImageService;
+use App\Services\PhoneService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Контроллер для работы с подписками на компании
  * Реализует методы для подписки пользователя на компании, отписки и получения подписок.
  */
-class FavouriteCompaniesAPIController extends Controller
+class FavouriteCompaniesAPIController extends AbstractController
 {
     /**
      * Подписывает текущего пользователя на компанию
      *
      * @method POST
      *
-     * @params companyId
+     * @params company_id
      *
      * @return Response с json ответом в формате Status
      */
     public function setFavouriteAction()
     {
-        if ($this->request->isPost()) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $companyId = $this->request->getPost('companyId');
 
-            $fav = FavoriteCompanies::findByIds($userId, $companyId);
+            //проверки
+            $errors = null;
 
-            if(!$fav){
-                $fav = new FavoriteCompanies();
-                $fav->setUserId($userId);
-                $fav->setCompanyId($companyId);
-
-                if (!$fav->save()) {
-                    $errors = [];
-                    foreach ($fav->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_OK,
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_ALREADY_EXISTS,
-                    "errors" => ["Пользователь уже подписан на компанию"]
-                ]
-            );
-            return $response;
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $this->userInfoService->subscribeToCompany($userId, $data['company_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('User was successfully subscribed to company');
     }
 
 
@@ -79,55 +82,35 @@ class FavouriteCompaniesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $companyId
+     * @param $company_id
      *
      * @return Response с json ответом в формате Status
      */
-    public function deleteFavouriteAction($companyId)
+    public function deleteFavouriteAction($company_id)
     {
-        if ($this->request->isDelete()) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $fav = FavoriteCompanies::findByIds($userId,$companyId);
+            //проверки
+            $errors = null;
 
-            if($fav){
-                if (!$fav->delete()) {
-                    $errors =[];
-                    foreach ($fav->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
+            $favComp = $this->userInfoService->getSigningToCompany($userId,$company_id);
 
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_OK,
-                    ]
-                );
-                return $response;
+            $this->userInfoService->unsubscribeFromCompany($favComp);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserInfoService::ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY:
+                case UserInfoService::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_WRONG,
-                    "errors" => ["Пользователь не подписан на компанию"]
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('User was successfully unsubscribed from company');
     }
 
 
@@ -138,19 +121,8 @@ class FavouriteCompaniesAPIController extends Controller
      */
     public function getFavouritesAction()
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            $favs = FavoriteCompanies::findByUserid($userId);
-
-            $response->setJsonContent($favs);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        return FavoriteCompanies::findByUserId($userId)->toArray();
     }
 }

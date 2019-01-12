@@ -1,6 +1,10 @@
 <?php
+
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+
 class Categories extends \Phalcon\Mvc\Model
 {
     /**
@@ -10,19 +14,19 @@ class Categories extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryid;
+    protected $category_id;
     /**
      *
      * @var string
      * @Column(type="string", length=45, nullable=false)
      */
-    protected $categoryname;
+    protected $category_name;
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $parentid;
+    protected $parent_id;
     /**
      *
      * @var string
@@ -38,34 +42,34 @@ class Categories extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryid
+     * @param integer $category_id
      * @return $this
      */
-    public function setCategoryId($categoryid)
+    public function setCategoryId($category_id)
     {
-        $this->categoryid = $categoryid;
+        $this->category_id = $category_id;
         return $this;
     }
     /**
      * Method to set the value of field categoryName
      *
-     * @param string $categoryname
+     * @param string $category_name
      * @return $this
      */
-    public function setCategoryName($categoryname)
+    public function setCategoryName($category_name)
     {
-        $this->categoryname = $categoryname;
+        $this->category_name = $category_name;
         return $this;
     }
     /**
      * Method to set the value of field parentId
      *
-     * @param integer $parentid
+     * @param integer $parent_id
      * @return $this
      */
-    public function setParentId($parentid)
+    public function setParentId($parent_id)
     {
-        $this->parentid = $parentid;
+        $this->parent_id = $parent_id;
         return $this;
     }
     /**
@@ -97,7 +101,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getCategoryId()
     {
-        return $this->categoryid;
+        return $this->category_id;
     }
     /**
      * Returns the value of field categoryName
@@ -106,7 +110,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getCategoryName()
     {
-        return $this->categoryname;
+        return $this->category_name;
     }
     /**
      * Returns the value of field parentId
@@ -115,7 +119,7 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function getParentId()
     {
-        return $this->parentid;
+        return $this->parent_id;
     }
     /**
      * Returns the value of field description
@@ -145,12 +149,12 @@ class Categories extends \Phalcon\Mvc\Model
         $validator = new Validation();
         if($this->getParentId()!= null)
             $validator->add(
-                'parentid',
+                'parent_id',
                 new Callback(
                     [
                         "message" => "Родительская категория не существует",
                         "callback" => function ($category) {
-                            $categoryParent = Categories::findFirstByCategoryid($category->getParentId());
+                            $categoryParent = Categories::findFirstByCategoryId($category->getParentId());
                             if ($categoryParent)
                                 return true;
                             return false;
@@ -165,9 +169,8 @@ class Categories extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("categories");
-        $this->hasMany('categoryId', 'Tasks', 'categoryId', ['alias' => 'Tasks']);
     }
     /**
      * Returns table name mapped in the model.
@@ -197,5 +200,32 @@ class Categories extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function findAllCategories(){
+        return self::find(['category_id > 20','order' => 'parent_id DESC']);
+    }
+
+    public static function findCategoriesForSite(){
+        $categories = Categories::find(['category_id > 20', 'order' => 'parent_id DESC']);
+
+        $categories2 = [];
+        foreach ($categories as $category) {
+            if ($category->getParentId() == null) {
+                $categories2[] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
+                    'description' => $category->getDescription(), 'img' => $category->getImg(),
+                    'child' => []];
+            } else {
+                for ($i = 0; $i < count($categories2); $i++)
+                    if ($categories2[$i]['id'] == $category->getParentId()) {
+                        $categories2[$i]['child'][] = ['id' => $category->getCategoryId(), 'name' => $category->getCategoryName(),
+                            'description' => $category->getDescription(), 'img' => $category->getImg(),
+                            'child' => [], 'check' => false];
+                        break;
+                    }
+            }
+        }
+
+        return $categories2;
     }
 }

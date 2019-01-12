@@ -223,8 +223,9 @@ class AuthService extends AbstractService
 
         return
             [
+                'user_id'=>$user->getUserId(),
                 'token' => $token,
-                'lifetime' => $lifetime
+                'life_time' => $lifetime
             ];
     }
 

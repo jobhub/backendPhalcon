@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Controllers;
+
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -7,12 +9,27 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\Accounts;
+
+use App\Services\ImageService;
+use App\Services\NewsService;
+use App\Services\AccountService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Контроллер для работы с новостями.
  * Реализует CRUD для новостей, позволяет просматривать новости тех, на кого подписан текущий пользователь.
  * Ну и методы для прикрепления изображений к новости.
  */
-class NewsAPIController extends Controller
+class NewsAPIController extends AbstractController
 {
     /**
      * Возвращает новости для ленты текущего пользователя
@@ -25,36 +42,9 @@ class NewsAPIController extends Controller
      */
     public function getNewsAction()
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            /*$favCompanies = FavoriteCompanies::findByUserid($userId);
-            $favUsers = Favoriteusers::findByUsersubject($userId);
-
-            $query = '';
-            foreach ($favCompanies as $favCompany){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favCompany->getCompanyId() . ' AND subjecttype = 1)';
-            }
-
-            foreach ($favUsers as $favUser){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favUser->getUserObject() . ' AND subjecttype = 0)';
-            }
-
-            $news = News::find([$query, "order" => "News.date DESC"]);*/
-            $news = News::getNewsForCurrentUser($userId);
-
-            $response->setJsonContent($news);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        return News::findNewsForCurrentUser($userId);
     }
 
     /**
@@ -68,127 +58,85 @@ class NewsAPIController extends Controller
      */
     public function getAllNewsAction()
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
+        $response = new Response();
 
-            /*$favCompanies = FavoriteCompanies::findByUserid($userId);
-            $favUsers = Favoriteusers::findByUsersubject($userId);
-
-            $query = '';
-            foreach ($favCompanies as $favCompany){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favCompany->getCompanyId() . ' AND subjecttype = 1)';
-            }
-
-            foreach ($favUsers as $favUser){
-                if($query != '')
-                    $query.=' OR ';
-                $query .= '(subjectid = ' . $favUser->getUserObject() . ' AND subjecttype = 0)';
-            }
-
-            $news = News::find([$query, "order" => "News.date DESC"]);*/
-            $news = News::getAllNewsForCurrentUser($userId);
-
-            $response->setJsonContent($news);
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        return News::findAllNewsForCurrentUser($userId);
     }
+
     /**
-     * Создает новость компании или пользователя (в зависимости от subjectType).
+     * Создает новость компании или пользователя.
      * Если прикрепить изображения, они будут добавлены к новости.
      *
      * @access private
      *
      * @method POST
      *
-     * @params int companyId (если не передать, то от имени юзера)
-     * @params string newsText
+     * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
+     * @params string news_text
      * @params string title
      * @params файлы изображений.
      * @return string - json array объекта Status
      */
     public function addNewsAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['news_text'] = $inputData->news_text;
+        $data['title'] = $inputData->title;
+        $data['account_id'] = $inputData->account_id;
+
+        $this->db->begin();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $new = new News();
             //проверки
-            if ($this->request->getPost('companyId') == null) {
-                //Значит все просто
-                $new->setSubjectId($userId);
-                $new->setSubjectType(0);
-            } else {
-
-                if (!Companies::checkUserHavePermission($userId, $this->request->getPost('companyId'), 'addNew')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-                $company = Companies::findFirstByCompanyid($this->request->getPost('companyId'));
-                $new->setSubjectId($company->getCompanyId());
-                $new->setSubjectType(1);
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $new->setPublishDate(date('Y-m-d H:i:s'));
-
-            $new->setNewsText($this->request->getPost('newsText'));
-            $new->setTitle($this->request->getPost('title'));
-
-            //$this->db->begin();
-            if (!$new->save()) {
-                $errors = [];
-                //$this->db->rollback();
-                foreach ($new->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addNews')) {
+                throw new Http403Exception('Permission error');
             }
+
+            $data['publish_date'] = date('Y-m-d H:i:s');
+
+            $news = $this->newsService->createNews($data);
 
             if ($this->request->hasFiles()) {
-                $result = $this->addImagesHandler($new->getNewsId());
-
-                $resultContent = json_decode($result->getContent(), true);
-                if ($resultContent['status'] != STATUS_OK) {
-                    $new->delete(true);
-                } else {
-                    $resultContent['newId'] = $new->getNewsId();
-                    $result->setJsonContent($resultContent);
-                }
-                return $result;
+                $files = $this->request->getUploadedFiles();
+                $ids = $this->imageService->createImagesToUser($files, $news);
+                $this->imageService->saveImagesToUser($files, $news, $ids);
             }
 
-            // $this->db->commit();
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    'newsId' => $new->getNewsId()
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                case NewsService::ERROR_UNABLE_CREATE_NEWS:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+        $this->db->commit();
+
+        return self::successResponse('News was successfully created',['news_id'=>$news->getNewsId()]);
     }
 
     /**
@@ -196,198 +144,126 @@ class NewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $newsId
+     * @param $news_id
      *
      * @return string - json array объекта Status
      */
-    public function deleteNewsAction($newsId)
+    public function deleteNewsAction($news_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $new = News::findFirstByNewsid($newsId);
-            //проверки
+            $news = $this->newsService->getNewsById($news_id);
 
-            if (!$new) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Новость не существует']
-                    ]
-                );
-
-                return $response;
-            }
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $new->getSubjectId(), $new->getSubjectType(), 'deleteNew')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $news->getAccountId(), 'deleteNews')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!$new->delete(true)) {
-                foreach ($new->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $this->newsService->deleteNews($news);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case NewsService::ERROR_UNABLE_DELETE_NEWS:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case NewsService::ERROR_NEWS_NOT_FOUND:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('News was successfully deleted');
     }
 
     /**
-     * Редактирует новость.при этом предполагается, что меняться будут только newText и дата новости.
+     * Редактирует новость.
      * Дата устанавливается текущая (на сервере).
      *
      * @method PUT
      *
-     * @params int newsId, string newsText, title
+     * @params int news_id, string news_text, title
      *
      * @return string - json array объекта Status
      */
     public function editNewsAction()
     {
-        if ($this->request->isPut() && $this->session->get('auth')) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['news_text'] = $inputData->news_text;
+        $data['title'] = $inputData->title;
+        $data['news_id'] = $inputData->news_id;
+
+        try {
+
+            //validation
+            if(empty(trim($data['news_id']))) {
+                $errors['news_id'] = 'Missing required parameter "news_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $new = News::findFirstByNewsid($this->request->getPut('newsId'));
-            //проверки
+            $news = $this->newsService->getNewsById($data['news_id']);
 
-            if (!$new) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Новость не существует']
-                    ]
-                );
-
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $news->getAccountId(), 'editNews')) {
+                throw new Http403Exception('Permission error');
             }
 
-            //проверки
-            if ($new->getSubjectType() == 0) {
+            unset($data['news_id']);
 
-                if ($new->getSubjectId() != $userId && auth['role'] != ROLE_MODERATOR) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
+            $this->newsService->changeNews($news, $data);
 
-            } else if ($new->getSubjectType() == 1) {
-
-                $company = Companies::findFirstByCompanyid($new->getSubjectId());
-
-                if (!$company || ($company->getUserId() != $userId && $auth['role'] != ROLE_MODERATOR)) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-
-                    return $response;
-                }
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case NewsService::ERROR_UNABLE_CHANGE_NEWS:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            //Редактирование
-            $new->setPublishDate(date('Y-m-d H:i:s'));
-            $new->setNewsText($this->request->getPut('newsText'));
-            $new->setTitle($this->request->getPut('title'));
-
-            if (!$new->save()) {
-                foreach ($new->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case NewsService::ERROR_NEWS_NOT_FOUND:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+
+        return self::successResponse('News was successfully changed');
     }
 
     /**
-     * Возвращает новости текущего пользователя/указанной компании
+     * Возвращает новости текущего пользователя/указанной компании пользователя.
      *
      * @method GET
      *
-     * @param $companyId
+     * @param $company_id
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getOwnNewsAction($companyId = null)
+    public function getOwnNewsAction($company_id = null)
     {
-        if ($this->request->isGet()) {
+        if ($company_id != null) {
+            return News::findNewsByCompany($company_id);
+        } else {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
-
-            if ($companyId != null) {
-                //Возвращаем новости компании
-                $company = Companies::findFirstByCompanyid($companyId);
-
-                if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $companyId, 1, 'getOwnNews')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $news = News::getNewsForSubject($companyId, 1);
-            } else {
-                //Возвращаем новости текущего пользователя
-                $news = News::getNewsForSubject($userId, 0);
-            }
-            $response->setJsonContent($news);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return News::findNewsByUser($userId);
         }
     }
 
@@ -396,26 +272,17 @@ class NewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $subjectId , $subjecttype
+     * @param $id
+     * @param $is_company (Можно не указывать, значение по умолчанию 0)
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectNewsAction($subjectId, $subjecttype)
+    public function getSubjectsNewsAction($id, $is_company = false)
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            $news = News::getNewsForSubject($subjectId, $subjecttype);
-
-            $response->setJsonContent($news);
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        if ($is_company && strtolower($is_company)!="false")
+            return $news = News::findNewsByCompany($id);
+        else
+            return $news = News::findNewsByUser($id);
     }
 
     /**
@@ -425,51 +292,60 @@ class NewsAPIController extends Controller
      *
      * @method POST
      *
-     * @params newsId
+     * @params news_id
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addImagesAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        try {
+            /*$sender = $this->request->getJsonRawBody();
 
-            $response = new Response();
+            $data['news_id'] = $sender->news_id;*/
+
+            $data['news_id'] = $this->request->getPost('news_id');
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $newsId = $this->request->getPost('newsId');
 
-            $news = News::findFirstByNewsid($newsId);
+            $news = $this->newsService->getNewsById($data['news_id']);
 
-            if (!$news) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный идентификатор новости'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $news->getAccountId(), 'editNews')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(), $news->getSubjectType(),
-                'editNew')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $this->db->begin();
+
+            $ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(),$news);
+
+            $this->imageService->saveImagesToNews($this->request->getUploadedFiles(),$news,$ids);
+
+            $this->db->commit();
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-            $result = $this->addImagesHandler($newsId);
-
-            return $result;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case NewsService::ERROR_NEWS_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Image was successfully added to news');
     }
 
     /**
@@ -480,7 +356,7 @@ class NewsAPIController extends Controller
      * @param $newId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($newId)
+    /*public function addImagesHandler($newId)
     {
         include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
@@ -582,7 +458,7 @@ class NewsAPIController extends Controller
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      * Удаляет картинку из списка изображений новости
@@ -668,7 +544,7 @@ class NewsAPIController extends Controller
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageByNameAction($newsId, $imageName)
+    /*public function deleteImageByNameAction($newsId, $imageName)
     {
         if ($this->request->isDelete() && $this->session->get('auth')) {
             $response = new Response();
@@ -729,7 +605,7 @@ class NewsAPIController extends Controller
 
             throw $exception;
         }
-    }
+    }*/
 
     /**
      * Удаляет картинку из списка изображений новости
@@ -737,69 +613,43 @@ class NewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $imageId id изображения
+     * @param $image_id id изображения
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteImageByIdAction($imageId)
+    public function deleteImageByIdAction($image_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
+        try{
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = ImagesNews::findFirstByImageid($imageId);
+            $image = $this->imageService->getImageById($image_id,ImageService::TYPE_NEWS);
 
-            if (!$image) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный путь к изображению'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $image->news->getAccountId(), 'editNews')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $news = News::findFirstByNewsid($image->getNewsId());
+            $this->imageService->deleteImage($image);
 
-            if (!$news || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $news->getSubjectId(),
-                    $news->getSubjectType(), 'editNews')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_DELETE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$image->delete()) {
-                $errors = [];
-                foreach ($image->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ImageService::ERROR_IMAGE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            //$result = ImageLoader::delete($image->getImagePath());
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Image was successfully deleted');
     }
 }

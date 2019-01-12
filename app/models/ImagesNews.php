@@ -1,83 +1,32 @@
 <?php
-
+namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class ImagesNews extends \Phalcon\Mvc\Model
+class ImagesNews extends ImagesModel
 {
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Identity
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $imageid;
-
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $newsid;
+    protected $news_id;
 
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=256, nullable=true)
-     */
-    protected $imagepath;
 
     const MAX_IMAGES = 3;
-    /**
-     * Method to set the value of field imageid
-     *
-     * @param integer $imageid
-     * @return $this
-     */
-    public function setImageId($imageid)
-    {
-        $this->imageid = $imageid;
-
-        return $this;
-    }
 
     /**
      * Method to set the value of field newid
      *
-     * @param integer $newsid
+     * @param integer $news_id
      * @return $this
      */
-    public function setNewsId($newsid)
+    public function setNewsId($news_id)
     {
-        $this->newsid = $newsid;
+        $this->news_id = $news_id;
 
         return $this;
-    }
-
-    /**
-     * Method to set the value of field imagepath
-     *
-     * @param string $imagepath
-     * @return $this
-     */
-    public function setImagePath($imagepath)
-    {
-        $this->imagepath = $imagepath;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field imageid
-     *
-     * @return integer
-     */
-    public function getImageId()
-    {
-        return $this->imageid;
     }
 
     /**
@@ -87,17 +36,7 @@ class ImagesNews extends \Phalcon\Mvc\Model
      */
     public function getNewsId()
     {
-        return $this->newsid;
-    }
-
-    /**
-     * Returns the value of field imagepath
-     *
-     * @return string
-     */
-    public function getImagePath()
-    {
-        return $this->imagepath;
+        return $this->news_id;
     }
 
     /**
@@ -110,12 +49,12 @@ class ImagesNews extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'newsid',
+            'news_id',
             new Callback(
                 [
                     "message" => "Такая новость не существует",
                     "callback" => function ($image) {
-                        $new = News::findFirstByNewsid($image->getNewsId());
+                        $new = News::findFirstByNewsId($image->getNewsId());
                         if ($new)
                             return true;
                         return false;
@@ -124,30 +63,8 @@ class ImagesNews extends \Phalcon\Mvc\Model
             )
         );
 
-        $validator->add(
-            'imagepath',
-            new Callback(
-                [
-                    "message" => "Формат не поддерживается",
-                    "callback" => function ($image) {
-                        $format = pathinfo($image->getImagePath(), PATHINFO_EXTENSION);
 
-                        if ($format == 'jpeg' || 'jpg')
-                            return true;
-                        elseif ($format == 'png')
-                            return true;
-                        elseif ($format == 'gif')
-                            return true;
-                        else {
-                            return false;
-                        }
-                    }
-                ]
-            )
-        );
-
-
-        return $this->validate($validator);
+        return parent::validation() && $this->validate($validator);
     }
 
     /**
@@ -157,7 +74,7 @@ class ImagesNews extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("imagesnews");
-        $this->belongsTo('newid', '\News', 'newid', ['alias' => 'News']);
+        $this->belongsTo('news_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
     }
 
     /**
@@ -192,16 +109,12 @@ class ImagesNews extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public function delete($delete = false, $data = null, $whiteList = null)
-    {
-        $path = $this->getImagePath();
-
-        $result = parent::delete($delete, false, $data, $whiteList);
-
-        if ($result && $path != null && $delete = true) {
-            ImageLoader::delete($path);
-        }
-
-        return $result;
+    /**
+     * return non formatted images objects
+     * @param $newsId
+     * @return mixed
+     */
+    public static function findImagesForNews($newsId){
+        return self::findByNewsId($newsId);
     }
 }

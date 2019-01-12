@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
@@ -19,7 +23,7 @@ class Companies extends NotDeletedModelWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $companyid;
+    protected $company_id;
 
     /**
      *
@@ -33,7 +37,7 @@ class Companies extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", length=90, nullable=false)
      */
-    protected $fullname;
+    protected $full_name;
 
     /**
      *
@@ -47,14 +51,14 @@ class Companies extends NotDeletedModelWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionid;
+    protected $region_id;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
@@ -75,7 +79,7 @@ class Companies extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $ismaster;
+    protected $is_master;
 
     /**
      *
@@ -84,10 +88,8 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $logotype;
 
-    protected $ratingexecutor;
-    protected $ratingclient;
-
-    protected $phones;
+    protected $rating_executor;
+    protected $rating_client;
     /**
      *
      * @var string
@@ -95,25 +97,26 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $description;
 
-    const publicColumns = ['companyid', 'name', 'fullname', 'tin',
-        'regionid', 'userid', 'website', 'email', 'logotype', 'ratingexecutor', 'ratingclient'];
+    const publicColumns = ['company_id', 'name', 'full_name', 'tin',
+        'region_id', /*'user_id',*/
+        'website', 'email', 'logotype', 'rating_executor', 'rating_client'];
 
     const publicColumnsInStr = 'companyid, name, fullname, tin,
-        regionid, userid, website, email, logotype, ratingexecutor, ratingclient';
+        region_id, website, email, logotype, rating_executor, rating_client';
 
-    const shortColumns = ['companyid', 'name', 'logotype'];
+    const shortColumns = ['company_id', 'name', 'logotype'];
 
-    const shortColumnsInStr = 'companyid, name, logotype';
+    const shortColumnsInStr = 'company_id, name, logotype';
 
     /**
      * Method to set the value of field companyId
      *
-     * @param integer $companyid
+     * @param integer $company_id
      * @return $this
      */
-    public function setCompanyId($companyid)
+    public function setCompanyId($company_id)
     {
-        $this->companyid = $companyid;
+        $this->company_id = $company_id;
 
         return $this;
     }
@@ -134,12 +137,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field fullName
      *
-     * @param string $fullname
+     * @param string $full_name
      * @return $this
      */
-    public function setFullName($fullname)
+    public function setFullName($full_name)
     {
-        $this->fullname = $fullname;
+        $this->full_name = $full_name;
 
         return $this;
     }
@@ -147,12 +150,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field tIN
      *
-     * @param string $tIN
+     * @param string $TIN
      * @return $this
      */
-    public function setTIN($tIN)
+    public function setTIN($TIN)
     {
-        $this->tin = $tIN;
+        $this->tin = $TIN;
 
         return $this;
     }
@@ -160,12 +163,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionid
+     * @param integer $region_id
      * @return $this
      */
-    public function setRegionId($regionid)
+    public function setRegionId($region_id)
     {
-        $this->regionid = $regionid;
+        $this->region_id = $region_id;
 
         return $this;
     }
@@ -186,12 +189,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field userId
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -202,7 +205,7 @@ class Companies extends NotDeletedModelWithCascade
      * @param string $website
      * @return $this
      */
-    public function setWebSite($website)
+    public function setWebsite($website)
     {
         $this->website = $website;
 
@@ -225,12 +228,12 @@ class Companies extends NotDeletedModelWithCascade
     /**
      * Method to set the value of field isMaster
      *
-     * @param string $ismaster
+     * @param string $is_master
      * @return $this
      */
-    public function setIsMaster($ismaster)
+    public function setIsMaster($is_master)
     {
-        $this->ismaster = $ismaster;
+        $this->is_master = $is_master;
 
         return $this;
     }
@@ -265,16 +268,16 @@ class Companies extends NotDeletedModelWithCascade
     }
 
 
-    public function setRatingExecutor($ratingexecutor)
+    public function setRatingExecutor($rating_executor)
     {
-        $this->ratingexecutor = $ratingexecutor;
+        $this->rating_executor = $rating_executor;
 
         return $this;
     }
 
-    public function setRatingClient($ratingclient)
+    public function setRatingClient($rating_client)
     {
-        $this->ratingclient = $ratingclient;
+        $this->rating_client = $rating_client;
 
         return $this;
     }
@@ -286,7 +289,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getCompanyId()
     {
-        return $this->companyid;
+        return $this->company_id;
     }
 
     /**
@@ -306,7 +309,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getFullName()
     {
-        return $this->fullname;
+        return $this->full_name;
     }
 
     /**
@@ -336,7 +339,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionid;
+        return $this->region_id;
     }
 
     /**
@@ -346,7 +349,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -354,7 +357,7 @@ class Companies extends NotDeletedModelWithCascade
      *
      * @return string
      */
-    public function getWebSite()
+    public function getWebsite()
     {
         return $this->website;
     }
@@ -376,7 +379,7 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function getIsMaster()
     {
-        return $this->ismaster;
+        return $this->is_master;
     }
 
     /**
@@ -391,12 +394,12 @@ class Companies extends NotDeletedModelWithCascade
 
     public function getRatingExecutor()
     {
-        return $this->ratingexecutor;
+        return $this->rating_executor;
     }
 
     public function getRatingClient()
     {
-        return $this->ratingclient;
+        return $this->rating_client;
     }
 
     /**
@@ -419,7 +422,7 @@ class Companies extends NotDeletedModelWithCascade
                 )
             );
 
-        if ($this->getWebSite() != null)
+        if ($this->getWebsite() != null)
             $validator->add(
                 'website',
                 new UrlValidator(
@@ -443,12 +446,12 @@ class Companies extends NotDeletedModelWithCascade
 
         if ($this->getRegionId() != null) {
             $validator->add(
-                'regionid',
+                'region_id',
                 new Callback(
                     [
                         "message" => "Такой регион не существует",
                         "callback" => function ($company) {
-                            $region = Regions::findFirstByRegionid($company->getRegionId());
+                            $region = Regions::findFirstByRegionId($company->getRegionId());
 
                             if ($region)
                                 return true;
@@ -459,13 +462,13 @@ class Companies extends NotDeletedModelWithCascade
             );
         }
 
-        $validator->add(
-            'userid',
+        /*$validator->add(
+            'user_id',
             new Callback(
                 [
                     "message" => "Такого пользователя не существует",
                     "callback" => function ($company) {
-                        $user = Users::findFirstByUserid($company->getUserId());
+                        $user = Users::findFirstByUserId($company->getUserId());
 
                         if ($user)
                             return true;
@@ -473,7 +476,7 @@ class Companies extends NotDeletedModelWithCascade
                     }
                 ]
             )
-        );
+        );*/
 
         if ($this->getLogotype() != null)
             $validator->add(
@@ -507,15 +510,15 @@ class Companies extends NotDeletedModelWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("companies");
-        $this->hasMany('companyid', '\CompaniesCategories', 'companyid', ['alias' => 'CompaniesCategories']);
-        $this->hasMany('companyid', '\PhonesCompanies', 'companyid', ['alias' => 'PhonesCompanies']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
-        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
-        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
+        $this->hasMany('company_id', 'App\Models\CompaniesCategories', 'company_id', ['alias' => 'CompaniesCategories']);
+        $this->hasMany('company_id', 'App\Models\PhonesCompanies', 'company_id', ['alias' => 'PhonesCompanies']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
     }
 
+    //don't work now
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
         try {
@@ -525,7 +528,12 @@ class Companies extends NotDeletedModelWithCascade
             $transaction = $manager->get();
             $this->setTransaction($transaction);
 
-            if (!$delete) {
+            $result = parent::delete($delete, $deletedCascade, $data, $whiteList);
+
+            $transaction->commit();
+
+            return $result;
+            /*if (!$delete) {
                 //каскадное 'удаление' точек оказания услуг
                 $tradePoints = TradePoints::findBySubject($this->getCompanyId(), 1);
                 foreach ($tradePoints as $tradePoint) {
@@ -636,7 +644,7 @@ class Companies extends NotDeletedModelWithCascade
 
                 $transaction->commit();
                 return $result;
-            }
+            }*/
         } catch (TxFailed $e) {
             $message = new Message(
                 $e->getMessage()
@@ -648,6 +656,7 @@ class Companies extends NotDeletedModelWithCascade
     }
 
 
+    //don't work too
     public function restore()
     {
         $manager = new TxManager();
@@ -764,37 +773,9 @@ class Companies extends NotDeletedModelWithCascade
         return 'companies';
     }
 
-    public static function checkUserHavePermission($userId, $companyId, $right = null)
+    public function getSequenceName()
     {
-        $managerRights = ['edit', 'addService', 'editService'];
-
-        $company = Companies::findFirst(['companyid = :companyId:',
-            'bind' => ['companyId' => $companyId]], false);
-        $user = Users::findFirstByUserid($userId);
-
-        if (!$company)
-            return false;
-
-        //владелец и модераторы могут все
-        if ($company->getUserId() == $userId || $user->getRole() == ROLE_MODERATOR) {
-            return true;
-        } else {
-            $companiesManagers = CompaniesManagers::findFirst(
-                ['companyid = :companyId: AND userid = :userId:',
-                    'bind' => ['companyId' => $companyId, 'userId' => $userId]]);
-
-            if (!$companiesManagers)
-                return false;
-
-            if ($right == null)
-                return false;
-
-            foreach ($managerRights as $managerRight) {
-                if ($managerRight == $right)
-                    return true;
-            }
-        }
-        return false;
+        return "companies_companyid_seq";
     }
 
     public function beforeSave()
@@ -803,5 +784,51 @@ class Companies extends NotDeletedModelWithCascade
             $this->setRatingClient(5);
         if ($this->getRatingExecutor() == null)
             $this->setRatingExecutor(5);
+    }
+
+    public static function findCompanyById(int $companyId, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]);
+        }
+    }
+
+    public static function findCompaniesByUserOwner(int $userId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $columns = [];
+        foreach (self::publicColumns as $publicColumn) {
+            $columns[] = 'c.' . $publicColumn;
+        }
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["c" => "App\Models\Companies"])
+            ->join('App\Models\Accounts', 'c.company_id = a.company_id and a.company_role_id = :role:', 'a')
+            ->where('a.user_id = :userId: and c.deleted = false',
+                [
+                    'userId' => $userId,
+                    'role' => CompanyRole::ROLE_OWNER_ID
+                ])
+            ->getQuery()
+            ->execute();
+
+        return self::handleCompanyFromArray($result->toArray());
+    }
+
+    public static function handleCompanyFromArray(array $companies)
+    {
+        $result = [];
+        foreach ($companies as $company) {
+            $company['phones'] = PhonesCompanies::getCompanyPhones($company['company_id']);
+
+            $result[] = $company;
+        }
+
+        return $result;
     }
 }
