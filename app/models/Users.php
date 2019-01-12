@@ -579,13 +579,13 @@ class Users extends NotDeletedModelWithCascade
      * @return array
      */
     public function getUserShortInfo(){
-        $userInfo = $this->getRelated('Userinfo', [
+      /*  $userInfo = $this->getRelated('Userinfo', [
             'columns' => Userinfo::shortColumns
         ]);
 
         if($userInfo)
             return $userInfo->toArray();
-
+*/
         return [
                 'userid' => $this->user_id ,
                 'email' => $this->email

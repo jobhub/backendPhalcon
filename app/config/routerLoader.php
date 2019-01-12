@@ -43,14 +43,86 @@ $routes = [
             ]
         ],
     ],
-
     '\App\Controllers\GroupController' => [
-        'prefix' => '/group',
+        'prefix' => '/user/group',
         'resources' => [
+            ['type' => 'post',
+                'path' => '/new', //Create new group @param name
+                'action' => 'newAction'
+            ],
+            ['type' => 'post',
+                'path' => '/send', //send message to a chat history @param message_id, body, type,
+                'action' => 'sendMessageAction'
+            ],
+            ['type' => 'post',
+                'path' => '', //send message to a chat history @param message_id, body, type,
+                'action' => 'mainAction'
+            ],
+            ['type' => 'post',
+                'path' => '/messaging', //toggle hidden user discussions @param messaging_id
+                'action' => 'messageAction'
+            ],
+            ['type' => 'get',
+                'path' => '/messaging', //toggle hidden user discussions @param messaging_id
+                'action' => 'messageAction'
+            ]
+        ]
+    ],
+    '\App\Controllers\ChannelController' => [
+        'prefix' => '/user/channel',
+        'resources' => [
+            ['type' => 'post',
+                'path' => '/new', //create new channel
+                'action' => 'createChannelAction'
+            ],
+            ['type' => 'get',
+                'path' => '/search{name}', //find channel
+                'action' => 'findChannelAction'
+            ],
+            ['type' => 'post',
+                'path' => '/subscribe', //find channel
+                'action' => 'subscribePublicChannelAction'
+            ],
+            ['type' => 'post',
+                'path' => '/send', //send message to channel
+                'action' => 'sendMessageAction'
+            ],
+            ['type' => 'get',
+                'path' => '/', //get user to channels
+                'action' => 'getUserChannelAction'
+            ],
+            ['type' => 'get',
+                'path' => '/messages{params}', //get channels messages
+                'action' => 'getChannelMessageAction'
+            ],
+            ['type' => 'put',
+                'path' => '/delete-history{params}', //get channels messages
+                'action' => 'deleteHistoryAction'
+            ],
             [
                 'type' => 'post',
-                'path' => '/new-group',
-                'action' => 'addAction'
+                'path' => '/add-user', // add users to channel @param json Array of users id
+                'action' => 'addUsersToChannelAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/delete-user', //remove users  to channels @param json Array of users id
+                'action' => 'removeUserToChannelAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/add-admin', //get channels messages @param json Array of users id
+                'action' => 'adminChannelAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/users{data}', //get channels messages @param channel_id
+                'action' => 'getUsersOfChannelAction'
+            ],
+            [
+                'type' => 'put',
+                'path' => '/messaging/hidden', //toggle hidden user discussions @param messaging_id
+                'action' => 'hiddenTogglePrivateChatAction'
             ]
         ]
     ],

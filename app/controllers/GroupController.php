@@ -62,7 +62,7 @@ class GroupController extends AbstractController {
         $action = $data['action'];
         try {
             if(method_exists($this->groupService, $action))
-                $response = $this->groupService->$action($data); // using same message service with private chat
+                    $response = $this->groupService->$action($data); // using same message service with private chat
             else
             {
                 throw new Http400Exception(_('Action not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
