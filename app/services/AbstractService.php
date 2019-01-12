@@ -38,4 +38,8 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
             throw new ServiceExtendedException('Unable to send email', self::ERROR_UNABLE_SEND_TO_MAIL, null, null, ['sending_error' => $res]);
         }
     }
+
+    public function log($message){
+        $this->logger->log($message);
+}
 }

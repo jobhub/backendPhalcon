@@ -19,17 +19,8 @@ class MessageController extends AbstractController {
      * @return array
      */
     public function sendMessageAction() {
-        $data = [];
-        $jsonData = $this->request->getJsonRawBody();
-        $payload = $this->session->get('auth');
-        $current_user_id = $payload['id'];
-        $this->logger->critical(
-             'user id = '. $current_user_id
-        );
-        $data["sender"] = $jsonData->user_sender_id;
-        $data["reciever"] = $jsonData->user_reciever_id;
-        $data["content"] = $jsonData->body;
-        $data["type"] = $jsonData->msg_type;
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $this->getUserid();
         try {
             $this->messageService->sendMessage($data);
         } catch (ServiceException $e) {
@@ -45,18 +36,14 @@ class MessageController extends AbstractController {
      * @return array
      */
     public function getChatBoxAction() {
-        $data = [];
-        $jsonData = $this->request->getJsonRawBody();
-        $data["sender"] = $jsonData->sender;
-        $data["reciever"] = $jsonData->reciever; 
-        $data["page"] =  $jsonData->page;  
-       
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $this->getUserid();
         try {
            $response = $this->messageService->getMessages($data);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
-        return parent::chatResponce('',$response);
+        return $response;
     }
 
     /**
@@ -68,7 +55,7 @@ class MessageController extends AbstractController {
     public function setAllToReadAction() {
         $data = [];
         $jsonData = $this->request->getJsonRawBody();
-        $data["sender"] = $jsonData->sender;
+        $data["sender"] = $this->getUserid();
         $data["reciever"] = $jsonData->reciever;     
        
         try {

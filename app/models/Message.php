@@ -5,6 +5,10 @@ namespace App\Models;
 class Message extends \Phalcon\Mvc\Model
 {
 
+    const DEFAULT_RESULT_PER_PAGE = 12;
+
+    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users'];
+
     /**
      *
      * @var integer
@@ -15,7 +19,7 @@ class Message extends \Phalcon\Mvc\Model
      *
      * @var string
      */
-    protected $creationDate;
+    protected $create_at;
 
     /**
      *
@@ -27,13 +31,13 @@ class Message extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    protected $sender;
+    protected $sender_id;
 
     /**
      *
      * @var string
      */
-    protected $isReaded;
+    protected $is_readed;
 
     /**
      *
@@ -45,7 +49,7 @@ class Message extends \Phalcon\Mvc\Model
      *
      * @var string
      */
-    protected $messageType;
+    protected $message_type;
 
     /**
      *
@@ -58,6 +62,18 @@ class Message extends \Phalcon\Mvc\Model
      * @var string
      */
     protected $deleted;
+
+    /**
+     *
+     * @var string
+     */
+    protected $received_users;
+
+    /**
+     *
+     * @var string
+     */
+    protected $readed_users;
 
     /**
      * Method to set the value of field id
@@ -73,14 +89,14 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field creationDate
+     * Method to set the value of field create_at
      *
-     * @param string $creationDate
+     * @param string $create_at
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreateAt($create_at)
     {
-        $this->creationDate = $creationDate;
+        $this->create_at = $create_at;
 
         return $this;
     }
@@ -99,27 +115,27 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field sender
+     * Method to set the value of field sender_id
      *
-     * @param integer $sender
+     * @param integer $sender_id
      * @return $this
      */
-    public function setSender($sender)
+    public function setSenderId($sender_id)
     {
-        $this->sender = $sender;
+        $this->sender_id = $sender_id;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field isReaded
+     * Method to set the value of field is_readed
      *
-     * @param string $isReaded
+     * @param string $is_readed
      * @return $this
      */
-    public function setIsReaded($isReaded)
+    public function setIsReaded($is_readed)
     {
-        $this->isReaded = $isReaded;
+        $this->is_readed = $is_readed;
 
         return $this;
     }
@@ -138,14 +154,14 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field messageType
+     * Method to set the value of field message_type
      *
-     * @param string $messageType
+     * @param string $message_type
      * @return $this
      */
-    public function setMessageType($messageType)
+    public function setMessageType($message_type)
     {
-        $this->messageType = $messageType;
+        $this->message_type = $message_type;
 
         return $this;
     }
@@ -177,6 +193,32 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Method to set the value of field received_users
+     *
+     * @param string $received_users
+     * @return $this
+     */
+    public function setReceivedUsers($received_users)
+    {
+        $this->received_users = $received_users;
+
+        return $this;
+    }
+
+    /**
+     * Method to set the value of field readed_users
+     *
+     * @param string $readed_users
+     * @return $this
+     */
+    public function setReadedUsers($readed_users)
+    {
+        $this->readed_users = $readed_users;
+
+        return $this;
+    }
+
+    /**
      * Returns the value of field id
      *
      * @return integer
@@ -187,13 +229,13 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field creationDate
+     * Returns the value of field create_at
      *
      * @return string
      */
-    public function getCreationDate()
+    public function getCreateAt()
     {
-        return $this->creationDate;
+        return $this->create_at;
     }
 
     /**
@@ -207,23 +249,23 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field sender
+     * Returns the value of field sender_id
      *
      * @return integer
      */
-    public function getSender()
+    public function getSenderId()
     {
-        return $this->sender;
+        return $this->sender_id;
     }
 
     /**
-     * Returns the value of field isReaded
+     * Returns the value of field is_readed
      *
      * @return string
      */
     public function getIsReaded()
     {
-        return $this->isReaded;
+        return $this->is_readed;
     }
 
     /**
@@ -237,13 +279,13 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field messageType
+     * Returns the value of field message_type
      *
      * @return string
      */
     public function getMessageType()
     {
-        return $this->messageType;
+        return $this->message_type;
     }
 
     /**
@@ -267,6 +309,26 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field received_users
+     *
+     * @return string
+     */
+    public function getReceivedUsers()
+    {
+        return $this->received_users;
+    }
+
+    /**
+     * Returns the value of field readed_users
+     *
+     * @return string
+     */
+    public function getReadedUsers()
+    {
+        return $this->readed_users;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -286,7 +348,8 @@ class Message extends \Phalcon\Mvc\Model
     {
         return 'message';
     }
-    
+
+
     public function getSequenceName() {
         return "\"message_id_seq\"";
     }

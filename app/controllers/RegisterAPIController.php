@@ -91,7 +91,7 @@ class RegisterAPIController extends AbstractController
             $tokens = $this->authService->createSession($resultUser);
 
             SupportClass::writeMessageInLogFile("Дошел до отправки кода активации");
-            $this->authService->sendActivationCode($resultUser);
+           // $this->authService->sendActivationCode($resultUser);
             SupportClass::writeMessageInLogFile("Отправил код активации");
 
             $tokens['role'] = $resultUser->getRole();

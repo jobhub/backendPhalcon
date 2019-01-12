@@ -34,6 +34,7 @@ class JWTMiddleware implements MiddlewareInterface
         if (!$info) {
             //$this->session->remove('auth');
             SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
+
         } else {
             if (strtotime($info['lifetime']) <= time()) {
                 SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
@@ -49,6 +50,7 @@ class JWTMiddleware implements MiddlewareInterface
             SupportClass::writeMessageInLogFile('Сессия есть, роль ' . $di->getSession()->get('auth')['role']);
             $role = $di->getSession()->get('auth')['role'];
         }
+
     }
 
     private function convertRequestBody()

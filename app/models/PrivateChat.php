@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class PrivateChat extends \Phalcon\Mvc\Model
+class PrivateChat extends HiddenSpamModel
 {
 
     /**
@@ -15,13 +15,13 @@ class PrivateChat extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    protected $user1;
+    protected $user_id;
 
     /**
      *
      * @var integer
      */
-    protected $user2;
+    protected $related_user_id;
 
     /**
      *
@@ -34,6 +34,12 @@ class PrivateChat extends \Phalcon\Mvc\Model
      * @var integer
      */
     protected $subject_type_user1;
+
+    /**
+     *
+     * @var string
+     */
+    protected $create_at;
 
     /**
      * Method to set the value of field id
@@ -49,27 +55,27 @@ class PrivateChat extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field user1
+     * Method to set the value of field user_id
      *
-     * @param integer $user1
+     * @param integer $user_id
      * @return $this
      */
-    public function setUser1($user1)
+    public function setUserId($user_id)
     {
-        $this->user1 = $user1;
+        $this->user_id = $user_id;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field user2
+     * Method to set the value of field related_user_id
      *
-     * @param integer $user2
+     * @param integer $related_user_id
      * @return $this
      */
-    public function setUser2($user2)
+    public function setRelatedUserId($related_user_id)
     {
-        $this->user2 = $user2;
+        $this->related_user_id = $related_user_id;
 
         return $this;
     }
@@ -111,23 +117,23 @@ class PrivateChat extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field user1
+     * Returns the value of field user_id
      *
      * @return integer
      */
-    public function getUser1()
+    public function getUserId()
     {
-        return $this->user1;
+        return $this->user_id;
     }
 
     /**
-     * Returns the value of field user2
+     * Returns the value of field related_user_id
      *
      * @return integer
      */
-    public function getUser2()
+    public function getRelatedUserId()
     {
-        return $this->user2;
+        return $this->related_user_id;
     }
 
     /**
@@ -150,6 +156,23 @@ class PrivateChat extends \Phalcon\Mvc\Model
         return $this->subject_type_user1;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getCreateAt(): string
+    {
+        return $this->create_at;
+    }
+
+    /**
+     * @param string $create_at
+     */
+    public function setCreateAt(string $create_at)
+    {
+        $this->create_at = $create_at;
+    }
+
     /**
      * Initialize method for model.
      */
@@ -158,8 +181,8 @@ class PrivateChat extends \Phalcon\Mvc\Model
         $this->setSchema("public");
         $this->setSource("privateChat");
         $this->belongsTo('chat_hist_id', 'App\Models\ChatHistory', 'id', ['alias' => 'Chathistory']);
-        $this->belongsTo('user1', 'App\Models\Users', 'id', ['alias' => 'User']);
-        $this->belongsTo('user2', 'App\Models\Users', 'id', ['alias' => 'User']);
+        $this->belongsTo('related_user_id', 'App\Models\Users', 'user_id', ['alias' => 'relatedUser']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'User']);
     }
 
     /**
@@ -171,32 +194,9 @@ class PrivateChat extends \Phalcon\Mvc\Model
     {
         return 'privateChat';
     }
-    
+
     public function getSequenceName()
     {
         return "\"PrivateChat_id_seq\"";
     }
-
-    /**
-     * Allows to query a set of records that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return PrivateChat[]|PrivateChat|\Phalcon\Mvc\Model\ResultSetInterface
-     */
-    public static function find($parameters = null)
-    {
-        return parent::find($parameters);
-    }
-
-    /**
-     * Allows to query the first record that match the specified conditions
-     *
-     * @param mixed $parameters
-     * @return PrivateChat|\Phalcon\Mvc\Model\ResultInterface
-     */
-    public static function findFirst($parameters = null)
-    {
-        return parent::findFirst($parameters);
-    }
-
 }

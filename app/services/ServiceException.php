@@ -12,7 +12,7 @@ use Phalcon\DI\FactoryDefault as DI;
  */
 class ServiceException extends \RuntimeException
 {
-    public function __construct(string $message = '', int $code = 0,\Throwable $e = null, $logger = null) {
+    public function __construct(string $message = '', $code = 0,\Throwable $e = null) {
         $di = DI::getDefault();
         $di->getLogger()->critical(
         $code. ' '. $message

@@ -12,7 +12,6 @@ use App\Models\PasswordResetCodes;
 
 use App\Libs\SupportClass;
 use App\Libs\PHPMailerApp;
-
 /**
  * business and other logic for authentication. Maybe just creation simple objects.
  *

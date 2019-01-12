@@ -123,16 +123,49 @@ class UserController extends AbstractController {
     /**
      * Get user discussions
      *
-     * @param string $userId
+     * @return  string $userId
      */
-    public function getUserChanelAction($idUser) {
+    public function getUserPrivateChatAction() {
         try {
-            $user = $this->privateChatService->getUserDiscutionChat('' . $idUser);
+            $user_id = $this->getUserid();
+            $discussions = $this->privateChatService->getUserPublicChats($user_id);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
 
-        return $user;
+        return $discussions;
+    }
+
+    /**
+     * Get user spam discussions
+     *
+     * @return  string $userId
+     */
+    public function getUserSpamPrivateChatAction() {
+        try {
+            $user_id = $this->getUserid();
+            $discussions = $this->privateChatService->getUserPublicChats($user_id,true);
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+
+        return $discussions;
+    }
+
+    /**
+     * Get user hidden discussions
+     *
+     * @return  array $discussions
+     */
+    public function getUserHiddenPrivateChatAction() {
+        try {
+            $user_id = $this->getUserid();
+            $discussions = $this->privateChatService->getUserPublicChats($user_id, false, true);
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+
+        return $discussions;
     }
 
 }
