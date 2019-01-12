@@ -43,12 +43,12 @@ class CompaniesAPIController extends AbstractController
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
 
-        $result['companies'] = Companies::findCompaniesByUserOwner($userId)->toArray();
+        $result['companies'] = Companies::findCompaniesByUserOwner($userId);
 
         if ($with_points && $with_points != 'false') {
             $result2 = [];
             foreach ($result['companies'] as $company) {
-                $points = TradePoints::findPointsByCompany($company['company_id'])->toArray();
+                $points = TradePoints::findPointsByCompany($company['company_id']);
                 $result2[] = ['company' => $company, 'points' => $points];
             }
 

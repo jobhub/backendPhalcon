@@ -124,7 +124,7 @@ class Phones extends \Phalcon\Mvc\Model
 
     public function getSequenceName()
     {
-        return "regions_phoneid_seq";
+        return "phones_phoneid_seq";
     }
 
     /**
@@ -210,7 +210,7 @@ class Phones extends \Phalcon\Mvc\Model
      * @return integer - количество ссылок
      */
     public function countOfReferences(){
-        $phonesPoints = PhonesPoints::findByPhoneid($this->getPhoneId());
+        $phonesPoints = PhonesPoints::findByPhoneId($this->getPhoneId());
         $phonesCompanies = PhonesCompanies::findByPhoneId($this->getPhoneId());
         $phonesUsers = PhonesUsers::findByPhoneId($this->getPhoneId());
 

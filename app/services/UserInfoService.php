@@ -10,6 +10,7 @@ use App\Libs\SupportClass;
 
 //models
 use App\Models\Userinfo;
+use App\Models\FavoriteCompanies;
 use App\Models\Settings;
 
 /**
@@ -26,6 +27,9 @@ class UserInfoService extends AbstractService {
     const ERROR_UNABLE_CREATE_SETTINGS = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_USER_INFO_NOT_FOUND = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_USER_INFO = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY = 5 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY = 7 + self::ADDED_CODE_NUMBER;
 
     public function createUserInfo(array $userInfoData){
         $userInfo = new Userinfo();
@@ -119,5 +123,44 @@ class UserInfoService extends AbstractService {
         }
 
         return Userinfo::handleUserInfo($userInfo);
+    }
+
+    public function subscribeToCompany(int $userId, int $companyId){
+        $fav = new FavoriteCompanies();
+        $fav->setUserId($userId);
+        $fav->setCompanyId($companyId);
+
+        if(!$fav->create()){
+            $errors = SupportClass::getArrayWithErrors($fav);
+            if(count($errors)>0)
+                throw new ServiceExtendedException('Unable subscribe user to company',
+                    self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY,null,null,$errors);
+            else{
+                throw new ServiceExtendedException('Unable subscribe user to company',
+                    self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY);
+            }
+        }
+    }
+
+    public function getSigningToCompany(int $userId, int $companyId){
+        $fav = FavoriteCompanies::findByIds($userId,$companyId);
+
+        if (!$fav) {
+            throw new ServiceException('User don\'t subscribe to company', self::ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY);
+        }
+        return $fav;
+    }
+
+    public function unsubscribeFromCompany(FavoriteCompanies $favComp){
+        if(!$favComp->delete()){
+            $errors = SupportClass::getArrayWithErrors($favComp);
+            if(count($errors)>0)
+                throw new ServiceExtendedException('Unable unsubscribe user from company',
+                    self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY,null,null,$errors);
+            else{
+                throw new ServiceExtendedException('Unable unsubscribe user from company',
+                    self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY);
+            }
+        }
     }
 }

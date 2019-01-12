@@ -39,7 +39,7 @@ abstract class AccountModel extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            '$account_id',
+            'account_id',
             new Callback(
                 [
                     "message" => "Такой аккаунт не существует",

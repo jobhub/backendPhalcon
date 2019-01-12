@@ -817,7 +817,7 @@ class Companies extends NotDeletedModelWithCascade
             ->getQuery()
             ->execute();
 
-        return $result;
+        return self::handleCompanyFromArray($result->toArray());
     }
 
     public static function handleCompanyFromArray(array $companies)

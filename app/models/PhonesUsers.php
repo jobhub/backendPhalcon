@@ -160,7 +160,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
 
     public static function findByIds($userId, $phoneId)
     {
-        return PhonesUsers::findFirst(["userid = :userId: AND phoneid = :phoneId:",
+        return PhonesUsers::findFirst(["user_id = :userId: AND phone_id = :phoneId:",
             'bind' =>
                 [
                     'userId' => $userId,

@@ -1139,6 +1139,165 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\PhonesAPIController'=>[
+        'prefix' => '',
+        'resources' => [
+            /**
+             * Добавляет телефон для указанной компании
+             * @method POST
+             * @params integer company_id, string phone или integer phone_id
+             * @return Phalcon\Http\Response с json ответом в формате Status;
+             */
+            [
+                'type' => 'post',
+                'path' => '/company/add/phone',
+                'action' => 'addPhoneToCompanyAction'
+            ],
+
+            /**
+             * Добавляет телефон для указанной точки оказания услуг
+             * @method POST
+             * @params integer point_id, string phone или integer phone_id
+             * @return Phalcon\Http\Response с json ответом в формате Status;
+             */
+            [
+                'type' => 'post',
+                'path' => '/trade-point/add/phone',
+                'action' => 'addPhoneToTradePointAction'
+            ],
+
+            /**
+             * Убирает телефон из списка телефонов компании
+             *
+             * @method DELETE
+             *
+             * @param int $phone_id
+             * @param int $company_id
+             * @return Phalcon\Http\Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/company/delete/phone/{phone_id}/{company_id}',
+                'action' => 'deletePhoneFromCompanyAction'
+            ],
+
+            /**
+             * Убирает телефон из списка телефонов точки
+             *
+             * @method DELETE
+             *
+             * @param int $phone_id
+             * @param int $point_id
+             * @return Phalcon\Http\Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/trade-point/delete/phone/{phone_id}/{point_id}',
+                'action' => 'deletePhoneFromTradePointAction'
+            ],
+
+            /**
+             * Изменяет определенный номер телефона у определенной точки услуг
+             * @method PUT
+             * @params integer point_id, string phone (новый) и integer phone_id (старый)
+             * @return Phalcon\Http\Response с json ответом в формате Status;
+             */
+            [
+                'type' => 'put',
+                'path' => '/trade-point/edit/phone',
+                'action' => 'editPhoneInTradePointAction'
+            ],
+
+            /**
+             * Изменяет определенный номер телефона у определенной компании
+             * @method PUT
+             * @params integer company_id, string phone (новый) и integer phone_id (старый)
+             * @return Phalcon\Http\Response с json ответом в формате Status;
+             */
+            [
+                'type' => 'put',
+                'path' => '/company/edit/phone',
+                'action' => 'editPhoneInCompanyAction'
+            ],
+
+            /**
+             * Добавляет телефон пользователю.
+             * Приватный метод.
+             *
+             * @method POST
+             *
+             * @params string phone или integer phone_id
+             * @return Phalcon\Http\Response с json ответом в формате Status;
+             */
+            [
+                'type' => 'post',
+                'path' => '/user/info/add/phone',
+                'action' => 'addPhoneToUserAction'
+            ],
+
+            /**
+             * Убирает телефон из списка телефонов пользователя.
+             * Приватный метод.
+             *
+             * @method DELETE
+             *
+             * @param int $phone_id
+             * @return Phalcon\Http\Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/user/info/delete/phone/{phone_id}',
+                'action' => 'deletePhoneFromUserAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\FavouriteCompaniesAPIController'=>[
+        'prefix' => '/user/info',
+        'resources' => [
+            /**
+             * Подписывает текущего пользователя на компанию
+             *
+             * @method POST
+             *
+             * @params company_id
+             *
+             * @return Response с json ответом в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/subscribe-to/company',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку на компанию
+             *
+             * @method DELETE
+             *
+             * @param $company_id
+             *
+             * @return Response с json ответом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/unsubscribe-from/company/{company_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает подписки пользователя на компании
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/favourite/companies',
+                'action' => 'getFavouritesAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

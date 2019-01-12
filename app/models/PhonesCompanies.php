@@ -161,7 +161,7 @@ class PhonesCompanies extends \Phalcon\Mvc\Model
     {
         $db = DI::getDefault()->getDb();
 
-        $query = $db->prepare('SELECT p.phone FROM "phonesCompanies" p_c INNER JOIN phones p ON 
+        $query = $db->prepare('SELECT p.phone, p.phone_id FROM "phonesCompanies" p_c INNER JOIN phones p ON 
             (p_c.phone_id = p.phone_id) where p_c.company_id = :companyId'
         );
 

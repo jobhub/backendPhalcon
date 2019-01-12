@@ -96,8 +96,7 @@ class CommentsAPIController extends AbstractController
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
-                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 case CommentService::ERROR_INVALID_COMMENT_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
                 default:
@@ -266,8 +265,7 @@ class CommentsAPIController extends AbstractController
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
-                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 case CommentService::ERROR_INVALID_COMMENT_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
                 default:

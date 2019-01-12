@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\PhonesPoints;
+use App\Services\PointService;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -7,247 +11,160 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 
+
+use App\Models\Companies;
+use App\Models\TradePoints;
+use App\Models\Accounts;
+use App\Services\CompanyService;
+use App\Services\AccountService;
+use App\Services\ImageService;
+use App\Services\PhoneService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Class PhonesAPIController
  * Контроллер для работы с номерами телефонов.
  * Содержит методы для добавления, изменения и удаления номеров телефонов
  * для пользователей, компаний и точек оказания услуг.
  */
-class PhonesAPIController extends Controller
+class PhonesAPIController extends AbstractController
 {
     /**
      * Добавляет телефон для указанной компании
      * @method POST
-     * @params integer companyId, string phone или integer phoneId
+     * @params integer company_id, string phone или integer phone_id
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function addPhoneToCompanyAction()
     {
-        if ($this->request->isPost()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
+        $data['phone'] = $inputData->phone;
+        $data['phone_id'] = $inputData->phone_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $company = Companies::findFirstByCompanyid($this->request->getPost("companyId"));
+            //проверки
+            $errors = null;
 
-            if ($company && ($company->getUserId() == $userId || $auth['role'] == ROLE_MODERATOR)) {
-                $this->db->begin();
-                if ($this->request->getPost("phone")) {
-
-                    //Создаем новый
-                    $phone = new Phones();
-                    $phone->setPhone($this->request->getPost("phone"));
-
-                    if (!$phone->save()) {
-                        $this->rollback();
-                        $errors = [];
-                        foreach ($phone->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-                } else if ($this->request->getPost("phoneId")) {
-                    $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
-
-                    if (!$phone) {
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => ['телефона с таким id не существует']
-                            ]
-                        );
-                        return $response;
-                    }
-
-
-                } else {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Нужно указать номер телефона или id существующего в параметрах \'phone\', \'phoneId\'']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $phoneCompany = PhonesCompanies::findByIds($company->getCompanyId(), $phone->getPhoneId());
-                if ($phoneCompany) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_ALREADY_EXISTS,
-                            "errors" => ['Телефон уже привязан к компании']
-                        ]
-                    );
-                    return $response;
-                }
-                $phoneCompany = new PhonesCompanies();
-
-                $phoneCompany->setCompanyId($company->getCompanyId());
-                $phoneCompany->setPhoneId($phone->getPhoneId());
-
-                if (!$phoneCompany->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phoneCompany->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $this->db->commit();
-
-                $response->setJsonContent(
-                    [
-                        'status' => STATUS_OK
-                    ]
-                );
-                return $response;
-
-            } else {
-                $response->setJsonContent(
-                    [
-                        'status' => STATUS_WRONG,
-                        'errors' => ['permission error']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
             }
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+
+            if (empty(trim($data['phone'])) && empty(trim($data['phone_id']))) {
+                $errors['phone'] = 'Missing required parameter "phone" or "phone_id"';
+            }
+
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $data['company_id'], 'addPhoneToCompany')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            if (empty(trim($data['phone']))) {
+                $phone = $this->phoneService->getPhoneById($data['phone_id']);
+                $data['phone'] = $phone->getPhone();
+            }
+
+            $phoneCompany = $this->phoneService->addPhoneToCompany($data['phone'], $data['company_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_COMPANY:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Phone was successfully added to company', ['phone_id' => $phoneCompany->getPhoneId()]);
     }
 
     /**
      * Добавляет телефон для указанной точки оказания услуг
      * @method POST
-     * @params integer pointId, string phone или integer phoneId
+     * @params integer point_id, string phone или integer phone_id
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function addPhoneToTradePointAction()
     {
-        if ($this->request->isPost()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['point_id'] = $inputData->point_id;
+        $data['phone'] = $inputData->phone;
+        $data['phone_id'] = $inputData->phone_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $point = TradePoints::findFirstByPointid($this->request->getPost("pointId"));
+            //проверки
+            $errors = null;
 
-            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(), 'editPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['point_id']))) {
+                $errors['point_id'] = 'Missing required parameter "point_id"';
             }
 
-            $this->db->begin();
-
-            if ($this->request->getPost("phone")) {
-
-                //Создаем новый
-                $phone = new Phones();
-                $phone->setPhone($this->request->getPost("phone"));
-
-                if (!$phone->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phone->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-            } else if ($this->request->getPost("phoneId")) {
-                $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
-
-                if (!$phone) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['телефона с таким id не существует']
-                        ]
-                    );
-                    return $response;
-                }
-
-            } else {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Нужно указать номер телефона или id существующего в параметрах \'phone\', \'phoneId\'']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['phone'])) && empty(trim($data['phone_id']))) {
+                $errors['phone'] = 'Missing required parameter "phone" or "phone_id"';
             }
 
-            $phonePoint = PhonesPoints::findByIds($point->getPointId(), $phone->getPhoneId());
-            if ($phonePoint) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_ALREADY_EXISTS,
-                        "errors" => ['Телефон уже привязан к точке оказания услуг']
-                    ]
-                );
-                return $response;
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
             }
 
-            $phonePoint = new PhonesPoints();
+            $point = $this->pointService->getPointById($data['point_id']);
 
-            $phonePoint->setPointId($point->getPointId());
-            $phonePoint->setPhoneId($phone->getPhoneId());
-
-            if (!$phonePoint->save()) {
-
-                $this->db->rollback();
-                $errors = [];
-                foreach ($phonePoint->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'addPhoneToPoint')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $this->db->commit();
+            if (empty(trim($data['phone']))) {
+                $phone = $this->phoneService->getPhoneById($data['phone_id']);
+                $data['phone'] = $phone->getPhone();
+            }
 
-            $response->setJsonContent(
-                [
-                    'status' => STATUS_OK
-                ]
-            );
-            return $response;
+            $phoneCompany = $this->phoneService->addPhoneToPoint($data['phone'], $data['point_id']);
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_POINT:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Phone was successfully added to company', ['phone_id' => $phoneCompany->getPhoneId()]);
     }
 
     /**
@@ -255,72 +172,48 @@ class PhonesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param int $phoneId
-     * @param int $companyId
+     * @param int $phone_id
+     * @param int $company_id
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
-    public function deletePhoneFromCompanyAction($phoneId, $companyId)
+    public function deletePhoneFromCompanyAction($phone_id, $company_id)
     {
-        if ($this->request->isDelete()) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $phonesCompany = PhonesCompanies::findByIds($companyId, $phoneId);
-
-            if (!$phonesCompany) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Телефон не существует']
-                    ]
-                );
-                return $response;
+            //проверки
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'deletePhoneFromCompany')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $company = $phonesCompany->companies;
+            $this->db->begin();
+            $phoneCompany = $this->phoneService->getPhoneCompanyById($phone_id,$company_id);
+            $this->phoneService->deletePhoneCompany($phoneCompany);
 
-            if (!$company || !Companies::checkUserHavePermission($userId, $companyId, 'editCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE_FROM_COMPANY:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$phonesCompany->delete()) {
-                $errors = [];
-                foreach ($phonesCompany->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                case PhoneService::ERROR_PHONE_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $phone = Phones::findFirstByPhoneid($phoneId);
-
-            if ($phone->countOfReferences() == 0)
-                $phone->delete();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+        $this->db->commit();
+
+        return self::successResponse('Phone was successfully deleted from company');
     }
 
     /**
@@ -328,214 +221,124 @@ class PhonesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param int $phoneId
-     * @param int $pointId
+     * @param int $phone_id
+     * @param int $point_id
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
-    public function deletePhoneFromTradePointAction($phoneId, $pointId)
+    public function deletePhoneFromTradePointAction($phone_id, $point_id)
     {
-        if ($this->request->isDelete()) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $phonesPoint = PhonesPoints::findByIds($pointId, $phoneId);
+            //проверки
+            $point = $this->pointService->getPointById($point_id);
 
-            if (!$phonesPoint) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Телефон не существует']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'addPhoneToPoint')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $point = $phonesPoint->tradepoints;
+            $this->db->begin();
 
-            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
-                    'editPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $phonePoint = $this->phoneService->getPhonePointById($phone_id,$point_id);
+            $this->phoneService->deletePhonePoint($phonePoint);
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE_FROM_POINT:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$phonesPoint->delete()) {
-                $errors = [];
-                foreach ($phonesPoint->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                case PhoneService::ERROR_PHONE_POINT_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $phone = Phones::findFirstByPhoneid($phoneId);
-
-            if ($phone->countOfReferences() == 0)
-                $phone->delete();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+        $this->db->commit();
+        return self::successResponse('Phone was successfully deleted from point');
     }
 
 
     /**
      * Изменяет определенный номер телефона у определенной точки услуг
      * @method PUT
-     * @params integer pointId, string phone (новый) и integer phoneId (старый)
+     * @params integer point_id, string phone (новый) и integer phone_id (старый)
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function editPhoneInTradePointAction()
     {
-        if ($this->request->isPut()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['point_id'] = $inputData->point_id;
+        $data['phone'] = $inputData->phone;
+        $data['phone_id'] = $inputData->phone_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
-            $point = TradePoints::findFirstByPointid($this->request->getPut("pointId"));
 
+            //проверки
+            $errors = null;
 
-            if (!$point || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $point->getSubjectId(), $point->getSubjectType(),
-                    'editPoint')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['point_id']))) {
+                $errors['point_id'] = 'Missing required parameter "point_id"';
             }
 
-
-            $this->db->begin();
-
-            if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
-
-                $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
-
-                if (!$phone) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Id старого номера не существует']
-                        ]
-                    );
-                    return $response;
-                }
-
-                if ($phone->countOfReferences() < 2) {
-                    $phone->setPhone($this->request->getPut("phone"));
-                } else {
-
-                    $phone = new Phones();
-                    $phone->setPhone($this->request->getPut("phone"));
-
-                    $phonePoint = new PhonesPoints();
-                }
-
-                $phonesPoint = PhonesPoints::findByIds($this->request->getPut("pointId"),
-                    $this->request->getPut("phoneId"));
-
-                if (!$phonesPoint) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Телефон не связан с точкой оказания услуг']
-                        ]
-                    );
-                    return $response;
-                }
-
-                if (!$phonesPoint->delete()) {
-                    $errors = [];
-                    foreach ($phonesPoint->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                if (!$phone->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phone->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $phonePoint->setPointId($point->getPointId());
-                $phonePoint->setPhoneId($phone->getPhoneId());
-
-                if (!$phonePoint->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phonePoint->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-            } else {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Нужно указать новый номер телефона phone и id старого phoneId']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['phone']))) {
+                $errors['phone'] = 'Missing required parameter "phone"';
             }
 
-            $this->db->commit();
+            if (empty(trim($data['phone_id']))) {
+                $errors['phone'] = 'Missing required parameter "phone_id"';
+            }
 
-            $response->setJsonContent(
-                [
-                    'status' => STATUS_OK
-                ]
-            );
-            return $response;
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $point = $this->pointService->getPointById($data['point_id']);
+
+            if (!Accounts::checkUserHavePermission($userId, $point->getAccountId(), 'changePhonesInPoint')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $phonePoint = $this->phoneService->getPhonePointById($data['phone_id'],$data['point_id']);
+            $this->phoneService->deletePhonePoint($phonePoint);
+
+            $phoneCompany = $this->phoneService->addPhoneToPoint($data['phone'], $data['point_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_POINT:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE_FROM_POINT:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                case PhoneService::ERROR_PHONE_POINT_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Phone was successfully changed', ['phone_id' => $phoneCompany->getPhoneId()]);
     }
 
     /*public function testAction(){
@@ -575,138 +378,71 @@ class PhonesAPIController extends Controller
     /**
      * Изменяет определенный номер телефона у определенной компании
      * @method PUT
-     * @params integer companyId, string phone (новый) и integer phoneId (старый)
+     * @params integer company_id, string phone (новый) и integer phone_id (старый)
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function editPhoneInCompanyAction()
     {
-        if ($this->request->isPut()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
+        $data['phone'] = $inputData->phone;
+        $data['phone_id'] = $inputData->phone_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $phonesCompany = PhonesCompanies::findByIds($this->request->getPut("companyId"),
-                $this->request->getPut("phoneId"));
+            //проверки
+            $errors = null;
 
-            if (!$phonesCompany) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Телефон не существует']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['company_id']))) {
+                $errors['company_id'] = 'Missing required parameter "company_id"';
             }
 
-            if (!Companies::checkUserHavePermission($userId, $this->request->getPut("companyId"), 'editCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['phone']))) {
+                $errors['phone'] = 'Missing required parameter "phone"';
             }
 
-            $this->db->begin();
-
-            if ($this->request->getPut("phone") && $this->request->getPut("phoneId")) {
-
-                $phone = Phones::findFirstByPhoneid($this->request->getPut("phoneId"));
-
-                if (!$phone) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['Id старого номера не существует']
-                        ]
-                    );
-                    return $response;
-                }
-
-                if ($phone->countOfReferences() < 2) {
-                    $phone->setPhone($this->request->getPut("phone"));
-
-                } else {
-                    //Удаляем предыдущую связь, создаем новый телефон и связываем с ним
-                    $phone = new Phones();
-                    $phone->setPhone($this->request->getPut("phone"));
-
-                }
-
-                if (!$phonesCompany->delete()) {
-                    $errors = [];
-                    foreach ($phonesCompany->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-                $phonesCompany = new PhonesCompanies();
-
-                if (!$phone->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phone->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-                $phonesCompany->setCompanyId($this->request->getPut("companyId"));
-                $phonesCompany->setPhoneId($phone->getPhoneId());
-
-                if (!$phonesCompany->save()) {
-
-                    $this->db->rollback();
-                    $errors = [];
-                    foreach ($phonesCompany->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-
-            } else {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Нужно указать новый номер телефона phone и id старого phoneId']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['phone_id']))) {
+                $errors['phone'] = 'Missing required parameter "phone_id"';
             }
 
-            $this->db->commit();
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
 
-            $response->setJsonContent(
-                [
-                    'status' => STATUS_OK
-                ]
-            );
-            return $response;
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $data['company_id'], 'changePhonesInPoint')) {
+                throw new Http403Exception('Permission error');
+            }
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $phoneCompany = $this->phoneService->getPhoneCompanyById($data['phone_id'],$data['company_id']);
+            $this->phoneService->deletePhoneCompany($phoneCompany);
+
+            $phoneCompany = $this->phoneService->addPhoneToCompany($data['phone'], $data['company_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_POINT:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE_FROM_COMPANY:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                case PhoneService::ERROR_PHONE_COMPANY_NOT_FOUND:
+                case PointService::ERROR_POINT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Phone was successfully changed', ['phone_id' => $phoneCompany->getPhoneId()]);
     }
 
     /**
@@ -715,106 +451,57 @@ class PhonesAPIController extends Controller
      *
      * @method POST
      *
-     * @params string phone или integer phoneId
+     * @params string phone или integer phone_id
      * @return Phalcon\Http\Response с json ответом в формате Status;
      */
     public function addPhoneToUserAction()
     {
-        if ($this->request->isPost()) {
+        $inputData = $this->request->getJsonRawBody();
+        $data['phone'] = $inputData->phone;
+        $data['phone_id'] = $inputData->phone_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $user = Users::findFirstByUserid($userId);
-
-            $this->db->begin();
-            if ($this->request->getPost("phone")) {
-                //Создаем новый
-                $phone = new Phones();
-                $phone->setPhone($this->request->getPost("phone"));
-
-                if (!$phone->save()) {
-                    $this->rollback();
-                    $errors = [];
-                    foreach ($phone->getMessages() as $message) {
-                        $errors[] = $message->getMessage();
-                    }
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => $errors
-                        ]
-                    );
-                    return $response;
-                }
-            } else if ($this->request->getPost("phoneId")) {
-                $phone = Phones::findFirstByPhoneid($this->request->getPost("phoneId"));
-
-                if (!$phone) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['телефона с таким id не существует']
-                        ]
-                    );
-                    return $response;
-                }
-            } else {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Нужно указать номер телефона или id существующего в параметрах \'phone\', \'phoneId\'']
-                    ]
-                );
-                return $response;
+            //проверки
+            $errors = null;
+            if (empty(trim($data['phone'])) && empty(trim($data['phone_id']))) {
+                $errors['phone'] = 'Missing required parameter "phone" or "phone_id"';
             }
 
-            $phoneUser = PhonesUsers::findByIds($user->getUserId(), $phone->getPhoneId());
-            if ($phoneUser) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_ALREADY_EXISTS,
-                        "errors" => ['Телефон уже привязан к пользователю']
-                    ]
-                );
-                return $response;
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
             }
 
-            $phoneUser = new PhonesUsers();
-
-            $phoneUser->setUserId($user->getUserId());
-            $phoneUser->setPhoneId($phone->getPhoneId());
-
-            if (!$phoneUser->save()) {
-
-                $this->db->rollback();
-                $errors = [];
-                foreach ($phoneUser->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['phone']))) {
+                $phone = $this->phoneService->getPhoneById($data['phone_id']);
+                $data['phone'] = $phone->getPhone();
             }
 
-            $this->db->commit();
+            $phoneUser = $this->phoneService->addPhoneToUser($data['phone'], $userId);
 
-            $response->setJsonContent(
-                [
-                    'status' => STATUS_OK
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_USER:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Phone was successfully added to user', ['phone_id' => $phoneUser->getPhoneId()]);
+
     }
 
     /**
@@ -823,58 +510,41 @@ class PhonesAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param int $phoneId
+     * @param int $phone_id
      * @return Phalcon\Http\Response с json массивом в формате Status
      */
-    public function deletePhoneFromUserAction($phoneId)
+    public function deletePhoneFromUserAction($phone_id)
     {
-        if ($this->request->isDelete()) {
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            $response = new Response();
 
-            $phonesUsers = PhonesUsers::findByIds($userId, $phoneId);
+            $this->db->begin();
 
-            if (!$phonesUsers) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Телефон не существует']
-                    ]
-                );
-                return $response;
+            $phoneUser = $this->phoneService->getPhoneUserById($phone_id,$userId);
+            $this->phoneService->deletePhoneUser($phoneUser);
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE_FROM_USER:
+                case PhoneService::ERROR_UNABLE_DELETE_PHONE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$phonesUsers->delete()) {
-                $errors = [];
-                foreach ($phonesUsers->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PhoneService::ERROR_PHONE_NOT_FOUND:
+                case PhoneService::ERROR_PHONE_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $phone = Phones::findFirstByPhoneid($phoneId);
-
-            if ($phone->countOfReferences() == 0)
-                $phone->delete();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+        $this->db->commit();
+        return self::successResponse('Phone was successfully deleted from user');
     }
 }

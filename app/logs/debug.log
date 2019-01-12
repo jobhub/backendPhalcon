@@ -59,3 +59,10 @@ s
 [Thu, 10 Jan 19 15:06:35 +0300][CRITICAL] 13001 Comment don't exists
 [Thu, 10 Jan 19 15:06:57 +0300][CRITICAL] 13001 Comment don't exists
 [Thu, 10 Jan 19 15:29:38 +0300][CRITICAL] 13004 Unable create comment
+[Fri, 11 Jan 19 14:09:39 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:10:16 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:11:53 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:12:08 +0300][CRITICAL] 12005 Unable add phone to company
+[Fri, 11 Jan 19 14:18:58 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 15:56:37 +0300][CRITICAL] 4005 Unable subscribe user to company
+[Fri, 11 Jan 19 15:58:47 +0300][CRITICAL] 4005 Unable subscribe user to company

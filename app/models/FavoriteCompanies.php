@@ -80,12 +80,12 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Пользователь подписчик не существует",
                     "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserid($favCompany->getUserId());
+                        $user = Users::findFirstByUserId($favCompany->getUserId());
 
                         if($user)
                             return true;
@@ -101,7 +101,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
                 [
                     "message" => "Такая компания не существует",
                     "callback" => function($favCompany) {
-                        $company = Companies::findFirstByCompanyid($favCompany->getCompanyId());
+                        $company = Companies::findFirstByCompanyId($favCompany->getCompanyId());
 
                         if($company)
                             return true;
@@ -121,8 +121,8 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("favouriteCompanies");
-        $this->belongsTo('companyid', '\Companies', 'companyid', ['alias' => 'Companies']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('company_id', 'App\Models\Companies', 'company_id', ['alias' => 'Companies']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -159,7 +159,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
 
     public static function findByIds($userId,$companyId)
     {
-        return FavoriteCompanies::findFirst(["userid = :userId: AND companyid = :companyId:",
+        return FavoriteCompanies::findFirst(["user_id = :userId: AND company_id = :companyId:",
             "bind" => [
                 "userId" => $userId,
                 "companyId" => $companyId,
