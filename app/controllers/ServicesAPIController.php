@@ -468,7 +468,7 @@ class ServicesAPIController extends AbstractController
         $data['tags'] = $inputData->tags;
         $data['old_points'] = $inputData->old_points;
         $data['new_points'] = $inputData->new_points;
-
+        $this->db->begin();
         try {
             //validation
             /*if(empty(trim($data['service_id']))) {
@@ -491,8 +491,6 @@ class ServicesAPIController extends AbstractController
             if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addService')) {
                 throw new Http403Exception('Permission error');
             }
-
-            $this->db->begin();
 
             if (!empty(trim($data['price']))) {
                 $data['price_min'] = $data['price'];

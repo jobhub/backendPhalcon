@@ -9,6 +9,7 @@
 namespace App\Libs;
 
 use Phalcon\Http\Response;
+use App\Services\ServiceExtendedException;
 
 class SupportClass
 {
@@ -148,6 +149,19 @@ class SupportClass
             $errors[] = $message->getMessage();
         }
         return $errors;
+    }
+
+    public static function getErrorsWithException($object, $code,$msg){
+        if (!$object->save()) {
+            $errors = SupportClass::getArrayWithErrors($object);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException($msg,
+                    $code, null, null, $errors);
+            else {
+                throw new ServiceExtendedException($msg,
+                    $code);
+            }
+        }
     }
 
     public static function getResponseWithErrorsFromArray($errors){

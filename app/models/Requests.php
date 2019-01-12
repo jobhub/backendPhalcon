@@ -1,10 +1,14 @@
 <?php
 
+namespace App\Models;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Requests extends SubjectsWithNotDeletedWithCascade
+class Requests extends \App\Models\AccountWithNotDeletedWithCascade
 {
     /**
      *
@@ -13,14 +17,14 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $requestid;
+    protected $request_id;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $serviceid;
+    protected $service_id;
 
     /**
      *
@@ -34,7 +38,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $dateend;
+    protected $date_end;
 
     /**
      *
@@ -43,7 +47,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     protected $status;
 
-    public const publicColumns = ['requestid', 'serviceid', 'description', 'dateend', 'status'];
+    const publicColumns = ['request_id', 'service_id', 'description', 'date_end', 'status'];
 
     /**
      * Method to set the value of field requestId
@@ -53,7 +57,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function setRequestId($requestid)
     {
-        $this->requestid = $requestid;
+        $this->request_id = $requestid;
 
         return $this;
     }
@@ -66,7 +70,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function setServiceId($serviceid)
     {
-        $this->serviceid = $serviceid;
+        $this->service_id = $serviceid;
 
         return $this;
     }
@@ -92,7 +96,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function setDateEnd($dateend)
     {
-        $this->dateend = $dateend;
+        $this->date_end = $dateend;
 
         return $this;
     }
@@ -117,7 +121,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function getRequestId()
     {
-        return $this->requestid;
+        return $this->request_id;
     }
 
     /**
@@ -127,7 +131,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function getServiceId()
     {
-        return $this->serviceid;
+        return $this->service_id;
     }
 
     /**
@@ -147,7 +151,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
      */
     public function getDateEnd()
     {
-        return $this->dateend;
+        return $this->date_end;
     }
 
     /**
@@ -170,12 +174,12 @@ class Requests extends SubjectsWithNotDeletedWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'serviceid',
+            'service_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($request) {
-                        $service = Services::findFirstByServiceid($request->getServiceId());
+                        $service = Services::findFirstByServiceId($request->getServiceId());
 
                         if ($service)
                             return true;
@@ -190,7 +194,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
             new Callback([
                 "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($request) {
-                    $status = Statuses::findFirstByStatusid($request->getStatus());
+                    $status = Statuses::findFirstByStatusId($request->getStatus());
                     if (!$status)
                         return false;
                     return true;
@@ -200,7 +204,7 @@ class Requests extends SubjectsWithNotDeletedWithCascade
 
         if($this->getDateEnd()!= null)
         $validator->add(
-            'dateend',
+            'date_end',
             new Callback([
                 "message" => "Крайняя дата на получение услуги должна быть позже текущего времени",
                 'callback' => function ($request) {
@@ -220,9 +224,10 @@ class Requests extends SubjectsWithNotDeletedWithCascade
     public function initialize()
     {
         //$this->setSchema("public");
+        parent::initialize();
         $this->setSource("requests");
-        $this->belongsTo('serviceid', '\Services', 'serviceid', ['alias' => 'Services']);
-        $this->belongsTo('status', '\Statuses', 'statusid', ['alias' => 'Statuses']);
+        $this->belongsTo('service_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
+        $this->belongsTo('status', 'App\Models\Statuses', 'status_id', ['alias' => 'Statuses']);
     }
 
     /**
@@ -235,4 +240,41 @@ class Requests extends SubjectsWithNotDeletedWithCascade
         return 'requests';
     }
 
+    public function getSequenceName()
+    {
+        return "request_requestid_seq";
+    }
+
+    public static function findRequestByCompany($companyId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["n" => "App\Models\Requests"])
+            ->join('App\Models\Accounts', 'n.account_id = a.id', 'a')
+            ->where('a.company_id = :companyId: and n.deleted = false', ['companyId' => $companyId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleRequestFromArray($result->toArray());
+    }
+
+    public static function findRequestByUser($userId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["n" => "App\Models\Requests"])
+            ->join('App\Models\Accounts', 'n.account_id = a.id and a.company_id is null', 'a')
+            ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
+            ->getQuery()
+            ->execute();
+
+        return self::handleRequestFromArray($result->toArray());
+    }
+
+    private static function handleRequestFromArray(array $requests)
+    {
+        return $requests;
+    }
 }

@@ -66,3 +66,15 @@ s
 [Fri, 11 Jan 19 14:18:58 +0300][CRITICAL] 12001 Unable add phone
 [Fri, 11 Jan 19 15:56:37 +0300][CRITICAL] 4005 Unable subscribe user to company
 [Fri, 11 Jan 19 15:58:47 +0300][CRITICAL] 4005 Unable subscribe user to company
+[Sat, 12 Jan 19 14:35:53 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 14:36:56 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 14:43:47 +0300][CRITICAL] 16001 unable to create request
+[Sat, 12 Jan 19 14:49:22 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 14:55:49 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 15:00:28 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:00:56 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:19 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:45 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:49 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:02:02 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:02:16 +0300][CRITICAL] 16002 Request don't exists

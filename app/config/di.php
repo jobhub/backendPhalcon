@@ -81,6 +81,8 @@ $di->setShared('pointService', '\App\Services\PointService');
 $di->setShared('companyService', '\App\Services\CompanyService');
 $di->setShared('commentService', '\App\Services\CommentService');
 $di->setShared('likeService', '\App\Services\LikeService');
+$di->setShared('requestService', '\App\Services\RequestService');
+
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');
 

@@ -1,11 +1,30 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\Requests;
+use App\Services\RequestService;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
+
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\Accounts;
+
+use App\Services\ImageService;
+use App\Services\NewsService;
+use App\Services\AccountService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
 
 /**
  * Class RequestsAPIController
@@ -15,77 +34,62 @@ use Phalcon\Mvc\Dispatcher;
  *      - отмена заявки;
  *      - подтверждение выполнения заявки.
  */
-class RequestsAPIController extends Controller
+class RequestsAPIController extends AbstractController
 {
     /**
      * Добавляет запрос на получение услуги
      *
      * @method POST
      *
-     * @params serviceId, description, dateEnd.
-     * @params (необязательный) companyId
+     * @params service_id, description, date_end.
+     * @params (необязательный) account_id
      * @return Response с json массивом в формате Status
      */
     public function addRequestAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
+        $data['date_end'] = $inputData->date_end;
+        $data['description'] = $inputData->description;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = new Requests();
-
-            if ($this->request->getPost("companyId")) {
-                if (!Companies::checkUserHavePermission($userId, $this->request->getPost("companyId"),
-                    'addRequest')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $request->setSubjectId($this->request->getPost("companyId"));
-                $request->setSubjectType(1);
-
-            } else {
-                $request->setSubjectId($userId);
-                $request->setSubjectType(0);
+            //проверки
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $request->setServiceId($this->request->getPost("serviceId"));
-            $request->setDescription($this->request->getPost("description"));
-            $request->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPost("dateEnd"))));
-            $request->setStatus(STATUS_WAITING_CONFIRM);
-
-            if (!$request->save()) {
-                $errors = [];
-                foreach ($request->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addRequest')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
+            $data['status'] = STATUS_WAITING_CONFIRM;
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            $request = $this->requestService->createRequest($data);
 
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case RequestService::ERROR_UNABLE_CREATE_REQUEST:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                case RequestService::ERROR_REQUEST_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Request was successfully created', ['request_id' => $request->getRequestId()]);
     }
 
     /**
@@ -93,57 +97,41 @@ class RequestsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $requestId
+     * @param $request_id
      * @return Response с json массивом в формате Status
      */
-    public function deleteRequestAction($requestId)
+    public function deleteRequestAction($request_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestid($requestId);
+            $request = $this->requestService->getRequestById($request_id);
 
-            if (!$request ||
-                (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
-                    'deleteRequest'))) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $request->getAccountId(), 'deleteRequest')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!$request->delete()) {
-                $errors = [];
-                foreach ($request->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
+            $this->requestService->deleteRequest($request);
 
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case RequestService::ERROR_UNABLE_DELETE_REQUEST:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case RequestService::ERROR_REQUEST_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Request was successfully deleted');
     }
 
     /**
@@ -151,68 +139,60 @@ class RequestsAPIController extends Controller
      *
      * @method PUT
      *
-     * @params requestId, description, dateEnd, (необязательные)companyId, userId
+     * @params request_id, description, date_end
      * @return Response с json массивом в формате Status
      */
     public function editRequestAction()
     {
-        if ($this->request->isPut() && $this->session->get('auth')) {
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['request_id'] = $inputData->request_id;
+        $data['description'] = $inputData->description;
+        $data['date_end'] = $inputData->date_end;
+
+        try {
+
+            //validation
+            if (empty(trim($data['request_id']))) {
+                $errors['request_id'] = 'Missing required parameter "request_id"';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $request = Requests::findFirstByRequestid($this->request->getPut('requestId'));
+            $request = $this->requestService->getRequestById($data['request_id']);
 
-            if (!$request ||
-                (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $request->getSubjectId(), $request->getSubjectType(),
-                    'editRequest'))) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
-            }
-            if ($this->request->getPut('companyId')) {
-                $request->setSubjectId($this->request->getPut("companyId"));
-                $request->setSubjectType(1);
-
-            } else if ($this->request->getPut('userId')) {
-                $request->setSubjectId($this->request->getPut('userId'));
-                $request->setSubjectType(0);
+            if (!Accounts::checkUserHavePermission($userId, $request->getAccountId(), 'editRequest')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $request->setDescription($this->request->getPut('description'));
-            $request->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPut('dateEnd'))));
+            unset($data['request_id']);
 
-            if (!$request->save()) {
-                $errors = [];
-                foreach ($request->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
+            $this->requestService->changeRequest($request, $data);
 
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case RequestService::ERROR_UNABLE_CHANGE_REQUEST:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case RequestService::ERROR_REQUEST_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Request was successfully changed');
     }
 
     /**
@@ -220,50 +200,26 @@ class RequestsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $companyId (необязательный)
+     * @param $company_id (необязательный)
      * @return string - json массив с объектами Requests и Status-ом
      */
-    public function getRequestsAction($companyId = null)
+    public function getRequestsAction($company_id = null)
     {
-        if ($this->request->isGet() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $auth = $this->session->get('auth');
+        $userId = $auth['id'];
 
-            if ($companyId == null) {
-                $subjectId = $userId;
-                $subjectType = 0;
-            } else {
-                $subjectId = $companyId;
-                $subjectType = 1;
-            }
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $subjectId, $subjectType,
-                'getRequests')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+        if ($company_id != null) {
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getRequest')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $requests = Requests::findBySubject($subjectId,$subjectType);
-
-            $response->setJsonContent(
-                [
-                    'status' => STATUS_OK,
-                    'requests' => $requests
-                ]
-            );
-            return $response;
-
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return Requests::findRequestByCompany($company_id);
         }
+        else
+            return Requests::findRequestByUser($userId);
     }
+
+    //TODO - заменить и эти 2 action-а тоже
 
     /**
      * Заказчик отменяет заявку.

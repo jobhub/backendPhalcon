@@ -290,7 +290,7 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasOne('user_id', 'App\Models\Userinfo', 'userid', ['alias' => 'Userinfo']);
+        $this->hasOne('user_id', 'App\Models\Userinfo', 'user_id', ['alias' => 'Userinfo']);
         $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
@@ -579,13 +579,13 @@ class Users extends NotDeletedModelWithCascade
      * @return array
      */
     public function getUserShortInfo(){
-      /*  $userInfo = $this->getRelated('Userinfo', [
+        $userInfo = $this->getRelated('Userinfo', [
             'columns' => Userinfo::shortColumns
         ]);
 
         if($userInfo)
             return $userInfo->toArray();
-*/
+
         return [
                 'userid' => $this->user_id ,
                 'email' => $this->email

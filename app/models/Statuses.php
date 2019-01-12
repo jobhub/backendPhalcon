@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 class Statuses extends \Phalcon\Mvc\Model
 {
 
@@ -9,7 +11,7 @@ class Statuses extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $statusid;
+    protected $status_id;
 
     /**
      *
@@ -26,7 +28,7 @@ class Statuses extends \Phalcon\Mvc\Model
      */
     public function setStatusId($statusid)
     {
-        $this->statusid = $statusid;
+        $this->status_id = $statusid;
 
         return $this;
     }
@@ -51,7 +53,7 @@ class Statuses extends \Phalcon\Mvc\Model
      */
     public function getStatusId()
     {
-        return $this->statusid;
+        return $this->status_id;
     }
 
     /**
@@ -71,8 +73,8 @@ class Statuses extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("public");
         $this->setSource("statuses");
-        $this->hasMany('statusid', 'Requests', 'status', ['alias' => 'Requests']);
-        $this->hasMany('statusid', 'Tasks', 'status', ['alias' => 'Tasks']);
+        $this->hasMany('status_id', 'App\Models\Requests', 'status', ['alias' => 'Requests']);
+        $this->hasMany('status_id', 'App\Models\Tasks', 'status', ['alias' => 'Tasks']);
     }
 
     /**
@@ -83,6 +85,11 @@ class Statuses extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'statuses';
+    }
+
+    public function getSequenceName()
+    {
+        return "statuses_statusid_seq";
     }
 
     /**

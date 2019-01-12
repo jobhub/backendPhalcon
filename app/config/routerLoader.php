@@ -1385,6 +1385,72 @@ $routes = [
             ],
         ]
     ],
+    '\App\Controllers\RequestsAPIController'=>[
+        'prefix' => '/request',
+        'resources' => [
+            /**
+             * Добавляет запрос на получение услуги
+             *
+             * @method POST
+             *
+             * @params service_id, description, date_end.
+             * @params (необязательный) account_id
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addRequestAction'
+            ],
+
+            /**
+             * Удаляет заявку
+             *
+             * @method DELETE
+             *
+             * @param $request_id
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{request_id}',
+                'action' => 'deleteRequestAction'
+            ],
+
+            /**
+             * Редактирует заявку
+             *
+             * @method PUT
+             *
+             * @params request_id, description, date_end
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editRequestAction'
+            ],
+
+            /**
+             * Редактирует заявку
+             *
+             * @method GET
+             *
+             * @param $company_id (необязательный)
+             * @return string - json массив с объектами Requests и Status-ом
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getRequestsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{company_id}',
+                'action' => 'getRequestsAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

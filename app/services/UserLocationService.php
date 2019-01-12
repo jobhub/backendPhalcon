@@ -27,7 +27,7 @@ class UserLocationService extends AbstractService
      * @param array $newsData
      * @return News. If all ok, return News object
      */
-    public function createNews(array $newsData)
+    public function createUserLocation(array $locationData)
     {
         $news = new News();
 
