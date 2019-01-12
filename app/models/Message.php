@@ -7,7 +7,7 @@ class Message extends \Phalcon\Mvc\Model
 
     const DEFAULT_RESULT_PER_PAGE = 12;
 
-    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users'];
+    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users', 'answer_of'];
 
     /**
      *
@@ -74,6 +74,14 @@ class Message extends \Phalcon\Mvc\Model
      * @var string
      */
     protected $readed_users;
+
+    /**
+     *
+     * @var integer
+     */
+    protected $answer_of;
+
+
 
     /**
      * Method to set the value of field id
@@ -329,6 +337,24 @@ class Message extends \Phalcon\Mvc\Model
     }
 
     /**
+     * @return int
+     */
+    public function getAnswerOf(): int
+    {
+        return $this->answer_of;
+    }
+
+    /**
+     * @param int $answer_of
+     */
+    public function setAnswerOf(int $answer_of)
+    {
+        $this->answer_of = $answer_of;
+    }
+
+
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -337,6 +363,7 @@ class Message extends \Phalcon\Mvc\Model
         $this->setSource("message");
         $this->hasMany('id', 'App\Models\File', 'id_message', ['alias' => 'File']);
         $this->belongsTo('chat_hist_id', 'App\Models\ChatHistory', 'id', ['alias' => 'Chathistory']);
+        $this->belongsTo('answer_of', 'App\Models\Message', 'id', ['alias' => 'Parent']);
     }
 
     /**
@@ -352,6 +379,23 @@ class Message extends \Phalcon\Mvc\Model
 
     public function getSequenceName() {
         return "\"message_id_seq\"";
+    }
+
+    public function getArrayReaded()
+    {
+        $query = $this->getModelsManager()->createQuery('SELECT array_to_json(received_users) AS received, array_to_json(readed_users) AS readed FROM message WHERE id = :message_id:');
+        $result = $query->execute(
+            [
+                'message_id' => $this->id
+            ]
+        );
+        $recieved = $result[0]['received'];
+        $readed = $result[0]['readed'];
+        $toRet = [
+            'revieved' => json_decode($recieved),
+            'readed' => json_decode($readed)
+        ];
+        return $toRet;
     }
 
     /**

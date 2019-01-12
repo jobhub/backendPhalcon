@@ -129,6 +129,7 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
      */
     public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+
         if ($addParamNotDeleted) {
             if(isset($parameters['conditions']))
                 $conditions = $parameters['conditions'];

@@ -4,9 +4,9 @@ $routes = [
     '\App\Controllers\UserController' => [
         'prefix' => '/user',
         'resources' => [
-            ['type' => 'get', // post; options, get, 
-                'path' => '/list/{id}',
-                'action' => 'getUserListAction'
+            ['type' => 'post', // post; options, get, 
+                'path' => '/login',
+                'action' => 'loginAction'
             ],
             ['type' => 'get', // post; options, get, 
                 'path' => '/find/{email}',
@@ -26,18 +26,22 @@ $routes = [
             ]
         ]
     ],
-    '\App\Controllers\PrivateChatController' => [
-        'prefix' => '/user',
+    '\App\Controllers\MessageController' => [
+        'prefix' => '/chat',
         'resources' => [
-            ['type' => 'put',
-                'path' => '/messaging/spam', //toggle hidden user discussions @param messaging_id
-                'action' => 'spamTogglePrivateChatAction'
+            ['type' => 'post',
+                'path' => '/send',
+                'action' => 'sendMessageAction'
             ],
-            ['type' => 'put',
-                'path' => '/messaging/hidden', //toggle hidden user discussions @param messaging_id
-                'action' => 'hiddenTogglePrivateChatAction'
+            ['type' => 'post',
+                'path' => '/chat-box',
+                'action' => 'getChatBoxAction'
+            ],
+            ['type' => 'post',
+                'path' => '/all-readed',
+                'action' => 'setAllToReadAction'
             ]
-        ]
+        ],
     ],
     '\App\Controllers\GroupController' => [
         'prefix' => '/user/group',
@@ -122,33 +126,7 @@ $routes = [
             ]
         ]
     ],
-    '\App\Controllers\MessageController' => [
-        'prefix' => '/chat',
-        'resources' => [
-            ['type' => 'post', 
-                'path' => '/send',
-                'action' => 'sendMessageAction'
-            ],
-            ['type' => 'post',  
-                'path' => '/chat-box',
-                'action' => 'getChatBoxAction'
-            ], 
-            ['type' => 'post', 
-                'path' => '/all-readed',
-                'action' => 'setAllToReadAction'
-            ]
-    ],
-    '\App\Controllers\GroupController' => [
-        'prefix' => '/group',
-        'resources' => [
-            [
-                'type' => 'post', 
-                'path' => '/new-group',
-                'action' => 'addAction'
-            ] 
-        ]
-    ]
-    ],
+
     '\App\Controllers\RegisterAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
@@ -260,6 +238,7 @@ $routes = [
                 'path' => '/check/resetPasswordCode',
                 'action' => 'checkResetPasswordCodeAction'
             ],
+
             /**
              * Меняет пароль, если активационный код верен
              * @access public
@@ -279,6 +258,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\SessionAPIController' => [
         'prefix' => '/authorization',
         'resources' => [
@@ -296,6 +276,7 @@ $routes = [
             ],
         ]
     ],
+
     //********************************************************
     //********************************************************
     //CategoriesAPI
@@ -316,6 +297,7 @@ $routes = [
                 'path' => '/get/site',
                 'action' => 'getCategoriesForSiteAction'
             ],
+
             /**
              * Возвращает категории
              *
@@ -328,6 +310,7 @@ $routes = [
                 'path' => '/get',
                 'action' => 'getCategoriesAction'
             ],
+
             /**
              * Подписывает текущего пользователя на указанную категорию.
              * @access private
@@ -340,6 +323,7 @@ $routes = [
                 'path' => '/subscribe',
                 'action' => 'setFavouriteAction'
             ],
+
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
              * @method PUT
@@ -351,6 +335,7 @@ $routes = [
                 'path' => '/edit/radius',
                 'action' => 'editRadiusInFavouriteAction'
             ],
+
             /**
              * Отписывает текущего пользователя от категории
              * @method DELETE
@@ -361,6 +346,7 @@ $routes = [
                 'path' => '/unsubscribe/{category_id}',
                 'action' => 'deleteFavouriteAction'
             ],
+
             /**
              * Возвращает все подписки пользователя на категории
              * @GET
@@ -373,6 +359,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\UserinfoAPIController'=>[
         'prefix' => '/user/info',
         'resources' => [
@@ -388,6 +375,7 @@ $routes = [
                 'path' => '/set-photo',
                 'action' => 'setPhotoAction'
             ],
+
             /**
              * Возвращает публичные данные о пользователе.
              * Публичный метод.
@@ -409,6 +397,7 @@ $routes = [
                 'path' => '/get/{user_id}',
                 'action' => 'getUserInfoAction'
             ],
+
             /**
              * Меняет данные текущего пользоваателя.
              * Приватный метод.
@@ -431,6 +420,7 @@ $routes = [
                 'path' => '/edit',
                 'action' => 'editUserInfoAction'
             ],
+
             /**
              * Добавляет все прикрепленные изображения к пользователю. Но суммарно изображений не больше 10.
              *
@@ -447,6 +437,7 @@ $routes = [
                 'path' => '/add/images',
                 'action' => 'addImagesAction'
             ],
+
             /**
              * Удаляет картинку из списка фотографий пользователя
              *
@@ -463,6 +454,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\NewsAPIController'=>[
         'prefix' => '/news',
         'resources' => [
@@ -494,6 +486,7 @@ $routes = [
                 'path' => '/get/all',
                 'action' => 'getAllNewsAction'
             ],
+
             /**
              * Создает новость компании или пользователя.
              * Если прикрепить изображения, они будут добавлены к новости.
@@ -513,6 +506,7 @@ $routes = [
                 'path' => '/add',
                 'action' => 'addNewsAction'
             ],
+
             /**
              * Удаляет указанную новость
              *
@@ -527,6 +521,7 @@ $routes = [
                 'path' => '/delete/{news_id}',
                 'action' => 'deleteNewsAction'
             ],
+
             /**
              * Редактирует новость.
              * Дата устанавливается текущая (на сервере).
@@ -542,6 +537,7 @@ $routes = [
                 'path' => '/edit',
                 'action' => 'editNewsAction'
             ],
+
             /**
              * Возвращает новости текущего пользователя/указанной компании пользователя.
              *
@@ -561,6 +557,7 @@ $routes = [
                 'path' => '/get/own',
                 'action' => 'getOwnNewsAction'
             ],
+
             /**
              * Возвращает новости указанного объекта
              *
@@ -581,6 +578,7 @@ $routes = [
                 'path' => '/get/by-subject/{id}',
                 'action' => 'getSubjectsNewsAction'
             ],
+
             /**
              * Добавляет все прикрепленные изображения к новости. Но суммарно изображений не больше некоторого количества.
              *
@@ -598,6 +596,7 @@ $routes = [
                 'path' => '/add/images',
                 'action' => 'addImagesAction'
             ],
+
             /**
              * Удаляет картинку из списка изображений новости
              * @access private
@@ -615,6 +614,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\ServicesAPIController'=>[
         'prefix' => '/service',
         'resources' => [
@@ -658,6 +658,7 @@ $routes = [
                 'path' => '/get/own/{company_id}',
                 'action' => 'getOwnServicesAction'
             ],
+
             /**
              * Возвращает услуги. Во-первых, принимает тип запроса в параметре type_query:
              * 0 - принимает строку user_query, центральную точку для поиска - center => [longitude => ..., latitude =>  ...],
@@ -700,6 +701,7 @@ $routes = [
                 'path' => '/get',
                 'action' => 'getServicesAction'
             ],
+
             /**
              * Удаляет картинку из списка картинок услуги
              *
@@ -714,6 +716,7 @@ $routes = [
                 'path' => '/delete/image/{image_id}',
                 'action' => 'deleteImageAction'
             ],
+
             /**
              * Удаляет указанную услугу
              * @access private
@@ -728,6 +731,7 @@ $routes = [
                 'path' => '/delete/{service_id}',
                 'action' => 'deleteServiceAction'
             ],
+
             /**
              * Редактирует указанную услугу
              * @access private
@@ -748,6 +752,7 @@ $routes = [
                 'path' => '/edit',
                 'action' => 'editServiceAction'
             ],
+
             /**
              * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
              *
@@ -769,6 +774,7 @@ $routes = [
                 'path' => '/add',
                 'action' => 'addServiceAction'
             ],
+
             /**
              * Добавляет картинки к услуге
              *
@@ -783,6 +789,7 @@ $routes = [
                 'path' => '/add/images',
                 'action' => 'addImagesAction'
             ],
+
             /**
              * Связывает услугу с точкой оказания услуг
              *
@@ -797,6 +804,7 @@ $routes = [
                 'path' => '/link/point',
                 'action' => 'linkServiceWithPointAction'
             ],
+
             /**
              * Убирает связь услуги и точки оказания услуг
              *
@@ -812,6 +820,7 @@ $routes = [
                 'path' => '/unlink/point/{service_id}/{point_id}',
                 'action' => 'unlinkServiceAndPointAction'
             ],
+
             /**
              * Увеличивает на 1 счетчик числа просмотров услуги.
              * @method PUT
@@ -823,6 +832,7 @@ $routes = [
                 'path' => '/increment/display',
                 'action' => 'incrementNumberOfDisplayForServiceAction'
             ],
+
             /**
              * Возвращает все заказы, которые могут быть связаны с данной услугой.
              * На самом деле нет, конечно же. Логики того, как это будет делаться нет.
@@ -837,6 +847,7 @@ $routes = [
                 'path' => '/get/tasks-for-service/{service_id}',
                 'action' => 'getTasksForService'
             ],
+
             /**
              * Возвращает публичную информацию об услуге.
              * Публичный доступ.
@@ -854,6 +865,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\CompaniesAPIController'=>[
         'prefix' => '/company',
         'resources' => [
@@ -875,6 +887,7 @@ $routes = [
                 'path' => '/get/{with_points}',
                 'action' => 'getCompaniesAction'
             ],
+
             /**
              * Создает компанию.
              *
@@ -888,6 +901,7 @@ $routes = [
                 'path' => '/add',
                 'action' => 'addCompanyAction'
             ],
+
             /**
              * Удаляет указанную компанию
              * @method DELETE
@@ -900,6 +914,7 @@ $routes = [
                 'path' => '/delete/{company_id}',
                 'action' => 'deleteCompanyAction'
             ],
+
             /**
              * Редактирует данные компании
              * @method PUT
@@ -910,6 +925,7 @@ $routes = [
                 'path' => '/edit',
                 'action' => 'editCompanyAction'
             ],
+
             /**
              * Устанавливает логотип для компании. Сам логотип должен быть передан в файлах. ($_FILES)
              * @method POST
@@ -921,6 +937,7 @@ $routes = [
                 'path' => '/set/logotype',
                 'action' => 'setCompanyLogotypeAction'
             ],
+
             /**
              * Делает указанного пользователя менеджером компании
              *
@@ -935,6 +952,7 @@ $routes = [
                 'path' => '/add/manager',
                 'action' => 'setManagerAction'
             ],
+
             /**
              * Удаляет пользователя из менеджеров компании
              *
@@ -950,6 +968,7 @@ $routes = [
                 'path' => '/delete/manager/{company_id}/{user_id}',
                 'action' => 'deleteManagerAction'
             ],
+
             /**
              * Возвращает публичную информацию о компании.
              * Публичный доступ
@@ -966,6 +985,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\TradePointsAPIController'=>[
         'prefix' => '/trade-point',
         'resources' => [
@@ -987,6 +1007,7 @@ $routes = [
                 'path' => '/get/{company_id}',
                 'action' => 'getPointsAction'
             ],
+
             /**
              * Возвращает точки предоставления услуг назначенные текущему пользователю
              * @access private
@@ -1004,6 +1025,7 @@ $routes = [
                 'path' => '/get/for-manager/{manager_user_id}',
                 'action' => 'getPointsForUserManagerAction'
             ],
+
             /**
              * Добавляет точку оказания услуг к компании
              * @access private
@@ -1019,6 +1041,7 @@ $routes = [
                 'path' => '/add',
                 'action' => 'addTradePointAction'
             ],
+
             /**
              * Редактирует указанную точку оказания услуг
              *
@@ -1034,6 +1057,7 @@ $routes = [
                 'path' => '/edit',
                 'action' => 'editTradePointAction'
             ],
+
             /**
              * Удаляет указанную точку оказания услуг
              *
@@ -1047,6 +1071,7 @@ $routes = [
                 'path' => '/delete/{point_id}',
                 'action' => 'deleteTradePointAction'
             ],
+
             /**
              * Возвращает публичную информацию об указанной точке оказания услуг.
              * Публичный доступ.
@@ -1064,6 +1089,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\CommentsAPIController'=>[
         'prefix' => '/comment',
         'resources' => [
@@ -1081,6 +1107,7 @@ $routes = [
                 'path' => '/images-users/get/{image_id}',
                 'action' => 'getCommentsForImageAction'
             ],
+
             /**
              * Возвращает комментарии к указанной новости
              *
@@ -1095,6 +1122,7 @@ $routes = [
                 'path' => '/news/get/{news_id}',
                 'action' => 'getCommentsForNewsAction'
             ],
+
             /**
              * Добавляет комментарий к фотографии пользователя
              * @access private
@@ -1113,6 +1141,7 @@ $routes = [
                 'path' => '/images-users/add',
                 'action' => 'addCommentForImageAction'
             ],
+
             /**
              * Удаляет комментарий, оставленный к фотографии пользователя
              *
@@ -1127,6 +1156,7 @@ $routes = [
                 'path' => '/images-users/delete/{comment_id}',
                 'action' => 'deleteCommentForImageAction'
             ],
+
             /**
              * Добавляет комментарий к новости
              * @access private
@@ -1145,6 +1175,7 @@ $routes = [
                 'path' => '/news/add',
                 'action' => 'addCommentForNewsAction'
             ],
+
             /**
              * Удаляет комментарий, оставленный к фотографии пользователя
              *
@@ -1159,6 +1190,7 @@ $routes = [
                 'path' => '/news/delete/{comment_id}',
                 'action' => 'deleteCommentForNewsAction'
             ],
+
             /**
              * Меняет лайкнутость текущим пользователем указанного комментария.
              *
@@ -1175,6 +1207,7 @@ $routes = [
                 'path' => '/images-users/like/toggle',
                 'action' => 'toggleLikeCommentForImageAction'
             ],
+
             /**
              * Меняет лайкнутость текущим пользователем указанного комментария.
              *
@@ -1193,6 +1226,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\PhonesAPIController'=>[
         'prefix' => '',
         'resources' => [
@@ -1207,6 +1241,7 @@ $routes = [
                 'path' => '/company/add/phone',
                 'action' => 'addPhoneToCompanyAction'
             ],
+
             /**
              * Добавляет телефон для указанной точки оказания услуг
              * @method POST
@@ -1218,6 +1253,7 @@ $routes = [
                 'path' => '/trade-point/add/phone',
                 'action' => 'addPhoneToTradePointAction'
             ],
+
             /**
              * Убирает телефон из списка телефонов компании
              *
@@ -1232,6 +1268,7 @@ $routes = [
                 'path' => '/company/delete/phone/{phone_id}/{company_id}',
                 'action' => 'deletePhoneFromCompanyAction'
             ],
+
             /**
              * Убирает телефон из списка телефонов точки
              *
@@ -1246,6 +1283,7 @@ $routes = [
                 'path' => '/trade-point/delete/phone/{phone_id}/{point_id}',
                 'action' => 'deletePhoneFromTradePointAction'
             ],
+
             /**
              * Изменяет определенный номер телефона у определенной точки услуг
              * @method PUT
@@ -1257,6 +1295,7 @@ $routes = [
                 'path' => '/trade-point/edit/phone',
                 'action' => 'editPhoneInTradePointAction'
             ],
+
             /**
              * Изменяет определенный номер телефона у определенной компании
              * @method PUT
@@ -1268,6 +1307,7 @@ $routes = [
                 'path' => '/company/edit/phone',
                 'action' => 'editPhoneInCompanyAction'
             ],
+
             /**
              * Добавляет телефон пользователю.
              * Приватный метод.
@@ -1282,6 +1322,7 @@ $routes = [
                 'path' => '/user/info/add/phone',
                 'action' => 'addPhoneToUserAction'
             ],
+
             /**
              * Убирает телефон из списка телефонов пользователя.
              * Приватный метод.
@@ -1298,6 +1339,7 @@ $routes = [
             ],
         ]
     ],
+
     '\App\Controllers\FavouriteCompaniesAPIController'=>[
         'prefix' => '/user/info',
         'resources' => [
@@ -1315,6 +1357,7 @@ $routes = [
                 'path' => '/subscribe-to/company',
                 'action' => 'setFavouriteAction'
             ],
+
             /**
              * Отменяет подписку на компанию
              *
@@ -1329,6 +1372,7 @@ $routes = [
                 'path' => '/unsubscribe-from/company/{company_id}',
                 'action' => 'deleteFavouriteAction'
             ],
+
             /**
              * Возвращает подписки пользователя на компании
              *

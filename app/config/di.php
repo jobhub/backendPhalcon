@@ -72,35 +72,18 @@ $di->setShared('phoneService', '\App\Services\PhoneService');
 $di->setShared('accountService', '\App\Services\AccountService');
 $di->setShared('userInfoService', '\App\Services\UserInfoService');
 $di->setShared('resetPasswordService', '\App\Services\ResetPasswordService');
+$di->setShared('categoryService', '\App\Services\CategoryService');
+$di->setShared('imageService', '\App\Services\ImageService');
+$di->setShared('newsService', '\App\Services\NewsService');
+$di->setShared('serviceService', '\App\Services\ServiceService');
+$di->setShared('tagService', '\App\Services\TagService');
+$di->setShared('pointService', '\App\Services\PointService');
+$di->setShared('companyService', '\App\Services\CompanyService');
+$di->setShared('commentService', '\App\Services\CommentService');
+$di->setShared('likeService', '\App\Services\LikeService');
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');
 
-$di->setShared(
-    "TradePointsAPI",
-    function () {
-        $tradePointsAPI = new TradePointsAPIController();
-
-        return $tradePointsAPI;
-    }
-);
-
-$di->setShared(
-    "CompaniesAPI",
-    function () {
-        $companiesAPI = new CompaniesAPIController();
-
-        return $companiesAPI;
-    }
-);
-
-$di->setShared(
-    "ContactDetailsCompanyCompanyAPI",
-    function () {
-        $contactDetailsAPI = new ContactDetailsCompanyAPIController();
-
-        return $contactDetailsAPI;
-    }
-);
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];

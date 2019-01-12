@@ -290,8 +290,8 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasOne('user_id', 'App\Models\Userinfo', 'user_id', ['alias' => 'Userinfo']);
-        $this->belongsTo('phone_id', 'App\Models\Phones', 'phone_id', ['alias' => 'Phones']);
+        $this->hasOne('user_id', 'App\Models\Userinfo', 'userid', ['alias' => 'Userinfo']);
+        $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
     /**
@@ -302,6 +302,10 @@ class Users extends NotDeletedModelWithCascade
     public function getSource()
     {
         return 'users';
+    }
+
+    public function getSequenceName() {
+        return "\"users_userid_seq\"";
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
@@ -571,5 +575,31 @@ class Users extends NotDeletedModelWithCascade
         return $avg;
     }
 
+    /**
+     * @return array
+     */
+    public function getUserShortInfo(){
+      /*  $userInfo = $this->getRelated('Userinfo', [
+            'columns' => Userinfo::shortColumns
+        ]);
 
+        if($userInfo)
+            return $userInfo->toArray();
+*/
+        return [
+                'userid' => $this->user_id ,
+                'email' => $this->email
+            ];
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public static function isUserExist($id){
+        $user = parent::findFirst($id);
+        if(!$user)
+            return false;
+        return true;
+    }
 }
