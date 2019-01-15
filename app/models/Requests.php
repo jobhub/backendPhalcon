@@ -8,7 +8,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Requests extends \App\Models\AccountWithNotDeletedWithCascade
+class Requests extends AccountWithNotDeletedWithCascade
 {
     /**
      *

@@ -128,8 +128,7 @@ class NewsAPIController extends AbstractController
                 case ImageService::ERROR_INVALID_IMAGE_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
-                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }

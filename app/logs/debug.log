@@ -78,3 +78,20 @@ s
 [Sat, 12 Jan 19 15:01:49 +0300][CRITICAL] 16002 Request don't exists
 [Sat, 12 Jan 19 15:02:02 +0300][CRITICAL] 16002 Request don't exists
 [Sat, 12 Jan 19 15:02:16 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:27:54 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 15:42:14 +0300][DEBUG] creation of chat history id =61
+[Sat, 12 Jan 19 16:07:55 +0300][CRITICAL] 1002 Account for user don't found
+[Mon, 14 Jan 19 14:24:31 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:08 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:16 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:24 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:29:02 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:29:12 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:30:14 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:30:18 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:32:13 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:32:26 +0300][CRITICAL] 17001 Unable to create task
+[Tue, 15 Jan 19 11:34:58 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:35:11 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:35:45 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:41:45 +0300][CRITICAL] 18002 Offer don't exists

@@ -226,6 +226,37 @@ class Accounts extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Checks equal between two accounts as subjects.
+     * If accounts created for one company then they are the equal.
+     *
+     *
+     * @param int $accountId1
+     * @param int $accountId2
+     *
+     * @return bool;
+     */
+    public static function equalsSubjects(int $accountId1, int $accountId2){
+        $account1 = Accounts::findFirstById($accountId1);
+
+        if(!$account1)
+            return false;
+
+        $account2 = Accounts::findFirstById($accountId2);
+
+        if(!$account2)
+            return false;
+
+        if($account1->getCompanyId()!= null && $account2->getCompanyId()!= null
+                &&$account1->getCompanyId() == $account2->getCompanyId())
+            return true;
+
+        if($account1->getCompanyId()== null && $account2->getCompanyId()== null
+            &&$account1->getUserId() == $account2->getUserId())
+            return true;
+
+        return false;
+    }
+    /**
      * Returns table name mapped in the model.
      *
      * @return string

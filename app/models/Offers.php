@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -8,7 +10,7 @@ use Phalcon\Mvc\Model\Message;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
-class Offers extends SubjectsWithNotDeletedWithCascade
+class Offers extends AccountWithNotDeletedWithCascade
 {
 
     /**
@@ -18,14 +20,14 @@ class Offers extends SubjectsWithNotDeletedWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $offerid;
+    protected $offer_id;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $taskid;
+    protected $task_id;
 
     /**
      *
@@ -62,17 +64,17 @@ class Offers extends SubjectsWithNotDeletedWithCascade
      */
     protected $confirmed;
 
-    const publicColumns = ['offerid', 'taskid', 'deadline', 'description', 'price', 'selected', 'confirmed'];
+    const publicColumns = ['offer_id', 'task_id', 'deadline', 'description', 'price', 'selected', 'confirmed'];
 
     /**
      * Method to set the value of field offerId
      *
-     * @param integer $offerid
+     * @param integer $offer_id
      * @return $this
      */
-    public function setOfferId($offerid)
+    public function setOfferId($offer_id)
     {
-        $this->offerid = $offerid;
+        $this->offer_id = $offer_id;
 
         return $this;
     }
@@ -80,12 +82,12 @@ class Offers extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field taskId
      *
-     * @param integer $taskid
+     * @param integer $task_id
      * @return $this
      */
-    public function setTaskId($taskid)
+    public function setTaskId($task_id)
     {
-        $this->taskid = $taskid;
+        $this->task_id = $task_id;
 
         return $this;
     }
@@ -162,7 +164,7 @@ class Offers extends SubjectsWithNotDeletedWithCascade
      */
     public function getOfferId()
     {
-        return $this->offerid;
+        return $this->offer_id;
     }
 
     /**
@@ -172,7 +174,7 @@ class Offers extends SubjectsWithNotDeletedWithCascade
      */
     public function getTaskId()
     {
-        return $this->taskid;
+        return $this->task_id;
     }
 
     /**
@@ -235,16 +237,14 @@ class Offers extends SubjectsWithNotDeletedWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'taskid',
+            'task_id',
             new Callback(
                 [
                     "message" => "Задание не существует",
                     "callback" => function ($offer) {
-                        $task = Tasks::findFirstByTaskid($offer->getTaskId());
+                        $task = Tasks::findFirstByTaskId($offer->getTaskId());
 
-                        if ($task && !SubjectsWithNotDeletedWithCascade::equals($offer->getSubjectId(),
-                                $offer->getSubjectType(), $task->getSubjectId(),
-                                $task->getSubjectType()))
+                        if ($task && !Accounts::equalsSubjects($task->accounts->getId(),$offer->accounts->getId()))
                             return true;
                         return false;
                     }
@@ -292,9 +292,10 @@ class Offers extends SubjectsWithNotDeletedWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        parent::initialize();
+        $this->setSchema("public");
         $this->setSource("offers");
-        $this->belongsTo('taskid', '\Tasks', 'taskid', ['alias' => 'Tasks']);
+        $this->belongsTo('task_id', 'App\Models\Tasks', 'task_id', ['alias' => 'Tasks']);
     }
 
     /**
@@ -307,6 +308,11 @@ class Offers extends SubjectsWithNotDeletedWithCascade
         return 'offers';
     }
 
+    public function getSequenceName()
+    {
+        return "offers_offerid_seq";
+    }
+
     /*public static function checkUserHavePermission($userId, $offerId, $right = null)
     {
         $offer = Offers::findFirstByOfferid($offerId);
@@ -317,6 +323,7 @@ class Offers extends SubjectsWithNotDeletedWithCascade
         return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $offer->getSubjectId(), $offer->getSubjectType(), $right);
     }*/
 
+    //TODO - переделать это.
     /**
      * Подтверждает готовность исполнителя выполнить заказ
      */
@@ -436,9 +443,36 @@ class Offers extends SubjectsWithNotDeletedWithCascade
         return false;
     }
 
-    public static function findByTask($taskId){
-        return Offers::find(['taskid = :taskId: AND selected = true AND confirmed = true',
+    public static function findConfirmedOfferByTask($taskId){
+        return Offers::find(['task_id = :taskId: AND selected = true AND confirmed = true',
             'bind' =>['taskId' => $taskId]
         ]);
+    }
+
+    public static function findOffersByCompany($companyId)
+    {
+        $result = self::findByCompany($companyId,"App\Models\Offers",self::publicColumns);
+        return self::handleOffersFromArray($result->toArray());
+    }
+
+    public static function findOffersByUser($userId)
+    {
+        $result = self::findByUser($userId,"App\Models\Offers",self::publicColumns);
+
+        return self::handleOffersFromArray($result->toArray());
+    }
+
+    public static function findOffersForTask($taskId)
+    {
+        $result = Offers::find([
+            'columns'=>self::publicColumns,
+            'conditions'=>'task_id = :taskId:',
+            'bind'=>['taskId'=>$taskId]]);
+
+        return self::handleOffersFromArray($result->toArray());
+    }
+
+    public static function handleOffersFromArray(array $tasks){
+        return $tasks;
     }
 }

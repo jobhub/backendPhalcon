@@ -14,7 +14,7 @@ class GroupController extends AbstractController {
 
 
     public function newAction(){
-        $user_id = $this->getUserid();
+        $user_id = $this->getUserId();
         $data = json_decode($this->request->getRawBody(), true);
         try {
            $group = $this->groupService->create($user_id, $data);
@@ -25,7 +25,7 @@ class GroupController extends AbstractController {
     }
 
     public function sendMessageAction(){
-        $user_id = $this->getUserid();
+        $user_id = $this->getUserId();
         $data = json_decode($this->request->getRawBody(), true);
         $data["sender"] = $user_id;
         try {
@@ -37,7 +37,7 @@ class GroupController extends AbstractController {
     }
 
     public function messageAction(){
-        $user_id = $this->getUserid();
+        $user_id = $this->getUserId();
         $data = json_decode($this->request->getRawBody(), true);
         $data["sender"] = $user_id;
         $action = $data['action'];
@@ -58,7 +58,7 @@ class GroupController extends AbstractController {
 
     public function mainAction(){
         $data = json_decode($this->request->getRawBody(), true);
-        $data["user_id"] = $this->getUserid();;
+        $data["user_id"] = $this->getUserId();;
         $action = $data['action'];
         try {
             if(method_exists($this->groupService, $action))

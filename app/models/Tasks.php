@@ -1,10 +1,14 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Tasks extends SubjectsWithNotDeletedWithCascade
+use App\Libs\SupportClass;
+
+class Tasks extends AccountWithNotDeletedWithCascade
 {
     /**
      * @var integer
@@ -12,14 +16,14 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      * @Identity
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $taskid;
+    protected $task_id;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $categoryid;
+    protected $category_id;
 
     /**
      *
@@ -68,7 +72,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      * @var integer
      * @Column(type="integer", length=32, nullable=true)
      */
-    protected $regionid;
+    protected $region_id;
 
     /**
      *
@@ -89,27 +93,27 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $datestart;
+    protected $date_start;
 
     /**
      *
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $dateend;
+    protected $date_end;
 
-    const publicColumns = ['taskid', 'categoryid','name', 'description', 'deadline', 'price',
-        'status', 'polygon', 'regionid', 'longitude', 'latitude', 'datestart', 'dateend'];
+    const publicColumns = ['task_id', 'category_id','name', 'description', 'deadline', 'price',
+        'status', 'polygon', 'region_id', 'longitude', 'latitude', 'date_start', 'date_end'];
 
     /**
      * Method to set the value of field taskId
      *
-     * @param integer $taskid
+     * @param integer $task_id
      * @return $this
      */
-    public function setTaskId($taskid)
+    public function setTaskId($task_id)
     {
-        $this->taskid = $taskid;
+        $this->task_id = $task_id;
 
         return $this;
     }
@@ -117,12 +121,12 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field categoryId
      *
-     * @param integer $categoryid
+     * @param integer $category_id
      * @return $this
      */
-    public function setCategoryId($categoryid)
+    public function setCategoryId($category_id)
     {
-        $this->categoryid = $categoryid;
+        $this->category_id = $category_id;
 
         return $this;
     }
@@ -169,12 +173,12 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field dateStart
      *
-     * @param string $datestart
+     * @param string $date_start
      * @return $this
      */
-    public function setDateStart($datestart)
+    public function setDateStart($date_start)
     {
-        $this->datestart = $datestart;
+        $this->date_start = $date_start;
 
         return $this;
     }
@@ -182,12 +186,12 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field dateEnd
      *
-     * @param string $dateend
+     * @param string $date_end
      * @return $this
      */
-    public function setDateEnd($dateend)
+    public function setDateEnd($date_end)
     {
-        $this->dateend = $dateend;
+        $this->date_end = $date_end;
 
         return $this;
     }
@@ -234,12 +238,12 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
     /**
      * Method to set the value of field regionId
      *
-     * @param integer $regionid
+     * @param integer $region_id
      * @return $this
      */
-    public function setRegionId($regionid)
+    public function setRegionId($region_id)
     {
-        $this->regionid = $regionid;
+        $this->region_id = $region_id;
 
         return $this;
     }
@@ -277,7 +281,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function getTaskId()
     {
-        return $this->taskid;
+        return $this->task_id;
     }
 
     /**
@@ -287,7 +291,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function getCategoryId()
     {
-        return $this->categoryid;
+        return $this->category_id;
     }
 
     /**
@@ -327,7 +331,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function getDateStart()
     {
-        return $this->datestart;
+        return $this->date_start;
     }
 
     /**
@@ -337,7 +341,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function getDateEnd()
     {
-        return $this->dateend;
+        return $this->date_end;
     }
 
     /**
@@ -377,7 +381,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function getRegionId()
     {
-        return $this->regionid;
+        return $this->region_id;
     }
 
     /**
@@ -410,12 +414,12 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
         $validator = new Validation();
 
         $validator->add(
-            'categoryid',
+            'category_id',
             new Callback(
                 [
                     "message" => "Такая категория не существует или она не является дочерней",
                     "callback" => function ($task) {
-                        $category = Categories::findFirstByCategoryid($task->getCategoryId());
+                        $category = Categories::findFirstByCategoryId($task->getCategoryId());
 
                         if ($category && ($category->getParentId() != null && $category->getParentId() != 0))
                             return true;
@@ -430,7 +434,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
             new Callback([
                 "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($task) {
-                $status = Statuses::findFirstByStatusid($task->getStatus());
+                $status = Statuses::findFirstByStatusId($task->getStatus());
                     if (!$status)
                         return false;
                     return true;
@@ -478,7 +482,8 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
             new Callback([
                 "message" => "Должна быть указана цена",
                 'callback' => function ($task) {
-                    if($task->getPrice() == null || !SupportClass::checkDouble($task->getPrice()))
+                    if($task->getPrice() == null ||
+                        (!is_double($task->getPrice()) && !is_integer($task->getPrice())))
                         return false;
                     return true;
                 }
@@ -487,7 +492,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
 
         if ($this->getRegionId() != null) {
             $validator->add(
-                'regionid',
+                'region_id',
                 new Callback(
                     [
                         "message" => "Указанный регион не существует",
@@ -503,21 +508,21 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
         }
 
         $validator->add(
-            'datestart',
+            'date_start',
             new PresenceOf([
                 "message" => "Дата начала приема заявок должна быть указана"
             ])
         );
 
         $validator->add(
-            'dateend',
+            'date_end',
             new PresenceOf([
                 "message" => "Дата завершения приема заявок должна быть указана"
             ])
         );
 
         $validator->add(
-            'dateend',
+            'date_end',
             new Callback(
                 [
                     "message" => "Дата завершения приема заявок должна быть не раньше даты начала и не позже даты завершения задания",
@@ -539,12 +544,13 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        parent::initialize();
+        $this->setSchema("public");
         $this->setSource("tasks");
-        $this->belongsTo('categoryid', '\Categories', 'categoryid', ['alias' => 'Categories']);
-        $this->belongsTo('regionid', '\Regions', 'regionid', ['alias' => 'Regions']);
-        $this->belongsTo('status', '\Statuses', 'statusid', ['alias' => 'Statuses']);
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('category_id', 'App\Models\Categories', 'category_id', ['alias' => 'Categories']);
+        $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
+        $this->belongsTo('status', 'App\Models\Statuses', 'status_id', ['alias' => 'Statuses']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -555,6 +561,46 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
     public function getSource()
     {
         return 'tasks';
+    }
+
+    public function getSequenceName()
+    {
+        return "tasks_taskid_seq";
+    }
+
+    public static function findTasksByCompany($companyId)
+    {
+        $result = self::findByCompany($companyId,"App\Models\Tasks",self::publicColumns);
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findTasksByUser($userId)
+    {
+        $result = self::findByUser($userId,"App\Models\Tasks",self::publicColumns);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findAcceptingTasksByUser($userId)
+    {
+        $result = self::findByUser($userId,"App\Models\Tasks",self::publicColumns,
+            ['status = :status:'],['status'=>STATUS_ACCEPTING]);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findAcceptingTasksByCompany($companyId)
+    {
+        $result = self::findByCompany($companyId,"App\Models\Tasks",self::publicColumns,
+            ['status = :status:'],['status'=>STATUS_ACCEPTING]);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+
+
+    public static function handleTaskFromArray(array $tasks){
+        return $tasks;
     }
 
     /*public static function checkUserHavePermission($userId, $taskId, $right = null)
@@ -592,7 +638,7 @@ class Tasks extends SubjectsWithNotDeletedWithCascade
 
     public function beforeDelete(){
         //Проверка, можно ли удалить задание
-        $offers = Offers::fincByTaskid($this->getTaskId());
+        $offers = Offers::findByTaskId($this->getTaskId());
         if(count($offers)!= 0)
             return false;
         return true;

@@ -632,7 +632,7 @@ class Reviews extends NotDeletedModelWithCascade
                     $subjectId = $task->getSubjectId();
                     $subjectType = $task->getSubjectType();
                 } else{
-                    $offer = Offers::findByTask($this->getBinderId());
+                    $offer = Offers::findConfirmedOfferByTask($this->getBinderId());
 
                     $subjectId = $offer->getSubjectId();
                     $subjectType = $offer->getSubjectType();

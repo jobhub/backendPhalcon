@@ -253,6 +253,11 @@ class AuthService extends AbstractService
     public function checkToken($token)
     {
         $data = explode('.', $token);
+
+        if(count($data) < 3){
+            return false;
+        }
+
         //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
         $di = DI::getDefault();
 

@@ -1451,6 +1451,195 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\TasksAPIController'=>[
+        'prefix' => '/task',
+        'resources' => [
+            /**
+             * Добавляет заказ
+             *
+             * @method POST
+             *
+             * @params (обязательные) category_id, name, price, date_end.
+             * @params (необязательные) account_id, description, deadline, polygon, region_id, longitude, latitude.
+             *
+             * @return string - json array  формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addTaskAction'
+            ],
+
+            /**
+             * Возвращает все задания субъекта (для него самого)
+             *
+             * @method GET
+             *
+             * @param $company_id
+             *
+             * @return string - массив заданий (Tasks) и Status
+             *
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/own',
+                'action' => 'getTasksForCurrentUserAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}',
+                'action' => 'getTasksForCurrentUserAction'
+            ],
+
+            /**
+             * Возвращает все задания указанного субъекта
+             *
+             * @method GET
+             *
+             * @param $id
+             * @param $is_company
+             *
+             * @return string - массив заданий (Tasks)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getTasksForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}',
+                'action' => 'getTasksForSubjectAction'
+            ],
+
+            /**
+             * Удаление заказа
+             *
+             * @method DELETE
+             * @param $task_id
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{task_id}',
+                'action' => 'deleteTaskAction'
+            ],
+
+            /**
+             * Редактирование задания
+             *
+             * @method PUT
+             * @params (обязательные) task_id.
+             * @params (необязательные)  description, deadline, polygon,
+             *                           region_id, longitude, latitude,
+             *                           category_id, name, price, date_end.
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editTaskAction'
+            ],
+
+            /**
+             * Выбирает предложение для выполнения заказа
+             *
+             * @method POST
+             * @params offer_id
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/select-offer',
+                'action' => 'selectOfferAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\OffersAPIController'=>[
+        'prefix' => '/offer',
+        'resources' => [
+            /**
+             * Возвращает предложения для определенного задания
+             * @method GET
+             * @param $task_id
+             *
+             * @return string - json array объектов Offers
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-task/{task_id}',
+                'action' => 'getForTaskAction'
+            ],
+
+            /**
+             * Добавляет предложение на выполнение указанного задания
+             *
+             * @method POST
+             *
+             * @params (Обязательные) task_id, deadline, price.
+             * @params (Необязательные) description, account_id.
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addOfferAction'
+            ],
+
+            /**
+             * Возвращает офферсы субъекта
+             *
+             * @method GET
+             *
+             * @param $company_id (необязательный). Если не отправить, будут возвращены для текущего пользователя
+             *
+             * @return string - json array объектов Offers
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-current',
+                'action' => 'getForCurrentUserAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-current/{company_id}',
+                'action' => 'getForCurrentUserAction'
+            ],
+
+            /**
+             * Удаляет предложение на выполнение заявки
+             *
+             * @method DELETE
+             * @param $offer_id
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{offer_id}',
+                'action' => 'deleteOfferAction'
+            ],
+
+            /**
+             * Редактирует предложение на выполнение указанного задания
+             *
+             * @method PUT
+             *
+             * @params (Обязательные) offer_id, deadline, price.
+             * @params (Необязательные) description.
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editOfferAction'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

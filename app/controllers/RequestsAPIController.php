@@ -11,12 +11,8 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
-use App\Models\ImagesUsers;
-use App\Models\News;
 use App\Models\Accounts;
 
-use App\Services\ImageService;
-use App\Services\NewsService;
 use App\Services\AccountService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
