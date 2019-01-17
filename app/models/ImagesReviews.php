@@ -87,6 +87,11 @@ class ImagesReviews extends ImagesModel
         return 'imagesreviews';
     }
 
+    public function getSequenceName()
+    {
+        return "imagesreviews_imageid_seq";
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *

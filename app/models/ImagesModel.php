@@ -26,13 +26,6 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
-
-    /**
-     *
      * @var string
      * @Column(type="string", length=256, nullable=false)
      */

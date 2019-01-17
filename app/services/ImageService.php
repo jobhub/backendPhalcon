@@ -16,6 +16,7 @@ use App\Models\ImagesServices;
 use App\Models\Users;
 use App\Models\News;
 use App\Models\Services;
+use App\Models\Reviews;
 
 //other
 use Phalcon\DI\FactoryDefault as DI;
@@ -129,6 +130,10 @@ class ImageService extends AbstractService
         return $this->createImagesToObject($files,$service,self::TYPE_SERVICE);
     }
 
+    public function createImagesToReview($files, Reviews $review){
+        return $this->createImagesToObject($files,$review,self::TYPE_REVIEW);
+    }
+
     private function createImagesToObject($files, $some_object, $type){
 
         switch ($type) {
@@ -185,6 +190,10 @@ class ImageService extends AbstractService
 
     public function saveImagesToCompany($files, Companies $company,array $imagesIds){
         return $this->saveImagesToObject($files,$company,$imagesIds,self::TYPE_COMPANY);
+    }
+
+    public function saveImagesToReview($files, Reviews $review, array $imagesIds){
+        return $this->saveImagesToObject($files,$review,$imagesIds,self::TYPE_REVIEW);
     }
 
     private function saveImagesToObject($files, $some_object, array $imagesIds, int $type){

@@ -520,7 +520,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findUserInfoById(int $userId, string $columns = null){
+    public static function findUserInfoById(int $userId, array $columns = null){
         if($columns == null)
             return self::findFirst(['user_id = :userId:',
                 'bind' => ['userId' => $userId]]);

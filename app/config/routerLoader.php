@@ -1385,6 +1385,47 @@ $routes = [
             ],
         ]
     ],
+
+    '\App\Controllers\FavouriteUsersAPIController'=>[
+        'prefix' => '/user/info',
+        'resources' => [
+            /**
+             * Подписывает текущего пользователя на указанного
+             * @method POST
+             * @params user_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/subscribe-to/user',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку на пользователя
+             * @method
+             * @param $user_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/unsubscribe-from/user/{user_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает подписки текущего пользователя
+             * @method GET
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/favourite/users',
+                'action' => 'getFavouritesAction'
+            ],
+        ]
+    ],
+
     '\App\Controllers\RequestsAPIController'=>[
         'prefix' => '/request',
         'resources' => [
@@ -1637,6 +1678,113 @@ $routes = [
                 'type' => 'put',
                 'path' => '/edit',
                 'action' => 'editOfferAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\ReviewsAPIController'=>[
+        'prefix' => '/review',
+        'resources' => [
+            /**
+             * Добавляет отзыв.
+             *
+             * @method POST
+             *
+             * @params int binder_id, int binder_type, bool executor, int rating, string text_review
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addReviewAction'
+            ],
+
+            /**
+             * Редактирует отзыв.
+             *
+             * @method PUT
+             *
+             * @params int rating, review_id
+             * @param (Необязатальные) review_text.
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editReviewAction'
+            ],
+
+            /**
+             * Удаляет отзыв.
+             *
+             * @method DELETE
+             *
+             * @param $review_id
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{review_id}',
+                'action' => 'deleteReviewAction'
+            ],
+
+            /**
+             * Возвращает отзывы об указанном субъекте, будь то пользователь или компания.
+             *
+             * @method GET
+             *
+             * @param $id - id субъекта
+             * @param $is_company - тип субъекта
+             *
+             * @return string - json array [status,[reviews]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+
+            /**
+             * Возвращает отзывы, связанные с указанной услугой.
+             *
+             * @method GET
+             *
+             * @param $serviceId - id услуги
+             * @param $numPage - номер страницы
+             * @param $widthPage - размер страницы
+             *
+             * @return string - json array [status,reviews => [review,{userinfo or company}]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}/{num_page}/{width_page}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+
+            /**
+             * Добавляет все прикрепленные изображения к отзыву. Но суммарно изображений для отзыва не больше 3.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params (обязательно) review_id
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/images',
+                'action' => 'addImagesAction'
             ],
         ]
     ],

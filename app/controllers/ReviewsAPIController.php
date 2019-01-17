@@ -6,68 +6,103 @@
  * Time: 11:45
  */
 
+namespace App\Controllers;
+
+use App\Services\RequestService;
+use App\Services\ReviewService;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Paginator\Adapter\NativeArray as Paginator;
 
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\Accounts;
+use App\Models\Binders;
+use App\Models\Reviews;
+
+use App\Services\ImageService;
+use App\Services\NewsService;
+use App\Services\AccountService;
+use App\Services\TaskService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
+
 /**
  * Class ReviewsAPIController
  * Контроллер для работы с отзывами.
  * Реализует CRUD для отывов, методы для добавления изображений к отзыву.
  */
-class ReviewsAPIController extends Controller
+class ReviewsAPIController extends AbstractController
 {
     /**
      * Добавляет отзыв.
      *
      * @method POST
      *
-     * @params int binderId, int binderType, bool executor, int rating
-     * @params (Необязатальные) textReview, fake.
+     * @params int binder_id, int binder_type, bool executor, int rating, string review_text
      *
      * @return Response - Status
      */
     public function addReviewAction()
     {
-        if ($this->request->isPost()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $inputData = $this->request->getJsonRawBody();
+        $data['binder_id'] = $inputData->binder_id;
+        $data['binder_type'] = $inputData->binder_type;
+        $data['rating'] = $inputData->rating;
+        $data['review_text'] = $inputData->review_text;
 
-            $response = new Response();
-            $binderId = $this->request->getPost('binderId');
-            $binderType = $this->request->getPost('binderType');
-            $executor = $this->request->getPost('executor');
+        try {
+            $userId = self::getUserId();
 
-            if (!Binders::checkUserHavePermission($userId, $binderId,
-                $binderType, $executor, 'addReview')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            //validation
+            if (empty(trim($data['binder_id']))) {
+                $errors['binder_id'] = 'Missing required parameter "binder_id"';
             }
 
-            $review = Reviews::findFirst(['binderid = :binderId: AND bindertype = :binderType: AND executor = :executor:',
-                'bind' => ['binderId' => $binderId, 'binderType' => $binderType, 'executor' => $executor]]);
-
-            if ($review) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Отзыв в связи с заказом уже написан']
-                    ]
-                );
-                return $response;
+            if (empty(trim($data['binder_type'])) && $data['binder_type'] != 0) {
+                $errors['binder_type'] = 'Missing required parameter "binder_type"';
             }
 
-            if ($binderType == 'task') {
-                $binder = Tasks::findFirstByTaskid($binderId);
-            } elseif ($binderType == 'request')
-                $binder = Requests::findFirstByRequestid($binderId);
+            /*if (empty(trim($data['executor']))) {
+                $errors['executor'] = 'Missing required parameter "executor"';
+            }*/
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
+            //проверки
+            if ($data['binder_type'] == 'task' || $data['binder_type'] == 1) {
+                $binder = $this->taskService->getTaskById($data['binder_id']);
+            } elseif ($data['binder_type'] == 'request' || $data['binder_type'] == 2)
+                $binder = $this->requestService->getRequestById($data['binder_id']);
+            else {
+                $errors['errors'] = true;
+                $errors['binder_type'] = 'Invalid parameter "binder_type". Must be "request" (or 1) or "task" (or 0).';
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
+            //getting executor
+            if(Accounts::checkUserRelatesWithAccount($userId,$binder->getAccountId())){
+                $data['executor'] = false;
+            } else{
+                $data['executor'] = true;
+            }
+
+            if (!Binders::checkUserHavePermission($userId, $data['binder_id'],
+                $data['binder_type'], $data['executor'], 'addReview')) {
+                throw new Http403Exception('Permission error');
+            }
 
             if (!($binder->getStatus() == STATUS_CANCELED ||
                 $binder->getStatus() == STATUS_NOT_EXECUTED ||
@@ -75,55 +110,39 @@ class ReviewsAPIController extends Controller
                 $binder->getStatus() == STATUS_PAID_EXECUTOR ||
                 $binder->getStatus() == STATUS_PAID_BY_SECURE_TRANSACTION)) {
 
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Нельзя писать отзыв на данном этапе']
-                    ]
-                );
-                return $response;
+                $errors['errors'] = true;
+                $errors['binder_id'] = 'Can\'t create review on current stage of executing.';
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
             }
 
-            $review = new Reviews();
-
-            $review->setBinderId($binderId);
-            $review->setBinderType($binderType);
-            $review->setExecutor($executor);
-            $review->setTextReview($this->request->getPost('textReview'));
-            $review->setReviewDate(date('Y-m-d H:i:s'));
-            $review->setUserId($userId);
-
-            /*if($this->request->getPost('fake'))
-                $review->setFake($this->request->getPost('fake'));*/
-
-            $review->setRating($this->request->getPost('rating'));
-
-            if (!$review->save()) {
-                $errors = [];
-                foreach ($review->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if(Reviews::reviewAlreadyExists($data['binder_id'],$data['binder_type'],$data['executor'])){
+                throw new Http400Exception('Review already exists');
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
+            $data['review_date'] = date('Y-m-d H:i:s');
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+            $review = $this->reviewService->createReview($data);
 
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_UNABLE_CREATE_REVIEW:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_TASK_NOT_FOUND:
+                case RequestService::ERROR_REQUEST_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Review was successfully created', ['review' => $review->toArray()]);
     }
 
     /**
@@ -131,73 +150,61 @@ class ReviewsAPIController extends Controller
      *
      * @method PUT
      *
-     * @params int rating, reviewId
-     * @param (Необязатальные) textReview.
+     * @params int rating, review_id
+     * @param (Необязатальные) review_text.
      *
      * @return Response - Status
      */
     public function editReviewAction()
     {
-        if ($this->request->isPut()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $inputData = $this->request->getJsonRawBody();
+        $data['review_id'] = $inputData->review_id;
+        $data['rating'] = $inputData->rating;
+        $data['review_text'] = $inputData->review_text;
 
-            $review = Reviews::findFirstByReviewid($this->request->getPut('reviewId'));
-
-            $response = new Response();
-
-            if (!$review) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Отзыв не существует']
-                    ]
-                );
-                return $response;
+        try {
+            //validation
+            if (empty(trim($data['review_id']))) {
+                $errors['review_id'] = 'Missing required parameter "review_id"';
             }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
+
+            $userId = self::getUserId();
+
+            $review = $this->reviewService->getReviewById($data['review_id']);
 
             if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
-                $review->getBinderType(), $review->getExecutor(), 'editReview')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+                $review->getBinderType(),$review->getExecutor(), 'editReview')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $review->setTextReview($this->request->getPut('textReview'));
-            $review->setReviewDate(date('Y-m-d H:i:s'));
-            $review->setRating($this->request->getPut('rating'));
-            $review->setUserId($userId);
+            unset($data['review_id']);
 
-            if (!$review->update()) {
-                $errors = [];
-                foreach ($review->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $this->reviewService->changeReview($review, $data);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_UNABLE_CHANGE_REVIEW:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_REVIEW_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Review was successfully changed');
     }
 
     /**
@@ -205,80 +212,42 @@ class ReviewsAPIController extends Controller
      *
      * @method DELETE
      *
-     * @param $reviewId
+     * @param $review_id
      *
      * @return Response - Status
      */
-    public function deleteReviewAction($reviewId)
+    public function deleteReviewAction($review_id)
     {
-        if ($this->request->isDelete()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        try {
+            $userId = self::getUserId();
 
-            $review = Reviews::findFirstByReviewid($reviewId);
+            $review = $this->reviewService->getReviewById($review_id);
 
-            $response = new Response();
-
-            if (!$review) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Отзыв не существует']
-                    ]
-                );
-                return $response;
+            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
+                $review->getBinderType(),$review->getExecutor(), 'deleteReview')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if ($review->getFake() == false) {
-                if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),
-                    $review->getBinderType(), $review->getExecutor(), 'deleteReview')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-            } else {
-                if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $review->getSubjectId(),
-                    $review->getSubjectType(), 'deleteReview')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
+            $this->reviewService->deleteReview($review);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_UNABLE_DELETE_REVIEW:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$review->delete()) {
-                $errors = [];
-                foreach ($review->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_REVIEW_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Review was successfully deleted');
     }
 
     /**
@@ -286,37 +255,17 @@ class ReviewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $subjectId - id субъекта
-     * @param $subjectType - тип субъекта
+     * @param $id - id субъекта
+     * @param $is_company - тип субъекта
      *
      * @return string - json array [status,[reviews]]
      */
-    public function getReviewsForSubjectAction($subjectId, $subjectType)
+    public function getReviewsForSubjectAction($id, $is_company = false)
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
-
-            $reviews = Reviews::getReviewsForObject($subjectId, $subjectType);
-
-            /*$i = count($reviews);
-            $comp = Companies::findFirstByCompanyid($subjectId);
-            $rating = $comp->getRatingExecutor();
-            $rating2 = ($rating*($i+1)-2.5)/$i;*/
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    "reviews" => $reviews
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
+        if ($is_company && strtolower($is_company) != "false")
+            return Reviews::findReviewsByCompany($id);
+        else
+            return Reviews::findReviewsByUser($id);
     }
 
     /**
@@ -324,72 +273,24 @@ class ReviewsAPIController extends Controller
      *
      * @method GET
      *
-     * @param $serviceId - id услуги
-     * @param $numPage - номер страницы
-     * @param $widthPage - размер страницы
+     * @param $service_id - id услуги
+     * @param $num_page - номер страницы
+     * @param $width_page - размер страницы
      *
      * @return string - json array [status,reviews => [review,{userinfo or company}]]
      */
-    public function getReviewsForServiceAction($serviceId, $numPage, $widthPage)
+    public function getReviewsForServiceAction($service_id, $num_page, $width_page)
     {
-        if ($this->request->isGet()) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
+        $reviews = Reviews::findReviewsForService($service_id);
 
-            $reviews = Reviews::getReviewsForService2($serviceId);
+        $paginator = new Paginator([
+            'data' => $reviews,
+            'limit' => $width_page,
+            'page' => $num_page
+        ]);
 
-            $reviews2_ar = [];
-            foreach ($reviews as $review) {
-                $reviews2['review'] = json_decode($review['review'], true);
 
-                unset($reviews2['review']['deleted']);
-                unset($reviews2['review']['deletedcascade']);
-                unset($reviews2['review']['fake']);
-                unset($reviews2['review']['subjectid']);
-                unset($reviews2['review']['subjecttype']);
-                unset($reviews2['review']['objectid']);
-                unset($reviews2['review']['objecttype']);
-
-                unset($reviews2['review']['userid']);
-                $subject = json_decode($review['subject'], true);
-                if (isset($subject['reviewid'])) {
-                    //$reviews2['review']['username'] = $reviews2['review']['fakename'];
-                    $userinfo = new Userinfo();
-                    $userinfo->setFirstname($reviews2['review']['fakename']);
-                    $reviews2['userinfo'] = $userinfo;
-                } else if (isset($subject['companyid'])) {
-                    $reviews2['company'] = $subject;
-                    unset($reviews2['company']['deleted']);
-                    unset($reviews2['company']['deletedcascade']);
-                    unset($reviews2['company']['ismaster']);
-                    unset($reviews2['company']['yandexMapPages']);
-
-                } else {
-                    $reviews2['userinfo'] = $subject;
-                }
-                unset($reviews2['review']['fakename']);
-
-                $reviews2_ar[] = $reviews2;
-            }
-
-            $paginator = new Paginator([
-                'data' => $reviews2_ar,
-                'limit' => $widthPage,
-                'page' => $numPage
-            ]);
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    "reviews" => $paginator->getPaginate()->items
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
+        return $paginator->getPaginate()->items;
     }
 
     /**
@@ -399,51 +300,55 @@ class ReviewsAPIController extends Controller
      *
      * @method POST
      *
-     * @params (обязательно) reviewId
+     * @params (обязательно) review_id
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addImagesAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $this->db->begin();
+        try {
+            $data['review_id'] = $this->request->getPost('review_id');
 
-            $response = new Response();
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $review = Reviews::findFirstByReviewid($this->request->getPost('reviewId'));
+            $review = $this->reviewService->getReviewById($data['review_id']);
 
-            if (!$review) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверный идентификатор услуги'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(), $review->getBinderType(),$review->getExecutor(), 'editReview')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Binders::checkUserHavePermission($userId, $review->getBinderId(),$review->getBinderType(),
-                $review->getExecutor(),'editReview')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
+            $ids = $this->imageService->createImagesToReview($this->request->getUploadedFiles(),$review);
+
+            $this->imageService->saveImagesToReview($this->request->getUploadedFiles(),$review,$ids);
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $result = $this->addImagesHandler($review->getReviewId());
-
-            return $result;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case ReviewService::ERROR_REVIEW_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                case ImageService::ERROR_INVALID_IMAGE_TYPE:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        $this->db->commit();
+        return self::successResponse('Image was successfully added to review');
     }
 
     /**
@@ -454,7 +359,7 @@ class ReviewsAPIController extends Controller
      * @param $reviewId
      * @return Response с json массивом типа Status
      */
-    public function addImagesHandler($reviewId)
+    /*public function addImagesHandler($reviewId)
     {
         include(APP_PATH . '/library/SimpleImage.php');
         $response = new Response();
@@ -476,11 +381,11 @@ class ReviewsAPIController extends Controller
             $images = ImagesReviews::findByReviewid($reviewId);
             $countImages = count($images);
 
-            if(($countImages + count($files)) > ImagesReviews::MAX_IMAGES ){
+            if (($countImages + count($files)) > ImagesReviews::MAX_IMAGES) {
                 $response->setJsonContent(
                     [
                         "errors" => ['Слишком много изображений для отзыва. 
-                        Можно сохранить для одного отзыва не более чем '.ImagesReviews::MAX_IMAGES.' изображений'],
+                        Можно сохранить для одного отзыва не более чем ' . ImagesReviews::MAX_IMAGES . ' изображений'],
                         "status" => STATUS_WRONG
                     ]
                 );
@@ -515,14 +420,14 @@ class ReviewsAPIController extends Controller
 
                 $newimage->setImagePath($filename);
 
-                if(!$newimage->update()){
+                if (!$newimage->update()) {
                     $this->db->rollback();
                     return SupportClass::getResponseWithErrors($newimage);
                 }
             }
             $i = 0;
             foreach ($files as $file) {
-                $result = ImageLoader::loadReviewImage($file->getTempName(), $file->getName(), $reviewId,$imagesIds[$i]);
+                $result = ImageLoader::loadReviewImage($file->getTempName(), $file->getName(), $reviewId, $imagesIds[$i]);
                 $i++;
                 if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                     if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
@@ -557,7 +462,7 @@ class ReviewsAPIController extends Controller
             ]
         );
         return $response;
-    }
+    }*/
 
     /**
      *

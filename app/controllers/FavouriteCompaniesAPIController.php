@@ -101,7 +101,7 @@ class FavouriteCompaniesAPIController extends AbstractController
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
-                case UserInfoService::ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY:
+                case UserInfoService::ERROR_USER_NOT_SUBSCRIBED_TO_COMPANY:
                 case UserInfoService::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());

@@ -101,6 +101,9 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
                 [
                     "message" => "Пользователь подписчик не существует",
                     "callback" => function($favUser) {
+                        if($favUser->getUserSubject() == $favUser->getUserObject())
+                            return false;
+
                         $user = Users::findFirstByUserId($favUser->getUserSubject());
 
                         if($user)
@@ -121,8 +124,8 @@ class FavoriteUsers extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("favoriteUsers");
-        $this->belongsTo('user_object', '\Users', 'user_id', ['alias' => 'Users']);
-        $this->belongsTo('user_subject', '\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('user_object', 'App\Models\Users', 'user_id', ['alias' => 'UserObject']);
+        $this->belongsTo('user_subject', 'App\Models\Users', 'user_id', ['alias' => 'UserSubject']);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\FavoriteUsers;
 use App\Models\Users;
 use App\Models\Group;
 use App\Models\Phones;
@@ -29,7 +30,11 @@ class UserInfoService extends AbstractService {
     const ERROR_UNABLE_CHANGE_USER_INFO = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY = 6 + self::ADDED_CODE_NUMBER;
-    const ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY = 7 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_SUBSCRIBED_TO_COMPANY = 7 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_UNABLE_SUBSCRIBE_USER_TO_USER = 8 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_USER = 9 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_SUBSCRIBED_TO_USER = 10 + self::ADDED_CODE_NUMBER;
 
     public function createUserInfo(array $userInfoData){
         $userInfo = new Userinfo();
@@ -146,7 +151,7 @@ class UserInfoService extends AbstractService {
         $fav = FavoriteCompanies::findByIds($userId,$companyId);
 
         if (!$fav) {
-            throw new ServiceException('User don\'t subscribe to company', self::ERROR_USER_NOT_SUBSCRIBE_TO_COMPANY);
+            throw new ServiceException('User don\'t subscribe to company', self::ERROR_USER_NOT_SUBSCRIBED_TO_COMPANY);
         }
         return $fav;
     }
@@ -161,6 +166,32 @@ class UserInfoService extends AbstractService {
                 throw new ServiceExtendedException('Unable unsubscribe user from company',
                     self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY);
             }
+        }
+    }
+
+    public function subscribeToUser(int $userId, int $userIdObject){
+        $fav = new FavoriteUsers();
+        $fav->setUserSubject($userId);
+        $fav->setUserObject($userIdObject);
+
+        if(!$fav->create()){
+            SupportClass::getErrorsWithException($fav,self::ERROR_UNABLE_SUBSCRIBE_USER_TO_USER,'Unable subscribe user to user');
+        }
+    }
+
+    public function getSigningToUser(int $userId, int $userIdObject){
+        $fav = FavoriteUsers::findByIds($userIdObject,$userId);
+
+        if (!$fav) {
+            throw new ServiceException('User don\'t subscribed to user', self::ERROR_USER_NOT_SUBSCRIBED_TO_USER);
+        }
+        return $fav;
+    }
+
+    public function unsubscribeFromUser(FavoriteUsers $favUser){
+        if(!$favUser->delete()){
+            SupportClass::getErrorsWithException($favUser,
+                self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_USER,'Unable unsubscribe user from user');
         }
     }
 }

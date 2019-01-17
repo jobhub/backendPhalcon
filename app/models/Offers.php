@@ -444,7 +444,7 @@ class Offers extends AccountWithNotDeletedWithCascade
     }
 
     public static function findConfirmedOfferByTask($taskId){
-        return Offers::find(['task_id = :taskId: AND selected = true AND confirmed = true',
+        return Offers::findFirst(['task_id = :taskId: AND selected = true AND confirmed = true',
             'bind' =>['taskId' => $taskId]
         ]);
     }

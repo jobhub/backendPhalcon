@@ -225,6 +225,31 @@ class Accounts extends \Phalcon\Mvc\Model
         return true;
     }
 
+    public static function checkUserRelatesWithAccount($userId, $accountId)
+    {
+        $account = Accounts::findFirstById($accountId);
+
+        if (!$account)
+            return false;
+
+        if($account->getUserId() == $userId)
+            return true;
+
+        if($account->getCompanyId()!= null){
+            $account = Accounts::findFirst([
+                'company_id = :companyId: and user_id = :userId:',
+                'bind' => [
+                    'companyId'=> $account->getCompanyId(),
+                    'userId' => $userId
+                ]
+            ]);
+
+            if($account)
+                return true;
+        }
+
+        return false;
+    }
     /**
      * Checks equal between two accounts as subjects.
      * If accounts created for one company then they are the equal.

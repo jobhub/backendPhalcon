@@ -48,8 +48,6 @@ class OfferService extends AbstractService
     {
         if (!empty(trim($data['task_id'])))
             $offer->setTaskId($data['task_id']);
-        if (!empty(trim($data['deadline'])))
-            $offer->setDeadline($data['deadline']);
         if (!empty(trim($data['description'])))
             $offer->setDescription($data['description']);
         if (!empty(trim($data['deadline'])))
