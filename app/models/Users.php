@@ -305,7 +305,7 @@ class Users extends NotDeletedModelWithCascade
     }
 
     public function getSequenceName() {
-        return "\"users_userid_seq\"";
+        return "users_userid_seq";
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)

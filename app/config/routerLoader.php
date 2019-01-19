@@ -1087,6 +1087,13 @@ $routes = [
                 'path' => '/get/info/{point_id}',
                 'action' => 'getPointInfoAction'
             ],
+
+
+            [
+                'type' => 'post',
+                'path' => '/moderator/change-to-markers',
+                'action' => 'changePointsAction'
+            ],
         ]
     ],
 

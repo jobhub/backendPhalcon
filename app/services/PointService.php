@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Markers;
 use App\Models\Services;
 use App\Models\TradePoints;
 use App\Models\ServicesPoints;
@@ -31,6 +32,7 @@ class PointService extends AbstractService
     const ERROR_UNABLE_ADD_POINT_TO_SERVICE = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_POINT_FROM_SERVICE = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_POINT = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_CREATE_MARKER = 7 + self::ADDED_CODE_NUMBER;
 
     public function addPointToService(int $pointId, int $serviceId)
     {
@@ -83,6 +85,8 @@ class PointService extends AbstractService
     {
         $point = new TradePoints();
 
+        $marker = $this->createMarker($data['longitude'],$data['latitude']);
+        $data['marker_id'] = $marker->getMarkerId();
         $this->fillPoint($point, $data);
 
         if ($point->save() == false) {
@@ -97,6 +101,19 @@ class PointService extends AbstractService
         }
 
         return $point;
+    }
+
+    public function createMarker($longitude, $latitude)
+    {
+        $marker = new Markers();
+        $marker->setLongitude($longitude);
+        $marker->setLatitude($latitude);
+
+        if ($marker->save() == false) {
+            SupportClass::getErrorsWithException($marker,self::ERROR_UNABLE_CREATE_MARKER,'Unable create marker');
+        }
+
+        return $marker;
     }
 
     public function changePoint(TradePoints $point, $data)
@@ -120,10 +137,7 @@ class PointService extends AbstractService
     {
         if (!empty(trim($data['name'])))
             $point->setName($data['name']);
-        if (!empty(trim($data['longitude'])))
-            $point->setLongitude($data['longitude']);
-        if (!empty(trim($data['latitude'])))
-            $point->setLatitude($data['latitude']);
+
         if (!empty(trim($data['fax'])))
             $point->setFax($data['fax']);
         if (!empty(trim($data['time'])))
@@ -140,6 +154,13 @@ class PointService extends AbstractService
             $point->setPositionVariable($data['position_variable']);
         if (!empty(trim($data['account_id'])))
             $point->setAccountId($data['account_id']);
+
+        /*if (!empty(trim($data['longitude'])))
+            $point->setLongitude($data['longitude']);
+        if (!empty(trim($data['latitude'])))
+            $point->setLatitude($data['latitude']);*/
+        if(!empty(trim($data['marker_id'])))
+            $point->setMarkerId($data['marker_id']);
     }
 
     public function deletePoint(TradePoints $point)

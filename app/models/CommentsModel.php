@@ -162,7 +162,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
                             ['conditions' => 'user_id = :userId:',
                                 'columns' => Userinfo::shortColumnsInStr,
                                 'bind' => ['userId' => $comment->accounts->getUserId()]]);*/
-                        $user = Userinfo::findUserInfoById($account->getUserId(),Userinfo::shortColumnsInStr);
+                        $user = Userinfo::findUserInfoById($account->getUserId(),Userinfo::shortColumns);
                         $handledComment['publisher_user'] = $user;
                     } else {
                         /*$company = Companies::findFirst(

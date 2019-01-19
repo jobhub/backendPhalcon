@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\TileSystem;
 use Phalcon\DI\FactoryDefault as DI;
 
 use App\Libs\SphinxClient;
@@ -1088,6 +1089,78 @@ class Services extends AccountWithNotDeletedWithCascade
         });
 
         return self::handleServiceFromArrayForSearch($allmatches);
+    }
+
+    public static function getServicesInClustersByQueryByTags($query, $lowLeft, $highRight)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        if (trim($query) == '')
+            $cl->SetMatchMode(SPH_MATCH_ALL);
+        else
+            $cl->SetMatchMode(SPH_MATCH_ANY);
+
+        $cl->SetLimits(0, 1000000, 1000000);
+        $cl->SetRankingMode(SPH_RANK_SPH04);
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        /*if ($regions != null) {
+            $cl->setFilter('region_id', $regions, false);
+            $cl->AddQuery($query, 'bro4you_small_tags_index');
+            $cl->ResetFilters();
+        }*/
+        /*if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }*/
+        $zoom = 23;
+        $quadCommon = TileSystem::getQuadKeyByViewport($highRight['latitude'],$highRight['longitude'],
+            $lowLeft['latitude'],$lowLeft['longitude']);
+
+        $quads = TileSystem::getClusters($quadCommon,strlen($quadCommon));
+
+        $cl->setGroupBy('quadkey'.((strlen($quadCommon)+2)>23?23:(strlen($quadCommon)+2)), SPH_GROUPBY_ATTR);
+        $cl->SetFilterRange('quadkey23',$quads['quadCodeLeft'],$quads['quadCodeRight']);
+        $cl->AddQuery($query, 'bro4you_small_tags_clusters_index');
+
+        $results = $cl->RunQueries();
+        $services = [];
+
+        /* $allmatches = [];
+        if($results!=null)
+            foreach ($results as $result) {
+                if ($result['total'] > 0) {
+                    $allmatches = array_merge($allmatches, $result['matches']);
+                }
+            }
+
+        $res = usort($allmatches, function ($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });*/
+
+        return $results[0]['matches'];
+    }
+
+    public function handleClusters(array $matches){
+        $clusters = [];
+        foreach($matches as $match) {
+
+            if($match['attrs']['@count'] == 1){
+                $clusters['service']=Services::findServiceById($match['attrs']['serv_id']);
+            } else {
+                $clusters['count'] = $match['attrs']['@count'];
+                $clusters['longitude'] = $match['attrs']['avgLongitude'];
+                $clusters['latitude'] = $match['attrs']['avgLatitude'];
+            }
+        }
     }
 
     /**

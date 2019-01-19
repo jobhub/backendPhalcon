@@ -232,7 +232,12 @@ class ServicesAPIController extends AbstractController
 
             $result['services'] = Services::getServicesByQueryByTags($data['user_query'],
                 $data['center'], $data['diagonal'], $data['regions_id']);
-        } else {
+        } elseif($data['type_query'] == 7) {
+
+            $result['services'] = Services::getServicesInClustersByQueryByTags($data['user_query'],
+                $data['low_left'], $data['high_right']);
+        }
+        else {
             $exception = new Http400Exception('Invalid some parameters');
             throw $exception->addErrorDetails(['type_query' => 'user query must contain at least 3 characters']);
         }
