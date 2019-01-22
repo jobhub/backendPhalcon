@@ -1146,21 +1146,25 @@ class Services extends AccountWithNotDeletedWithCascade
             return ($a['weight'] > $b['weight']) ? -1 : 1;
         });*/
 
-        return $results[0]['matches'];
+        return self::handleClusters($results[0]['matches']);
     }
 
-    public function handleClusters(array $matches){
+    public static function handleClusters(array $matches){
         $clusters = [];
         foreach($matches as $match) {
-
+            $cluster = [];
             if($match['attrs']['@count'] == 1){
-                $clusters['service']=Services::findServiceById($match['attrs']['serv_id']);
+                $cluster['service']=Services::findServiceById($match['attrs']['serv_id']);
             } else {
-                $clusters['count'] = $match['attrs']['@count'];
-                $clusters['longitude'] = $match['attrs']['avgLongitude'];
-                $clusters['latitude'] = $match['attrs']['avgLatitude'];
+                $cluster['count'] = $match['attrs']['@count'];
+                $cluster['longitude'] = $match['attrs']['avglongitude'];
+                $cluster['latitude'] = $match['attrs']['avglatitude'];
             }
+
+            $clusters[] = $cluster;
         }
+
+        return $clusters;
     }
 
     /**

@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Libs\SupportClass;
+use App\Models\Users;
 use App\Models\Userinfo;
 use App\Models\PhonesUsers;
 use App\Models\ImagesUsers;
@@ -476,10 +479,10 @@ class UserinfoAPIController extends AbstractController
      */
     public function getUserInfoAction($user_id = null)
     {
-        try{
+        try {
             $currentUserId = $this->session->get('auth')['id'];
 
-            $res_user_id = $user_id == null?$currentUserId:$user_id;
+            $res_user_id = $user_id == null ? $currentUserId : $user_id;
 
             $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id);
 
@@ -491,7 +494,7 @@ class UserinfoAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('',$userInfo);
+        return self::successResponse('', $userInfo);
     }
 
     /**
@@ -515,10 +518,10 @@ class UserinfoAPIController extends AbstractController
     {
         $data = json_decode($this->request->getRawBody(), true);
 
-        if(!isset($data['path_to_photo']))
+        if (!isset($data['path_to_photo']))
             unset($data['path_to_photo']);
 
-        try{
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
@@ -543,7 +546,7 @@ class UserinfoAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('User\'s info successfully changed',$userInfo);
+        return self::successResponse('User\'s info successfully changed', $userInfo);
     }
 
     /**
@@ -559,7 +562,7 @@ class UserinfoAPIController extends AbstractController
      */
     public function addImagesAction()
     {
-        try{
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
@@ -569,9 +572,9 @@ class UserinfoAPIController extends AbstractController
 
             $this->db->begin();
 
-            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(),$user);
+            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(), $user);
 
-            $this->imageService->saveImagesToUser($this->request->getUploadedFiles(),$user,$ids);
+            $this->imageService->saveImagesToUser($this->request->getUploadedFiles(), $user, $ids);
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
@@ -727,11 +730,11 @@ class UserinfoAPIController extends AbstractController
      */
     public function deleteImageAction($image_id)
     {
-        try{
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = $this->imageService->getImageById($image_id,ImageService::TYPE_USER);
+            $image = $this->imageService->getImageById($image_id, ImageService::TYPE_USER);
 
             if ($image->getUserId() != $userId) {
                 throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
@@ -763,10 +766,11 @@ class UserinfoAPIController extends AbstractController
 
     /*public function addUsersAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $userId = $this->getUserId();
 
-            $response = new Response();
-
+        if($userId!=6) {
+            throw new Http403Exception('Permission error');
+        }
             $users = [];
 
             //юзеры
@@ -849,10 +853,40 @@ class UserinfoAPIController extends AbstractController
 
             return $response;
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
     }*/
+
+    public function addUsersAction()
+    {
+        /*$userId = $this->getUserId();
+
+        if ($userId != 6) {
+            throw new Http403Exception('Permission error');
+        }*/
+        $users = [];
+
+        $count = 20000;
+
+        for ($i = 0; $i < $count; $i++) {
+            $user['password'] = '12345678';
+            $user['email'] = 'email'.$i.'@mail.comru';
+            $users[] = $user;
+        }
+
+        $this->db->begin();
+        foreach ($users as $userArr) {
+            $user = new Users();
+            $user->setActivated(true);
+            $user->setEmail($userArr['email']);
+            $user->setPassword($userArr['password']);
+            $user->setRole(ROLE_USER);
+
+            if (!$user->save()) {
+                $this->db->rollback();
+                SupportClass::getErrorsWithException($user,100000,'Не удалось создать пользователя');
+            }
+        }
+        $this->db->commit();
+
+        return self::successResponse('All users successfully created');
+    }
 }

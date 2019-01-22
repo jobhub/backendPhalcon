@@ -452,6 +452,12 @@ $routes = [
                 'path' => '/delete/image/{image_id}',
                 'action' => 'deleteImageAction'
             ],
+
+            [
+                'type' => 'post',
+                'path' => '/moderator/add-users',
+                'action' => 'addUsersAction'
+            ],
         ]
     ],
 
@@ -1792,6 +1798,29 @@ $routes = [
                 'type' => 'post',
                 'path' => '/add/images',
                 'action' => 'addImagesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\TestController'=>[
+        'prefix' => '/moderator/test',
+        'resources' => [
+            [
+                'type' => 'post',
+                'path' => '/add-users',
+                'action' => 'addUsersAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-accounts',
+                'action' => 'addAccountsAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-news',
+                'action' => 'addNewsAction'
             ],
         ]
     ],
