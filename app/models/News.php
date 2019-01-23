@@ -43,9 +43,13 @@ class News extends AccountWithNotDeletedWithCascade
      */
     protected $title;
 
+    protected $likes;
+
     const publicColumns = ['news_id', 'publish_date', 'news_text', 'title'];
 
     const publicColumnsInStr = 'news_id, publish_date, news_text, title';
+
+    const DEFAULT_RESULT_PER_PAGE = 10;
 
     /**
      * Method to set the value of field newId
@@ -58,6 +62,22 @@ class News extends AccountWithNotDeletedWithCascade
         $this->news_id = $news_id;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param mixed $likes
+     */
+    public function setLikes($likes)
+    {
+        $this->likes = $likes;
     }
 
     /**
@@ -213,9 +233,12 @@ class News extends AccountWithNotDeletedWithCascade
         return $result;
     }
 
-    public static function findNewsForCurrentUser($userId)
+    public static function findNewsForCurrentUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
+
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
 
         $str = "SELECT ";
         foreach (News::publicColumns as $column) {
@@ -235,11 +258,15 @@ class News extends AccountWithNotDeletedWithCascade
                     INNER JOIN public.\"favoriteUsers\" favu
                     ON (a.user_id = favu.user_object)
                     WHERE favu.user_subject = :userId)) as foo
-                    ORDER BY foo.publish_date desc";
+                    ORDER BY foo.publish_date desc
+                    LIMIT :limit 
+                    OFFSET :offset";
 
         $query = $db->prepare($str);
         $result = $query->execute([
             'userId' => $userId,
+            'limit' => $page_size,
+            'offset'=>$offset
         ]);
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -247,9 +274,12 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function findAllNewsForCurrentUser($userId)
+    public static function findAllNewsForCurrentUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
+
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
 
         $str = "SELECT ";
         $columns ='';
@@ -278,11 +308,15 @@ class News extends AccountWithNotDeletedWithCascade
                     INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
                     WHERE a.user_id = :userId and a.company_id is null)
                     ) as foo
-                    ORDER BY foo.publish_date desc";
+                    ORDER BY foo.publish_date desc
+                    LIMIT :limit 
+                    OFFSET :offset";
 
         $query = $db->prepare($str);
         $result = $query->execute([
             'userId' => $userId,
+            'limit' => $page_size,
+            'offset'=>$offset
         ]);
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -298,28 +332,36 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function findNewsByCompany($companyId)
+    public static function findNewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["n" => "App\Models\News"])
             ->join('App\Models\Accounts', 'n.account_id = a.id', 'a')
             ->where('a.company_id = :companyId: and n.deleted = false', ['companyId' => $companyId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 
         return self::handleNewsFromArray($result->toArray());
     }
 
-    public static function findNewsByUser($userId)
+    public static function findNewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["n" => "App\Models\News"])
             ->join('App\Models\Accounts', 'n.account_id = a.id and a.company_id is null', 'a')
             ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 
@@ -351,7 +393,7 @@ class News extends AccountWithNotDeletedWithCascade
 
             $newsWithAllElement['images'] = [];
             foreach ($imagesNews as $image) {
-                $newsWithAllElement['images'][] = $image->getImagePath();
+                $newsWithAllElement['images'][] = $image['image_path'];
             }
 
             $newsWithAllElement['comments'] = CommentsNews::getComments($newsElement['news_id']);

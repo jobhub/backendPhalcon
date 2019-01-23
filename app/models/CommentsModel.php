@@ -7,7 +7,6 @@ namespace App\Models;
  */
 abstract class CommentsModel extends AccountWithNotDeleted
 {
-
     /**
      *
      * @var integer
@@ -36,6 +35,32 @@ abstract class CommentsModel extends AccountWithNotDeleted
      * @Column(type="integer", length=32, nullable=true)
      */
     protected $reply_id;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $object_id;
+
+    const DEFAULT_RESULT_PER_PAGE_PARENT = 10;
+    const DEFAULT_RESULT_PER_PAGE_CHILD = 10;
+
+    /**
+     * @return int
+     */
+    public function getObjectId()
+    {
+        return $this->object_id;
+    }
+
+    /**
+     * @param int $object_id
+     */
+    public function setObjectId($object_id)
+    {
+        $this->object_id = $object_id;
+    }
 
     /**
      * Method to set the value of field commentid
@@ -183,5 +208,39 @@ abstract class CommentsModel extends AccountWithNotDeleted
             $handledComments[] = $handledComment;
         }
         return $handledComments;
+    }
+
+    public static function findParentComments($model,$objectId,$page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE_PARENT){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        $comments = strval('App\Models\\'.$model)::find(['conditions'=>'object_id = :objectId: and reply_id is null',
+            'bind' =>['objectId'=> $objectId],
+            'order' => 'comment_date DESC',
+            'limit'=>$page_size,
+            'offset'=>$offset],false);
+
+        $comments_arr =  self::handleComments($comments->toArray());
+        /*for($i = 0; $i < count($comments_arr);$i++){
+            $like_model = 'App\Models\Likes'.$model;
+            $comments_arr[$i]['likes'] = count($like_model::findByCommentId($comments_arr[$i]['comment_id']));
+        }*/
+        return $comments_arr;
+    }
+
+    public static function findChildComments($model,$objectId,$parentId,$page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE_CHILD){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        $comments = strval('App\Models\\'.$model)::find(['conditions'=>'object_id = :objectId: and reply_id = :parentId:',
+            'bind' =>['objectId'=> $objectId,'parentId'=>$parentId],
+            'order' => 'comment_date DESC',
+            'limit'=>$page_size,
+            'offset'=>$offset],false);
+
+        $comments_arr =  self::handleComments($comments->toArray());
+        /*for($i = 0; $i < count($comments_arr);$i++){
+            $like_model = 'App\Models\Likes'.$model;
+            $comments_arr[$i]['likes'] = count($like_model::findByCommentId($comments_arr[$i]['comment_id']));
+        }*/
+        return $comments_arr;
     }
 }

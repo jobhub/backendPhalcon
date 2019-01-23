@@ -5,7 +5,7 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class CommentsNews extends CommentsModel
+class CommentsServices extends CommentsModel
 {
     /**
      * Validations and business logic
@@ -23,7 +23,7 @@ class CommentsNews extends CommentsModel
                     [
                         "message" => "Попытка оставить комментарий на несуществующий комментарий была неуспешна",
                         "callback" => function ($comment) {
-                            $replycomment = CommentsNews::findFirst(['comment_id = :commentId:',
+                            $replycomment = CommentsServices::findFirst(['comment_id = :commentId:',
                                 'bind' =>['commentId'=>$comment->getReplyId()]
                             ], false);
 
@@ -45,14 +45,13 @@ class CommentsNews extends CommentsModel
     {
         parent::initialize();
         $this->setSchema("public");
-        $this->setSource("comments_news");
-        $this->hasMany('comment_id', 'App\Models\LikesCommentsNews', 'comment_id', ['alias' => 'LikesCommentsNews']);
-        $this->belongsTo('object_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
+        $this->setSource("comments_services");
+        $this->belongsTo('object', 'App\Models\Services', 'news_id', ['alias' => 'Services']);
     }
 
     public function getSequenceName()
     {
-        return "comments_news_commentid_seq";
+        return "comments_services_comment_id_seq";
     }
 
     /**
@@ -62,7 +61,7 @@ class CommentsNews extends CommentsModel
      */
     public function getSource()
     {
-        return 'comments_news';
+        return 'comments_services';
     }
 
     public static function getComments($newsId){

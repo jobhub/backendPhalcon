@@ -128,9 +128,16 @@ class ImagesServices extends ImagesModel
     /**
      * return non formatted images objects
      * @param $serviceId
+     * @param $page
+     * @param $page_size
      * @return mixed
      */
-    public static function findImagesForService($serviceId){
-        return self::findByServiceId($serviceId);
+    public static function findImagesForService($serviceId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return self::handleImages(
+            self::find(['conditions'=>'service_id = :serviceId:','bind'=>['serviceId'=>$serviceId],
+                'limit'=>$page_size,'offset'=>$offset])
+        );
     }
 }

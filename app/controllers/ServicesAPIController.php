@@ -44,17 +44,19 @@ class ServicesAPIController extends AbstractController
      *
      * @param $id
      * @param $is_company
+     * @param $page
+     * @param $page_size
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getServicesForSubjectAction($id, $is_company)
+    public function getServicesForSubjectAction($id, $is_company = false, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
         if ($is_company && strtolower($is_company) != "false") {
-            $services = Services::findServicesByCompanyId($id);
+            $services = Services::findServicesByCompanyId($id,$page,$page_size);
         } else {
-            $services = Services::findServicesByUserId($id);
+            $services = Services::findServicesByUserId($id,$page,$page_size);
         }
         return $services;
     }
@@ -66,23 +68,23 @@ class ServicesAPIController extends AbstractController
      *
      * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
      *        Иначе компании, в которой он должен быть хотя бы менеджером.
-     *
+     * @param $page
+     * @param $page_size
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getOwnServicesAction($company_id = null)
+    public function getOwnServicesAction($company_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        if ($company_id == null) {
-            $services = Services::findServicesByUserId($userId);
+        $userId = self::getUserId();
+        if ($company_id == null || !is_integer($company_id)) {
+            $services = Services::findServicesByUserId($userId,$page,$page_size);
         } else {
             if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getServices')) {
                 throw new Http403Exception('Permission error');
             }
-            $services = Services::findServicesByCompanyId($company_id);
+            $services = Services::findServicesByCompanyId($company_id,$page,$page_size);
         }
         return $services;
     }
@@ -1423,7 +1425,7 @@ class ServicesAPIController extends AbstractController
             throw new Http400Exception('Service not found', ServiceService::ERROR_SERVICE_NOT_FOUND);
         }
 
-        return Services::handleServiceFromArray([$service]);
+        return Services::handleServiceFromArray([$service->toArray()]);
         //$reviews = Reviews::getReviewsForService2($service_id, 2);
 
         //$reviews = Reviews::getReviewsForService2($serviceId);

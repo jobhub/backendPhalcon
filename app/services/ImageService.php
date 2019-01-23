@@ -29,11 +29,11 @@ use Phalcon\DI\FactoryDefault as DI;
 class ImageService extends AbstractService
 {
 
-    const TYPE_USER = 0;
-    const TYPE_NEWS = 1;
-    const TYPE_REVIEW = 2;
-    const TYPE_SERVICE = 3;
-    const TYPE_COMPANY = 4;
+    const TYPE_USER = 'user';
+    const TYPE_NEWS = 'news';
+    const TYPE_REVIEW = 'review';
+    const TYPE_SERVICE = 'service';
+    const TYPE_COMPANY = 'company';
 
     const ADDED_CODE_NUMBER = 7000;
 
@@ -45,7 +45,7 @@ class ImageService extends AbstractService
     const ERROR_UNABLE_SAVE_IMAGE = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_IMAGE = 6 + self::ADDED_CODE_NUMBER;
 
-    public function getImageById(int $id, int $type)
+    public function getImageById(int $id, $type)
     {
         switch ($type) {
             case self::TYPE_USER:
@@ -67,6 +67,28 @@ class ImageService extends AbstractService
             throw new ServiceException('Image not found', self::ERROR_IMAGE_NOT_FOUND);
         }
         return $image;
+    }
+
+    public function getImages(int $objectId,$type, $page = 1, $page_size = ImagesModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        switch ($type) {
+            case self::TYPE_USER:
+                $images = ImagesUsers::findImagesForUser($objectId,$page,$page_size);
+                break;
+            case self::TYPE_NEWS:
+                $images = ImagesNews::findImagesForNews($objectId,$page,$page_size);
+                break;
+            case self::TYPE_REVIEW:
+                $images = ImagesReviews::findImagesForReview($objectId,$page,$page_size);
+                break;
+            case self::TYPE_SERVICE:
+                $images = ImagesServices::findImagesForService($objectId,$page,$page_size);
+                break;
+            default:
+                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+        }
+
+        return $images;
     }
 
     /*public function addImagesToUser($files, Users $user)
@@ -196,7 +218,7 @@ class ImageService extends AbstractService
         return $this->saveImagesToObject($files,$review,$imagesIds,self::TYPE_REVIEW);
     }
 
-    private function saveImagesToObject($files, $some_object, array $imagesIds, int $type){
+    private function saveImagesToObject($files, $some_object, array $imagesIds, $type){
         $i = 0;
         foreach ($files as $file) {
             switch ($type) {
@@ -241,7 +263,7 @@ class ImageService extends AbstractService
         return true;
     }
 
-    private function createImage(int $id, string $pathToImage,int $type){
+    private function createImage(int $id, string $pathToImage,$type){
         switch ($type) {
             case self::TYPE_USER:
                 $image = new ImagesUsers();

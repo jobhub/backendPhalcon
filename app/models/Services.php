@@ -95,6 +95,8 @@ class Services extends AccountWithNotDeletedWithCascade
     const publicColumnsInStr = 'service_id, description, date_publication, price_min, price_max,
         region_id, name, rating';
 
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
     /**
      * Method to set the value of field serviceId
      *
@@ -1283,9 +1285,11 @@ class Services extends AccountWithNotDeletedWithCascade
         return $result;
     }
 
-    public static function findServicesForPoint($pointId)
+    public static function findServicesForPoint($pointId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $modelsManager =DI::getDefault()->get('modelsManager');
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
 
         $columns = [];
         foreach (self::publicColumns as $col){
@@ -1298,6 +1302,8 @@ class Services extends AccountWithNotDeletedWithCascade
             ->join('App\Models\ServicesPoints', 's.service_id = sp.service_id', 'sp')
             ->join('App\Models\TradePoints', 'sp.point_id = p.point_id', 'p')
             ->where('p.point_id = :pointId:', ['pointId' => $pointId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 
@@ -1315,28 +1321,34 @@ class Services extends AccountWithNotDeletedWithCascade
         return $service;
     }
 
-    public static function findServicesByUserId($userId){
+    public static function findServicesByUserId($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
-
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id and a.company_id is null', 'a')
             ->where('a.user_id = :userId: and s.deleted = false', ['userId' => $userId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 
         return self::handleServiceFromArray($result->toArray());
     }
 
-    public static function findServicesByCompanyId($companyId){
+    public static function findServicesByCompanyId($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
-
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id', 'a')
             ->where('a.company_id = :companyId: and s.deleted = false', ['companyId' => $companyId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 
@@ -1472,7 +1484,7 @@ class Services extends AccountWithNotDeletedWithCascade
     }
 
     public static function findServiceById($serviceId){
-        return self::findFirst(['columns'=>self::publicColumns,'condition'=>'service_id = :serviceId:',
+        return self::findFirst(['columns'=>self::publicColumns,'conditions'=>'service_id = :serviceId:',
             'bind'=>['serviceId'=>$serviceId]]);
     }
 }

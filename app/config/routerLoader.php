@@ -478,6 +478,16 @@ $routes = [
                 'path' => '/get',
                 'action' => 'getNewsAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/{page}',
+                'action' => 'getNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{page}/{page_size}',
+                'action' => 'getNewsAction'
+            ],
             /**
              * Возвращает все новости юзера и новости тех, на кого он подписан.
              * Пока простая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
@@ -490,6 +500,16 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/all',
+                'action' => 'getAllNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/all/{page}',
+                'action' => 'getAllNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/all/{page}/{page_size}',
                 'action' => 'getAllNewsAction'
             ],
 
@@ -561,6 +581,16 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/own',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}/{page_size}',
                 'action' => 'getOwnNewsAction'
             ],
 
@@ -641,6 +671,22 @@ $routes = [
                 'path' => '/get/for-subject/{id}/{is_company}',
                 'action' => 'getServicesForSubjectAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}/{page_size}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+
             /**
              * Возвращает все услуги данного юзера (или его компании).
              *
@@ -662,6 +708,16 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/own/{company_id}',
+                'action' => 'getOwnServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}',
+                'action' => 'getOwnServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}/{page_size}',
                 'action' => 'getOwnServicesAction'
             ],
 
@@ -1237,6 +1293,92 @@ $routes = [
                 'path' => '/news/like/toggle',
                 'action' => 'toggleLikeCommentForNewsAction'
             ],
+
+
+            /**
+             * Добавляет комментарий к указанному объекту
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type
+             *
+             * @params object_id - id новости
+             * @params comment_text - текст комментария
+             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
+             * Если не указан, то от имени текущего пользователя по умолчанию.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'addCommentAction'
+            ],
+
+            /**
+             * Удаляет комментарий указаннного типа
+             *
+             * @method DELETE
+             *
+             * @param $type string - тип комментария
+             * @param $comment_id int id комментария
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/delete/{type}/{comment_id}',
+                'action' => 'deleteCommentAction'
+            ],
+
+            /**
+             * Удаляет комментарий указаннного типа
+             *
+             * @method DELETE
+             *
+             * @param $type string - тип комментария
+             * @param $comment_id int id комментария
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{comment_id}',
+                'action' => 'deleteCommentAction'
+            ],
+
+            /**
+             * Возвращает комментарии к указанному объекту
+             *
+             * @method GET
+             * @param $type
+             * @param $object_id
+             * @param $parent_id
+             * @param $page
+             * @param $page_size
+             * @return string - json array массив комментариев
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{page}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{page}/{page_size}',
+                'action' => 'getCommentsAction'
+            ],
         ]
     ],
 
@@ -1802,6 +1944,49 @@ $routes = [
         ]
     ],
 
+    '\App\Controllers\ImageController'=>[
+        'prefix' => '/image',
+        'resources' => [
+            /**
+             * Возвращает изображения для указанного объекта.
+             * Тип может быть:
+             *      user
+             *      news
+             *      review
+             *      service
+             *      company (пока еще не реализовано)
+             *
+             * @access private
+             *
+             * @method GET
+             * @param $type string
+             * @param $object_id int
+             * @param $page
+             * @param $page_size
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{page}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{page}/{page_size}',
+                'action' => 'getImagesAction'
+            ],
+        ]
+    ],
+
+
+
     '\App\Controllers\TestController'=>[
         'prefix' => '/moderator/test',
         'resources' => [
@@ -1821,6 +2006,52 @@ $routes = [
                 'type' => 'post',
                 'path' => '/add-news',
                 'action' => 'addNewsAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-likes/{offset}/{count}',
+                'action' => 'addLikesAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-array-like/{news_id}/{user_id}',
+                'action' => 'addArrayLikeAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked/{news_id}/{user_id}',
+                'action' => 'getLikedArrayAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked/{news_id}/{user_id}',
+                'action' => 'getLikedTableAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked-cycle/{news_limit}/{users_limit}',
+                'action' => 'getLikedArrayInCycleAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked-cycle/{news_limit}/{users_limit}/{offset}',
+                'action' => 'getLikedArrayInCycleAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked-cycle/{news_limit}/{users_limit}',
+                'action' => 'getLikedTableInCycleAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked-cycle/{news_limit}/{users_limit}/{offset}',
+                'action' => 'getLikedTableInCycleAction'
             ],
         ]
     ],

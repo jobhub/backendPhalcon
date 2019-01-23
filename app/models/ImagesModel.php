@@ -32,6 +32,7 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     protected $image_path;
 
     const MAX_IMAGES = 10;
+    const DEFAULT_RESULT_PER_PAGE = 10;
 
     /**
      * Method to set the value of field imageid
@@ -119,12 +120,12 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     {
     }
 
-    public static function getComments($imageId)
+    /*public static function getComments($imageId)
     {
         $comments = CommentsImagesUsers::findByImageId($imageId);
 
         return $comments;
-    }
+    }*/
 
     public function delete($delete = false, $data = null, $whiteList = null)
     {
@@ -139,13 +140,17 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
         return $result;
     }
 
+    /**
+     * @param /ResultSet $images
+     * @return array
+     */
     public static function handleImages($images)
     {
         $handledImages = [];
         foreach ($images as $image) {
             $handledImage = [
-                'imageid' => $image->getImageId(),
-                'imagepath' => $image->getImagePath()];
+                'image_id' => $image->getImageId(),
+                'image_path' => $image->getImagePath()];
             $handledImages[] = $handledImage;
         }
         return $handledImages;

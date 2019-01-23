@@ -112,9 +112,16 @@ class ImagesNews extends ImagesModel
     /**
      * return non formatted images objects
      * @param $newsId
+     * @param $page
+     * @param $page_size
      * @return mixed
      */
-    public static function findImagesForNews($newsId){
-        return self::findByNewsId($newsId);
+    public static function findImagesForNews($newsId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) *$page_size;
+        return self::handleImages(
+            self::find(['conditions'=>'news_id = :newsId:','bind'=>['newsId'=>$newsId],
+                'limit'=>$page_size,'offset'=>$offset])
+        );
     }
 }

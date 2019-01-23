@@ -110,3 +110,6 @@ s
 [Sat, 19 Jan 19 15:22:52 +0300][CRITICAL] 1002 Account for user don't found
 [Sat, 19 Jan 19 15:35:34 +0300][CRITICAL] 1002 Account for user don't found
 [Tue, 22 Jan 19 11:32:43 +0300][CRITICAL] 5003 Invalid login
+[Wed, 23 Jan 19 14:13:16 +0300][CRITICAL] 5003 Invalid login
+[Wed, 23 Jan 19 14:19:00 +0300][CRITICAL] 13004 Unable create comment
+[Wed, 23 Jan 19 15:11:16 +0300][CRITICAL] 13004 Unable create comment

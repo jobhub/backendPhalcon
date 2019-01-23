@@ -141,10 +141,17 @@ class ImagesUsers extends ImagesModel
     /**
      * return non formatted images objects
      * @param $userId
+     * @param $page
+     * @param $page_size
      * @return mixed
      */
-    public static function findImagesForUser($userId){
-        return self::findByUserId($userId);
+    public static function findImagesForUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return self::handleImages(
+            self::find(['conditions'=>'user_id = :user_id:','bind'=>['user_id'=>$userId],
+                'limit'=>$page_size,'offset'=>$offset])
+        );
     }
 
     public static function handleImages($images)

@@ -854,39 +854,4 @@ class UserinfoAPIController extends AbstractController
             return $response;
 
     }*/
-
-    public function addUsersAction()
-    {
-        /*$userId = $this->getUserId();
-
-        if ($userId != 6) {
-            throw new Http403Exception('Permission error');
-        }*/
-        $users = [];
-
-        $count = 20000;
-
-        for ($i = 0; $i < $count; $i++) {
-            $user['password'] = '12345678';
-            $user['email'] = 'email'.$i.'@mail.comru';
-            $users[] = $user;
-        }
-
-        $this->db->begin();
-        foreach ($users as $userArr) {
-            $user = new Users();
-            $user->setActivated(true);
-            $user->setEmail($userArr['email']);
-            $user->setPassword($userArr['password']);
-            $user->setRole(ROLE_USER);
-
-            if (!$user->save()) {
-                $this->db->rollback();
-                SupportClass::getErrorsWithException($user,100000,'Не удалось создать пользователя');
-            }
-        }
-        $this->db->commit();
-
-        return self::successResponse('All users successfully created');
-    }
 }

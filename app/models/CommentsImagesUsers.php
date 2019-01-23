@@ -77,7 +77,7 @@ class CommentsImagesUsers extends CommentsModel
     {
         parent::initialize();
         $this->setSource("comments_imagesusers");
-        $this->belongsTo('image_id', 'App\Models\ImagesUsers', 'image_id', ['alias' => 'ImagesUsers']);
+        $this->belongsTo('object_id', 'App\Models\ImagesUsers', 'image_id', ['alias' => 'ImagesUsers']);
     }
 
     public function getSequenceName()

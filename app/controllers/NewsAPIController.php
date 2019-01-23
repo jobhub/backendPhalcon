@@ -36,15 +36,17 @@ class NewsAPIController extends AbstractController
      * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
      * @access private
      *
+     * @param $page
+     * @param $page_size
      * @method GET
      *
      * @return string - json array с новостями (или их отсутствием)
      */
-    public function getNewsAction()
+    public function getNewsAction($page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
-        return News::findNewsForCurrentUser($userId);
+        return News::findNewsForCurrentUser($userId,$page,$page_size);
     }
 
     /**
@@ -53,16 +55,17 @@ class NewsAPIController extends AbstractController
      *
      * @access private
      * @method GET
-     *
+     * @param $page
+     * @param $page_size
      * @return string - json array с новостями (или их отсутствием)
      */
-    public function getAllNewsAction()
+    public function getAllNewsAction($page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
         $response = new Response();
 
-        return News::findAllNewsForCurrentUser($userId);
+        return News::findAllNewsForCurrentUser($userId,$page,$page_size);
     }
 
     /**
@@ -251,18 +254,20 @@ class NewsAPIController extends AbstractController
      *
      * @method GET
      *
+     * @param $page
+     * @param $page_size
      * @param $company_id
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getOwnNewsAction($company_id = null)
+    public function getOwnNewsAction($company_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        if ($company_id != null) {
-            return News::findNewsByCompany($company_id);
+        if ($company_id != null && is_integer($company_id)) {
+            return News::findNewsByCompany($company_id,$page,$page_size);
         } else {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
-            return News::findNewsByUser($userId);
+            return News::findNewsByUser($userId,$page,$page_size);
         }
     }
 
@@ -270,18 +275,19 @@ class NewsAPIController extends AbstractController
      * Возвращает новости указанного объекта
      *
      * @method GET
-     *
+     * @param $page
+     * @param $page_size
      * @param $id
      * @param $is_company (Можно не указывать, значение по умолчанию 0)
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectsNewsAction($id, $is_company = false)
+    public function getSubjectsNewsAction($id, $is_company = false, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
         if ($is_company && strtolower($is_company)!="false")
-            return $news = News::findNewsByCompany($id);
+            return $news = News::findNewsByCompany($id,$page,$page_size);
         else
-            return $news = News::findNewsByUser($id);
+            return $news = News::findNewsByUser($id,$page,$page_size);
     }
 
     /**
