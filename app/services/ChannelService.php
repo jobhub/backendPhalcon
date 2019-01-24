@@ -31,6 +31,8 @@ class ChannelService extends AbstractService
 
     const ERROR_UNABLE_TO_ACCESS_CHANNEL = 13005;
 
+    const ERROR_TRANSACTION = 13005;
+
     /**
      * @param $user_id
      * @param $data
@@ -69,7 +71,7 @@ class ChannelService extends AbstractService
             $subscriber->setChannelId($channel->getId());
             if ($subscriber->save() === false) {
                 $transaction->rollback(
-                    'Cannot save ChannelUsersSubscriber'
+                    'Cannot save ChannelUsersSubscriber '
                 );
             }
 
@@ -105,7 +107,6 @@ class ChannelService extends AbstractService
             );
             if (!$channels)
                 return [];
-
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }

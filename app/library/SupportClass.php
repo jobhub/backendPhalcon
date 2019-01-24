@@ -13,11 +13,13 @@ use Phalcon\Http\Response;
 class SupportClass
 {
 
-    public static function checkInteger($var){
+    public static function checkInteger($var)
+    {
         return ((string)(int)$var == $var);
     }
 
-    public static function checkPositiveInteger($var){
+    public static function checkPositiveInteger($var)
+    {
         return ((string)(int)$var == $var);
     }
 
@@ -25,8 +27,9 @@ class SupportClass
         return ((string)(double)$var == $var);
     }*/
 
-    public static function pullRegions($filename, $db = null){
-        if($db == null)
+    public static function pullRegions($filename, $db = null)
+    {
+        if ($db == null)
             $db = Phalcon\DI::getDefault()->getDb();
 
         $content = file_get_contents($filename);
@@ -35,13 +38,13 @@ class SupportClass
         $str = str_replace('osmId', '"osmId"', $str);
         $str = str_replace('name', '"name"', $str);
         $str = str_replace("'", '"', $str);
-        $regions = json_decode($str,true);
+        $regions = json_decode($str, true);
         //$res = json_decode($str,true);
 
         $db->begin();
-        foreach($regions as $region){
+        foreach ($regions as $region) {
             $regionObj = Regions::findFirstByRegionid($region['osmId']);
-            if(!$regionObj) {
+            if (!$regionObj) {
                 $regionObj = new Regions();
                 $regionObj->setRegionId($region['osmId']);
             }
@@ -53,31 +56,31 @@ class SupportClass
                 foreach ($regionObj->getMessages() as $message) {
                     $errors[] = $message->getMessage();
                 }
-                return ['result' => false,'errors' => $errors];
+                return ['result' => false, 'errors' => $errors];
             }
         }
         $db->commit();
         return ['result' => true];
     }
 
-    public static function transformControllerName($controllerName){
+    public static function transformControllerName($controllerName)
+    {
         $new_controller = array();
-        for($i=0;$i<strlen($controllerName);$i++)
-        {
+        for ($i = 0; $i < strlen($controllerName); $i++) {
             $lowercase = strtolower($controllerName[$i]);
-            if(ord($controllerName[$i])<=90 && $i>0)
-            {
-                $new_controller[]='_';
+            if (ord($controllerName[$i]) <= 90 && $i > 0) {
+                $new_controller[] = '_';
             }
-            $new_controller[]=$lowercase;
+            $new_controller[] = $lowercase;
         }
-        $str = implode('',$new_controller);
-        return implode('',$new_controller);
+        $str = implode('', $new_controller);
+        return implode('', $new_controller);
     }
 
-    public static function writeMessageInLogFile($message){
-        $file = fopen(BASE_PATH.'/public/logs.txt', 'a');
-        fwrite($file,'Дата: '.date('Y-m-d H:i:s').' - '.$message."\r\n");
+    public static function writeMessageInLogFile($message)
+    {
+        $file = fopen(BASE_PATH . '/public/logs.txt', 'a');
+        fwrite($file, 'Дата: ' . date('Y-m-d H:i:s') . ' - ' . $message . "\r\n");
         fflush($file);
         fclose($file);
     }
@@ -97,12 +100,13 @@ class SupportClass
         $rad = M_PI / 180;
         //Calculate distance from latitude and longitude
         $theta = $longitudeFrom - $longitudeTo;
-        $dist = sin($latitudeFrom * $rad) * sin($latitudeTo * $rad) +  cos($latitudeFrom * $rad) * cos($latitudeTo * $rad) * cos($theta * $rad);
+        $dist = sin($latitudeFrom * $rad) * sin($latitudeTo * $rad) + cos($latitudeFrom * $rad) * cos($latitudeTo * $rad) * cos($theta * $rad);
 
-        return acos($dist) / $rad * 60 *  1853;
+        return acos($dist) / $rad * 60 * 1853;
     }
 
-    public static function translateInPhpArrFromPostgreArr($str){
+    public static function translateInPhpArrFromPostgreArr($str)
+    {
         //$str = json_decode($str);
         $str[0] = '[';
         $str[strlen($str) - 1] = ']';
@@ -130,7 +134,8 @@ class SupportClass
         return $response;
     }*/
 
-    public static function getResponseWithErrors($object){
+    public static function getResponseWithErrors($object)
+    {
         $errors = [];
         foreach ($object->getMessages() as $message) {
             $errors[] = $message->getMessage();
@@ -142,7 +147,8 @@ class SupportClass
             ];
     }
 
-    public static function getArrayWithErrors($object){
+    public static function getArrayWithErrors($object)
+    {
         $errors = [];
         foreach ($object->getMessages() as $message) {
             $errors[] = $message->getMessage();
@@ -150,7 +156,8 @@ class SupportClass
         return $errors;
     }
 
-    public static function getResponseWithErrorsFromArray($errors){
+    public static function getResponseWithErrorsFromArray($errors)
+    {
         $response = new Response();
         $response->setJsonContent(
             [
@@ -167,7 +174,8 @@ class SupportClass
      * @param $set
      * @return string
      */
-   public static function to_pg_array($set) {
+    public static function to_pg_array($set)
+    {
         settype($set, 'array'); // can be called with a scalar or array
         $result = array();
         foreach ($set as $t) {
@@ -175,11 +183,70 @@ class SupportClass
                 $result[] = to_pg_array($t);
             } else {
                 $t = str_replace('"', '\\"', $t); // escape double quote
-                if (! is_numeric($t)) // quote only non-numeric values
+                if (!is_numeric($t)) // quote only non-numeric values
                     $t = '"' . $t . '"';
                 $result[] = $t;
             }
         }
         return '{' . implode(",", $result) . '}'; // format
+    }
+
+    /**
+     * Convert Postgres array to php
+     *
+     * @param $s
+     * @param int $start
+     * @param null $end
+     * @return array|null
+     */
+    public static function to_php_array($s, $start = 0, &$end = null)
+    {
+        if (empty($s) || $s[0] != '{') return null;
+        $return = array();
+        $string = false;
+        $quote = '';
+        $len = strlen($s);
+        $v = '';
+        for ($i = $start + 1; $i < $len; $i++) {
+            $ch = $s[$i];
+
+            if (!$string && $ch == '}') {
+                if ($v !== '' || !empty($return)) {
+                    $return[] = $v;
+                }
+                $end = $i;
+                break;
+            } elseif (!$string && $ch == '{') {
+                $v = to_php_array($s, $i, $i);
+            } elseif (!$string && $ch == ',') {
+                $return[] = $v;
+                $v = '';
+            } elseif (!$string && ($ch == '"' || $ch == "'")) {
+                $string = true;
+                $quote = $ch;
+            } elseif ($string && $ch == $quote && $s[$i - 1] == "\\") {
+                $v = substr($v, 0, -1) . $ch;
+            } elseif ($string && $ch == $quote && $s[$i - 1] != "\\") {
+                $string = false;
+            } else {
+                $v .= $ch;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Remove an element from an array.
+     *
+     * @param string|int $element
+     * @param array $array
+     */
+    public static function deleteElement($element, &$array)
+    {
+        $index = array_search($element, $array);
+        if ($index !== false) {
+            unset($array[$index]);
+        }
     }
 }

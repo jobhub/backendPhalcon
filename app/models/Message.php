@@ -77,6 +77,12 @@ class Message extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var string
+     */
+    protected $deleted_by_users;
+
+    /**
+     *
      * @var integer
      */
     protected $answer_of;
@@ -352,6 +358,22 @@ class Message extends \Phalcon\Mvc\Model
         $this->answer_of = $answer_of;
     }
 
+    /**
+     * @return string
+     */
+    public function getDeletedByUsers(): string
+    {
+        return $this->deleted_by_users;
+    }
+
+    /**
+     * @param string $deleted_by_users
+     */
+    public function setDeletedByUsers(string $deleted_by_users)
+    {
+        $this->deleted_by_users = $deleted_by_users;
+    }
+
 
 
     /**
@@ -383,18 +405,23 @@ class Message extends \Phalcon\Mvc\Model
 
     public function getArrayReaded()
     {
-        $query = $this->getModelsManager()->createQuery('SELECT array_to_json(received_users) AS received, array_to_json(readed_users) AS readed FROM message WHERE id = :message_id:');
-        $result = $query->execute(
-            [
-                'message_id' => $this->id
-            ]
-        );
-        $recieved = $result[0]['received'];
+        try{
+        $query = $this->getModelsManager()->createQuery('SELECT array_to_json(received_users) AS received, array_to_json(readed_users) AS readed FROM message WHERE message.id = 36');
+           $result = $query->execute(
+                [
+                    'message_id' => $this->id
+                ]
+            );
+        $toRet = [];
+       /* $recieved = $result[0]['received'];
         $readed = $result[0]['readed'];
         $toRet = [
             'revieved' => json_decode($recieved),
             'readed' => json_decode($readed)
-        ];
+        ];*/
+        }catch (\PDOException $e){
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
         return $toRet;
     }
 
@@ -418,6 +445,34 @@ class Message extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static  function  findDeleted($chat_hit_id){
+        $messages = self::find([
+            'order' => 'create_at ASC',
+            'limit' => self::DEFAULT_RESULT_PER_PAGE,
+            'conditions' => 'chat_hist_id = :chat_hist_id: AND :user_id: = ANY(deleted_by_users)',
+            'bind' => [
+                "chat_hist_id" => $chat_hit_id
+            ],
+            'columns' => self::PUBLIC_COLUMNS
+
+        ]);
+    }
+
+    public static  function  findUnreaded($user_id, $chat_hit_id){
+        $messages = self::find([
+            'order' => 'create_at ASC',
+            'limit' => self::DEFAULT_RESULT_PER_PAGE,
+            'conditions' => 'chat_hist_id = :chat_hist_id: AND :user_id: = ANY(readed_users)',
+            'bind' => [
+                "chat_hist_id" => $chat_hit_id,
+                "user_id" => $user_id
+            ],
+            'columns' => self::PUBLIC_COLUMNS
+
+        ]);
+        return $messages;
     }
 
 }

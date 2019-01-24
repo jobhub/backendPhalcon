@@ -1,0 +1,526 @@
+<?php
+
+namespace App\Services;
+
+
+use App\Controllers\AbstractHttpException;
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Libs\SupportClass;
+use App\Models\Groups;
+use App\Models\Rastreniya;
+use App\Models\RastreniyaResponses;
+use App\Models\UserChatGroups;
+
+use App\Models\Userinfo;
+use App\Models\Users;
+use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
+use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
+
+class RastreniyaService extends AbstractService
+{
+    const ERROR_TRANSACTION = 16001;
+
+    const ERROR_UNABLE_TO_ACCESS_GROUP = 16005;
+
+    public function create($user_id, $data)
+    {
+        $content = $data["content"];
+        $is_incognito = $data["is_incognito"];
+        /*
+         * start validation bloc
+         */
+        if (is_null($content) || strlen(trim($content)) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        if (is_null($is_incognito) || !is_bool($is_incognito)) {
+            throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        if (!Users::isUserExist($user_id)) {
+            throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        /*
+         * End validation block
+         */
+        try {
+            $manager = new TxManager();
+            $transaction = $manager->get();
+
+            $rast = new Rastreniya();
+            $rast->setTransaction($transaction);
+            $rast->setUserId($user_id);
+            $rast->setContent($content);
+            $rast->setIsIncognito($is_incognito);
+
+            if ($rast->save() === false) {
+                $transaction->rollback(
+                    'Cannot save Rast'
+                );
+            }
+
+            $transaction->commit();
+
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return $rast->getPublicInfo();
+    }
+
+    public function updateRast($data)
+    {
+        $content = $data["content"];
+        $is_incognito = $data["is_incognito"];
+        $rast_id = $data["rast_id"];
+        $user_id = $data["user_id"];
+        /*
+         * start validation bloc
+         */
+        if (is_null($content) || strlen(trim($content)) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        if (is_null($is_incognito) || !is_bool($is_incognito)) {
+            throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        $rast = Rastreniya::findFirst([
+            'conditions' => 'id = :rast_id: AND user_id = :user_id:',
+            'bind' => [
+                'rast_id' => $rast_id,
+                'user_id' => $user_id
+            ],
+        ]);
+
+        if (!$rast) {
+            throw new Http400Exception(_('Unable to delete Rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        /*
+         * End validation block
+         */
+        try {
+            $manager = new TxManager();
+            $transaction = $manager->get();
+
+            $rast->setTransaction($transaction);
+            $rast->setContent($content);
+            $rast->setIsIncognito($is_incognito);
+
+            if ($rast->update() === false) {
+                $transaction->rollback(
+                    'Cannot update Rast'
+                );
+            }
+
+            $transaction->commit();
+
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return $rast->getPublicInfo();
+    }
+
+
+    /**
+     * Get all Rastreniya
+     *
+     * @param $user_id int
+     * @param $data array
+     * @return array
+     */
+    public function getRasts($user_id, $data)
+    {
+        if (isset($data["page"]) && is_integer($data["page"]))
+            $page = $data["page"];
+        else
+            $page = 1;
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * Rastreniya::DEFAULT_RESULT_PER_PAGE;
+        try {
+            $rasts = Rastreniya::find([
+                /*'conditions' => 'user_id = :user_id:',
+                'bind' => [
+                    "user_id" => $user_id
+                ],*/
+                'limit' => Rastreniya::DEFAULT_RESULT_PER_PAGE,
+                'order' => 'create_at DESC',
+                'offset' => $offset, // offset of result
+            ]);
+            $toRet = [];
+            foreach ($rasts as $rast) {
+                $user = Userinfo::findUserInfoById($user_id, Userinfo::shortColumnsInStr);
+                if (!$user) {
+                    $user = $rast->getRelated('User', [
+                        'columns' => ['user_id', 'email']
+                    ]);
+                }
+                $likes = SupportClass::to_php_array($rast->getLikeUsers());
+                $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
+                $item = ['infos' => $rast->getPublicInfo()];
+                $item['owner'] = $user;
+                $item['likes'] = sizeof($likes);
+                $item['dislikes'] = sizeof($dislikes);
+                $item['comments'] = self::countComments($rast->getId());
+                if (in_array($user_id, $likes)) {
+                    $item['is_liked'] = true;
+                } else if (in_array($user_id, $dislikes)) {
+                    $item['is_disliked'] = true;
+                }
+                if ($item['comments']['total'] > 0) {
+                    // Load last comments info;
+                    $last = RastreniyaResponses::findFirst([
+                        'conditions' => 'rastreniya_id = :rast_id:',
+                        'bind' => [
+                            'rast_id' => $rast->getId()
+                        ],
+                        'order' => 'create_at DESC',
+                        'columns' => RastreniyaResponses::PUBLIC_COLUMNS
+                    ]);
+                    if ($user_id == $last->user_id)
+                        $owner = $user;
+                    else
+                        $owner = Userinfo::findUserInfoById($last->user_id, Userinfo::shortColumnsInStr);
+                    $item['comments']['last_comment'] = $last;
+                    $item['comments']['user_info'] = $owner;
+                }
+                array_push($toRet, $item);
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $toRet;
+    }
+
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function likeRast($data)
+    {
+        try {
+            if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
+                throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $rast_id = $data["rast_id"];
+            $user_id = $data["user_id"];
+            if (!Users::isUserExist($user_id)) {
+                throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :id:',
+                'bind' => [
+                    'id' => $rast_id
+                ]
+            ]);
+            if (!$rast)
+                throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+
+            $rast->like($user_id);
+
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function dislikeRast($data)
+    {
+        try {
+            if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
+                throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $rast_id = $data["rast_id"];
+            $user_id = $data["user_id"];
+            if (!Users::isUserExist($user_id)) {
+                throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :id:',
+                'bind' => [
+                    'id' => $rast_id
+                ]
+            ]);
+            if (!$rast)
+                throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+
+            $rast->dislike($user_id);
+
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function newResponse($data)
+    {
+        $rast_id = $data["rast_id"];
+        $user_id = $data["user_id"];
+        $content = $data["content"];
+        $parent_id = $data["parent_id"];
+
+        if (is_null($content) || strlen(trim($content)) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
+            throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        try {
+            if (!Users::isUserExist($user_id)) {
+                throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $manager = new TxManager();
+            $transaction = $manager->get();
+
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :id:',
+                'bind' => [
+                    'id' => $rast_id
+                ]
+            ]);
+            if (!$rast)
+                throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+
+            $response = new RastreniyaResponses();
+            $response->setTransaction($transaction);
+
+            $response->setContent($content);
+            $response->setUserId($user_id);
+            $response->setRastreniyaId($rast_id);
+
+            if (isset($data["parent_id"]) || is_integer($data["parent_id"])) {
+                $parent_id = $data["parent_id"];
+                $parent = RastreniyaResponses::findFirst([
+                    'conditions' => ' id = :id: AND rastreniya_id = :rast_id:',
+                    'bind' => [
+                        'rast_id' => $rast->getId(),
+                        'id' => $parent_id
+                    ]
+                ]);
+
+                if (!$parent) {
+                    $this->log('Unable to set the parent ' . $parent_id . ' of a response in rastreniya id = ' . $rast_id);
+                } else {
+                    if ($parent->getParentId() != null)
+                        $response->setParentId($parent->getParentId());
+                    else
+                        $response->setParentId($parent_id);
+                }
+            }
+
+
+            if ($response->save() === false) {
+                $transaction->rollback(
+                    'Cannot save Rastreniya'
+                );
+            }
+            $transaction->commit();
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return $response->getPublicInfo();
+    }
+
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function getResponses($data)
+    {
+        $rast_id = $data["rast_id"];
+        $user_id = $data["user_id"];
+        $content = $data["content"];
+        if (isset($data["page"]) && is_integer($data["page"]))
+            $page = $data["page"];
+        else
+            $page = 1;
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * RastreniyaResponses::DEFAULT_RESULT_PER_PAGE;
+        if (is_null($content) || strlen(trim($content)) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
+            throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        try {
+            if (!Users::isUserExist($user_id)) {
+                throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :id:',
+                'bind' => [
+                    'id' => $rast_id
+                ]
+            ]);
+            if (!$rast)
+                throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+
+            // Load last comments info;
+            $responses = RastreniyaResponses::find([
+                'conditions' => 'rastreniya_id = :rast_id: AND parent_id IS NULL ',
+                'bind' => [
+                    'rast_id' => $rast->getId()
+                ],
+                'limit' => RastreniyaResponses::DEFAULT_RESULT_PER_PAGE,
+                'order' => 'create_at DESC',
+                'offset' => $offset, // offset of result
+            ]);
+            $toRet = [];
+            foreach ($responses as $resp) {
+                $item = ['info' => $resp->getPublicInfo()];
+                $owner = Userinfo::findUserInfoById($resp->getUserId(), Userinfo::shortColumnsInStr);
+                if (!$owner) {
+                    $owner = $resp->getRelated('User', [
+                        'columns' => ['user_id', 'email']
+                    ]);
+                }
+                $item['user_info'] = $owner;
+                $item['childs'] = self::getChildResponse($resp->getId(), $rast->getId());
+                array_push($toRet, $item);
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return $toRet;
+    }
+
+    /**
+     * Get all responses of response
+     *
+     * @param $response_id
+     * @param $rast_id
+     * @return array
+     */
+    public function getChildResponse($response_id, $rast_id)
+    {
+        // Load last comments info;
+        $responses = RastreniyaResponses::find([
+            'conditions' => 'rastreniya_id = :rast_id: AND parent_id = :parent_id: ',
+            'bind' => [
+                'rast_id' => $rast_id,
+                'parent_id' => $response_id,
+            ],
+            //'limit' => RastreniyaResponses::DEFAULT_RESULT_PER_PAGE,
+            'order' => 'create_at DESC',
+            //'offset' => $offset, // offset of result
+        ]);
+        $toRet = [];
+        foreach ($responses as $resp) {
+            $item = ['info' => $resp->getPublicInfo()];
+            $owner = Userinfo::findUserInfoById($resp->getUserId(), Userinfo::shortColumnsInStr);
+            if (!$owner) {
+                $owner = $resp->getRelated('User', [
+                    'columns' => ['user_id', 'email']
+                ]);
+            }
+            $item['user_info'] = $owner;
+            array_push($toRet, $item);
+        }
+        return $toRet;
+    }
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function deleteResponses($data)
+    {
+        $response_id = $data["response_id"];
+        $user_id = $data["user_id"];
+        if (!isset($response_id) || !is_integer($response_id)) {
+            throw new Http400Exception(_('Missing response id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        try {
+            // Load last comments info;
+            $response = RastreniyaResponses::findFirst([
+                'conditions' => 'id = :resp_id: AND user_id = :user_id:',
+                'bind' => [
+                    'resp_id' => $response_id,
+                    'user_id' => $user_id
+                ],
+            ]);
+            $this->log($response_id . ' and ' . $user_id);
+            if (!$response) {
+                throw new Http400Exception(_('Unable to delete response'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+            $response->delete();
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return true;
+    }
+
+    /**
+     * likeRast
+     *
+     * @param $data
+     * @return bool
+     */
+    public function deleteRast($data)
+    {
+        $rast_id = $data["rast_id"];
+        $user_id = $data["user_id"];
+        if (!isset($rast_id) || !is_integer($rast_id)) {
+            throw new Http400Exception(_('Missing rast id'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        try {
+            // Load last comments info;
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :rast_id: AND user_id = :user_id:',
+                'bind' => [
+                    'rast_id' => $rast_id,
+                    'user_id' => $user_id
+                ],
+            ]);
+
+            if (!$rast) {
+                throw new Http400Exception(_('Unable to delete Rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            }
+
+            $rast->delete();
+            $this->log('Deletion of rastreniya '.$rast_id . '  by user ' . $user_id);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return true;
+    }
+
+    public function countComments($rast_id)
+    {
+        return $this->db->fetchOne('SELECT COUNT(*) AS total FROM rastreniya_responses WHERE deleted != TRUE AND rastreniya_id = ' . $rast_id);
+    }
+
+}

@@ -83,6 +83,7 @@ $di->setShared('commentService', '\App\Services\CommentService');
 $di->setShared('likeService', '\App\Services\LikeService');
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');
+$di->setShared('rastreniyaService', '\App\Services\RastreniyaService');
 
 
 $di['mailer'] = function() {

@@ -485,7 +485,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         //$this->setSchema("service_services");
         $this->setSource("userinfo");
-        $this->belongsTo('user_id', '\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**

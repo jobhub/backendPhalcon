@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use http\Client\Curl\User;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
@@ -290,7 +291,7 @@ class Users extends NotDeletedModelWithCascade
     {
         //$this->setSchema("service_services");
         $this->setSource("users");
-        $this->hasOne('user_id', 'App\Models\Userinfo', 'userid', ['alias' => 'Userinfo']);
+        $this->hasOne('user_id', 'App\Models\Userinfo', 'user_id', ['alias' => 'Userinfo']);
         $this->belongsTo('phone_id', 'Phones', 'phone_id', ['alias' => 'Phones']);
     }
 
@@ -576,20 +577,21 @@ class Users extends NotDeletedModelWithCascade
     }
 
     /**
+     * @param $user_id
      * @return array
      */
-    public function getUserShortInfo(){
-      /*  $userInfo = $this->getRelated('Userinfo', [
+    public function getUserShortInfo($user_id = null){
+        $userInfo = $this->getRelated('Userinfo', [
             'columns' => Userinfo::shortColumns
         ]);
-
-        if($userInfo)
-            return $userInfo->toArray();
-*/
-        return [
-                'userid' => $this->user_id ,
+        if(! $userInfo)
+            return [
+            'user_id' => $this->user_id ,
                 'email' => $this->email
             ];
+
+            return $userInfo->toArray();
+
     }
 
     /**
@@ -597,6 +599,8 @@ class Users extends NotDeletedModelWithCascade
      * @return bool
      */
     public static function isUserExist($id){
+        if(is_null($id) || empty($id))
+            return false;
         $user = parent::findFirst($id);
         if(!$user)
             return false;
