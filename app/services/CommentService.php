@@ -120,7 +120,7 @@ class CommentService extends AbstractService {
         return $comment;
     }
 
-    public function getParentComments(int $objectId, $type, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
+    public function getParentComments(int $objectId, $type,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
         switch ($type) {
             case self::TYPE_USER_IMAGES:
                 $model = 'CommentsImagesUsers';
@@ -135,12 +135,12 @@ class CommentService extends AbstractService {
                 throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
         }
 
-        $comments = CommentsModel::findParentComments($model,$objectId,$page,$page_size);
+        $comments = CommentsModel::findParentComments($model,$objectId,$page,$page_size,$accountId);
 
         return $comments;
     }
 
-    public function getChildComments(int $objectId, $type, $parentId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
+    public function getChildComments(int $objectId, $type, $parentId,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
         switch ($type) {
             case self::TYPE_USER_IMAGES:
                 $model = 'CommentsImagesUsers';
@@ -155,7 +155,7 @@ class CommentService extends AbstractService {
                 throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
         }
 
-        $comments = CommentsModel::findChildComments($model,$objectId,$parentId,$page,$page_size);
+        $comments = CommentsModel::findChildComments($model,$objectId,$parentId,$page,$page_size,$accountId);
 
         return $comments;
     }

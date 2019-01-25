@@ -89,13 +89,31 @@ class Services extends AccountWithNotDeletedWithCascade
 
     protected $rating;
 
+    protected $likes;
+
     const publicColumns = ['service_id', 'description', 'date_publication', 'price_min', 'price_max',
-        'region_id', 'name', 'rating'];
+        'region_id', 'name', 'rating', 'likes'];
 
     const publicColumnsInStr = 'service_id, description, date_publication, price_min, price_max,
-        region_id, name, rating';
+        region_id, name, rating, likes';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param mixed $likes
+     */
+    public function setLikes($likes)
+    {
+        $this->likes = $likes;
+    }
 
     /**
      * Method to set the value of field serviceId
@@ -1321,7 +1339,7 @@ class Services extends AccountWithNotDeletedWithCascade
         return $service;
     }
 
-    public static function findServicesByUserId($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+    public static function findServicesByUserId($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE,$accountId = null){
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
@@ -1330,15 +1348,16 @@ class Services extends AccountWithNotDeletedWithCascade
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id and a.company_id is null', 'a')
             ->where('a.user_id = :userId: and s.deleted = false', ['userId' => $userId])
+            ->orderBy('service_id desc')
             ->limit($page_size)
             ->offset($offset)
             ->getQuery()
             ->execute();
 
-        return self::handleServiceFromArray($result->toArray());
+        return self::handleServiceFromArray($result->toArray(),$accountId);
     }
 
-    public static function findServicesByCompanyId($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+    public static function findServicesByCompanyId($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE, $accountId=null){
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
@@ -1347,16 +1366,23 @@ class Services extends AccountWithNotDeletedWithCascade
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id', 'a')
             ->where('a.company_id = :companyId: and s.deleted = false', ['companyId' => $companyId])
+            ->orderBy('service_id desc')
             ->limit($page_size)
             ->offset($offset)
             ->getQuery()
             ->execute();
 
-        return self::handleServiceFromArray($result->toArray());
+        return self::handleServiceFromArray($result->toArray(),$accountId);
     }
 
-    public static function handleServiceFromArray(array $services){
+    public static function handleServiceFromArray(array $services, $accountId = null){
         $servicesAll = [];
+
+        if($accountId == null){
+            $session = DI::getDefault()->get('session');
+            $accountId = $session->get('accountId');
+        }
+
         foreach ($services as $service) {
             $serviceAll = $service;
 
@@ -1402,6 +1428,8 @@ class Services extends AccountWithNotDeletedWithCascade
             $serviceAll['tags'] = count($tags) > 0 ?
                 $tags : [];
            // $serviceAll['rating_count'] = count(Reviews::getReviewsForService($service['service']['service_id']));
+            $serviceAll = LikeModel::handleObjectWithLikes($serviceAll,$service,$accountId);
+            unset($serviceAll['likes']);
 
 
             $servicesAll[] = $serviceAll;

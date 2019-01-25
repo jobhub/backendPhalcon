@@ -31,8 +31,26 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     protected $image_path;
 
+    protected $likes;
+
     const MAX_IMAGES = 10;
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param mixed $likes
+     */
+    public function setLikes($likes)
+    {
+        $this->likes = $likes;
+    }
 
     /**
      * Method to set the value of field imageid

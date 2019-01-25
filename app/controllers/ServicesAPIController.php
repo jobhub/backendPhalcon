@@ -46,13 +46,26 @@ class ServicesAPIController extends AbstractController
      * @param $is_company
      * @param $page
      * @param $page_size
+     * @param $account_id
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getServicesForSubjectAction($id, $is_company = false, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    public function getServicesForSubjectAction($id, $is_company = false, $account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
+        $userId = self::getUserId();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getServices')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
         if ($is_company && strtolower($is_company) != "false") {
             $services = Services::findServicesByCompanyId($id,$page,$page_size);
         } else {
@@ -79,11 +92,21 @@ class ServicesAPIController extends AbstractController
     {
         $userId = self::getUserId();
         if ($company_id == null || !is_integer($company_id)) {
+            $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+            $this->session->set('accountId',$accountId);
             $services = Services::findServicesByUserId($userId,$page,$page_size);
         } else {
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getServices')) {
+            if(!Accounts::checkUserHavePermissionToCompany($userId,$company_id,'getServices')){
                 throw new Http403Exception('Permission error');
             }
+
+            $accountId = Accounts::findFirst(['user_id = :userId: and company_id = :companyId:','bind'=>
+                [
+                    'userId'=>$userId,
+                    'companyId'=>$company_id
+                ]])->getId();
+
+            $this->session->set('accountId',$accountId);
             $services = Services::findServicesByCompanyId($company_id,$page,$page_size);
         }
         return $services;

@@ -105,6 +105,9 @@ class SupportClass
 
     public static function translateInPhpArrFromPostgreArr($str){
         //$str = json_decode($str);
+        if(is_null($str))
+            return [];
+
         $str[0] = '[';
         $str[strlen($str) - 1] = ']';
 

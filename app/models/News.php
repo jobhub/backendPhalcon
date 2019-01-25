@@ -45,9 +45,9 @@ class News extends AccountWithNotDeletedWithCascade
 
     protected $likes;
 
-    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title'];
+    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title', 'likes'];
 
-    const publicColumnsInStr = 'news_id, publish_date, news_text, title';
+    const publicColumnsInStr = 'news_id, publish_date, news_text, title, likes';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
 
@@ -368,11 +368,18 @@ class News extends AccountWithNotDeletedWithCascade
         return self::handleNewsFromArray($result->toArray());
     }
 
-    private static function handleNewsFromArray(array $news)
+    private static function handleNewsFromArray(array $news, $accountId = null)
     {
         $newsWithAll = [];
+
+        if($accountId == null){
+            $session = DI::getDefault()->get('session');
+            $accountId = $session->get('accountId');
+        }
+
         foreach ($news as $newsElement) {
             $newsWithAllElement = $newsElement/*->toArray()*/;
+            unset($newsWithAllElement['likes']);
             if ($newsElement['account_id']!= null) {
                 $account = Accounts::findFirstById($newsElement['account_id']);
                 if ($account->getCompanyId() == null) {
@@ -385,9 +392,7 @@ class News extends AccountWithNotDeletedWithCascade
                 }
             }
 
-            $newsWithAllElement['stats'] = new Stats();
-
-            $newsWithAllElement['liked'] = rand() % 2 == 0 ? true : false;
+            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement,$newsElement,$accountId);
 
             $imagesNews = ImagesNews::findImagesForNews($newsElement['news_id']);
 
@@ -396,9 +401,12 @@ class News extends AccountWithNotDeletedWithCascade
                 $newsWithAllElement['images'][] = $image['image_path'];
             }
 
-            $newsWithAllElement['comments'] = CommentsNews::getComments($newsElement['news_id']);
+            $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews',$newsElement['news_id']);
 
-            $newsWithAllElement['stats']->setComments(count($newsWithAllElement['comments']));
+            $newsWithAllElement['last_comment'] = $last_comment;
+
+            $newsWithAllElement['stats']['comments'] = count(CommentsNews::findByObjectId($newsElement['news_id']));
+
             $newsWithAll[] = $newsWithAllElement;
         }
         return $newsWithAll;

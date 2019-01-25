@@ -598,12 +598,19 @@ $routes = [
              * Возвращает новости указанного объекта
              *
              * @method GET
-             *
+             * @param $page
+             * @param $page_size
              * @param $id
-             * @param $is_company (Можно не указывать, значение по умолчанию false)
+             * @param $is_company (Можно не указывать, значение по умолчанию 0)
+             * @param $account_id - аккаунт от имени которого совершаются действия.
              *
              * @return string - json array объектов news или Status, если ошибка
              */
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
             [
                 'type' => 'get',
                 'path' => '/get/by-subject/{id}/{is_company}',
@@ -611,7 +618,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/by-subject/{id}',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
                 'action' => 'getSubjectsNewsAction'
             ],
 
@@ -661,6 +678,9 @@ $routes = [
              *
              * @param $id
              * @param $is_company
+             * @param $page
+             * @param $page_size
+             * @param $account_id
              * @return string -  массив услуг в виде:
              *      [{serviceid, description, datepublication, pricemin, pricemax,
              *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
@@ -678,12 +698,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/for-subject/{id}/{is_company}/{page}',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}',
                 'action' => 'getServicesForSubjectAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/for-subject/{id}/{is_company}/{page}/{page_size}',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}/{page}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
                 'action' => 'getServicesForSubjectAction'
             ],
 
@@ -1161,6 +1186,12 @@ $routes = [
 
     '\App\Controllers\CommentsAPIController'=>[
         'prefix' => '/comment',
+        /**
+         * Возможные значения для $type:
+         *      user-image
+         *      news
+         *      services
+         */
         'resources' => [
             /**
              * Возвращает комментарии к указанной фотографии пользователя
@@ -1171,11 +1202,11 @@ $routes = [
              *
              * @return string - json array массив комментариев
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/images-users/get/{image_id}',
                 'action' => 'getCommentsForImageAction'
-            ],
+            ],*/
 
             /**
              * Возвращает комментарии к указанной новости
@@ -1186,11 +1217,11 @@ $routes = [
              *
              * @return string - json array массив комментариев
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/news/get/{news_id}',
                 'action' => 'getCommentsForNewsAction'
-            ],
+            ],*/
 
             /**
              * Добавляет комментарий к фотографии пользователя
@@ -1205,11 +1236,11 @@ $routes = [
              *
              * @return string - json array в формате Status + id созданного комментария
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/images-users/add',
                 'action' => 'addCommentForImageAction'
-            ],
+            ],*/
 
             /**
              * Удаляет комментарий, оставленный к фотографии пользователя
@@ -1220,11 +1251,11 @@ $routes = [
              *
              * @return string - json array в формате Status - результат операции
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/images-users/delete/{comment_id}',
                 'action' => 'deleteCommentForImageAction'
-            ],
+            ],*/
 
             /**
              * Добавляет комментарий к новости
@@ -1234,16 +1265,16 @@ $routes = [
              *
              * @params object_id - id новости
              * @params comment_text - текст комментария
-             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
+             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.ыфя
              * Если не указан, то от имени текущего пользователя по умолчанию.
              *
              * @return string - json array в формате Status - результат операции
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/news/add',
                 'action' => 'addCommentForNewsAction'
-            ],
+            ],*/
 
             /**
              * Удаляет комментарий, оставленный к фотографии пользователя
@@ -1254,11 +1285,11 @@ $routes = [
              *
              * @return string - json array в формате Status - результат операции
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/news/delete/{comment_id}',
                 'action' => 'deleteCommentForNewsAction'
-            ],
+            ],*/
 
             /**
              * Меняет лайкнутость текущим пользователем указанного комментария.
@@ -1271,11 +1302,11 @@ $routes = [
              *
              * @return Response
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/images-users/like/toggle',
                 'action' => 'toggleLikeCommentForImageAction'
-            ],
+            ],*/
 
             /**
              * Меняет лайкнутость текущим пользователем указанного комментария.
@@ -1288,11 +1319,11 @@ $routes = [
              *
              * @return Response
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/news/like/toggle',
                 'action' => 'toggleLikeCommentForNewsAction'
-            ],
+            ],*/
 
 
             /**
@@ -1355,6 +1386,7 @@ $routes = [
              * @param $type
              * @param $object_id
              * @param $parent_id
+             * @param $account_id
              * @param $page
              * @param $page_size
              * @return string - json array массив комментариев
@@ -1371,12 +1403,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{type}/{object_id}/{parent_id}/{page}',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}',
                 'action' => 'getCommentsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{type}/{object_id}/{parent_id}/{page}/{page_size}',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}/{page}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}/{page}/{page_size}',
                 'action' => 'getCommentsAction'
             ],
         ]
@@ -1963,6 +2000,7 @@ $routes = [
              * @param $object_id int
              * @param $page
              * @param $page_size
+             * @param $account_id
              * @params (обязательно) изображения. Именование не важно.
              *
              * @return string - json array в формате Status - результат операции
@@ -1974,18 +2012,46 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{type}/{object_id}/{page}',
+                'path' => '/get/{type}/{object_id}/{account_id}',
                 'action' => 'getImagesAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{type}/{object_id}/{page}/{page_size}',
+                'path' => '/get/{type}/{object_id}/{account_id}/{page}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{account_id}/{page}/{page_size}',
                 'action' => 'getImagesAction'
             ],
         ]
     ],
 
+    '\App\Controllers\LikeController'=>[
+        'prefix' => '/like',
+        'resources' => [
 
+            /**
+             * Меняет лайкнутость текущим пользователем указанного комментария.
+             *
+             * @method POST
+             *
+             * @param $type
+             * @params object_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            [
+                'type' => 'post',
+                'path' => '/toggle/{type}',
+                'action' => 'toggleLikeAction'
+            ],
+
+        ]
+    ],
 
     '\App\Controllers\TestController'=>[
         'prefix' => '/moderator/test',

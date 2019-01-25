@@ -11,17 +11,9 @@ namespace App\Controllers;
 use App\Controllers\HttpExceptions\Http403Exception;
 use App\Libs\SupportClass;
 use App\Models\ImagesModel;
-use App\Models\Users;
-use App\Models\Userinfo;
-use App\Models\PhonesUsers;
-use App\Models\ImagesUsers;
-use App\Models\News;
-use App\Models\FavoriteUsers;
-use App\Models\FavoriteCompanies;
+use App\Models\Accounts;
 
 use App\Services\ImageService;
-use App\Services\UserInfoService;
-use App\Services\UserService;
 
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Paginator\Adapter\Model as Paginator;
@@ -59,12 +51,26 @@ class ImageController extends AbstractController
      * @param $object_id int
      * @param $page
      * @param $page_size
+     * @param $account_id
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function getImagesAction($type, $object_id, $page = 1, $page_size = ImagesModel::DEFAULT_RESULT_PER_PAGE)
+    public function getImagesAction($type, $object_id,$account_id = null, $page = 1,
+                                    $page_size = ImagesModel::DEFAULT_RESULT_PER_PAGE)
     {
+        $userId = self::getUserId();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
         try {
             $images = $this->imageService->getImages($object_id,$type,$page,$page_size);
         } catch (ServiceException $e) {

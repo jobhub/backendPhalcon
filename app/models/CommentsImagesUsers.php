@@ -95,15 +95,4 @@ class CommentsImagesUsers extends CommentsModel
     {
         return 'comments_imagesusers';
     }
-
-    public static function getComments($imageId){
-        $comments = CommentsImagesUsers::find(['image_id = :imageId:','bind' =>['imageId'=> $imageId],
-            'order' => 'comment_date DESC'],false);
-
-        $comments_arr =  CommentsModel::handleComments($comments->toArray());
-        for($i = 0; $i < count($comments_arr);$i++){
-            $comments_arr[$i]['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comments_arr[$i]['comment_id']));
-        }
-        return $comments_arr;
-    }
 }

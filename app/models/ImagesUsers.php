@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
@@ -150,21 +152,25 @@ class ImagesUsers extends ImagesModel
         $offset = ($page - 1) * $page_size;
         return self::handleImages(
             self::find(['conditions'=>'user_id = :user_id:','bind'=>['user_id'=>$userId],
-                'limit'=>$page_size,'offset'=>$offset])
+                'limit'=>$page_size,'offset'=>$offset,'order'=>'image_id desc'])->toArray()
         );
     }
 
     public static function handleImages($images)
     {
+        $session = DI::getDefault()->get('session');
+        $accountId = $session->get('accountId');
+
         $handledImages = [];
         foreach ($images as $image) {
             $handledImage = [
-                'image_id' => $image->getImageId(),
-                'image_path' => $image->getImagePath()];
+                'image_id' => $image['image_id'],
+                'image_path' => $image['image_path']];
 
-            $handledImage['stats'] = new Stats();
-            $handledImage['comments'] = CommentsImagesUsers::getComments($image->getImageId());
-            $handledImage['stats']->setComments(count($handledImage['comments']));
+            $handledImage['stats']['comments'] = count(CommentsImagesUsers::findByObjectId($handledImage['image_id']));
+
+            $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
+
             $handledImages[] = $handledImage;
         }
         return $handledImages;

@@ -44,8 +44,9 @@ class NewsAPIController extends AbstractController
      */
     public function getNewsAction($page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
+        $userId = self::getUserId();
+        $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+        $this->session->set('accountId',$accountId);
         return News::findNewsForCurrentUser($userId,$page,$page_size);
     }
 
@@ -61,9 +62,9 @@ class NewsAPIController extends AbstractController
      */
     public function getAllNewsAction($page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        $response = new Response();
+        $userId = self::getUserId();
+        $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+        $this->session->set('accountId',$accountId);
 
         return News::findAllNewsForCurrentUser($userId,$page,$page_size);
     }
@@ -262,11 +263,25 @@ class NewsAPIController extends AbstractController
      */
     public function getOwnNewsAction($company_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
+        $userId = self::getUserId();
+
         if ($company_id != null && is_integer($company_id)) {
+            if(!Accounts::checkUserHavePermissionToCompany($userId,$company_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+
+            $accountId = Accounts::findFirst(['user_id = :userId: and company_id = :companyId:','bind'=>
+            [
+                'userId'=>$userId,
+                'companyId'=>$company_id
+            ]])->getId();
+
+            $this->session->set('accountId',$accountId);
+
             return News::findNewsByCompany($company_id,$page,$page_size);
         } else {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+            $this->session->set('accountId',$accountId);
             return News::findNewsByUser($userId,$page,$page_size);
         }
     }
@@ -279,11 +294,24 @@ class NewsAPIController extends AbstractController
      * @param $page_size
      * @param $id
      * @param $is_company (Можно не указывать, значение по умолчанию 0)
+     * @param $account_id - аккаунт от имени которого совершаются действия.
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectsNewsAction($id, $is_company = false, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
+    public function getSubjectsNewsAction($id, $is_company = false, $account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
+        $userId = self::getUserId();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
         if ($is_company && strtolower($is_company)!="false")
             return $news = News::findNewsByCompany($id,$page,$page_size);
         else

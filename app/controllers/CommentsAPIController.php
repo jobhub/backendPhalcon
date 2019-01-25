@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 
+use App\Models\AccountModel;
 use App\Models\CommentsModel;
 use App\Services\AccountService;
 use App\Services\LikeService;
@@ -181,7 +182,7 @@ class CommentsAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $liked = $this->likeService->toggleLike($data['comment_id'],$data['account_id'], LikeService::TYPE_COMMENT_USER_IMAGES);
+            $liked = $this->likeService->toggleLike($data['comment_id'], $data['account_id'], LikeService::TYPE_COMMENT_USER_IMAGES);
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -201,7 +202,7 @@ class CommentsAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Like was toggled',['liked'=>$liked]);
+        return self::successResponse('Like was toggled', ['liked' => $liked]);
     }
 
     /**
@@ -350,7 +351,7 @@ class CommentsAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $liked = $this->likeService->toggleLike($data['comment_id'],$data['account_id'], LikeService::TYPE_COMMENT_NEWS);
+            $liked = $this->likeService->toggleLike($data['comment_id'], $data['account_id'], LikeService::TYPE_COMMENT_NEWS);
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -370,7 +371,7 @@ class CommentsAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Like was toggled',['liked'=>$liked]);
+        return self::successResponse('Like was toggled', ['liked' => $liked]);
     }
 
     /**
@@ -450,7 +451,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteCommentAction($type,$comment_id)
+    public function deleteCommentAction($type, $comment_id)
     {
         try {
             $auth = $this->session->get('auth');
@@ -498,17 +499,33 @@ class CommentsAPIController extends AbstractController
      * @param $type
      * @param $object_id
      * @param $parent_id
+     * @param $account_id
      * @param $page
      * @param $page_size
      * @return string - json array массив комментариев
      */
-    public function getCommentsAction($type,$object_id,int $parent_id = null,$page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT)
+    public function getCommentsAction($type, $object_id, $parent_id = null, $account_id = null, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT)
     {
         try {
+            if (self::isAuthorized()) {
+                $userId = self::getUserId();
+                if ($account_id == null || !is_integer(intval($account_id))) {
+                    $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+                }
+
+
+                if (!Accounts::checkUserHavePermission($userId, $account_id, 'getComments')) {
+                    throw new Http403Exception('Permission error');
+                }
+
+            } else
+                $account_id = null;
+
+
             if ($parent_id != null && is_integer($parent_id)) {
-                $comments = $this->commentService->getChildComments($object_id,$type,$parent_id,$page,$page_size);
-            } else{
-                $comments = $this->commentService->getParentComments($object_id,$type,$page,$page_size);
+                $comments = $this->commentService->getChildComments($object_id, $type, $parent_id,$account_id, $page, $page_size);
+            } else {
+                $comments = $this->commentService->getParentComments($object_id, $type,$account_id, $page, $page_size);
             }
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
