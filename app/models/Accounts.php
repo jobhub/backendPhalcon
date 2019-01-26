@@ -225,6 +225,13 @@ class Accounts extends \Phalcon\Mvc\Model
         return true;
     }
 
+    public function getUserInfomations(){
+        if(is_null($this->user_id)){
+            return Companies::findFirst($this->company_id);
+        }
+       return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumnsInStr);
+    }
+
     /**
      * Returns table name mapped in the model.
      *

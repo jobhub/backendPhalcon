@@ -6,6 +6,7 @@ use App\Controllers\AbstractController;
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
+use App\Models\Accounts;
 use App\Services\AbstractService;
 use App\Services\ServiceException;
 use App\Services\UserService;
@@ -61,7 +62,7 @@ class RastreniyaController extends AbstractController {
         $action = $data['action'];
         try {
             if(in_array($action, ["likeRast","dislikeRast"]) && method_exists($this->rastreniyaService, $action))
-                $response = $this->rastreniyaService->$action($data, true);
+                $response = $this->rastreniyaService->$action($data);
             else
             {
                 throw new Http400Exception(_('Action not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
@@ -76,11 +77,11 @@ class RastreniyaController extends AbstractController {
 
     public function responseAction(){
         $data = json_decode($this->request->getRawBody(), true);
-        $data["user_id"] = $this->getUserid();;
+        $data["user_id"] = $this->getUserid();
         $action = $data['action'];
         try {
-            if(in_array($action, ["newResponse","getResponses","deleteResponses"]) && method_exists($this->rastreniyaService, $action))
-                $response = $this->rastreniyaService->$action($data, true);
+            if(in_array($action, ["newResponse","getResponses","deleteResponses","updateResponse"]) && method_exists($this->rastreniyaService, $action))
+                $response = $this->rastreniyaService->$action($data);
             else
             {
                 throw new Http400Exception(_('Action not found'), AbstractHttpException::BAD_REQUEST_CONTENT);

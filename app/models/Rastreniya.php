@@ -35,6 +35,13 @@ class Rastreniya extends LikeDislikeModel
 
     /**
      *
+     * @var integer
+     */
+    protected $account_id;
+
+
+    /**
+     *
      * @var string
      */
     protected $content;
@@ -169,6 +176,7 @@ class Rastreniya extends LikeDislikeModel
         $this->setSource("rastreniya");
         $this->hasMany('id', 'App\Models\RastreniyaResponses', 'rastreniya_id', ['alias' => 'RastreniyaResponses']);
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'User']);
+        $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'Account']);
     }
 
     /**
@@ -208,6 +216,22 @@ class Rastreniya extends LikeDislikeModel
        foreach (self::PUBLIC_INFO as $info)
            $toRet[$info] = $this->$info;
        return $toRet;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAccountId()
+    {
+        return $this->account_id;
+    }
+
+    /**
+     * @param int $account_id
+     */
+    public function setAccountId(int $account_id)
+    {
+        $this->account_id = $account_id;
     }
 
 }

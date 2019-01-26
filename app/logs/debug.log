@@ -86,3 +86,5 @@ LINE 1: ...id" = $1 AND "rastreniya_responses"."parent_id" = '' AND "ra...
 [Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +318
 [Thu, 24 Jan 19 13:41:27 +0300][DEBUG] Deletion of rastreniya 14  by user 7
 [Thu, 24 Jan 19 13:53:36 +0300][DEBUG] Unable to set the parent 24 of a response in rastreniya id = 14
+[Sat, 26 Jan 19 13:40:45 +0300][DEBUG] Unable to set the parent 27 of a response in rastreniya id = 17
+[Sat, 26 Jan 19 14:02:14 +0300][DEBUG] Deletion of rastreniya 17  by user 7

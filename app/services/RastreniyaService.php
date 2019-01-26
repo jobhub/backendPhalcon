@@ -5,7 +5,9 @@ namespace App\Services;
 
 use App\Controllers\AbstractHttpException;
 use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
 use App\Libs\SupportClass;
+use App\Models\Accounts;
 use App\Models\Groups;
 use App\Models\Rastreniya;
 use App\Models\RastreniyaResponses;
@@ -32,11 +34,17 @@ class RastreniyaService extends AbstractService
         if (is_null($content) || strlen(trim($content)) == 0) {
             throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
+
         if (is_null($is_incognito) || !is_bool($is_incognito)) {
             throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
-        if (!Users::isUserExist($user_id)) {
+
+        /*if (!Users::isUserExist($user_id)) {
             throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }*/
+
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http400Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
         /*
          * End validation block
@@ -50,6 +58,7 @@ class RastreniyaService extends AbstractService
             $rast->setUserId($user_id);
             $rast->setContent($content);
             $rast->setIsIncognito($is_incognito);
+            $rast->setAccountId($data["account_id"]);
 
             if ($rast->save() === false) {
                 $transaction->rollback(
@@ -69,25 +78,32 @@ class RastreniyaService extends AbstractService
 
     public function updateRast($data)
     {
-        $content = $data["content"];
-        $is_incognito = $data["is_incognito"];
         $rast_id = $data["rast_id"];
         $user_id = $data["user_id"];
+
         /*
          * start validation bloc
          */
-        if (is_null($content) || strlen(trim($content)) == 0) {
+        if (is_null($data["content"]) || strlen(trim($data["content"])) == 0) {
             throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
-        if (is_null($is_incognito) || !is_bool($is_incognito)) {
+        if (is_null($data["is_incognito"]) || !is_bool($data["is_incognito"])) {
             throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http403Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        $is_incognito = $data["is_incognito"];
+        $content = $data["content"];
+        $account_id = $data["account_id"];
+
         $rast = Rastreniya::findFirst([
-            'conditions' => 'id = :rast_id: AND user_id = :user_id:',
+            'conditions' => 'id = :rast_id: AND account_id = :account_id:',
             'bind' => [
                 'rast_id' => $rast_id,
-                'user_id' => $user_id
+                'account_id' => $account_id
             ],
         ]);
 
@@ -150,16 +166,17 @@ class RastreniyaService extends AbstractService
             ]);
             $toRet = [];
             foreach ($rasts as $rast) {
-                $user = Userinfo::findUserInfoById($user_id, Userinfo::shortColumnsInStr);
-                if (!$user) {
-                    $user = $rast->getRelated('User', [
-                        'columns' => ['user_id', 'email']
-                    ]);
+                $account = Accounts::findFirst($rast->getAccountId());
+                if (!$account) {
+                    $user = [];
+                } else {
+                    $user = $account->getUserInfomations();
                 }
                 $likes = SupportClass::to_php_array($rast->getLikeUsers());
                 $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
                 $item = ['infos' => $rast->getPublicInfo()];
-                $item['owner'] = $user;
+                //$item['owner'] = $user;
+                $item['owner'] = $account->getUserInfomations();
                 $item['likes'] = sizeof($likes);
                 $item['dislikes'] = sizeof($dislikes);
                 $item['comments'] = self::countComments($rast->getId());
@@ -178,10 +195,10 @@ class RastreniyaService extends AbstractService
                         'order' => 'create_at DESC',
                         'columns' => RastreniyaResponses::PUBLIC_COLUMNS
                     ]);
-                    if ($user_id == $last->user_id)
+                    if ($account->getId() == $last['account_id'])
                         $owner = $user;
                     else
-                        $owner = Userinfo::findUserInfoById($last->user_id, Userinfo::shortColumnsInStr);
+                        $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
                     $item['comments']['last_comment'] = $last;
                     $item['comments']['user_info'] = $owner;
                 }
@@ -264,30 +281,38 @@ class RastreniyaService extends AbstractService
 
 
     /**
-     * likeRast
+     * Add response to a Rastreniya
      *
      * @param $data
      * @return bool
      */
     public function newResponse($data)
     {
-        $rast_id = $data["rast_id"];
         $user_id = $data["user_id"];
-        $content = $data["content"];
-        $parent_id = $data["parent_id"];
 
-        if (is_null($content) || strlen(trim($content)) == 0) {
+        /*
+         * Validation
+         */
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http400Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        if (!isset($data["content"]) || strlen(trim($data["content"])) == 0) {
             throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
         if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
             throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
+        /*
+        * End Validation
+        */
+
+        $rast_id = $data["rast_id"];
+        $account_id = $data["account_id"];
+        $content = $data["content"];
 
         try {
-            if (!Users::isUserExist($user_id)) {
-                throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
-            }
             $manager = new TxManager();
             $transaction = $manager->get();
 
@@ -304,7 +329,7 @@ class RastreniyaService extends AbstractService
             $response->setTransaction($transaction);
 
             $response->setContent($content);
-            $response->setUserId($user_id);
+            $response->setAccountId($account_id);
             $response->setRastreniyaId($rast_id);
 
             if (isset($data["parent_id"]) || is_integer($data["parent_id"])) {
@@ -342,9 +367,63 @@ class RastreniyaService extends AbstractService
         return $response->getPublicInfo();
     }
 
+    /**
+     * Add response to a Rastreniya
+     *
+     * @param $data
+     * @return bool
+     */
+    public function updateResponse($data)
+    {
+        $user_id = $data["user_id"];
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http400Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        if (is_null($data["content"]) || strlen(trim($data["content"])) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        if (is_null($data["response_id"]) || strlen(trim($data["response_id"])) == 0) {
+            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        $response_id = $data["response_id"];
+        $account_id = $data["account_id"];
+        $content = $data["content"];
+
+        try {
+            $manager = new TxManager();
+            $transaction = $manager->get();
+
+
+            $response = RastreniyaResponses::findFirst([
+                'conditions' => ' id = :id: AND account_id = :account_id:',
+                'bind' => [
+                    'account_id' => $account_id,
+                    'id' => $response_id
+                ]
+            ]);
+            $response->setTransaction($transaction);
+
+            $response->setContent($content);
+
+            if ($response->update() === false) {
+                $transaction->rollback(
+                    'Cannot Update Rastreniya response'
+                );
+            }
+            $transaction->commit();
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        } catch (TxFailed $e) {
+            throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return true;
+    }
+
 
     /**
-     * likeRast
+     * get all response of a Rastreniya
      *
      * @param $data
      * @return bool
@@ -393,12 +472,15 @@ class RastreniyaService extends AbstractService
             $toRet = [];
             foreach ($responses as $resp) {
                 $item = ['info' => $resp->getPublicInfo()];
-                $owner = Userinfo::findUserInfoById($resp->getUserId(), Userinfo::shortColumnsInStr);
-                if (!$owner) {
-                    $owner = $resp->getRelated('User', [
-                        'columns' => ['user_id', 'email']
-                    ]);
+                $account = Accounts::findFirst($resp->getAccountId());
+
+                if (!$account) {
+                    $owner = [];
+                } else {
+                    $owner = $account->getUserInfomations();
                 }
+
+
                 $item['user_info'] = $owner;
                 $item['childs'] = self::getChildResponse($resp->getId(), $rast->getId());
                 array_push($toRet, $item);
@@ -434,11 +516,12 @@ class RastreniyaService extends AbstractService
         $toRet = [];
         foreach ($responses as $resp) {
             $item = ['info' => $resp->getPublicInfo()];
-            $owner = Userinfo::findUserInfoById($resp->getUserId(), Userinfo::shortColumnsInStr);
-            if (!$owner) {
-                $owner = $resp->getRelated('User', [
-                    'columns' => ['user_id', 'email']
-                ]);
+            $account = Accounts::findFirst($resp->getAccountId());
+
+            if (!$account) {
+                $owner = [];
+            } else {
+                $owner = $account->getUserInfomations();
             }
             $item['user_info'] = $owner;
             array_push($toRet, $item);
@@ -454,21 +537,30 @@ class RastreniyaService extends AbstractService
      */
     public function deleteResponses($data)
     {
-        $response_id = $data["response_id"];
         $user_id = $data["user_id"];
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http400Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+        $response_id = $data["response_id"];
+        $account_id = $data["account_id"];
+
+        if (!Accounts::checkUserHavePermission($user_id, $account_id, 'deleteComment')) {
+            throw new Http403Exception('Permission error');
+        }
+
         if (!isset($response_id) || !is_integer($response_id)) {
             throw new Http400Exception(_('Missing response id'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
+
         try {
             // Load last comments info;
             $response = RastreniyaResponses::findFirst([
-                'conditions' => 'id = :resp_id: AND user_id = :user_id:',
+                'conditions' => 'id = :resp_id: AND account_id = :account_id:',
                 'bind' => [
                     'resp_id' => $response_id,
-                    'user_id' => $user_id
+                    'account_id' => $account_id
                 ],
             ]);
-            $this->log($response_id . ' and ' . $user_id);
             if (!$response) {
                 throw new Http400Exception(_('Unable to delete response'), AbstractHttpException::BAD_REQUEST_CONTENT);
             }
@@ -491,9 +583,21 @@ class RastreniyaService extends AbstractService
     {
         $rast_id = $data["rast_id"];
         $user_id = $data["user_id"];
+
+        if (!isset($data["account_id"]) && !Accounts::checkUserHavePermission($user_id, $data["account_id"])) {
+            throw new Http400Exception(_('Unable to access to this account'), AbstractHttpException::BAD_REQUEST_CONTENT);
+        }
+
+        $account_id = $data["account_id"];
+
         if (!isset($rast_id) || !is_integer($rast_id)) {
             throw new Http400Exception(_('Missing rast id'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
+
+        if (!Accounts::checkUserHavePermission($user_id, $account_id, 'deleteComment')) {
+            throw new Http403Exception('Permission error');
+        }
+
         try {
             // Load last comments info;
             $rast = Rastreniya::findFirst([
@@ -509,7 +613,7 @@ class RastreniyaService extends AbstractService
             }
 
             $rast->delete();
-            $this->log('Deletion of rastreniya '.$rast_id . '  by user ' . $user_id);
+            $this->log('Deletion of rastreniya ' . $rast_id . '  by user ' . $user_id);
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         } catch (TxFailed $e) {
@@ -522,5 +626,4 @@ class RastreniyaService extends AbstractService
     {
         return $this->db->fetchOne('SELECT COUNT(*) AS total FROM rastreniya_responses WHERE deleted != TRUE AND rastreniya_id = ' . $rast_id);
     }
-
 }
