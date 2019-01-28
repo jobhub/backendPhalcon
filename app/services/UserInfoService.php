@@ -82,7 +82,7 @@ class UserInfoService extends AbstractService {
         if(!empty(trim($data['address'])))
             $userInfo->setAddress($data['address']);
         if(!empty(trim($data['birthday'])))
-            $userInfo->setBirthday(date('Y-m-d H:m', strtotime($data['birthday'])));
+            $userInfo->setBirthday(date('Y-m-d H:i:sO', strtotime($data['birthday'])));
         if(!empty(trim($data['about'])))
             $userInfo->setAbout($data['about']);
         if(!empty(trim($data['status'])))
@@ -120,14 +120,14 @@ class UserInfoService extends AbstractService {
         return $user;
     }
 
-    public function getHandledUserInfoById(int $userId){
+    public function getHandledUserInfoById(int $userId, int $userReceiver){
         $userInfo = Userinfo::findUserInfoById($userId);
 
         if (!$userInfo || $userInfo == null) {
             throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
         }
 
-        return Userinfo::handleUserInfo($userInfo);
+        return Userinfo::handleUserInfo($userInfo,$userReceiver);
     }
 
     public function subscribeToCompany(int $userId, int $companyId){

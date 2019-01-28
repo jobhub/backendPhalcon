@@ -410,7 +410,7 @@ class CommentsAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $data['comment_date'] = date('Y-m-d H:i:s');
+            $data['comment_date'] = date('Y-m-d H:i:sO');
 
             $comment = $this->commentService->createComment($data, $type);
 
@@ -454,8 +454,7 @@ class CommentsAPIController extends AbstractController
     public function deleteCommentAction($type, $comment_id)
     {
         try {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $userId = self::getUserId();
 
             $comment = $this->commentService->getCommentById($comment_id, $type);
 

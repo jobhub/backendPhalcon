@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
@@ -223,15 +224,20 @@ class Users extends NotDeletedModelWithCascade
         $email = $login;
         $formatPhone = Phones::formatPhone($phone);
         $phoneObj = Phones::findFirstByPhone($formatPhone);
-        $user = Users::findFirst(
-            [
-                "(email = :email: OR phone_id = :phoneId:)",
-                "bind" => [
-                    "email" => $email,
-                    "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
+        try {
+            $user = Users::findFirst(
+                [
+                    "(email = :email: OR phone_id = :phoneId:)",
+                    "bind" => [
+                        "email" => $email,
+                        "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
+                    ]
                 ]
-            ]
-        );
+            );
+        }catch(\Exception $e){
+            SupportClass::writeMessageInLogFile('Exception '.$e->getMessage());
+            return null;
+        }
         return $user;
     }
 

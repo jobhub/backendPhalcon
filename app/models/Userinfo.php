@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
@@ -98,6 +100,8 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
 
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
     /**
      * Method to set the value of field userId
      *
@@ -141,7 +145,6 @@ class Userinfo extends \Phalcon\Mvc\Model
     }
 
 
-
     /**
      * Method to set the value of field patronymic
      *
@@ -176,8 +179,8 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setBirthday($birthday)
     {
-        if($birthday==="")
-            $birthday=null;
+        if ($birthday === "")
+            $birthday = null;
         $this->birthday = $birthday;
 
         return $this;
@@ -191,9 +194,9 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setMale($male)
     {
-        if($male == 'мужской' || $male == 'Мужской')
+        if ($male == 'мужской' || $male == 'Мужской')
             $this->male = 1;
-        else if($male == 'женский' || $male == 'Женский')
+        else if ($male == 'женский' || $male == 'Женский')
             $this->male = 0;
         else
             $this->male = $male;
@@ -329,7 +332,6 @@ class Userinfo extends \Phalcon\Mvc\Model
     }
 
 
-
     /**
      * Returns the value of field male
      *
@@ -364,10 +366,12 @@ class Userinfo extends \Phalcon\Mvc\Model
     {
         return $this->rating_executor;
     }
+
     public function getRatingClient()
     {
         return $this->rating_client;
     }
+
     public function getPathToPhoto()
     {
         return $this->path_to_photo;
@@ -441,7 +445,7 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
-        if($this->getPathToPhoto() != null)
+        if ($this->getPathToPhoto() != null)
             $validator->add(
                 'path_to_photo',
                 new Callback(
@@ -464,16 +468,16 @@ class Userinfo extends \Phalcon\Mvc\Model
                 )
             );
 
-        if($this->getEmail() != null)
-        $validator->add(
-            'email',
-            new EmailValidator(
-                [
-                    'model' => $this,
-                    'message' => 'Введите, пожалуйста, правильный адрес',
-                ]
-            )
-        );
+        if ($this->getEmail() != null)
+            $validator->add(
+                'email',
+                new EmailValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, правильный адрес',
+                    ]
+                )
+            );
 
         return $this->validate($validator);
     }
@@ -520,17 +524,19 @@ class Userinfo extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findUserInfoById(int $userId, array $columns = null){
-        if($columns == null)
+    public static function findUserInfoById(int $userId, array $columns = null)
+    {
+        if ($columns == null)
             return self::findFirst(['user_id = :userId:',
                 'bind' => ['userId' => $userId]]);
-        else{
-            return self::findFirst(['columns' => $columns,'user_id = :userId:',
+        else {
+            return self::findFirst(['columns' => $columns, 'user_id = :userId:',
                 'bind' => ['userId' => $userId]]);
         }
     }
 
-    public static function handleUserInfo(Userinfo $userInfo){
+    public static function handleUserInfo(Userinfo $userInfo, $userReceiverId)
+    {
         $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
         $images = ImagesUsers::getImages($userInfo->getUserId());
 
@@ -541,7 +547,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         $countSubscriptions = count(FavoriteUsers::findByUserSubject($userInfo->getUserId()))
             + count(FavoriteCompanies::findByUserId($userInfo->getUserId()));
 
-        return [
+        $data = [
             'user_info' => $userInfo,
             'phones' => $phones,
             'images' => $images,
@@ -549,5 +555,116 @@ class Userinfo extends \Phalcon\Mvc\Model
             'countSubscribers' => $countSubscribers,
             'countSubscriptions' => $countSubscriptions,
         ];
+
+        if ($userReceiverId != $userInfo->getUserId()) {
+
+            $subscribed = FavoriteUsers::findByIds($userInfo->getUserId(), $userReceiverId);
+
+            $data['subscribed'] = boolval($subscribed);
+        }
+
+        return $data;
+    }
+
+    public static function findUsersByQueryWithFilters($query,
+                                                       $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE,
+                                                       $ageMin = null, $ageMax = null,
+                                                       $male = null, $hasPhoto = null)
+    {
+        $db = DI::getDefault()->getDb();
+
+        $query = str_replace('!', '', $query);
+        $query = str_replace('|', '', $query);
+        $query = str_replace('&', '', $query);
+        $ress = explode(' ', $query);
+        $res2 = [];
+        foreach ($ress as $res) {
+            if (trim($res) != "")
+                $res2[] = trim($res);
+        }
+
+        $str = implode(' ', $res2);
+
+        $sqlQuery = "select user_id, email, phone,
+            first_name,last_name, patronymic,
+            male, birthday,path_to_photo,status from get_users_like(:str) ";
+
+        $params = [
+            'str' => $str,
+        ];
+
+        $whereExists = false;
+
+        if ($ageMin != null && $ageMin != false) {
+            $dateMin = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'),
+                date('m'), date('d'), date('Y') - $ageMin));
+            if ($whereExists)
+                $sqlQuery .= " and birthday <= '" . $dateMin . '\'::date';
+            else {
+                $whereExists = true;
+                $sqlQuery .= "where birthday <= '" . $dateMin . '\'::date';
+            }
+            //$params['dateMin'] = $dateMin;
+        }
+
+        if ($ageMax != null && $ageMax != false) {
+            $dateMax = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'),
+                date('m'), date('d'), date('Y') - $ageMax));
+            if ($whereExists)
+                $sqlQuery .= " and birthday >= '" . $dateMax . '\'::date';
+            else {
+                $whereExists = true;
+                $sqlQuery .= "where birthday >= '" . $dateMax . '\'::date';
+            }
+
+            /*$params['dateMax'] = $dateMax;*/
+        }
+
+        if ($male != null && $male != false || is_integer($male)) {
+            if ($whereExists)
+                $sqlQuery .= " and male = :male";
+            else {
+                $whereExists = true;
+                $sqlQuery .= " where male = :male";
+            }
+            $params['male'] = $male;
+        }
+
+        if (!is_null($hasPhoto) || is_bool($hasPhoto)) {
+            if ($whereExists) {
+                if ($hasPhoto)
+                    $sqlQuery .= " and not (path_to_photo is null)";
+                else {
+                    $sqlQuery .= " and (path_to_photo is null)";
+                }
+            } else {
+                $whereExists = true;
+                if ($hasPhoto)
+                    $sqlQuery .= " where not (path_to_photo is null)";
+                else {
+                    $sqlQuery .= " where (path_to_photo is null)";
+                }
+            }
+        }
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $sqlQuery .= " LIMIT :limit";
+        $sqlQuery .= " OFFSET :offset";
+
+        $params['limit'] = $page_size;
+        $params['offset'] = $offset;
+
+        try {
+            $query = $db->prepare($sqlQuery);
+
+
+            $query->execute($params);
+            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+        }catch (\Exception $e){
+            echo $e;
+        }
+//$str = var_export($result, true);
+        return $result;
     }
 }

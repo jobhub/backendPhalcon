@@ -140,8 +140,8 @@ class ImageService extends AbstractService
         return true;
     }*/
 
-    public function createImagesToUser($files, Users $user){
-        return $this->createImagesToObject($files,$user,self::TYPE_USER);
+    public function createImagesToUser($files, Users $user, $data = null){
+        return $this->createImagesToObject($files,$user,self::TYPE_USER,$data);
     }
 
     public function createImagesToNews($files, News $news){
@@ -156,7 +156,7 @@ class ImageService extends AbstractService
         return $this->createImagesToObject($files,$review,self::TYPE_REVIEW);
     }
 
-    private function createImagesToObject($files, $some_object, $type){
+    private function createImagesToObject($files, $some_object, $type, $data = null){
 
         switch ($type) {
             case self::TYPE_USER:
@@ -180,8 +180,9 @@ class ImageService extends AbstractService
         }
 
         $imagesIds = [];
+        $i = 0;
         foreach ($files as $file) {
-            $newImage = $this->createImage($id,'magic_string',$type);
+            $newImage = $this->createImage($id,'magic_string',$type, $data[$i]);
 
             if($type == self::TYPE_NEWS && $file->getKey() == 'title')
                 $imagesIds[] =  $file->getKey();
@@ -194,6 +195,7 @@ class ImageService extends AbstractService
                 $id, $imagesIds[count($imagesIds)-1]);
 
             $this->changePathToImage($newImage,$filename);
+            $i++;
         }
         return $imagesIds;
     }
@@ -263,11 +265,12 @@ class ImageService extends AbstractService
         return true;
     }
 
-    private function createImage(int $id, string $pathToImage,$type){
+    private function createImage(int $id, string $pathToImage,$type, $data = null){
         switch ($type) {
             case self::TYPE_USER:
                 $image = new ImagesUsers();
                 $image->setUserId($id);
+                $image->setImageText($data['image_text']);
                 break;
             case self::TYPE_NEWS:
                 $image = new ImagesNews();
@@ -287,7 +290,7 @@ class ImageService extends AbstractService
 
         $image->setImagePath($pathToImage);
 
-        if(!$image->save()){
+        if(!$image->create()){
             $errors = SupportClass::getArrayWithErrors($image);
             if(count($errors)>0)
                 throw new ServiceExtendedException('Unable save image',

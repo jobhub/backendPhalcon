@@ -257,15 +257,18 @@ class ReviewsAPIController extends AbstractController
      *
      * @param $id - id субъекта
      * @param $is_company - тип субъекта
+     * @param $page
+     * @param $page_size
      *
      * @return string - json array [status,[reviews]]
      */
-    public function getReviewsForSubjectAction($id, $is_company = false)
+    public function getReviewsForSubjectAction($id, $is_company = false,
+                                               $page = 1, $page_size = Reviews::DEFAULT_RESULT_PER_PAGE)
     {
         if ($is_company && strtolower($is_company) != "false")
-            return Reviews::findReviewsByCompany($id);
+            return Reviews::findReviewsByCompany($id,$page,$page_size);
         else
-            return Reviews::findReviewsByUser($id);
+            return Reviews::findReviewsByUser($id,$page,$page_size);
     }
 
     /**
@@ -274,23 +277,14 @@ class ReviewsAPIController extends AbstractController
      * @method GET
      *
      * @param $service_id - id услуги
-     * @param $num_page - номер страницы
-     * @param $width_page - размер страницы
+     * @param $page - номер страницы
+     * @param $page_size - размер страницы
      *
      * @return string - json array [status,reviews => [review,{userinfo or company}]]
      */
-    public function getReviewsForServiceAction($service_id, $num_page, $width_page)
+    public function getReviewsForServiceAction($service_id, $page = 1, $page_size = Reviews::DEFAULT_RESULT_PER_PAGE)
     {
-        $reviews = Reviews::findReviewsForService($service_id);
-
-        $paginator = new Paginator([
-            'data' => $reviews,
-            'limit' => $width_page,
-            'page' => $num_page
-        ]);
-
-
-        return $paginator->getPaginate()->items;
+        return Reviews::findReviewsForService($service_id,$page,$page_size);
     }
 
     /**

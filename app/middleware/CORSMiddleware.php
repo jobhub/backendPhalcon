@@ -43,6 +43,19 @@ class CORSMiddleware implements MiddlewareInterface
                 '1000'
             ) 
             ->setHeader('Access-Control-Allow-Credentials', 'true');
+
+        /*if ($application->request->isMethod('OPTIONS'))
+        {
+            $headers = [
+                'Access-Control-Allow-Origin'      => '*',
+                'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
+                'Access-Control-Allow-Credentials' => 'true',
+                'Access-Control-Max-Age'           => '86400',
+                'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
+            ];
+            return $application
+                ->response->json('{"method":"OPTIONS"}', 200, $headers);
+        }*/
     }
 
     /**

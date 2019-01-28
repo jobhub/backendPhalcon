@@ -34,6 +34,12 @@ class PHPMailerApp
         ob_start();
         $view->partial($path, $params);
         $this->currMessage = ob_get_clean();
+
+        $this->currMessage .= "\n\rАктивационный код = ".$params['activation'];
+        $this->currMessage .= "\n\rКод для смены пароля = ".$params['resetcode'];
+        SupportClass::writeMessageInLogFile('Текст письма:');
+        SupportClass::writeMessageInLogFile($this->currMessage);
+
         return $this;
     }
 
@@ -64,12 +70,16 @@ class PHPMailerApp
                 );
             };
 
+            if($this->config['driver']!='smtp')
+                throw new Exception('Currently only smtp is supported.');
+
             $this->mail->isSMTP();                                      // Set mailer to use SMTP
             $this->mail->Host = $this->config['host'];  // Specify main and backup SMTP servers
-            $this->mail->SMTPAuth = true;                               // Enable SMTP authentication
+            //$this->mail->SMTPAuth = true;                               // Enable SMTP authentication                   // SMTP password
+            $this->mail->SMTPSecure = $this->config['encryption'];
+            $this->mail->SMTPAuth = ($this->config['auth'] ? true : false);
             $this->mail->Username = $this->config['username'];                 // SMTP username
-            $this->mail->Password = $this->config['password'];                           // SMTP password
-            $this->mail->SMTPSecure = $this->config['encryption'];                            // Enable TLS encryption, `ssl` also accepted
+            $this->mail->Password = $this->config['password'];                                // Enable TLS encryption, `ssl` also accepted
             $this->mail->Port = $this->config['port'];
 
             //Recipients

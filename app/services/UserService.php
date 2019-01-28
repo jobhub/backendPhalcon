@@ -227,7 +227,7 @@ class UserService extends AbstractService
     public function deleteActivationCode(int $userId)
     {
         try {
-            $code = ActivationCodes::findFirstByUserid($userId);
+            $code = ActivationCodes::findFirstByUserId($userId);
 
             if (!$code) {
                 return true;
@@ -250,7 +250,7 @@ class UserService extends AbstractService
 
     public function checkActivationCode(string $code, int $userId)
     {
-        $activationCode = ActivationCodes::findFirstByUserid($userId);
+        $activationCode = ActivationCodes::findFirstByUserId($userId);
 
         if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > ActivationCodes::TIME_LIFE)) {
             return self::WRONG_ACTIVATION_CODE;

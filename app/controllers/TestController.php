@@ -15,7 +15,7 @@ use App\Models\FavoriteUsers;
 use App\Models\FavoriteCompanies;
 
 use App\Services\ImageService;
-use App\Services\UserInfoService;
+use App\Services\AbstractService;
 use App\Services\UserService;
 
 use Phalcon\Mvc\Model\Criteria;
@@ -303,5 +303,33 @@ class TestController extends AbstractController
         $this->db->commit();
 
         return self::successResponse('All users successfully created');
+    }
+
+    public function sendMessageAction()
+    {
+        $data = json_decode($this->request->getRawBody(), true);
+
+        //Пока, если код существует, то просто перезаписывается
+        try {
+            $this->resetPasswordService->sendMail('reset_code_letter', 'emails/reset_code_letter',
+                    ['resetcode' => '1234',
+                    'deactivate' => '1234',
+                    'email' => $data['email']],'Подтвердите сброс пароля');
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Code for reset password successfully sent');
     }
 }

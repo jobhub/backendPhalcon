@@ -17,7 +17,25 @@ class ImagesUsers extends ImagesModel
      */
     protected $user_id;
 
+    protected $image_text;
+
     const MAX_IMAGES = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getImageText()
+    {
+        return $this->image_text;
+    }
+
+    /**
+     * @param mixed $image_text
+     */
+    public function setImageText($image_text)
+    {
+        $this->image_text = $image_text;
+    }
 
     /**
      * Method to set the value of field userid
@@ -77,7 +95,7 @@ class ImagesUsers extends ImagesModel
         parent::initialize();
         $this->setSchema("public");
         $this->setSource("imagesusers");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -137,7 +155,7 @@ class ImagesUsers extends ImagesModel
     public static function getImages($userId)
     {
         $images = ImagesUsers::findByUserId($userId);
-        return self::handleImages($images);
+        return self::handleImages($images->toArray());
     }
 
     /**
@@ -171,6 +189,7 @@ class ImagesUsers extends ImagesModel
 
             $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
 
+            $handledImage['image_text'] = $image['image_text'];
             $handledImages[] = $handledImage;
         }
         return $handledImages;

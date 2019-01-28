@@ -89,6 +89,8 @@ class Reviews extends NotDeletedModelWithCascade
     const publicColumns = ['review_id', 'review_text', 'review_date', 'rating', 'binder_id',
         'binder_type', 'executor', 'fake_name',];
 
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
     /**
      * Методы-костыли
      */
@@ -446,9 +448,11 @@ class Reviews extends NotDeletedModelWithCascade
         return $result;
     }
 
-    public static function findReviewsByUser($userId)
+    public static function findReviewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
 
         $columns = '';
         foreach (self::publicColumns as $publicColumn) {
@@ -496,19 +500,25 @@ class Reviews extends NotDeletedModelWithCascade
               inner join accounts on (reviews.object_account_id = accounts.id)
               WHERE accounts.user_id = :userId)
               ) p0
-              ORDER BY p0.review_date desc"
+              ORDER BY p0.review_date desc
+              LIMIT :limit 
+              OFFSET :offset"
         );
 
         $query->execute([
             'userId' => $userId,
+            'limit' => $page_size,
+            'offset'=>$offset
         ]);
 
         return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
     }
 
-    public static function findReviewsByCompany($companyId)
+    public static function findReviewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
 
         $columns = '';
         foreach (self::publicColumns as $publicColumn) {
@@ -555,12 +565,16 @@ class Reviews extends NotDeletedModelWithCascade
               inner join accounts on (reviews.object_account_id = accounts.id)
               WHERE accounts.company_id = :companyId)
               ) p0
-              ORDER BY p0.review_date desc";
+              ORDER BY p0.review_date desc
+              LIMIT :limit 
+              OFFSET :offset";
 
         $query = $db->prepare($str);
 
         $query->execute([
             'companyId' => $companyId,
+            'limit' => $page_size,
+            'offset'=>$offset
         ]);
 
         return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
@@ -644,8 +658,11 @@ class Reviews extends NotDeletedModelWithCascade
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }*/
 
-    public static function findReviewsForService($serviceId, $limit = null)
+    public static function findReviewsForService($serviceId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
         $modelsManager = DI::getDefault()->get('modelsManager');
         $columns = [];
         foreach (self::publicColumns as $publicColumn) {
@@ -657,6 +674,8 @@ class Reviews extends NotDeletedModelWithCascade
             ->join('App\Models\Requests', 'req.request_id = rev.binder_id and rev.binder_type = "request" and executor = false', 'req')
             ->join('App\Models\Services', 's.service_id = req.service_id', 's')
             ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
+            ->limit($page_size)
+            ->offset($offset)
             ->getQuery()
             ->execute();
 

@@ -354,6 +354,8 @@ class UserLocation extends \Phalcon\Mvc\Model
         return $result;
     }
 
+
+
     function calculate_age($birthday) {
         $birthday_timestamp = strtotime($birthday);
         $age = date('Y') - date('Y', $birthday_timestamp);

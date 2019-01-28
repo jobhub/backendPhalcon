@@ -484,7 +484,7 @@ class UserinfoAPIController extends AbstractController
 
             $res_user_id = $user_id == null ? $currentUserId : $user_id;
 
-            $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id);
+            $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id, $currentUserId);
 
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
@@ -495,6 +495,58 @@ class UserinfoAPIController extends AbstractController
         }
 
         return self::successResponse('', $userInfo);
+    }
+
+    /**
+     * Возвращает результат поиска пользователей.
+     * Публичный метод.
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params age_min - минимальный возраст
+     * @params age_max - максимальный возраст
+     * @params male - пол
+     * @params has_photo - фильтр, имеется ли у него фотография
+     * @params page - номер страницы
+     * @params page_size - размер страницы
+     *
+     * @return array [userinfo, [phones], [images], countNews, countSubscribers,
+     *          countSubscriptions];
+     */
+    public function findUsersWithFiltersAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['query'] = $inputData->query;
+
+        if($inputData->age_min!=null) {
+            $data['age_min'] = $inputData->age_min;
+        }
+        $data['age_max'] = $inputData->age_max;
+
+        $data['male'] = $inputData->male;
+
+        $data['has_photo'] = $inputData->has_photo;
+        /*if(!is_null($inputData->has_photo) && $inputData->has_photo != "false")
+            $data['has_photo'] = true;
+        elseif($inputData->has_photo == "false")
+            $data['has_photo'] = false;*/
+
+        if (is_null($inputData->page))
+            $data['page'] = 1;
+        else
+            $data['page'] = $inputData->page;
+        if (is_null($inputData->page_size))
+            $data['page_size'] = Userinfo::DEFAULT_RESULT_PER_PAGE;
+        else
+            $data['page_size'] = $inputData->page_size;
+
+        $users = Userinfo::findUsersByQueryWithFilters($data['query'],
+            $data['page'], $data['page_size'],
+            $data['age_min'], $data['age_max'],
+            $data['male'], $data['has_photo']);
+
+        return $users;
     }
 
     /**
@@ -555,13 +607,16 @@ class UserinfoAPIController extends AbstractController
      * @access private
      *
      * @method POST
-     *
+     * @params image_texts - тексты к каждому изображению
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addImagesAction()
     {
+        $inputData = $this->request->getJsonRawBody();
+        $data = /*$inputData->image_text*/
+            $this->request->getPost('image_texts');
         try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -572,7 +627,7 @@ class UserinfoAPIController extends AbstractController
 
             $this->db->begin();
 
-            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(), $user);
+            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(), $user, $data);
 
             $this->imageService->saveImagesToUser($this->request->getUploadedFiles(), $user, $ids);
         } catch (ServiceExtendedException $e) {

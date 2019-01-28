@@ -45,11 +45,29 @@ class News extends AccountWithNotDeletedWithCascade
 
     protected $likes;
 
-    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title', 'likes'];
+    protected $news_type;
 
-    const publicColumnsInStr = 'news_id, publish_date, news_text, title, likes';
+    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title', 'likes', 'news_type'];
+
+    const publicColumnsInStr = 'news_id, publish_date, news_text, title, likes, news_type';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getNewsType()
+    {
+        return $this->news_type;
+    }
+
+    /**
+     * @param mixed $news_type
+     */
+    public function setNewsType($news_type)
+    {
+        $this->news_type = $news_type;
+    }
 
     /**
      * Method to set the value of field newId
@@ -266,7 +284,7 @@ class News extends AccountWithNotDeletedWithCascade
         $result = $query->execute([
             'userId' => $userId,
             'limit' => $page_size,
-            'offset'=>$offset
+            'offset' => $offset
         ]);
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -282,29 +300,29 @@ class News extends AccountWithNotDeletedWithCascade
         $offset = ($page - 1) * $page_size;
 
         $str = "SELECT ";
-        $columns ='';
+        $columns = '';
         foreach (News::publicColumns as $column) {
             $str .= $column . ", ";
-            $columns.=$column . ", ";
+            $columns .= $column . ", ";
         }
 
         $str .= "account_id";
-        $columns.="account_id";
+        $columns .= "account_id";
 
-        $str .= " FROM ((SELECT " .$columns." FROM public.news n 
+        $str .= " FROM ((SELECT " . $columns . " FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
                     INNER JOIN public.\"favoriteCompanies\" favc ON 
                                 (a.company_id = favc.company_id)
                     WHERE favc.user_id = :userId)
                     UNION
-                    (SELECT " .$columns." FROM public.news n 
+                    (SELECT " . $columns . " FROM public.news n 
                     INNER JOIN public.accounts a ON 
                     (n.account_id = a.id AND a.company_id is null and n.deleted = false)
                     INNER JOIN public.\"favoriteUsers\" favu
                     ON (a.user_id = favu.user_object)
                     WHERE favu.user_subject = :userId)
                     UNION
-                    (SELECT " .$columns." FROM public.news n
+                    (SELECT " . $columns . " FROM public.news n
                     INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
                     WHERE a.user_id = :userId and a.company_id is null)
                     ) as foo
@@ -316,7 +334,7 @@ class News extends AccountWithNotDeletedWithCascade
         $result = $query->execute([
             'userId' => $userId,
             'limit' => $page_size,
-            'offset'=>$offset
+            'offset' => $offset
         ]);
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -336,51 +354,77 @@ class News extends AccountWithNotDeletedWithCascade
     {
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
-        $modelsManager = DI::getDefault()->get('modelsManager');
+        /*$modelsManager = DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["n" => "App\Models\News"])
             ->join('App\Models\Accounts', 'n.account_id = a.id', 'a')
-            ->where('a.company_id = :companyId: and n.deleted = false', ['companyId' => $companyId])
+            ->where('a.company_id = :companyId: and n.deleted = false and publish_date < :now:',
+                ['companyId' => $companyId, 'now' => date('Y-m-d H:i')])
             ->limit($page_size)
             ->offset($offset)
             ->getQuery()
-            ->execute();
+            ->execute();*/
 
-        return self::handleNewsFromArray($result->toArray());
+        $db = DI::getDefault()->getDb();
+
+        $sql = 'select ' . self::publicColumnsInStr . ' from public.news n inner join 
+		      public.accounts a ON (n.account_id = a.id)
+                a.company_id = :companyId and n.deleted = false and publish_date < CURRENT_TIMESTAMP
+                ORDER BY n.publish_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+        $query = $db->prepare($sql);
+        $result = $query->execute([
+            'companyId' => $companyId,
+            'limit' => $page_size,
+            'offset' => $offset,
+        ]);
+
+        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return self::handleNewsFromArray($news);
     }
 
     public static function findNewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
-        $modelsManager = DI::getDefault()->get('modelsManager');
-        $result = $modelsManager->createBuilder()
-            ->columns(self::publicColumns)
-            ->from(["n" => "App\Models\News"])
-            ->join('App\Models\Accounts', 'n.account_id = a.id and a.company_id is null', 'a')
-            ->where('a.user_id = :userId: and n.deleted = false', ['userId' => $userId])
-            ->limit($page_size)
-            ->offset($offset)
-            ->getQuery()
-            ->execute();
+        $db = DI::getDefault()->getDb();
 
-        return self::handleNewsFromArray($result->toArray());
+        $sql = 'select ' . self::publicColumnsInStr . ' from public.news n inner join 
+		      public.accounts a ON (n.account_id = a.id and a.company_id is null)
+                where a.user_id = :userId and n.deleted = false and publish_date < CURRENT_TIMESTAMP
+                ORDER BY n.publish_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+        $query = $db->prepare($sql);
+        $result = $query->execute([
+            'userId' => $userId,
+            'limit' => $page_size,
+            'offset' => $offset,
+        ]);
+
+        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
+        return self::handleNewsFromArray($news);
     }
 
     private static function handleNewsFromArray(array $news, $accountId = null)
     {
         $newsWithAll = [];
 
-        if($accountId == null){
+        if ($accountId == null) {
             $session = DI::getDefault()->get('session');
             $accountId = $session->get('accountId');
         }
 
         foreach ($news as $newsElement) {
-            $newsWithAllElement = $newsElement/*->toArray()*/;
+            $newsWithAllElement = $newsElement/*->toArray()*/
+            ;
             unset($newsWithAllElement['likes']);
-            if ($newsElement['account_id']!= null) {
+            if ($newsElement['account_id'] != null) {
                 $account = Accounts::findFirstById($newsElement['account_id']);
                 if ($account->getCompanyId() == null) {
                     $user = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
@@ -392,7 +436,7 @@ class News extends AccountWithNotDeletedWithCascade
                 }
             }
 
-            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement,$newsElement,$accountId);
+            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, $accountId);
 
             $imagesNews = ImagesNews::findImagesForNews($newsElement['news_id']);
 
@@ -401,7 +445,7 @@ class News extends AccountWithNotDeletedWithCascade
                 $newsWithAllElement['images'][] = $image['image_path'];
             }
 
-            $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews',$newsElement['news_id']);
+            $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews', $newsElement['news_id']);
 
             $newsWithAllElement['last_comment'] = $last_comment;
 

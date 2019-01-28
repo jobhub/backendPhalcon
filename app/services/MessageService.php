@@ -98,7 +98,6 @@ class MessageService extends AbstractService
 
     public function deleteMessage($data, $is_group_msg = false)
     {
-
             $id_msg = $data['msg_id'];
             try {
             $message = Message::findFirst($id_msg);

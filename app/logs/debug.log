@@ -116,3 +116,28 @@ s
 [Fri, 25 Jan 19 11:22:32 +0300][CRITICAL] 14005 Object for like not found
 [Fri, 25 Jan 19 11:23:56 +0300][CRITICAL] 14005 Object for like not found
 [Fri, 25 Jan 19 19:53:31 +0300][CRITICAL] 7001 Invalid type of image
+[Sat, 26 Jan 19 12:05:38 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:06:34 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:07:11 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:10:02 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:12:40 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:12:48 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:17:39 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 10:38:46 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 10:43:32 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 13:01:09 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:13 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:14 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:15 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:16 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:21 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:22 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:23 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:24 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:25 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:26 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:26 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:18 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:19 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:20 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:08:24 +0300][CRITICAL] 4001 Unable create info for user

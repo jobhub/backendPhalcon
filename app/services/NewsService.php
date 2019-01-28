@@ -65,7 +65,7 @@ class NewsService extends AbstractService
         if (!empty(trim($data['title'])))
             $news->setTitle($data['title']);
         if (!empty(trim($data['publish_date'])))
-            $news->setPublishDate(date('Y-m-d H:i:s', strtotime($data['publish_date'])));
+            $news->setPublishDate(date('Y-m-d H:i:sO', strtotime($data['publish_date'])));
         if (!empty(trim($data['account_id'])))
             $news->setAccountId($data['account_id']);
     }

@@ -94,7 +94,7 @@ class CommentService extends AbstractService {
         if(!empty(trim($data['comment_text'])))
             $comment->setCommentText($data['comment_text']);
         if(!empty(trim($data['comment_date'])))
-            $comment->setCommentDate(date('Y-m-d H:i:s', strtotime($data['comment_date'])));
+            $comment->setCommentDate(date('Y-m-d H:i:sO', strtotime($data['comment_date'])));
         if(!empty(trim($data['object_id'])))
             $comment->setObjectId($data['object_id']);
     }

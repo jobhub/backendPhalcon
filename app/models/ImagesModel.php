@@ -167,8 +167,8 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
         $handledImages = [];
         foreach ($images as $image) {
             $handledImage = [
-                'image_id' => $image->getImageId(),
-                'image_path' => $image->getImagePath()];
+                'image_id' => $image['image_id'],
+                'image_path' => $image['image_path']];
             $handledImages[] = $handledImage;
         }
         return $handledImages;

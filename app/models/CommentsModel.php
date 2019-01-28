@@ -239,6 +239,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
             $handledComment['child_count'] = count($model::find(['reply_id = :parentId:',
                 'bind'=>['parentId'=>$comment['comment_id']]
                 ],false));
+
             $handledComment = LikeModel::handleObjectWithLikes($handledComment, $comment, $accountId);
             $handledComments[] = $handledComment;
         }

@@ -121,7 +121,7 @@ class ImagesNews extends ImagesModel
         $offset = ($page - 1) *$page_size;
         return self::handleImages(
             self::find(['conditions'=>'news_id = :newsId:','bind'=>['newsId'=>$newsId],
-                'limit'=>$page_size,'offset'=>$offset])
+                'limit'=>$page_size,'offset'=>$offset])->toArray()
         );
     }
 }

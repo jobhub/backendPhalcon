@@ -78,6 +78,40 @@ try {
     }
     );
 
+    /*if($app->request->isOptions()){
+
+        $app->response->json('{"method":"OPTIONS"}', 200, $headers);
+    }*/
+
+    if($app->request->isOptions()){
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Max-Age'           => '86400',
+            'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
+        ];
+        $response = new \Phalcon\Http\Response();
+        $response->setStatusCode(200, 'All ok');
+
+        $response->setHeader('Access-Control-Allow-Origin', '*')
+            ->setHeader(
+                'Access-Control-Allow-Methods',
+                'GET, PUT, POST, DELETE, OPTIONS, CONNECT, HEAD, PURGE, PATCH'
+            )
+            ->setHeader(
+                'Access-Control-Allow-Headers',
+                'Content-type'
+            )
+            ->setHeader(
+                'Access-Control-Max-Age',
+                '1000'
+            )
+            ->setHeader('Access-Control-Allow-Credentials', 'true');
+        $response->send();
+        return;
+    }
+
     // Processing request
     $app->handle();
 } catch (AbstractHttpException $e) {

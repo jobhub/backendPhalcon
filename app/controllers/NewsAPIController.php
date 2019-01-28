@@ -80,6 +80,7 @@ class NewsAPIController extends AbstractController
      * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
      * @params string news_text
      * @params string title
+     * @params string publish_date
      * @params файлы изображений.
      * @return string - json array объекта Status
      */
@@ -89,11 +90,12 @@ class NewsAPIController extends AbstractController
         $data['news_text'] = $inputData->news_text;
         $data['title'] = $inputData->title;
         $data['account_id'] = $inputData->account_id;
+        if(!is_null($inputData->publish_date))
+            $data['publish_date'] = date('Y-m-d H:i:sO', strtotime($inputData->publish_date));
 
         $this->db->begin();
         try {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $userId = self::getUserId();
 
             //проверки
             if (empty(trim($data['account_id']))) {
@@ -104,7 +106,14 @@ class NewsAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $data['publish_date'] = date('Y-m-d H:i:s');
+            if(!is_null($data['publish_date']) && (time() - strtotime($data['publish_date']) > 3600)){
+                $errors['publish_date'] = 'date of publication too early';
+            }
+
+            if(!is_null($errors)){
+                $exception = new Http400Exception('Invalid some parameters',self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
 
             $news = $this->newsService->createNews($data);
 
@@ -298,7 +307,8 @@ class NewsAPIController extends AbstractController
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectsNewsAction($id, $is_company = false, $account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
+    public function getSubjectsNewsAction($id, $is_company = false, $account_id = null,
+                                          $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 

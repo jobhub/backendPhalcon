@@ -86,8 +86,22 @@ class SessionAPIController extends AbstractController
     {
         $data = json_decode($this->request->getRawBody(), true);
 
+        if(empty($data['login'])){
+            $errors['login'] = 'Missing required parameter \'login\'';
+        }
+
+        if(empty($data['password'])){
+            $errors['password'] = 'Missing required parameter \'password\'';
+        }
+
+        if(!is_null($errors)){
+            $exception = new Http400Exception('Invalid some parameters',self::ERROR_INVALID_REQUEST);
+            throw $exception->addErrorDetails($errors);
+        }
+
         try {
             $user = $this->userService->getUserByLogin($data['login']);
+            SupportClass::writeMessageInLogFile('email пользователя '.$user->getEmail());
             SupportClass::writeMessageInLogFile('Юзер найден в бд');
             $this->authService->checkPassword($user, $data['password']);
             $result = $this->authService->createSession($user);

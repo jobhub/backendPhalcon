@@ -10,7 +10,7 @@ class ActivationCodes extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
     /**
      *
      * @var string
@@ -46,12 +46,12 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
         return $this;
     }
     /**
@@ -99,7 +99,7 @@ class ActivationCodes extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
     /**
      * Returns the value of field activation
@@ -139,7 +139,7 @@ class ActivationCodes extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("activationcodes");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
     /**
      * Returns table name mapped in the model.

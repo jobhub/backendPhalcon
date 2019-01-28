@@ -427,7 +427,7 @@ $routes = [
              * @access private
              *
              * @method POST
-             *
+             * @params image_text - текст к изображению
              * @params (обязательно) изображения. Именование не важно.
              *
              * @return string - json array в формате Status - результат операции
@@ -457,6 +457,29 @@ $routes = [
                 'type' => 'post',
                 'path' => '/moderator/add-users',
                 'action' => 'addUsersAction'
+            ],
+
+            /**
+             * Возвращает результат поиска пользователей.
+             * Публичный метод.
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params age_min - минимальный возраст
+             * @params age_max - максимальный возраст
+             * @params male - пол
+             * @params has_photo - фильтр, имеется ли у него фотография
+             * @params page - номер страницы
+             * @params page_size - размер страницы
+             *
+             * @return array [userinfo, [phones], [images], countNews, countSubscribers,
+             *          countSubscriptions];
+             */
+            [
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findUsersWithFiltersAction'
             ],
         ]
     ],
@@ -1943,6 +1966,16 @@ $routes = [
                 'path' => '/get/for-subject/{id}/{is_company}',
                 'action' => 'getReviewsForSubjectAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}/{page_size}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
 
             /**
              * Возвращает отзывы, связанные с указанной услугой.
@@ -1957,7 +1990,17 @@ $routes = [
              */
             [
                 'type' => 'get',
-                'path' => '/get/for-service/{service_id}/{num_page}/{width_page}',
+                'path' => '/get/for-service/{service_id}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}/{page}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}/{page}/{page_size}',
                 'action' => 'getReviewsForServiceAction'
             ],
 
@@ -2118,6 +2161,13 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get-table-liked-cycle/{news_limit}/{users_limit}/{offset}',
                 'action' => 'getLikedTableInCycleAction'
+            ],
+
+
+            [
+                'type' => 'post',
+                'path' => '/send-message-to-email',
+                'action' => 'sendMessageAction'
             ],
         ]
     ],

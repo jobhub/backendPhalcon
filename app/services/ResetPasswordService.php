@@ -34,13 +34,13 @@ class ResetPasswordService extends AbstractService
 
     public function checkResetPasswordCode(Users $user, string $code){
         if ($user->getPhoneId() == null) {
-            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code = :resetCode:',
+            $resetCode = PasswordResetCodes::findFirst(['user_id = :userId: and reset_code = :resetCode:',
                 'bind' => [
                     'userId' => $user->getUserId(),
                     'resetCode' => $code
                 ]]);
         } else {
-            $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and reset_code_phone = :resetCode:',
+            $resetCode = PasswordResetCodes::findFirst(['user_id = :userId: and reset_code_phone = :resetCode:',
                 'bind' => [
                     'userId' => $user->getUserId(),
                     'resetCode' => $code
@@ -51,10 +51,10 @@ class ResetPasswordService extends AbstractService
             return self::RIGHT_PASSWORD_RESET_CODE;
         }
 
-        $resetCode = PasswordResetCodes::findFirst(['userid = :userId: and deactivate_code = :resetCode:',
+        $resetCode = PasswordResetCodes::findFirst(['user_id = :userId: and deactivate_code = :resetCode:',
             'bind' => [
                 'userId' => $user->getUserId(),
-                'resetCode' => $this->request->getPost('resetcode')
+                'resetCode' => $code
             ]]);
 
         if ($resetCode) {
@@ -66,7 +66,7 @@ class ResetPasswordService extends AbstractService
 
     public function deletePasswordResetCode(int $userId){
         try {
-            $code = PasswordResetCodes::findFirstByUserid($userId);
+            $code = PasswordResetCodes::findFirstByUserId($userId);
 
             if (!$code) {
                 return true;
@@ -110,14 +110,14 @@ class ResetPasswordService extends AbstractService
      */
     public function createPasswordResetCode(Users $user)
     {
-        $resetCode = PasswordResetCodes::findFirstByUserid($user->getUserId());
+        $resetCode = PasswordResetCodes::findFirstByUserId($user->getUserId());
         if (!$resetCode) {
             $resetCode = new PasswordResetCodes();
             $resetCode->setUserId($user->getUserId());
-        } else if (strtotime($resetCode->getTime()) > strtotime(date('Y-m-d H:i:s') . '+00') - PasswordResetCodes::RESEND_TIME) {
+        } else if (strtotime($resetCode->getTime()) > strtotime(date('Y-m-d H:i:sO')) - PasswordResetCodes::RESEND_TIME) {
             throw new ServiceExtendedException('Time to resend did\'t come', self::ERROR_NO_TIME_TO_RESEND, null, null,
                 ['time_left' => strtotime($resetCode->getTime())
-                    - (strtotime(date('Y-m-d H:i:s' . '+00')) - PasswordResetCodes::RESEND_TIME)]);
+                    - (strtotime(date('Y-m-d H:i:sO')) - PasswordResetCodes::RESEND_TIME)]);
         }
 
         if ($user->getPhoneId() == null) {
