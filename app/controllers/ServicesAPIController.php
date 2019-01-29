@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\HttpExceptions\Http403Exception;
 use App\Models\Accounts;
+use App\Models\FavouriteServices;
 use App\Services\AccountService;
 use App\Services\CategoryService;
 use App\Services\PhoneService;
@@ -1518,6 +1519,133 @@ class ServicesAPIController extends AbstractController
         return $response;
     }
 
+    /**
+     * Подписывает текущего пользователя или его аккаунт (компанию) на услугу
+     *
+     * @method POST
+     *
+     * @params service_id
+     * @params account_id = null
+     *
+     * @return Response с json ответом в формате Status
+     */
+    public function setFavouriteAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
+            $userId = self::getUserId();
+
+            if(is_null($data['account_id']) || !is_integer($data['account_id'])){
+                $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'setFavouriteService')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            if (empty(trim($data['service_id']))) {
+                $errors['service_id'] = 'Missing required parameter "service_id"';
+            }
+
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
+
+            $this->serviceService->subscribeToService($data['account_id'], $data['service_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Account was successfully subscribed to service');
+    }
+
+
+    /**
+     * Отменяет подписку на услугу
+     *
+     * @method DELETE
+     *
+     * @param $service_id
+     * @param $account_id = null
+     *
+     * @return Response с json ответом в формате Status
+     */
+    public function deleteFavouriteAction($service_id, $account_id = null)
+    {
+        try {
+            $userId = self::getUserId();
+
+            if(is_null($account_id) || !is_integer($account_id)){
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'deleteFavouriteService')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $fafServ = $this->serviceService->getSigningToService($account_id,$service_id);
+
+            $this->serviceService->unsubscribeFromService($fafServ);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Account was successfully unsubscribed from service');
+    }
+
+
+    /**
+     * Возвращает избранные услуги пользователя
+     *
+     * @method GET
+     *
+     * @param $account_id = null
+     * @param $page = 1
+     * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array с подписками (просто id-шники)
+     */
+    public function getFavouritesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        return FavouriteServices::findFavouritesByAccountId($account_id,$page,$page_size);
+    }
     /*public
     function addImagesToAllServicesAction()
     {

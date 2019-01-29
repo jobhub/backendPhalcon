@@ -111,6 +111,7 @@ class NewsAPIController extends AbstractController
             }
 
             if(!is_null($errors)){
+                $errors['errors'] = true;
                 $exception = new Http400Exception('Invalid some parameters',self::ERROR_INVALID_REQUEST);
                 throw $exception->addErrorDetails($errors);
             }

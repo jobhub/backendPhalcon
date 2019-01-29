@@ -141,3 +141,9 @@ s
 [Mon, 28 Jan 19 13:03:19 +0300][CRITICAL] 2005 Time to resend did't come
 [Mon, 28 Jan 19 13:03:20 +0300][CRITICAL] 2005 Time to resend did't come
 [Mon, 28 Jan 19 13:08:24 +0300][CRITICAL] 4001 Unable create info for user
+[Tue, 29 Jan 19 14:00:34 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:00:53 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:02:05 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:08:56 +0300][CRITICAL] 9005 Unable subscribe user to service
+[Tue, 29 Jan 19 14:10:41 +0300][CRITICAL] 9005 Unable subscribe user to service
+[Tue, 29 Jan 19 14:10:42 +0300][CRITICAL] 9005 Unable subscribe user to service

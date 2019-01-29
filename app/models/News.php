@@ -342,13 +342,13 @@ class News extends AccountWithNotDeletedWithCascade
         return News::handleNewsFromArray($news);
     }
 
-    public static function findNewsByAccount($accountId)
+    /*public static function findNewsByAccount($accountId)
     {
         $news = News::findByAccount($accountId, 'News.publish_date DESC',
             News::publicColumnsInStr . ', account_id');
 
         return News::handleNewsFromArray($news);
-    }
+    }*/
 
     public static function findNewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {

@@ -973,6 +973,75 @@ $routes = [
                 'path' => '/get/info/{service_id}',
                 'action' => 'getServiceInfoAction'
             ],
+
+            /**
+             * Подписывает текущего пользователя или его аккаунт (компанию) на услугу
+             *
+             * @method POST
+             *
+             * @params service_id
+             * @params account_id = null
+             *
+             * @return Response с json ответом в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/favourite',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку на услугу
+             *
+             * @method DELETE
+             *
+             * @param $service_id
+             * @param $account_id = null
+             *
+             * @return Response с json ответом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/favourite/{service_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/favourite/{service_id}/{account_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает избранные услуги пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/favourites',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}/{page}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesAction'
+            ],
         ]
     ],
 

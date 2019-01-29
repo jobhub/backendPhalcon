@@ -6,6 +6,7 @@ use App\Models\Services;
 use App\Models\Users;
 use App\Models\Group;
 use App\Models\Phones;
+use App\Models\FavouriteServices;
 
 use App\Libs\SupportClass;
 
@@ -27,6 +28,10 @@ class ServiceService extends AbstractService {
     const ERROR_UNABLE_DELETE_SERVICE = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_SERVICE = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CREATE_SERVICE = 4 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE = 5 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE = 7 + self::ADDED_CODE_NUMBER;
 
     public function createService(array $serviceData){
         $service = new Services();
@@ -106,6 +111,32 @@ class ServiceService extends AbstractService {
                 throw new ServiceExtendedException('Unable to delete service',
                     self::ERROR_UNABLE_DELETE_SERVICE);
             }
+        }
+    }
+
+    public function subscribeToService(int $accountId, int $serviceId){
+        $fav = new FavouriteServices();
+        $fav->setAccountId($accountId);
+        $fav->setServiceId($serviceId);
+
+        if(!$fav->create()){
+            SupportClass::getErrorsWithException($fav,self::ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE,'Unable subscribe user to service');
+        }
+    }
+
+    public function getSigningToService(int $accountId, int $serviceId){
+        $fav = FavouriteServices::findFavouriteByIds($accountId,$serviceId);
+
+        if (!$fav) {
+            throw new ServiceException('User don\'t subscribed to service', self::ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE);
+        }
+        return $fav;
+    }
+
+    public function unsubscribeFromService(FavouriteServices $favService){
+        if(!$favService->delete()){
+            SupportClass::getErrorsWithException($favService,
+                self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE,'Unable unsubscribe user from service');
         }
     }
 }
