@@ -68,6 +68,35 @@ $routes = [
             ]
         ]
     ],
+    '\App\Controllers\RastreniyaController' => [
+        'prefix' => '/user/rastreniya',
+        'resources' => [
+            ['type' => 'post',
+                'path' => '/new', //Create new rastreniya @param content
+                'action' => 'newAction'
+            ],
+            ['type' => 'post',
+                'path' => '/comment', //add new rastreniya
+                'action' => 'sendMessageAction'
+            ],
+            ['type' => 'get',
+                'path' => '', //get Rastreniya
+                'action' => 'getAction'
+            ],
+            ['type' => 'put',
+                'path' => '/notice', //toggle hidden user discussions @param messaging_id
+                'action' => 'noticeAction'
+            ],
+            ['type' => 'post',
+                'path' => '/response', //toggle hidden user discussions @param messaging_id
+                'action' => 'responseAction'
+            ],
+            ['type' => 'put',
+                'path' => '', //toggle hidden user discussions @param messaging_id
+                'action' => 'putAction'
+            ]
+        ]
+    ],
     '\App\Controllers\ChannelController' => [
         'prefix' => '/user/channel',
         'resources' => [

@@ -89,6 +89,7 @@ $di->setShared('forwardService', '\App\Services\ForwardService');
 
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');
+$di->setShared('rastreniyaService', '\App\Services\RastreniyaService');
 
 
 $di['mailer'] = function() {

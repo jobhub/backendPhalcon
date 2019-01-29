@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Libs\SupportClass;
+use http\Client\Curl\User;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
@@ -224,20 +225,15 @@ class Users extends NotDeletedModelWithCascade
         $email = $login;
         $formatPhone = Phones::formatPhone($phone);
         $phoneObj = Phones::findFirstByPhone($formatPhone);
-        try {
-            $user = Users::findFirst(
-                [
-                    "(email = :email: OR phone_id = :phoneId:)",
-                    "bind" => [
-                        "email" => $email,
-                        "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
-                    ]
+        $user = Users::findFirst(
+            [
+                "(email = :email: OR phone_id = :phoneId:)",
+                "bind" => [
+                    "email" => $email,
+                    "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
                 ]
-            );
-        }catch(\Exception $e){
-            SupportClass::writeMessageInLogFile('Exception '.$e->getMessage());
-            return null;
-        }
+            ]
+        );
         return $user;
     }
 
@@ -582,20 +578,21 @@ class Users extends NotDeletedModelWithCascade
     }
 
     /**
+     * @param $user_id
      * @return array
      */
-    public function getUserShortInfo(){
+    public function getUserShortInfo($user_id = null){
         $userInfo = $this->getRelated('Userinfo', [
             'columns' => Userinfo::shortColumns
         ]);
-
-        if($userInfo)
-            return $userInfo->toArray();
-
-        return [
-                'userid' => $this->user_id ,
+        if(! $userInfo)
+            return [
+            'user_id' => $this->user_id ,
                 'email' => $this->email
             ];
+
+            return $userInfo->toArray();
+
     }
 
     /**
@@ -603,6 +600,8 @@ class Users extends NotDeletedModelWithCascade
      * @return bool
      */
     public static function isUserExist($id){
+        if(is_null($id) || empty($id))
+            return false;
         $user = parent::findFirst($id);
         if(!$user)
             return false;

@@ -206,4 +206,63 @@ class SupportClass
         }
         return '{' . implode(",", $result) . '}'; // format
     }
+
+    /**
+     * Convert Postgres array to php
+     *
+     * @param $s
+     * @param int $start
+     * @param null $end
+     * @return array|null
+     */
+    public static function to_php_array($s, $start = 0, &$end = null)
+    {
+        if (empty($s) || $s[0] != '{') return null;
+        $return = array();
+        $string = false;
+        $quote = '';
+        $len = strlen($s);
+        $v = '';
+        for ($i = $start + 1; $i < $len; $i++) {
+            $ch = $s[$i];
+
+            if (!$string && $ch == '}') {
+                if ($v !== '' || !empty($return)) {
+                    $return[] = $v;
+                }
+                $end = $i;
+                break;
+            } elseif (!$string && $ch == '{') {
+                $v = to_php_array($s, $i, $i);
+            } elseif (!$string && $ch == ',') {
+                $return[] = $v;
+                $v = '';
+            } elseif (!$string && ($ch == '"' || $ch == "'")) {
+                $string = true;
+                $quote = $ch;
+            } elseif ($string && $ch == $quote && $s[$i - 1] == "\\") {
+                $v = substr($v, 0, -1) . $ch;
+            } elseif ($string && $ch == $quote && $s[$i - 1] != "\\") {
+                $string = false;
+            } else {
+                $v .= $ch;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Remove an element from an array.
+     *
+     * @param string|int $element
+     * @param array $array
+     */
+    public static function deleteElement($element, &$array)
+    {
+        $index = array_search($element, $array);
+        if ($index !== false) {
+            unset($array[$index]);
+        }
+    }
 }

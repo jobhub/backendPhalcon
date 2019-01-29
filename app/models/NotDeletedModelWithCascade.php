@@ -148,8 +148,8 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
             }
             if(isset($parameters['conditions']))
                 $parameters['conditions'] = $conditions;
-            else
-                $parameters[0] = $conditions;
+           else
+             $parameters[0] = $conditions;
         }
 
         return parent::findFirst($parameters);

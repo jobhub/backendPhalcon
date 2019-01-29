@@ -63,11 +63,13 @@ class MessageService extends AbstractService
                     $msg->setAnswerOf($other_msg);
             }
 
-
+            $statut_array = [$data["sender"]];
             $msg->setSenderId($data["sender"])
                 ->setContent($data["body"])
                 ->setChatHistId($chatHistory->getId())
                 ->setMessageType($data["type"])
+                ->setReadedUsers(SupportClass::to_pg_array($statut_array))
+                ->setReceivedUsers(SupportClass::to_pg_array($statut_array))
                 ->create();
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
@@ -98,16 +100,17 @@ class MessageService extends AbstractService
 
     public function deleteMessage($data, $is_group_msg = false)
     {
-            $id_msg = $data['msg_id'];
+
+            $id_msg = $data['message_id'];
             try {
             $message = Message::findFirst($id_msg);
             if (!$message)
                 throw new Http400Exception('unable to get message service : missing id', self::ERROR_UNABLE_SEND_MSG);
            $data = $message->getArrayReaded();
-           var_dump($data);
             } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
+        return $data;
     }
 
     /**
@@ -134,9 +137,10 @@ class MessageService extends AbstractService
             $messages = Message::find([
                 'order' => 'create_at ASC',
                 'limit' => Message::DEFAULT_RESULT_PER_PAGE,
-                'conditions' => 'chat_hist_id = :chat_hist_id:',
+                'conditions' => 'chat_hist_id = :chat_hist_id: AND NOT (:user_id: = ANY (deleted_by_users))',
                 'bind' => [
-                    "chat_hist_id" => $chatHistory->getId()
+                    "chat_hist_id" => $chatHistory->getId(),
+                    "user_id" => $data['sender']
                 ],
                 'offset' => $offset, // offset of result
                 'columns' => Message::PUBLIC_COLUMNS

@@ -175,6 +175,10 @@ class Groups extends \Phalcon\Mvc\Model
         return 'groups';
     }
 
+    public function getSequenceName() {
+        return "\"groups_id_seq\"";
+    }
+
 
     /**
      * Allows to query a set of records that match the specified conditions
