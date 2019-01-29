@@ -521,7 +521,7 @@ class CommentsAPIController extends AbstractController
                 $account_id = null;
 
 
-            if ($parent_id != null && is_integer($parent_id)) {
+            if ($parent_id != null && is_integer(intval($parent_id))) {
                 $comments = $this->commentService->getChildComments($object_id, $type, $parent_id,$account_id, $page, $page_size);
             } else {
                 $comments = $this->commentService->getParentComments($object_id, $type,$account_id, $page, $page_size);
