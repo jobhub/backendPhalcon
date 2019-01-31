@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use App\Libs\SupportClass;
 
 /**
@@ -236,9 +238,8 @@ abstract class CommentsModel extends AccountWithNotDeleted
             } else {
                 $handledComment['deleted'] = $comment['deleted'];
             }
-            $handledComment['child_count'] = count($model::find(['reply_id = :parentId:',
-                'bind'=>['parentId'=>$comment['comment_id']]
-                ],false));
+            $handledComment['child_count'] = self::getCountOfComments($model::getSource(),$comment['object_id'],
+                '{'.$comment['comment_id'].'}');
 
             $handledComment = LikeModel::handleObjectWithLikes($handledComment, $comment, $accountId);
             $handledComments[] = $handledComment;
@@ -288,5 +289,53 @@ abstract class CommentsModel extends AccountWithNotDeleted
         return $comments_arr;
     }
 
+    /**
+     * @param $model - name of table
+     * @param null $parentIds
+     * @param $objectId
+     *
+     * @return integer - count of comments
+     */
+    public static function getCountOfComments($model, $objectId, $parentIds = null){
+        $db = DI::getDefault()->getDb();
+        $count = 0;
+        $ids = $parentIds;
 
+        $sqlParent = 'SELECT COUNT(*) AS total, array_agg(comment_id) as ids FROM ' .
+            $model . ' where reply_id is null and object_id = :objectId';
+
+
+        $sqlChild = 'SELECT COUNT(*) AS total, array_agg(comment_id) as ids FROM ' .
+            $model . ' where reply_id = ANY (:ids) and object_id = :objectId';
+
+        do {
+            if ($ids == null) {
+                $query = $db->prepare($sqlParent);
+                $query->execute([
+                    'objectId' => $objectId
+                ]);
+
+                $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+                /*if ($result[0]['total'] == 0)
+                    return $result[0]['total'];*/
+
+                $count+=$result[0]['total'];
+                $ids = $result[0]['ids'];
+            } else {
+                $query = $db->prepare($sqlChild);
+                $query->execute([
+                    'ids' => $ids,
+                    'objectId' => $objectId
+                ]);
+
+                $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+                $count+=$result[0]['total'];
+                $ids = $result[0]['ids'];
+            }
+        } while($result[0]['total']!=0);
+
+        return $count;
+    }
 }

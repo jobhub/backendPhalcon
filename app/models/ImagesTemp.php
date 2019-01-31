@@ -4,8 +4,26 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
-class ImagesNews extends ImagesModel
+class ImagesTemp extends ImagesModel
 {
+
+    protected $further_path;
+
+    /**
+     * @return mixed
+     */
+    public function getFurtherPath()
+    {
+        return $this->further_path;
+    }
+
+    /**
+     * @param mixed $further_path
+     */
+    public function setFurtherPath($further_path)
+    {
+        $this->further_path = $further_path;
+    }
 
     /**
      * Validations and business logic
@@ -20,10 +38,10 @@ class ImagesNews extends ImagesModel
             'object_id',
             new Callback(
                 [
-                    "message" => "Такая новость не существует",
+                    "message" => "Такой аккаунт не существует",
                     "callback" => function ($image) {
-                        $new = News::findFirstByNewsId($image->getObjectId());
-                        if ($new)
+                        $account = Accounts::findFirstById($image->getObjectId());
+                        if ($account)
                             return true;
                         return false;
                     }
@@ -41,8 +59,8 @@ class ImagesNews extends ImagesModel
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("images_news");
-        $this->belongsTo('object_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
+        $this->setSource("images_temp");
+        $this->belongsTo('object_id', 'App\Models\Accounts', 'id', ['alias' => 'Accounts']);
     }
 
     /**
@@ -52,12 +70,7 @@ class ImagesNews extends ImagesModel
      */
     public function getSource()
     {
-        return 'images_news';
-    }
-
-    public function getSequenceName()
-    {
-        return "imagesnews_image_id_seq";
+        return 'images_temp';
     }
 
     /**
@@ -82,19 +95,21 @@ class ImagesNews extends ImagesModel
         return parent::findFirst($parameters);
     }
 
-    /**
-     * return non formatted images objects
-     * @param $newsId
-     * @param $page
-     * @param $page_size
-     * @return mixed
-     */
-    public static function findImagesForNews($newsId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) *$page_size;
-        return self::handleImages(
-            self::find(['conditions'=>'object_id = :newsId:','bind'=>['newsId'=>$newsId],
-                'limit'=>$page_size,'offset'=>$offset])->toArray()
-        );
+    public static function handleImages($images)
+    {
+        $handledImages = [];
+        foreach ($images as $image) {
+            $handledImages[] = self::handleImage($image);
+        }
+        return $handledImages;
+    }
+
+    public static function handleImage($image)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path'],
+            /*'further_path' => $image['further_path']*/];
+        return $handledImage;
     }
 }

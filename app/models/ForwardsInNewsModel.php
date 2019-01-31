@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 class ForwardsInNewsModel extends \Phalcon\Mvc\Model
 {
 
@@ -188,5 +193,34 @@ class ForwardsInNewsModel extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function handleObjectWithForwards($model, array $handledObject, $objectId, $accountId = null)
+    {
+        $handledObject['stats']['forwards'] = self::getCount($model,$objectId);
+        return $handledObject;
+    }
+
+    public static function getCount($model, $objectId){
+        $db = DI::getDefault()->getDb();
+
+        $sql = 'Select COUNT(*) from '.$model::getSource().' where object_id = :objectId';
+
+        $query = $db->prepare($sql);
+        $query->execute([
+            'objectId' => $objectId
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC)[0]['count'];
+    }
+
+    public static function findByIds($model, $accountId, $objectId){
+        $account = Accounts::findFirstById($accountId);
+
+        return $model::find(['account_id = ANY :accounts and object_id = :objectId','bind'=>
+        [
+            'accounts'=>$account->getRelatedAccounts(),
+            'objectId'=>$objectId
+        ]]);
     }
 }

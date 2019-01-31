@@ -86,6 +86,7 @@ $di->setShared('taskService', '\App\Services\TaskService');
 $di->setShared('offerService', '\App\Services\OfferService');
 $di->setShared('reviewService', '\App\Services\ReviewService');
 $di->setShared('forwardService', '\App\Services\ForwardService');
+$di->setShared('favouriteService', '\App\Services\FavouriteService');
 
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');

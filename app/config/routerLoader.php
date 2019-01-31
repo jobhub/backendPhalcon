@@ -576,6 +576,11 @@ $routes = [
              * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
              * @params string news_text
              * @params string title
+             * @params string publish_date
+             * @params string news_type
+             *
+             * @params array temp_images - массив с id временных изображений, которые должны быть добавлены в новость
+             *
              * @params файлы изображений.
              * @return string - json array объекта Status
              */
@@ -2133,6 +2138,7 @@ $routes = [
              *      review
              *      service
              *      company (пока еще не реализовано)
+             *      temp
              *
              * @access private
              *
@@ -2166,6 +2172,46 @@ $routes = [
                 'path' => '/get/{type}/{object_id}/{account_id}/{page}/{page_size}',
                 'action' => 'getImagesAction'
             ],
+
+            /**
+             * Добавляет все прикрепленные изображения к указанному объекту.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type;
+             *
+             * @params object_id
+             *
+             * @params image_text в случае изображения пользователя
+             *
+             * @params (обязательно) изображения.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'addImagesAction'
+            ],
+
+            /**
+             * Удаляет картинку из списка изображений
+             * @access private
+             *
+             * @method DELETE
+             *
+             * @param $type
+             * @params (посылается в теле запроса) $image_id id изображения или же массив id-шников изображений
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}',
+                'action' => 'deleteImageByIdAction'
+            ],
         ]
     ],
 
@@ -2191,6 +2237,54 @@ $routes = [
                 'action' => 'toggleLikeAction'
             ],
 
+        ]
+    ],
+
+    '\App\Controllers\ForwardsController'=>[
+        'prefix' => '/forward',
+        'resources' => [
+            /**
+             * Создает репост новости
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type
+             *
+             * @params object_id - id новости
+             * @params forward_text - текст репоста
+             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
+             * Если не указан, то от имени текущего пользователя по умолчанию.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'addForwardAction'
+            ],
+
+            /**
+             * Удаляет комментарий указаннного типа
+             *
+             * @method DELETE
+             *
+             * @param $type string - тип репоста
+             * @param $object_id int id новость
+             * @param $account_id int id аккаунта
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}',
+                'action' => 'addForwardAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}/{account_id}',
+                'action' => 'addForwardAction'
+            ],
         ]
     ],
 

@@ -68,6 +68,8 @@ class NewsService extends AbstractService
             $news->setPublishDate(date('Y-m-d H:i:sO', strtotime($data['publish_date'])));
         if (!empty(trim($data['account_id'])))
             $news->setAccountId($data['account_id']);
+        if (!empty(trim($data['news_type'])))
+            $news->setNewsType($data['news_type']);
     }
 
     //Чертов php не позволяет переопределять методы, используя разные входные переменные.

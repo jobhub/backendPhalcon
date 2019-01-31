@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Libs\SupportClass;
+use App\Models\ImagesTemp;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -81,6 +83,10 @@ class NewsAPIController extends AbstractController
      * @params string news_text
      * @params string title
      * @params string publish_date
+     * @params string news_type
+     *
+     * @params array temp_images - массив с id временных изображений, которые должны быть добавлены в новость
+     *
      * @params файлы изображений.
      * @return string - json array объекта Status
      */
@@ -90,6 +96,10 @@ class NewsAPIController extends AbstractController
         $data['news_text'] = $inputData->news_text;
         $data['title'] = $inputData->title;
         $data['account_id'] = $inputData->account_id;
+        $data['news_type'] = $inputData->news_type;
+
+        $data['temp_images'] = $inputData->temp_images;
+
         if(!is_null($inputData->publish_date))
             $data['publish_date'] = date('Y-m-d H:i:sO', strtotime($inputData->publish_date));
 
@@ -117,11 +127,41 @@ class NewsAPIController extends AbstractController
             }
 
             $news = $this->newsService->createNews($data);
+            $news = $this->newsService->getNewsById($news->getNewsId());
 
             if ($this->request->hasFiles()) {
                 $files = $this->request->getUploadedFiles();
                 $ids = $this->imageService->createImagesToUser($files, $news);
                 $this->imageService->saveImagesToUser($files, $news, $ids);
+            }
+
+            $new_news_text = $news->getNewsText();
+            $tempImages = [];
+            $filenames = [];
+            if($data['temp_images']!=null){
+                foreach ($data['temp_images'] as $temp_image_id){
+                    $tempImage = ImagesTemp::findFirstByImageId($temp_image_id);
+
+                    if($tempImage->getObjectId()!= $news->getAccountId())
+                        throw new Http403Exception('Permission error');
+
+                    $oldPath = $tempImage->getImagePath();
+
+                    $newPath = $this->imageService->transferTempImageToNewsObject($tempImage,$news->getNewsId());
+
+                    $filenames[] = $newPath;
+                    $new_news_text = str_replace($oldPath,$newPath,$new_news_text);
+                    $tempImages[] = $tempImage;
+                }
+
+                $new_data['news_text'] = $new_news_text;
+                $this->newsService->changeNews($news, $new_data);
+
+                $i = 0;
+                foreach($tempImages as $tempImage){
+                    $newPath = $this->imageService->transferTempImageToNewsFile($tempImage,$news->getNewsId(),$filenames[$i]);
+                    $i++;
+                }
             }
 
         } catch (ServiceExtendedException $e) {
@@ -131,6 +171,7 @@ class NewsAPIController extends AbstractController
                 case ImageService::ERROR_UNABLE_CREATE_IMAGE:
                 case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                 case NewsService::ERROR_UNABLE_CREATE_NEWS:
+                case NewsService::ERROR_UNABLE_CHANGE_NEWS:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -142,6 +183,7 @@ class NewsAPIController extends AbstractController
                 case ImageService::ERROR_INVALID_IMAGE_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
@@ -149,7 +191,7 @@ class NewsAPIController extends AbstractController
         }
         $this->db->commit();
 
-        return self::successResponse('News was successfully created',['news_id'=>$news->getNewsId()]);
+        return self::successResponse('News was successfully created',['news_id'=>$news->toArray()]);
     }
 
     /**
@@ -275,7 +317,7 @@ class NewsAPIController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if ($company_id != null && is_integer($company_id)) {
+        if ($company_id != null && SupportClass::checkInteger($company_id)) {
             if(!Accounts::checkUserHavePermissionToCompany($userId,$company_id,'getNews')){
                 throw new Http403Exception('Permission error');
             }
@@ -348,12 +390,12 @@ class NewsAPIController extends AbstractController
 
             $data['news_id'] = $sender->news_id;*/
 
-            $data['news_id'] = $this->request->getPost('news_id');
+            $data['object_id'] = $this->request->getPost('object_id');
 
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $news = $this->newsService->getNewsById($data['news_id']);
+            $news = $this->newsService->getNewsById($data['object_id']);
 
             if (!Accounts::checkUserHavePermission($userId, $news->getAccountId(), 'editNews')) {
                 throw new Http403Exception('Permission error');

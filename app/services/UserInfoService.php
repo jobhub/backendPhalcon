@@ -132,8 +132,8 @@ class UserInfoService extends AbstractService {
 
     public function subscribeToCompany(int $userId, int $companyId){
         $fav = new FavoriteCompanies();
-        $fav->setUserId($userId);
-        $fav->setCompanyId($companyId);
+        $fav->setSubjectId($userId);
+        $fav->setObjectId($companyId);
 
         if(!$fav->create()){
             $errors = SupportClass::getArrayWithErrors($fav);
@@ -171,8 +171,8 @@ class UserInfoService extends AbstractService {
 
     public function subscribeToUser(int $userId, int $userIdObject){
         $fav = new FavoriteUsers();
-        $fav->setUserSubject($userId);
-        $fav->setUserObject($userIdObject);
+        $fav->setSubjectId($userId);
+        $fav->setObjectId($userIdObject);
 
         if(!$fav->create()){
             SupportClass::getErrorsWithException($fav,self::ERROR_UNABLE_SUBSCRIBE_USER_TO_USER,'Unable subscribe user to user');

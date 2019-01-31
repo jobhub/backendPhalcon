@@ -3,8 +3,6 @@
 namespace App\Controllers;
 
 
-use App\Models\AccountModel;
-use App\Models\ForwardsInNewsModel;
 use App\Services\AccountService;
 use App\Services\LikeService;
 use Phalcon\Mvc\Model\Criteria;
@@ -13,6 +11,8 @@ use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
+
+use App\Libs\SupportClass;
 
 use App\Models\ForwardsNews;
 use App\Models\ForwardsImagesUsers;
@@ -125,7 +125,7 @@ class ForwardsController extends AbstractController
         try {
             $userId = self::getUserId();
 
-            if(is_null($account_id) || !is_integer($account_id)){
+            if(is_null($account_id) || !SupportClass::checkInteger($account_id)){
                 $account_id = Accounts::findForUserDefaultAccount($userId);
             }
 

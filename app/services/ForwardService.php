@@ -26,6 +26,8 @@ use App\Controllers\HttpExceptions\Http500Exception;
 class ForwardService extends AbstractService
 {
     const TYPE_NEWS = 'news';
+    const TYPE_SERVICE = 'service';
+    const TYPE_IMAGE_USER = 'image-user';
 
     const ADDED_CODE_NUMBER = 20000;
 
@@ -41,6 +43,12 @@ class ForwardService extends AbstractService
         switch ($type) {
             case self::TYPE_NEWS:
                 $forward = new ForwardsNews();
+                break;
+            case self::TYPE_SERVICE:
+                $forward = new ForwardsServices();
+                break;
+            case self::TYPE_IMAGE_USER:
+                $forward = new ForwardsImagesUsers();
                 break;
             default:
                 throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FORWARD_TYPE);
@@ -95,6 +103,12 @@ class ForwardService extends AbstractService
         switch ($type) {
             case self::TYPE_NEWS:
                 $forward = ForwardsNews::findForwardByIds($accountId, $objectId);
+                break;
+            case self::TYPE_SERVICE:
+                $forward = ForwardsServices::findForwardByIds($accountId, $objectId);
+                break;
+            case self::TYPE_IMAGE_USER:
+                $forward = ForwardsImagesUsers::findForwardByIds($accountId, $objectId);
                 break;
             default:
                 throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FORWARD_TYPE);

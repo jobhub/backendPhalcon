@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -47,9 +48,9 @@ class News extends AccountWithNotDeletedWithCascade
 
     protected $news_type;
 
-    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title', 'likes', 'news_type'];
+    const publicColumns = ['news_id', 'publish_date', 'news_text', 'title', 'likes', 'news_type', 'account_id'];
 
-    const publicColumnsInStr = 'news_id, publish_date, news_text, title, likes, news_type';
+    const publicColumnsInStr = 'news_id, publish_date, news_text, title, likes, news_type, account_id';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
 
@@ -258,25 +259,39 @@ class News extends AccountWithNotDeletedWithCascade
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
 
-        $str = "SELECT ";
-        foreach (News::publicColumns as $column) {
-            $str .= $column . ", ";
-        }
-
-        $str .= "account_id";
-
-        $str .= " FROM ((SELECT * FROM public.news n 
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id
+	FROM (
+        (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
+         FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
                     INNER JOIN public.\"favoriteCompanies\" favc ON 
                                 (a.company_id = favc.company_id)
                     WHERE favc.user_id = :userId)
-                    UNION
-                    (SELECT * FROM public.news n 
+        UNION ALL
+        (
+    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+    inner join public.accounts a ON (m.account_id = a.id)
+    INNER JOIN public.\"favoriteCompanies\" favc ON (a.company_id = favc.company_id)
+                where favc.user_id = :userId)
+      	UNION ALL
+        (
+            SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
+                     FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
-                    INNER JOIN public.\"favoriteUsers\" favu
-                    ON (a.user_id = favu.user_object)
-                    WHERE favu.user_subject = :userId)) as foo
-                    ORDER BY foo.publish_date desc
+                    INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
+                    WHERE favu.user_subject = :userId
+        )
+        UNION ALL
+        (
+            select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+            inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
+            INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
+                        WHERE favu.user_subject = :userId
+        )
+    ) as foo
+                    ORDER BY foo.date desc
                     LIMIT :limit 
                     OFFSET :offset";
 
@@ -288,8 +303,7 @@ class News extends AccountWithNotDeletedWithCascade
         ]);
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-        return News::handleNewsFromArray($news);
+        return News::handleNewsSetWithForwards($news);
     }
 
     public static function findAllNewsForCurrentUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
@@ -299,34 +313,39 @@ class News extends AccountWithNotDeletedWithCascade
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
 
-        $str = "SELECT ";
-        $columns = '';
-        foreach (News::publicColumns as $column) {
-            $str .= $column . ", ";
-            $columns .= $column . ", ";
-        }
-
-        $str .= "account_id";
-        $columns .= "account_id";
-
-        $str .= " FROM ((SELECT " . $columns . " FROM public.news n 
-                    INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id
+	FROM (
+        (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
+         FROM public.news n 
+                    INNER JOIN public.accounts a ON (n.account_id = a.id)
                     INNER JOIN public.\"favoriteCompanies\" favc ON 
                                 (a.company_id = favc.company_id)
                     WHERE favc.user_id = :userId)
-                    UNION
-                    (SELECT " . $columns . " FROM public.news n 
-                    INNER JOIN public.accounts a ON 
-                    (n.account_id = a.id AND a.company_id is null and n.deleted = false)
-                    INNER JOIN public.\"favoriteUsers\" favu
-                    ON (a.user_id = favu.user_object)
-                    WHERE favu.user_subject = :userId)
-                    UNION
-                    (SELECT " . $columns . " FROM public.news n
-                    INNER JOIN public.accounts a ON (n.account_id = a.id and n.deleted = false)
-                    WHERE a.user_id = :userId and a.company_id is null)
-                    ) as foo
-                    ORDER BY foo.publish_date desc
+        UNION ALL
+        (
+    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+    inner join public.accounts a ON (m.account_id = a.id)
+    INNER JOIN public.\"favoriteCompanies\" favc ON (a.company_id = favc.company_id)
+                where favc.user_id = :userId)
+      	UNION ALL
+        (
+            SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
+                     FROM public.news n 
+                    INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
+                    INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
+                    WHERE favu.user_subject = :userId
+        )
+        UNION ALL
+        (
+            select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+            inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
+            INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
+                        WHERE favu.user_subject = :userId
+        )
+    ) as foo
+                    ORDER BY foo.date desc
                     LIMIT :limit 
                     OFFSET :offset";
 
@@ -339,7 +358,7 @@ class News extends AccountWithNotDeletedWithCascade
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        return News::handleNewsFromArray($news);
+        return News::handleNewsSetWithForwards($news);
     }
 
     /*public static function findNewsByAccount($accountId)
@@ -354,24 +373,20 @@ class News extends AccountWithNotDeletedWithCascade
     {
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
-        /*$modelsManager = DI::getDefault()->get('modelsManager');
-        $result = $modelsManager->createBuilder()
-            ->columns(self::publicColumns)
-            ->from(["n" => "App\Models\News"])
-            ->join('App\Models\Accounts', 'n.account_id = a.id', 'a')
-            ->where('a.company_id = :companyId: and n.deleted = false and publish_date < :now:',
-                ['companyId' => $companyId, 'now' => date('Y-m-d H:i')])
-            ->limit($page_size)
-            ->offset($offset)
-            ->getQuery()
-            ->execute();*/
-
         $db = DI::getDefault()->getDb();
 
-        $sql = 'select ' . self::publicColumnsInStr . ' from public.news n inner join 
-		      public.accounts a ON (n.account_id = a.id)
-                a.company_id = :companyId and n.deleted = false and publish_date < CURRENT_TIMESTAMP
-                ORDER BY n.publish_date desc
+        $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
+                (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
+                    from public.news n inner join 
+		            public.accounts a ON (n.account_id = a.id)
+                    where a.company_id = :companyId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL (
+                    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+                    inner join public.accounts a ON (m.account_id = a.id)
+                        where a.company_id = :companyId)
+                ) foo
+                order by foo.date desc
                 LIMIT :limit
                 OFFSET :offset';
 
@@ -384,7 +399,7 @@ class News extends AccountWithNotDeletedWithCascade
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        return self::handleNewsFromArray($news);
+        return self::handleNewsSetWithForwards($news);
     }
 
     public static function findNewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
@@ -393,22 +408,196 @@ class News extends AccountWithNotDeletedWithCascade
         $offset = ($page - 1) * $page_size;
         $db = DI::getDefault()->getDb();
 
-        $sql = 'select ' . self::publicColumnsInStr . ' from public.news n inner join 
-		      public.accounts a ON (n.account_id = a.id and a.company_id is null)
-                where a.user_id = :userId and n.deleted = false and publish_date < CURRENT_TIMESTAMP
-                ORDER BY n.publish_date desc
+        $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
+                (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
+                    from public.news n inner join 
+		            public.accounts a ON (n.account_id = a.id and a.company_id is null)
+                    where a.user_id = :userId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL (
+                    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+                    inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
+                        where a.user_id = :userId)
+                ) foo
+                order by foo.date desc
                 LIMIT :limit
                 OFFSET :offset';
 
         $query = $db->prepare($sql);
-        $result = $query->execute([
+        $query->execute([
             'userId' => $userId,
             'limit' => $page_size,
             'offset' => $offset,
         ]);
 
-        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
-        return self::handleNewsFromArray($news);
+        $newsResultset = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $newsResult = self::handleNewsSetWithForwards($newsResultset);
+        /*foreach ($newsResultset as $newsElement){
+            $resultElement = [];
+            switch ($newsElement['relname']){
+                case 'news':{
+                    $news = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $news = News::getPublicInfoFromArray($news);
+
+                    //$news = News::findNewsById($newsElement['object_id'],self::publicColumns)->toArray();
+                    $resultElement = self::handleNewsFromArray([$news])[0];
+
+                    $resultElement['is_forward'] = false;
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_services':{
+                    $service = Services::findServiceById($newsElement['object_id'])->toArray();
+
+                    if(is_null($service))
+                        break;
+
+                    $resultElement['service'] = Services::handleServiceForNews($service);
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData,$resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_news':{
+                    $news = News::findNewsById($newsElement['object_id'],News::publicColumns)->toArray();
+
+                    if(is_null($news))
+                        break;
+
+                    $resultElement['news'] = News::handleNewsFromArray([$news])[0];
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData,$resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_images_users':{
+                $imageUser = ImagesUsers::findImageById($newsElement['object_id'])->toArray();
+
+                if(is_null($imageUser))
+                    break;
+
+                $resultElement['image_user'] = ImagesUsers::handleImages([$imageUser])[0];
+
+                $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                $resultElement = self::addForwardData($forwardData,$resultElement);
+
+                $newsResult[] = $resultElement;
+
+                break;
+                }
+            }
+        }*/
+
+        return /*self::handleNewsFromArray($news);*/
+            $newsResult;
+    }
+
+    /**
+     * @param array $newsResultset - must have fields [date, data, relname, object_id]
+     *
+     * @return array with news and all forwards for user
+     */
+    public static function handleNewsSetWithForwards(array $newsResultset)
+    {
+        $newsResult = [];
+        foreach ($newsResultset as $newsElement) {
+            $resultElement = [];
+            switch ($newsElement['relname']) {
+                case 'news': {
+                    $news = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $news = News::getPublicInfoFromArray($news);
+
+                    //$news = News::findNewsById($newsElement['object_id'],self::publicColumns)->toArray();
+                    $resultElement = self::handleNewsFromArray([$news])[0];
+
+                    $resultElement['is_forward'] = false;
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_services': {
+                    $service = Services::findServiceById($newsElement['object_id'])->toArray();
+
+                    if (is_null($service))
+                        break;
+
+                    $resultElement['service'] = Services::handleServiceForNews($service);
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData, $resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_news': {
+                    $news = News::findNewsById($newsElement['object_id'], News::publicColumns)->toArray();
+
+                    if (is_null($news))
+                        break;
+
+                    $resultElement['news'] = News::handleNewsFromArray([$news])[0];
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData, $resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+                case 'forwards_images_users': {
+                    $imageUser = ImagesUsers::findImageById($newsElement['object_id'])->toArray();
+
+                    if (is_null($imageUser))
+                        break;
+
+                    $resultElement['image_user'] = ImagesUsers::handleImages([$imageUser])[0];
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData, $resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
+            }
+        }
+        return $newsResult;
+    }
+
+    public static function addForwardData(array $data, array $resultElement)
+    {
+        $resultElement['forward_text'] = $data['forward_text'];
+        $resultElement['forward_date'] = $data['forward_date'];
+        $resultElement['is_forward'] = true;
+
+        $account = Accounts::findFirstById($data['account_id']);
+
+        if ($account != null) {
+            if($account->getCompanyId()==null)
+                $resultElement['publisher_user'] = $account->getUserInfomations();
+            else
+                $resultElement['publisher_company'] = $account->getUserInfomations();
+        }
+
+        return $resultElement;
     }
 
     private static function handleNewsFromArray(array $news, $accountId = null)
@@ -421,8 +610,7 @@ class News extends AccountWithNotDeletedWithCascade
         }
 
         foreach ($news as $newsElement) {
-            $newsWithAllElement = $newsElement/*->toArray()*/
-            ;
+            $newsWithAllElement = $newsElement;
             unset($newsWithAllElement['likes']);
             if ($newsElement['account_id'] != null) {
                 $account = Accounts::findFirstById($newsElement['account_id']);
@@ -436,8 +624,6 @@ class News extends AccountWithNotDeletedWithCascade
                 }
             }
 
-            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, $accountId);
-
             $imagesNews = ImagesNews::findImagesForNews($newsElement['news_id']);
 
             $newsWithAllElement['images'] = [];
@@ -449,11 +635,26 @@ class News extends AccountWithNotDeletedWithCascade
 
             $newsWithAllElement['last_comment'] = $last_comment;
 
-            $newsWithAllElement['stats']['comments'] = count(CommentsNews::findByObjectId($newsElement['news_id']));
+            //$newsWithAllElement['stats']['comments'] = count(CommentsNews::findByObjectId($newsElement['news_id']));
+            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, $accountId);
+            $newsWithAllElement = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsNews',$newsWithAllElement, $newsElement['news_id'], $accountId);
+
+            $newsWithAllElement['stats']['comments'] = CommentsModel::getCountOfComments('comments_news', $newsElement['news_id']);
 
             $newsWithAll[] = $newsWithAllElement;
         }
         return $newsWithAll;
+    }
+
+    public static function findNewsById(int $newsId, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['news_id = :newsId:',
+                'bind' => ['newsId' => $newsId]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'news_id = :newsId:',
+                'bind' => ['newsId' => $newsId]]);
+        }
     }
 
     private function sendPush($new)
@@ -597,4 +798,24 @@ class News extends AccountWithNotDeletedWithCascade
         }
     }
 
+    /**
+     * Build an array with only public data
+     *
+     * @return array
+     */
+    public function getPublicInfo()
+    {
+        $toRet = [];
+        foreach (self::publicColumns as $info)
+            $toRet[$info] = $this->$info;
+        return $toRet;
+    }
+
+    public static function getPublicInfoFromArray(array $news_data)
+    {
+        $toRet = [];
+        foreach (self::publicColumns as $info)
+            $toRet[$info] = $news_data[$info];
+        return $toRet;
+    }
 }

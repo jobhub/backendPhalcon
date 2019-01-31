@@ -65,7 +65,11 @@ class LikeModel
     }
 
     public static function handleObjectWithLikes(array $handledObject, array $object, $accountId = null){
-        $likes = SupportClass::translateInPhpArrFromPostgreArr($object['likes']);
+
+        if(is_array($object['likes']))
+            $likes = $object['likes'];
+        else
+            $likes = SupportClass::translateInPhpArrFromPostgreArr($object['likes']);
         if(is_null($likes))
             $handledObject['stats']['likes'] = 0;
         else

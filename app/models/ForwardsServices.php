@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Callback;
-
-class FavoriteCompanies extends \Phalcon\Mvc\Model
+class ForwardsServices extends ForwardsInNewsModel
 {
+
+    public function validation()
+    {
+        return parent::validation();
+    }
 
     /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        //$this->setSchema("public");
-        $this->setSource("favourite_companies");
-        $this->belongsTo('object_id', 'App\Models\Companies', 'company_id', ['alias' => 'object']);
-        $this->belongsTo('subject_id', 'App\Models\Accounts', 'id', ['alias' => 'subject']);
+        parent::initialize();
+        $this->setSource("forwards_services");
+        $this->belongsTo('object_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
     }
 
     /**
@@ -26,14 +27,14 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favourite_companies';
+        return 'forwards_services';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return FavoriteCompanies[]|FavoriteCompanies|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ForwardsNews[]|ForwardsNews|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -44,10 +45,15 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return FavoriteCompanies|\Phalcon\Mvc\Model\ResultInterface
+     * @return ForwardsNews|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function findForwardByIds($accountId, $objectId)
+    {
+        return parent::findByIds('App\Models\ForwardsServices',$accountId,$objectId)->toArray();
     }
 }

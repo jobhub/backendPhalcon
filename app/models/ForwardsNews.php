@@ -7,9 +7,7 @@ class ForwardsNews extends ForwardsInNewsModel
 
     public function validation()
     {
-        $validator = new Validation();
-
-        return $this->validate($validator) && parent::validation();
+        return parent::validation();
     }
 
     /**
@@ -56,10 +54,6 @@ class ForwardsNews extends ForwardsInNewsModel
 
     public static function findForwardByIds($accountId, $objectId)
     {
-        return self::findFirst(['account_id = :accountId: and object_id = :objectId:','bind'=>
-        [
-            'accountId'=>$accountId,
-            'objectId'=>$objectId
-        ]])->toArray();
+        return parent::findByIds('App\Models\ForwardsNews',$accountId,$objectId)->toArray();
     }
 }

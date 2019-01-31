@@ -65,6 +65,11 @@ class CommentsNews extends CommentsModel
         return 'comments_news';
     }
 
+    public static function getSourceStatic()
+    {
+        return 'comments_news';
+    }
+
     public static function getComments($newsId){
         $comments = CommentsNews::find(['object_id = :newsId:','bind' =>['newsId'=> $newsId],
             'order' => 'comment_date DESC'],false);

@@ -10,14 +10,9 @@ use Phalcon\Validation\Validator\Callback;
 
 class ImagesUsers extends ImagesModel
 {
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
-
     protected $image_text;
+
+    protected $likes;
 
     const MAX_IMAGES = 10;
 
@@ -37,27 +32,21 @@ class ImagesUsers extends ImagesModel
         $this->image_text = $image_text;
     }
 
-    /**
-     * Method to set the value of field userid
-     *
-     * @param integer $user_id
-     * @return $this
-     */
-    public function setUserId($user_id)
-    {
-        $this->user_id = $user_id;
 
-        return $this;
+    /**
+     * @return mixed
+     */
+    public function getLikes()
+    {
+        return $this->likes;
     }
 
     /**
-     * Returns the value of field userid
-     *
-     * @return integer
+     * @param mixed $likes
      */
-    public function getUserId()
+    public function setLikes($likes)
     {
-        return $this->user_id;
+        $this->likes = $likes;
     }
 
     /**
@@ -70,12 +59,12 @@ class ImagesUsers extends ImagesModel
         $validator = new Validation();
 
         $validator->add(
-            'user_id',
+            'object_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $user = Users::findFirstByUserId($image->getUserId());
+                        $user = Users::findFirstByUserId($image->getObjectId());
                         if ($user)
                             return true;
                         return false;
@@ -94,8 +83,8 @@ class ImagesUsers extends ImagesModel
     {
         parent::initialize();
         $this->setSchema("public");
-        $this->setSource("imagesusers");
-        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->setSource("image_susers");
+        $this->belongsTo('object_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -105,8 +94,14 @@ class ImagesUsers extends ImagesModel
      */
     public function getSource()
     {
-        return 'imagesusers';
+        return 'images_users';
     }
+
+    public function getSequenceName()
+    {
+        return "imagesusers_image_id_seq";
+    }
+
 
     /**
      * Allows to query a set of records that match the specified conditions
@@ -169,9 +164,26 @@ class ImagesUsers extends ImagesModel
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         return self::handleImages(
-            self::find(['conditions'=>'user_id = :user_id:','bind'=>['user_id'=>$userId],
+            self::find(['conditions'=>'object_id = :user_id:','bind'=>['user_id'=>$userId],
                 'limit'=>$page_size,'offset'=>$offset,'order'=>'image_id desc'])->toArray()
         );
+    }
+
+    public static function handleImage($image)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path']];
+
+
+        $handledImage['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $image['image_id']);
+        $handledImage = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsImagesUsers',$handledImage, $image['image_id'], $accountId);
+
+        $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
+
+        $handledImage['image_text'] = $image['image_text'];
+
+        return $handledImage;
     }
 
     public static function handleImages($images)
@@ -181,16 +193,7 @@ class ImagesUsers extends ImagesModel
 
         $handledImages = [];
         foreach ($images as $image) {
-            $handledImage = [
-                'image_id' => $image['image_id'],
-                'image_path' => $image['image_path']];
-
-            $handledImage['stats']['comments'] = count(CommentsImagesUsers::findByObjectId($handledImage['image_id']));
-
-            $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
-
-            $handledImage['image_text'] = $image['image_text'];
-            $handledImages[] = $handledImage;
+            $handledImages[] = self::handleImage($image);
         }
         return $handledImages;
     }

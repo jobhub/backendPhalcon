@@ -116,7 +116,7 @@ class ServiceService extends AbstractService {
 
     public function subscribeToService(int $accountId, int $serviceId){
         $fav = new FavouriteServices();
-        $fav->setAccountId($accountId);
+        $fav->setSubjectId($accountId);
         $fav->setServiceId($serviceId);
 
         if(!$fav->create()){

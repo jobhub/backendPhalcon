@@ -226,10 +226,23 @@ class Accounts extends \Phalcon\Mvc\Model
     }
 
     public function getUserInfomations(){
-        if(is_null($this->user_id)){
-            return Companies::findFirst($this->company_id);
+        if(!is_null($this->company_id)){
+            return Companies::findCompanyById($this->company_id, Companies::shortColumns);
         }
-       return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumnsInStr);
+       return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumns);
+    }
+
+    public function getRelatedAccounts(){
+        if ($this->getCompanyId() == null) {
+            $accounts = [$this->getId()];
+        } else {
+            $accounts_obj = Accounts::findByCompanyId($this->getCompanyId());
+            $accounts = [];
+            foreach ($accounts_obj as $account) {
+                $accounts[] = $account->getId();
+            }
+        }
+        return $accounts;
     }
 
     public static function checkUserRelatesWithAccount($userId, $accountId)

@@ -7,6 +7,7 @@ use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
 use App\Libs\ImageLoader;
+
 /**
  *  Model with basic functions for all models with images
  *
@@ -31,7 +32,7 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     protected $image_path;
 
-    protected $likes;
+    protected $object_id;
 
     const MAX_IMAGES = 10;
     const DEFAULT_RESULT_PER_PAGE = 10;
@@ -39,18 +40,19 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     /**
      * @return mixed
      */
-    public function getLikes()
+    public function getObjectId()
     {
-        return $this->likes;
+        return $this->object_id;
     }
 
     /**
-     * @param mixed $likes
+     * @param mixed $object_id
      */
-    public function setLikes($likes)
+    public function setObjectId($object_id)
     {
-        $this->likes = $likes;
+        $this->object_id = $object_id;
     }
+
 
     /**
      * Method to set the value of field imageid
@@ -136,7 +138,20 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
+        $this->setSchema("public");
+        $this->setSource("images_model");
     }
+
+    public function getSequenceName()
+    {
+        return "images_model_image_id_seq1";
+    }
+
+    public function getSource()
+    {
+        return 'images_model';
+    }
+
 
     /*public static function getComments($imageId)
     {
@@ -166,15 +181,31 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     {
         $handledImages = [];
         foreach ($images as $image) {
-            $handledImage = [
-                'image_id' => $image['image_id'],
-                'image_path' => $image['image_path']];
-            $handledImages[] = $handledImage;
+            $handledImages[] = self::handleImage($image);
         }
         return $handledImages;
     }
 
-    public static function findImageById($imageId){
+    public static function handleImage($image)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path']];
+        return $handledImage;
+    }
+
+    public static function findImageById($imageId)
+    {
         return self::findFirstByImageId($imageId);
+    }
+
+    public static function findImages($model, $objectId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return $model::handleImages(
+            $model::find(['conditions' => 'object_id = :objectId:', 'bind' => ['objectId' => $objectId],
+                'limit' => $page_size, 'offset' => $offset])
+        );
     }
 }

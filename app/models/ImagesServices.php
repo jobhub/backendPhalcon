@@ -10,39 +10,6 @@ use Phalcon\Validation\Validator\Callback;
 
 class ImagesServices extends ImagesModel
 {
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $service_id;
-
-    const MAX_IMAGES = 10;
-
-    /**
-     * Method to set the value of field serviceid
-     *
-     * @param integer $service_id
-     * @return $this
-     */
-    public function setServiceId($service_id)
-    {
-        $this->service_id = $service_id;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field serviceid
-     *
-     * @return integer
-     */
-    public function getServiceId()
-    {
-        return $this->service_id;
-    }
-
     /**
      * Validations and business logic
      *
@@ -53,12 +20,12 @@ class ImagesServices extends ImagesModel
         $validator = new Validation();
 
         $validator->add(
-            'service_id',
+            'object_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $service = Services::findFirstByServiceId($image->getServiceId());
+                        $service = Services::findFirstByServiceId($image->getObjectId());
                         if ($service)
                             return true;
                         return false;
@@ -78,8 +45,8 @@ class ImagesServices extends ImagesModel
     {
         parent::initialize();
         $this->setSchema("public");
-        $this->setSource("imagesservices");
-        $this->belongsTo('service_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
+        $this->setSource("images_services");
+        $this->belongsTo('object_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
     }
 
     /**
@@ -89,7 +56,7 @@ class ImagesServices extends ImagesModel
      */
     public function getSource()
     {
-        return 'imagesservices';
+        return 'images_services';
     }
 
     public function getSequenceName()
@@ -136,7 +103,7 @@ class ImagesServices extends ImagesModel
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         return self::handleImages(
-            self::find(['conditions'=>'service_id = :serviceId:','bind'=>['serviceId'=>$serviceId],
+            self::find(['conditions'=>'object_id = :serviceId:','bind'=>['serviceId'=>$serviceId],
                 'limit'=>$page_size,'offset'=>$offset])
         );
     }

@@ -92,10 +92,10 @@ class Services extends AccountWithNotDeletedWithCascade
     protected $likes;
 
     const publicColumns = ['service_id', 'description', 'date_publication', 'price_min', 'price_max',
-        'region_id', 'name', 'rating', 'likes'];
+        'region_id', 'name', 'rating', 'likes', 'account_id'];
 
     const publicColumnsInStr = 'service_id, description, date_publication, price_min, price_max,
-        region_id, name, rating, likes';
+        region_id, name, rating, likes, account_id';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
 
@@ -1378,7 +1378,7 @@ class Services extends AccountWithNotDeletedWithCascade
         return self::handleServiceFromArray($result->toArray(), $accountId);
     }
 
-    public static function handleService(array $service, $accountId = null)
+    public static function handleServiceForNews(array $service, $accountId = null)
     {
         if ($accountId == null) {
             $session = DI::getDefault()->get('session');
@@ -1391,29 +1391,34 @@ class Services extends AccountWithNotDeletedWithCascade
 
         //owner of service
         if ($account) {
+
+            $publisher = $account->getUserInfomations();
+
             if ($account->getCompanyId() != null) {
-                $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());
-                $publisher = Companies::findFirst(
+               /* $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());*/
+
+                /*$publisher = Companies::findFirst(
                     ['conditions' => 'company_id = :companyId:',
-                        'columns' => Companies::publicColumnsInStr,
-                        'bind' => ['companyId' => $account->getCompanyId()]])->toArray();
+                        'columns' => Companies::shortColumnsInStr,
+                        'bind' => ['companyId' => $account->getCompanyId()]])->toArray();*/
 
-
-                $phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
-                $publisher['phones'] = $phones;
+                /*$phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
+                $publisher['phones'] = $phones;*/
                 $serviceAll['publisher_company'] = $publisher;
             } else {
-                $categories = UsersCategories::getCategoriesByUser($account->getUserId());
-                $publisher = Userinfo::findFirst(
+                /*$categories = UsersCategories::getCategoriesByUser($account->getUserId());*/
+
+                /*$publisher = Userinfo::findFirst(
                     ['conditions' => 'user_id = :userId:',
-                        'columns' => Userinfo::publicColumnsInStr,
-                        'bind' => ['userId' => $account->getUserId()]])->toArray();
-                $phones = PhonesUsers::getUserPhones($account->getUserId());
-                $publisher['phones'] = $phones;
+                        'columns' => Userinfo::shortColumnsInStr,
+                        'bind' => ['userId' => $account->getUserId()]])->toArray();*/
+
+                /*$phones = PhonesUsers::getUserPhones($account->getUserId());
+                $publisher['phones'] = $phones;*/
                 $serviceAll['publisher_user'] = $publisher;
             }
 
-            $serviceAll['categories'] = $categories;
+            /*$serviceAll['categories'] = $categories;*/
         }
 
         //images for service
@@ -1438,8 +1443,11 @@ class Services extends AccountWithNotDeletedWithCascade
         unset($serviceAll['likes']);
 
         //comments
-        $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsServices', $service['service_id']);
-        $newsWithAllElement['last_comment'] = $last_comment;
+        /*$last_comment = CommentsNews::findLastParentComment('App\Models\CommentsServices', $service['service_id']);
+        $serviceAll['last_comment'] = $last_comment;*/
+
+        $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
+        $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $accountId);
 
         return $serviceAll;
     }
@@ -1498,7 +1506,11 @@ class Services extends AccountWithNotDeletedWithCascade
             $serviceAll['tags'] = count($tags) > 0 ?
                 $tags : [];
             // $serviceAll['rating_count'] = count(Reviews::getReviewsForService($service['service']['service_id']));
+
             $serviceAll = LikeModel::handleObjectWithLikes($serviceAll, $service, $accountId);
+            $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
+            $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $accountId);
+
             unset($serviceAll['likes']);
 
 
