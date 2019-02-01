@@ -264,31 +264,31 @@ class News extends AccountWithNotDeletedWithCascade
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
-                    INNER JOIN public.\"favoriteCompanies\" favc ON 
-                                (a.company_id = favc.company_id)
-                    WHERE favc.user_id = :userId)
+                    INNER JOIN public.favorite_companies favc ON 
+                                (a.company_id = favc.object_id)
+                    WHERE favc.subject_id = :userId)
         UNION ALL
         (
     select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
 from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
     inner join public.accounts a ON (m.account_id = a.id)
-    INNER JOIN public.\"favoriteCompanies\" favc ON (a.company_id = favc.company_id)
-                where favc.user_id = :userId)
+    INNER JOIN public.favorite_companies favc ON (a.company_id = favc.object_id)
+                where favc.subject_id = :userId)
       	UNION ALL
         (
             SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
                      FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
-                    INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
-                    WHERE favu.user_subject = :userId
+                    INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
+                    WHERE favu.subject_id = :userId
         )
         UNION ALL
         (
             select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
                     from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
             inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
-            INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
-                        WHERE favu.user_subject = :userId
+            INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
+                        WHERE favu.subject_id = :userId
         )
     ) as foo
                     ORDER BY foo.date desc
@@ -318,32 +318,43 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
-                    INNER JOIN public.\"favoriteCompanies\" favc ON 
-                                (a.company_id = favc.company_id)
-                    WHERE favc.user_id = :userId)
+                    INNER JOIN public.favorite_companies favc ON 
+                                (a.company_id = favc.object_id)
+                    WHERE favc.subject_id = :userId)
         UNION ALL
         (
     select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
 from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
     inner join public.accounts a ON (m.account_id = a.id)
-    INNER JOIN public.\"favoriteCompanies\" favc ON (a.company_id = favc.company_id)
-                where favc.user_id = :userId)
+    INNER JOIN public.favorite_companies favc ON (a.company_id = favc.object_id)
+                where favc.subject_id = :userId)
       	UNION ALL
         (
             SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
                      FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
-                    INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
-                    WHERE favu.user_subject = :userId
+                    INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
+                    WHERE favu.subject_id = :userId
         )
         UNION ALL
         (
             select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
                     from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
             inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
-            INNER JOIN public.\"favoriteUsers\" favu ON (a.user_id = favu.user_object)
-                        WHERE favu.user_subject = :userId
+            INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
+                        WHERE favu.subject_id = :userId
         )
+        UNION ALL
+        (select row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
+                    from public.news n inner join 
+		            public.accounts a ON (n.account_id = a.id and a.company_id is null)
+                    where a.user_id = :userId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL 
+                (
+                    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+                    inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
+                        where a.user_id = :userId)
     ) as foo
                     ORDER BY foo.date desc
                     LIMIT :limit 

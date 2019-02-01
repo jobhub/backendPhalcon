@@ -44,7 +44,7 @@ class FavouriteService extends AbstractService {
                 $fav = new FavoriteCompanies();
                 break;
             case self::TYPE_SERVICE:
-                $fav = new FavouriteServices();
+                $fav = new FavouriteService();
                 break;
             default:
                 throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FAVOURITE_TYPE);

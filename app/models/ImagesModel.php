@@ -34,8 +34,26 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
     protected $object_id;
 
+    protected $date_creation;
+
     const MAX_IMAGES = 10;
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getDateCreation()
+    {
+        return $this->date_creation;
+    }
+
+    /**
+     * @param mixed $date_creation
+     */
+    public function setDateCreation($date_creation)
+    {
+        $this->date_creation = $date_creation;
+    }
 
     /**
      * @return mixed

@@ -18,6 +18,8 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Libs\SupportClass;
+
 use App\Models\Services;
 
 use App\Services\ImageService;
@@ -110,6 +112,7 @@ class ServicesAPIController extends AbstractController
             $this->session->set('accountId',$accountId);
             $services = Services::findServicesByCompanyId($company_id,$page,$page_size);
         }
+
         return $services;
     }
 
@@ -1634,7 +1637,7 @@ class ServicesAPIController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && is_integer(intval($account_id))){
+        if($account_id!=null && SupportClass::checkInteger($account_id)){
             if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
                 throw new Http403Exception('Permission error');
             }
@@ -1644,7 +1647,7 @@ class ServicesAPIController extends AbstractController
 
         self::setAccountId($account_id);
 
-        return FavouriteServices::findFavouritesByAccountId($account_id,$page,$page_size);
+        return FavouriteServices::findFavourites($account_id,$page,$page_size);
     }
     /*public
     function addImagesToAllServicesAction()

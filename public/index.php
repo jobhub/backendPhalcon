@@ -84,13 +84,13 @@ try {
     }*/
 
     if($app->request->isOptions()){
-        $headers = [
+        /*$headers = [
             'Access-Control-Allow-Origin'      => '*',
             'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS, PUT, DELETE',
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age'           => '86400',
             'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
-        ];
+        ];*/
         $response = new \Phalcon\Http\Response();
         $response->setStatusCode(200, 'All ok');
 
@@ -101,11 +101,11 @@ try {
             )
             ->setHeader(
                 'Access-Control-Allow-Headers',
-                'Content-type'
+                'Content-Type, Authorization, X-Requested-With'
             )
             ->setHeader(
                 'Access-Control-Max-Age',
-                '1000'
+                '86400'
             )
             ->setHeader('Access-Control-Allow-Credentials', 'true');
         $response->send();

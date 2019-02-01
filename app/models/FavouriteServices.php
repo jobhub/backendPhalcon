@@ -62,7 +62,7 @@ class FavouriteServices extends FavouriteModel
         ]);
     }
 
-    public static function findFavouritesByAccountId($accountId, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE){
+    public static function findFavourites($accountId, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE){
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');

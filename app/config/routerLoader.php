@@ -2216,11 +2216,22 @@ $routes = [
     ],
 
     '\App\Controllers\LikeController'=>[
+
+        /**
+         * Возможные значения $type
+         *      'comment-user-image';
+         *      'comment-news';
+         *      'comment-service';
+         *      'news';
+         *      'service';
+         *      'user-image';
+         */
+
         'prefix' => '/like',
         'resources' => [
 
             /**
-             * Меняет лайкнутость текущим пользователем указанного комментария.
+             * Меняет лайкнутость текущим пользователем указанного объекта
              *
              * @method POST
              *
@@ -2242,18 +2253,26 @@ $routes = [
 
     '\App\Controllers\ForwardsController'=>[
         'prefix' => '/forward',
+
+        /**
+         * Возможные значения $type
+         *      'news';
+         *      'service';
+         *      'user-image';
+         */
+
         'resources' => [
             /**
-             * Создает репост новости
+             * Создает репост
              * @access private
              *
              * @method POST
              *
              * @param $type
              *
-             * @params object_id - id новости
+             * @params object_id - id объекта
              * @params forward_text - текст репоста
-             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
+             * @params account_id - int id аккаунта
              * Если не указан, то от имени текущего пользователя по умолчанию.
              *
              * @return string - json array в формате Status - результат операции
@@ -2265,12 +2284,12 @@ $routes = [
             ],
 
             /**
-             * Удаляет комментарий указаннного типа
+             * Удаляет репост
              *
              * @method DELETE
              *
              * @param $type string - тип репоста
-             * @param $object_id int id новость
+             * @param $object_id int id объекта
              * @param $account_id int id аккаунта
              *
              * @return string - json array в формате Status - результат операции
@@ -2284,6 +2303,131 @@ $routes = [
                 'type' => 'delete',
                 'path' => '/delete/{type}/{object_id}/{account_id}',
                 'action' => 'addForwardAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\FavouriteController'=>[
+        'prefix' => '/favourite',
+
+        /**
+         * Возможные значения $type
+         *      'user';
+         *      'service';
+         *      'company';
+         */
+
+        'resources' => [
+            /**
+             * Подписывает текущего пользователя на что-либо
+             * @method POST
+             *
+             * @param $type
+             *
+             * @params account_id = null
+             * @params object_id = null
+             *
+             * @return string - json array Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку
+             * @method
+             * @param $object_id
+             * @param $type
+             * @param $account_id = null
+             * @return string - json array Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}/{account_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает всех подписчиков на текущий аккаунт (а именно, компанию или пользователя)
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $query = null
+             * @param $page = 1
+             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}/{page}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}/{page}/{page_size}',
+                'action' => 'getSubscribersAction'
+            ],
+
+            /**
+             * Возвращает все подписки текущего аккаунта (или всех аккаунтов компании, если аккаунт с ней связан)
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $query = null
+             * @param $page = 1
+             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}/{page}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}/{page}/{page_size}',
+                'action' => 'getSubscriptionsAction'
             ],
         ]
     ],

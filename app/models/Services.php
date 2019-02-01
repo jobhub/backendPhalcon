@@ -1422,7 +1422,7 @@ class Services extends AccountWithNotDeletedWithCascade
         }
 
         //images for service
-        $images = ImagesServices::findByServiceId($service['service_id']);
+        $images = ImagesServices::findByObjectId($service['service_id']);
         $serviceAll['images'] = [];
         foreach ($images as $image) {
             $serviceAll['images'][] = $image->getImagePath();

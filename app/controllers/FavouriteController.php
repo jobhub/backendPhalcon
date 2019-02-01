@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Libs\SupportClass;
-use App\Models\FavoriteUsers;
+use App\Models\FavouriteModel;
 use App\Models\Accounts;
 use App\Services\FavouriteService;
 use Phalcon\Mvc\Controller;
@@ -29,7 +29,7 @@ use App\Services\ServiceExtendedException;
 class FavouriteController extends AbstractController
 {
     /**
-     * Подписывает текущего пользователя на указанного
+     * Подписывает текущего пользователя на что-либо
      * @method POST
      *
      * @param $type
@@ -92,11 +92,11 @@ class FavouriteController extends AbstractController
             }
         }
 
-        return self::successResponse('User was successfully subscribed to other user');
+        return self::successResponse('User was successfully subscribed');
     }
 
     /**
-     * Отменяет подписку на пользователя
+     * Отменяет подписку
      * @method
      * @param $object_id
      * @param $type
@@ -145,17 +145,70 @@ class FavouriteController extends AbstractController
             }
         }
 
-        return self::successResponse('Account was successfully unsubscribed from object');
+        return self::successResponse('Account was successfully unsubscribed');
     }
 
     /**
-     * Возвращает подписки текущего пользователя
+     * Возвращает всех подписчиков на указанный аккаунт (а именно, компанию или пользователя)
+     *
      * @method GET
+     *
+     * @param $account_id = null
+     * @param $query = null
+     * @param $page = 1
+     * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+     *
      * @return string - json array подписок
      */
-    public function getFavouritesAction()
+    public function getSubscribersAction($account_id = null,$query = null,
+                                         $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
-        return FavoriteUsers::findByUserSubject($userId)->toArray();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($account_id);
+        } else{
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
+        self::setAccountId($account->getId());
+
+        return FavouriteModel::findSubscribers($account,$query,$page,$page_size);
+    }
+
+    /**
+     * Возвращает все подписки текущего аккаунта (или всех аккаунтов компании, если аккаунт с ней связан)
+     *
+     * @method GET
+     *
+     * @param $account_id = null
+     * @param $query = null
+     * @param $page = 1
+     * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array подписок
+     */
+    public function getSubscriptionsAction($account_id = null,$query = null,
+                                         $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if($account_id!=null && SupportClass::checkInteger($account_id)){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($account_id);
+        } else{
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
+        self::setAccountId($account->getId());
+
+        return FavouriteModel::findSubscriptions($account,$query,$page,$page_size);
     }
 }

@@ -117,7 +117,7 @@ class SupportClass
 
         $str = str_replace('"{', '{', $str);
         $str = str_replace('}"', '}', $str);
-        $str = stripslashes($str);
+        //$str = stripslashes($str);
 
         $str = json_decode($str, true);
         return $str;
@@ -213,7 +213,7 @@ class SupportClass
         $result = array();
         foreach ($set as $t) {
             if (is_array($t)) {
-                $result[] = to_pg_array($t);
+                $result[] = self::to_pg_array($t);
             } else {
                 $t = str_replace('"', '\\"', $t); // escape double quote
                 if (!is_numeric($t)) // quote only non-numeric values

@@ -49,4 +49,21 @@ class FavoriteUsers extends FavouriteModel
     {
         return parent::findFirst($parameters);
     }
+
+    public static function handleFavourites($favs)
+    {
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+            $handledFavs[] = self::handleFavourite($fav);
+        }
+        return $handledFavs;
+    }
+
+    public static function handleFavourite($fav)
+    {
+        $handledFavUser = [
+            'subscriber' => Userinfo::findUserInfoById($fav['object_id'],Userinfo::shortColumnsInStr),
+        ];
+        return $handledFavUser;
+    }
 }

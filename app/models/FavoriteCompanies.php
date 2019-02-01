@@ -5,7 +5,7 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class FavoriteCompanies extends \Phalcon\Mvc\Model
+class FavoriteCompanies extends FavouriteModel
 {
 
     /**
@@ -14,7 +14,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
     public function initialize()
     {
         //$this->setSchema("public");
-        $this->setSource("favourite_companies");
+        $this->setSource("favorite_companies");
         $this->belongsTo('object_id', 'App\Models\Companies', 'company_id', ['alias' => 'object']);
         $this->belongsTo('subject_id', 'App\Models\Accounts', 'id', ['alias' => 'subject']);
     }
@@ -26,7 +26,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favourite_companies';
+        return 'favorite_companies';
     }
 
     /**
@@ -49,5 +49,24 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function handleSubscriptions($favs)
+    {
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+            $handledFavs[] = self::handleSubscription($fav);
+        }
+        return $handledFavs;
+    }
+
+
+
+    public static function handleSubscription($fav)
+    {
+        $handledFavUser = [
+            'subscription' => Companies::findCompanyById($fav['object_id'],Companies::shortColumnsInStr),
+        ];
+        return $handledFavUser;
     }
 }

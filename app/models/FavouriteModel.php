@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
+use App\Libs\SupportClass;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
@@ -25,6 +28,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
     protected $subject_id;
 
     protected $favourite_date;
+
+    const DEFAULT_RESULT_PER_PAGE = 10;
 
     /**
      * @return mixed
@@ -102,18 +107,20 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             new Callback(
                 [
                     "message" => "Такой аккаунт не существует",
-                    "callback" => function ($account_model) {
-                        $account_exists = Accounts::findFirstById($account_model->getAccountId()) ? true : false;
+                    "callback" => function ($fav_model) {
+                        $account_exists = Accounts::findFirstById($fav_model->getSubjectId());
                         if ($account_exists) {
-                            if ($account_model->accounts->getCompanyId() != null) {
-                                $accounts = Accounts::findByCompanyId($account_model->accounts->getCompanyId());
+                            if ($account_exists->getCompanyId() != null) {
+                                $accounts = Accounts::findByCompanyId($account_exists->getCompanyId());
 
                                 $ids = [];
                                 foreach ($accounts as $account) {
                                     $ids[] = $account->getId();
                                 }
 
-                                $exists = self::findFirst(['account_id = ANY(:ids:)', 'bind' => ['ids' => $ids]]);
+                                $ids = SupportClass::to_pg_array($ids);
+
+                                $exists = self::findFirst(['subject_id = ANY(:ids:)', 'bind' => ['ids' => $ids]]);
 
                                 return $exists ? false : true;
                             }
@@ -123,7 +130,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                     }])
         );
 
-        if($this->getFavouriteDate()!=null)
+        if ($this->getFavouriteDate() != null)
             $validator->add(
                 'favourite_date',
                 new Callback(
@@ -182,14 +189,346 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($model,$subjectId,$objectId)
+    public static function findByIds($model, $subjectId, $objectId)
     {
         $account = Accounts::findFirstById($subjectId);
 
-        return $model::find(['subject_id = ANY :accounts and object_id = :objectId','bind'=>
+        return $model::find(['subject_id = ANY :accounts and object_id = :objectId', 'bind' =>
             [
-                'accounts'=>$account->getRelatedAccounts(),
-                'objectId'=>$objectId
+                'accounts' => $account->getRelatedAccounts(),
+                'objectId' => $objectId
             ]]);
+    }
+
+    public static function findFavourites($subjectId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        $account = Accounts::findFirstById($subjectId);
+
+        $favs = self::find(['subject_id = ANY (:subjectId)', 'bind' => [
+            'subjectId' => $account->getRelatedAccounts()
+        ], 'offset' => $offset, 'limit' => $page_size]);
+
+        return self::handleFavourites($favs->toArray());
+    }
+
+    public static function handleFavourites($favs)
+    {
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+            $handledFavs[] = self::handleFavourite($fav);
+        }
+        return $handledFavs;
+    }
+
+    public static function handleFavourite($fav)
+    {
+        return $fav;
+    }
+
+    public static function handleSubscribers($favs)
+    {
+
+        $session = DI::getDefault()->get('session');
+        $accountId = $session->get('accountId');
+
+        $account = Accounts::findFirstById($accountId);
+
+        if (!$account)
+            return null;
+
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+
+            $handledFav = self::handleSubscriber($fav, $account->getRelatedAccounts());
+            if($handledFav!=null)
+                $handledFavs[] = $handledFav;
+        }
+        return $handledFavs;
+    }
+
+    public static function handleSubscriber($fav, string $currentAccountIds)
+    {
+        $account = Accounts::findFirstById($fav['subject_id']);
+
+        if (!$account)
+            return null;
+
+        if ($account->getCompanyId() != null) {
+            $subscriber = Companies::findCompanyById($account->getCompanyId(),
+                Companies::shortColumns);
+
+            if(!$subscriber)
+                return null;
+
+            $handledFavUser = [
+                'subscriber' => $subscriber
+            ];
+
+            $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
+            and object_id = :companyId:', 'bind' => [
+                'currentAccountId' => $currentAccountIds,
+                'companyId' => $account->getCompanyId()
+            ]]);
+
+            $handledFavUser['subscribed'] = $subscribed ? true : false;
+        } else {
+
+            $subscriber = Userinfo::findUserInfoById($account->getUserId(),
+                Userinfo::shortColumns);
+
+            if(!$subscriber)
+                return null;
+
+            $handledFavUser = [
+                'subscriber' => $subscriber,
+            ];
+
+            $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
+            and object_id = :userId:', 'bind' => [
+                'currentAccountId' => $currentAccountIds,
+                'userId' => $account->getUserId()
+            ]]);
+
+            $handledFavUser['subscribed'] = $subscribed ? true : false;
+        }
+        return $handledFavUser;
+    }
+
+    public static function handleSubscriptions($favs)
+    {
+        $session = DI::getDefault()->get('session');
+        $accountId = $session->get('accountId');
+
+        $account = Accounts::findFirstById($accountId);
+
+        if (!$account)
+            return null;
+
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+
+            $handledFav = self::handleSubscription($fav);
+            if($handledFav!=null)
+                $handledFavs[] = $handledFav;
+        }
+        return $handledFavs;
+    }
+
+    public static function handleSubscription($fav)
+    {
+
+        if($fav['relation'] == 'favorite_companies') {
+            $subscription = Companies::findCompanyById($fav['object_id'],
+                Companies::shortColumns);
+
+            if(!$subscription)
+                return null;
+
+            $handledFav = [
+                'subscription' => $subscription
+            ];
+        } else {
+            $subscription = Userinfo::findUserInfoById($fav['object_id'],
+                Userinfo::shortColumns);
+
+            if(!$subscription)
+                return null;
+
+            $handledFav = [
+                'subscription' => $subscription,
+            ];
+        }
+        return $handledFav;
+    }
+
+
+    public static function findSubscribers(Accounts $account, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        if ($account->getCompanyId() != null) {
+            if (empty(trim($query))) {
+                $result = FavoriteCompanies::find(['object_id = :companyId:', 'bind' => [
+                    'companyId' => $account->getCompanyId()
+                ], 'offset' => $offset, 'limit' => $page_size])->toArray();
+            } else {
+                $db = DI::getDefault()->getDb();
+
+                $sql = 'Select * FROM (
+    (select fav_comp.* from favorite_companies as fav_comp
+    			inner join accounts a on (a.id = fav_comp.subject_id and a.company_id is null)
+                inner join userinfo on (userinfo.user_id = a.user_id)
+                inner join users on (users.user_id = userinfo.user_id)
+                where fav_comp.object_id = :companyId and users.deleted = false
+                and ( 
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                     OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                     ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    ))
+    UNION ALL
+    (select fav_comp.* from favorite_companies as fav_comp
+    			inner join accounts a on (a.id = fav_comp.subject_id and a.company_id is not null)
+                inner join companies on (companies.company_id = a.company_id)
+                where fav_comp.object_id = :companyId and companies.deleted = false
+    			and (
+                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    or ((name) ilike \'%\'||:query||\'%\')
+                    )      
+    )
+    ) as foo 
+    order by foo.favourite_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+                $query_sql = $db->prepare($sql);
+                $query_sql->execute([
+                    'companyId' => $account->getCompanyId(),
+                    'query' => $query,
+                    'limit' => $page_size,
+                    'offset' => $offset,
+                ]);
+
+                $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        } else {
+            if (empty(trim($query))) {
+                $result = FavoriteUsers::find(['object_id = :userId:', 'bind' => [
+                    'userId' => $account->getUserId()
+                ], 'offset' => $offset, 'limit' => $page_size])->toArray();
+            } else {
+                $db = DI::getDefault()->getDb();
+
+                $sql = 'Select * FROM (
+    (select fav_user.* from favorite_users as fav_user
+    			inner join accounts a on (a.id = fav_user.subject_id and a.company_id is null)
+                inner join userinfo on (userinfo.user_id = a.user_id)
+                inner join users on (users.user_id = userinfo.user_id)
+                where fav_user.object_id = :userId and users.deleted = false
+                and ( 
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                     OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                     ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    ))
+    UNION ALL
+    (select fav_user.* from favorite_users as fav_user
+    			inner join accounts a on (a.id = fav_user.subject_id and a.company_id is not null)
+                inner join companies on (companies.company_id = a.company_id)
+                where fav_user.object_id = 7 and companies.deleted = false
+    			and (
+                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    or ((name) ilike \'%\'||:query||\'%\')
+                    )      
+    )
+    ) as foo 
+    order by foo.favourite_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+                $query_sql = $db->prepare($sql);
+                $query_sql->execute([
+                    'userId' => $account->getUserId(),
+                    'query' => $query,
+                    'limit' => $page_size,
+                    'offset' => $offset,
+                ]);
+
+                $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            }
+        }
+
+        return self::handleSubscribers($result);
+    }
+
+    public static function findSubscriptions(Accounts $account, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $db = DI::getDefault()->getDb();
+
+        if (empty(trim($query))) {
+            $sql = 'Select * FROM (
+    (
+    select fav_user.*, \'favorite_users\' as relation from favorite_users as fav_user
+                inner join userinfo on (userinfo.user_id = fav_user.object_id)
+                inner join users on (users.user_id = userinfo.user_id)
+                where fav_user.subject_id = ANY(:ids) and users.deleted = false
+    )
+    UNION ALL
+    (select fav_comp.*, \'favorite_companies\' as relation from favorite_companies as fav_comp
+                inner join companies c on (c.company_id = fav_comp.object_id)
+                where fav_comp.subject_id = ANY(:ids) and c.deleted = false
+    )
+    ) as foo 
+    order by foo.favourite_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+            $query_sql = $db->prepare($sql);
+            $query_sql->execute([
+                'ids' => $account->getRelatedAccounts(),
+                'limit' => $page_size,
+                'offset' => $offset,
+            ]);
+
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+        } else {
+
+            $sql = 'Select * FROM (
+    (
+    select fav_user.*, \'favorite_users\' as relation from favorite_users as fav_user
+                inner join userinfo on (userinfo.user_id = fav_user.object_id)
+                inner join users on (users.user_id = userinfo.user_id)
+                where fav_user.subject_id = ANY(:ids) and users.deleted = false
+                and ( 
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                     OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                     ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    OR
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    )
+    )
+    UNION ALL
+    (select fav_comp.*, \'favorite_companies\' as relation from favorite_companies as fav_comp
+                inner join companies c on (c.company_id = fav_comp.object_id)
+                where fav_comp.subject_id = ANY(:ids) and c.deleted = false
+    			   and (
+                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    or ((name) ilike \'%\'||:query||\'%\')
+                    )   
+    )
+    ) as foo 
+    order by foo.favourite_date desc
+                LIMIT :limit
+                OFFSET :offset';
+
+            $query_sql = $db->prepare($sql);
+            $query_sql->execute([
+                'ids' => $account->getRelatedAccounts(),
+                'query' => $query,
+                'limit' => $page_size,
+                'offset' => $offset,
+            ]);
+
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+        }
+
+        return self::handleSubscriptions($result);
     }
 }

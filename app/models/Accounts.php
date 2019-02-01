@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
+
 class Accounts extends \Phalcon\Mvc\Model
 {
 
@@ -242,7 +244,7 @@ class Accounts extends \Phalcon\Mvc\Model
                 $accounts[] = $account->getId();
             }
         }
-        return $accounts;
+        return SupportClass::to_pg_array($accounts);
     }
 
     public static function checkUserRelatesWithAccount($userId, $accountId)
