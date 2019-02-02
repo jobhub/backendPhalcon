@@ -634,12 +634,12 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                 }
             }
 
-            $imagesNews = ImagesNews::findImagesForNews($newsElement['news_id']);
+            $imagesNews = ImagesModel::findImages('App\Models\ImagesNews',$newsElement['news_id']);
 
-            $newsWithAllElement['images'] = [];
-            foreach ($imagesNews as $image) {
+            $newsWithAllElement['images'] = ImagesNews::handleImages($imagesNews);
+            /*foreach ($imagesNews as $image) {
                 $newsWithAllElement['images'][] = $image['image_path'];
-            }
+            }*/
 
             $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews', $newsElement['news_id']);
 

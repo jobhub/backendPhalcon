@@ -21,10 +21,9 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $image_id;
+    protected $object_id;
 
     /**
      *
@@ -33,7 +32,21 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     protected $image_path;
 
-    protected $object_id;
+    /**
+     *
+     * @var integer
+     * @Primary
+     * @Identity
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $image_id;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $date_creation;
 
     const MAX_IMAGES = 10;
     const DEFAULT_RESULT_PER_PAGE = 10;
@@ -222,7 +235,7 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
         $offset = ($page - 1) * $page_size;
         return $model::handleImages(
             $model::find(['conditions' => 'object_id = :objectId:', 'bind' => ['objectId' => $objectId],
-                'limit' => $page_size, 'offset' => $offset])
+                'limit' => $page_size, 'offset' => $offset, 'order'=>'image_id desc'])->toArray()
         );
     }
 }

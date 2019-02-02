@@ -197,3 +197,11 @@ s
 [Sat, 02 Feb 19 12:47:46 +0300][CRITICAL] 7004 Unable save image
 [Sat, 02 Feb 19 13:35:15 +0300][DEBUG] user 7 send message to user 6
 [Sat, 02 Feb 19 13:35:34 +0300][DEBUG] creation of chat history id =64
+[Sat, 02 Feb 19 13:43:23 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 14:12:43 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:15:13 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:28:11 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:36:17 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 15:06:32 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 15:07:11 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 15:07:28 +0300][CRITICAL] 7004 Unable save image

@@ -251,15 +251,32 @@ class ImageService extends AbstractService
         foreach ($files as $file) {
             $newImage = $this->createImage($id, 'magic_string', $type, $data[$i]);
 
+            $newImage = get_class($newImage)::findFirstByImageId($newImage->getImageId());
+
             if ($type == self::TYPE_NEWS && $file->getKey() == 'title')
-                $imagesIds[] = $file->getKey();
+                $imagesIds[] = ['image_id' => $newImage->getImageId(),'file_name' => $file->getKey()];
             else
-                $imagesIds[] = $newImage->getImageId();
+                $imagesIds[] =['image_id' => $newImage->getImageId(),'file_name' => $newImage->getImageId()];
 
             $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
 
+            if($type == self::TYPE_NEWS) {
+                if ($imagesIds[$i]['file_name'] == 'title') {
+                    $existsTitle = ImagesNews::findFirst(['object_id = :newsId: and image_path like :image_path:',
+                        'bind' => ['newsId' => $some_object->getNewsId(),
+                            'image_path' =>
+                                '%'.ImageLoader::formFullImageName('news', '',
+                                    $some_object->getNewsId(), $imagesIds[$i]['file_name']).'%',
+                        ]]);
+
+                    if ($existsTitle) {
+                        $this->deleteImage($existsTitle);
+                    }
+                }
+            }
+
             $filename = ImageLoader::formFullImageName($path, $imageFormat,
-                $id, $imagesIds[count($imagesIds) - 1]);
+                $id, $imagesIds[count($imagesIds) - 1]['file_name']);
 
             /*if($type == self::TYPE_TEMP) {
                 $further_filename = ImageLoader::formFullImageName('news', $imageFormat,
@@ -306,27 +323,28 @@ class ImageService extends AbstractService
             switch ($type) {
                 case self::TYPE_USER:
                     $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
-                        $some_object->getUserId(), $imagesIds[$i]);
+                        $some_object->getUserId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_NEWS:
+
                     $result = ImageLoader::loadNewsImage($file->getTempName(), $file->getName(),
-                        $some_object->getNewsId(), $imagesIds[$i]);
+                        $some_object->getNewsId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_REVIEW:
                     $result = ImageLoader::loadReviewImage($file->getTempName(), $file->getName(),
-                        $some_object->getReviewId(), $imagesIds[$i]);
+                        $some_object->getReviewId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_SERVICE:
                     $result = ImageLoader::loadServiceImage($file->getTempName(), $file->getName(),
-                        $some_object->getServiceId(), $imagesIds[$i]);
+                        $some_object->getServiceId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_COMPANY:
                     $result = ImageLoader::loadCompanyLogotype($file->getTempName(), $file->getName(),
-                        $some_object->getCompanyId(), $imagesIds[$i]);
+                        $some_object->getCompanyId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_TEMP:
                     $result = ImageLoader::loadTempImage($file->getTempName(), $file->getName(),
-                        $some_object->getId(), $imagesIds[$i]);
+                        $some_object->getId(), $imagesIds[$i]['file_name']);
                     break;
                 default:
                     throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
@@ -444,6 +462,8 @@ class ImageService extends AbstractService
 
         //Создание объекта для изображения в базе
         $newImage = $this->createImage($news_id, 'magic_string', self::TYPE_NEWS);
+
+        $newImage = get_class($newImage)::findFirstByImageId($newImage->getImageId());
 
         $imageId = $newImage->getImageId();
 

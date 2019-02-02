@@ -111,9 +111,8 @@ class ImageController extends AbstractController
     {
         try {
             $this->db->begin();
-            /*$data['object_id'] = $this->request->getPost('object_id');
-            $data['image_text'] = $this->request->getPost('image_text');*/
-            $inputData = $this->request->getJsonRawBody();
+            //$inputData = $this->request->getJsonRawBody();
+            $inputData = json_decode(json_encode($this->request->getPost()));
             $data['object_id'] = $inputData->object_id;
             $data['image_text'] = $inputData->image_text;
 
@@ -133,7 +132,7 @@ class ImageController extends AbstractController
 
             $addedImages = [];
             foreach ($ids as $image_id){
-                $addedImages[] = $this->imageService->getModelForType($type)::handleImage($this->imageService->getImageById($image_id,$type)->toArray());
+                $addedImages[] = $this->imageService->getModelForType($type)::handleImage($this->imageService->getImageById($image_id['image_id'],$type)->toArray());
             }
 
             $this->db->commit();
@@ -190,8 +189,9 @@ class ImageController extends AbstractController
                 $data['image_id'] = [$data['image_id']];
             }
 
-            foreach ($data['image_id'] as $image_id) {
+            $images = [];
 
+            foreach ($data['image_id'] as $image_id) {
                 $image = $this->imageService->getImageById($image_id, $type);
 
                 $object = $this->imageService->checkPermissionToObject($type, $image->getObjectId()
@@ -200,9 +200,11 @@ class ImageController extends AbstractController
                 if (!$object) {
                     throw new Http403Exception('Permission error');
                 }
-
-                $this->imageService->deleteImage($image);
+                $images[] = $image;
             }
+
+            foreach ($images as $image)
+                $this->imageService->deleteImage($image);
 
             $this->db->commit();
         } catch (ServiceExtendedException $e) {

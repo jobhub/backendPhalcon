@@ -118,8 +118,8 @@ class NewsAPIController extends AbstractController
      */
     public function addNewsAction()
     {
-        //$inputData = $this->request->getJsonRawBody();
-        $inputData = json_decode(json_encode($this->request->getPost()));
+        $inputData = $this->request->getJsonRawBody();
+        //$inputData = json_decode(json_encode($this->request->getPost()));
         $data['news_text'] = $inputData->news_text;
         $data['title'] = $inputData->title;
         $data['account_id'] = $inputData->account_id;
