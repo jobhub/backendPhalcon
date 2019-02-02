@@ -164,3 +164,36 @@ s
 [Thu, 31 Jan 19 16:05:07 +0300][CRITICAL] 8004 unable to change news
 [Thu, 31 Jan 19 16:05:15 +0300][CRITICAL] 8004 unable to change news
 [Thu, 31 Jan 19 16:08:22 +0300][CRITICAL] 7008 Не удалось переместить временное изображение в новости
+[Fri, 01 Feb 19 16:06:23 +0300][DEBUG] creation of chat history id =62
+[Fri, 01 Feb 19 16:43:51 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:43:58 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:44:27 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:56:11 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:22:31 +0300][DEBUG] creation of chat history id =63
+[Sat, 02 Feb 19 10:22:31 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:22:31 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:22:40 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:23:04 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:23:47 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:24:07 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:24:29 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:25:00 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:34:12 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:35:36 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:36:44 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:37:16 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:40:32 +0300][DEBUG] user 6 send message to user 7
+[Sat, 02 Feb 19 10:44:59 +0300][DEBUG] user 6 send message to user 7
+[Sat, 02 Feb 19 10:51:44 +0300][CRITICAL] 22P02 SQLSTATE[22P02]: Invalid text representation: 7 ERROR:  invalid input syntax for integer: "qewr"
+[Sat, 02 Feb 19 11:13:47 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:14:07 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:14:43 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:15:17 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:16:29 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:23:57 +0300][CRITICAL] 20004 Unable create forward
+[Sat, 02 Feb 19 11:25:09 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 02 Feb 19 11:34:25 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Sat, 02 Feb 19 12:45:39 +0300][CRITICAL] 5003 User don't exists
+[Sat, 02 Feb 19 12:47:46 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 13:35:15 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 13:35:34 +0300][DEBUG] creation of chat history id =64

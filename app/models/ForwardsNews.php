@@ -54,6 +54,6 @@ class ForwardsNews extends ForwardsInNewsModel
 
     public static function findForwardByIds($accountId, $objectId)
     {
-        return parent::findByIds('App\Models\ForwardsNews',$accountId,$objectId)->toArray();
+        return parent::findByIds('App\Models\ForwardsNews',$accountId,$objectId);
     }
 }

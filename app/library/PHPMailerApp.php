@@ -90,6 +90,7 @@ class PHPMailerApp
             $this->mail->Subject =  $this->subject;
             $this->mail->Body    = $this->currMessage;
             $this->mail->AltBody = $this->currMessage;
+            $this->mail->CharSet = 'UTF-8';
 
             $this->mail->send();
 

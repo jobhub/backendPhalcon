@@ -282,4 +282,12 @@ class SupportClass
             unset($array[$index]);
         }
     }
+
+    public static function getCertainColumnsFromArray(array $data, array $columns)
+    {
+        $toRet = [];
+        foreach ($columns as $info)
+            $toRet[$info] = $data[$info];
+        return $toRet;
+    }
 }

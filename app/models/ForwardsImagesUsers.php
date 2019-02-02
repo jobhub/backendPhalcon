@@ -54,6 +54,6 @@ class ForwardsImagesUsers extends ForwardsInNewsModel
 
     public static function findForwardByIds($accountId, $objectId)
     {
-        return parent::findByIds('App\Models\ForwardsImagesUsers',$accountId,$objectId)->toArray();
+        return parent::findByIds('App\Models\ForwardsImagesUsers',$accountId,$objectId);
     }
 }

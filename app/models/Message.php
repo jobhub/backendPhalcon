@@ -2,13 +2,23 @@
 
 namespace App\Models;
 
+use Pimple\Tests\Service;
+
 class Message extends \Phalcon\Mvc\Model
 {
 
     const DEFAULT_RESULT_PER_PAGE = 12;
 
-    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users', 'answer_of'];
+    const PUBLIC_COLUMNS = ['id', 'create_at', 'sender_id', 'content', 'received_users', 'readed_users', 'answer_of',
+        'message_type','attached_id'];
 
+    //Forward types
+
+    const TYPE_FORWARD_NEWS = 'FRW_NEWS';
+    const TYPE_FORWARD_SERVICE = 'FRW_SERV';
+    const TYPE_FORWARD_IMAGE_USER = 'FRW_IMG_U';
+
+    const TYPE_DEFAULT = 'TEXT';
     /**
      *
      * @var integer
@@ -87,7 +97,11 @@ class Message extends \Phalcon\Mvc\Model
      */
     protected $answer_of;
 
-
+    /**
+     *
+     * @var integer
+     */
+    protected $attached_id;
 
     /**
      * Method to set the value of field id
@@ -374,7 +388,21 @@ class Message extends \Phalcon\Mvc\Model
         $this->deleted_by_users = $deleted_by_users;
     }
 
+    /**
+     * @return int
+     */
+    public function getAttachedId(): int
+    {
+        return $this->attached_id;
+    }
 
+    /**
+     * @param int $attached_id
+     */
+    public function setAttachedId(int $attached_id)
+    {
+        $this->attached_id = $attached_id;
+    }
 
     /**
      * Initialize method for model.
@@ -473,6 +501,34 @@ class Message extends \Phalcon\Mvc\Model
 
         ]);
         return $messages;
+    }
+
+    public static function handleMessages(array $messages)
+    {
+        $handledMessages = [];
+        foreach ($messages as $message) {
+            $handledMessage = $message;
+
+            switch ($message["message_type"]){
+                case Message::TYPE_FORWARD_IMAGE_USER:
+                    $handledMessage['forward_data'] = ImagesUsers::findImageById($message['attached_id'])->toArray();
+                    break;
+                case Message::TYPE_FORWARD_NEWS:
+                    $handledMessage['forward_data'] = News::findNewsById($message['attached_id'],
+                        News::publicColumns)->toArray();
+                    break;
+                case Message::TYPE_FORWARD_SERVICE:
+                    $handledMessage['forward_data'] = Services::findServiceById($message['attached_id'],
+                        Services::publicColumns)->toArray();
+                    break;
+            }
+
+            $handledMessages[] = $handledMessage;
+        }
+        return $handledMessages;
+        /**
+         *  { }
+         */
     }
 
 }

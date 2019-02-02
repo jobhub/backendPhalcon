@@ -252,7 +252,7 @@ class News extends AccountWithNotDeletedWithCascade
         return $result;
     }
 
-    public static function findNewsForCurrentUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    public static function findNewsForCurrentAccount(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
 
@@ -266,21 +266,21 @@ class News extends AccountWithNotDeletedWithCascade
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
                     INNER JOIN public.favorite_companies favc ON 
                                 (a.company_id = favc.object_id)
-                    WHERE favc.subject_id = :userId)
+                    WHERE favc.subject_id = ANY (:ids))
         UNION ALL
         (
     select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
 from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
     inner join public.accounts a ON (m.account_id = a.id)
     INNER JOIN public.favorite_companies favc ON (a.company_id = favc.object_id)
-                where favc.subject_id = :userId)
+                where favc.subject_id = ANY (:ids))
       	UNION ALL
         (
             SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
                      FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
                     INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
-                    WHERE favu.subject_id = :userId
+                    WHERE favu.subject_id = ANY (:ids)
         )
         UNION ALL
         (
@@ -288,7 +288,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
             inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
             INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
-                        WHERE favu.subject_id = :userId
+                        WHERE favu.subject_id = ANY (:ids)
         )
     ) as foo
                     ORDER BY foo.date desc
@@ -297,7 +297,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $query = $db->prepare($str);
         $result = $query->execute([
-            'userId' => $userId,
+            'ids' => $account->getRelatedAccounts(),
             'limit' => $page_size,
             'offset' => $offset
         ]);
@@ -306,7 +306,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         return News::handleNewsSetWithForwards($news);
     }
 
-    public static function findAllNewsForCurrentUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    public static function findAllNewsForCurrentUser(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $db = DI::getDefault()->getDb();
 
@@ -320,21 +320,22 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
                     INNER JOIN public.favorite_companies favc ON 
                                 (a.company_id = favc.object_id)
-                    WHERE favc.subject_id = :userId)
+                    WHERE favc.subject_id = ANY(:ids) and n.publish_date < CURRENT_TIMESTAMP
+        )
         UNION ALL
         (
-    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
-from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
-    inner join public.accounts a ON (m.account_id = a.id)
-    INNER JOIN public.favorite_companies favc ON (a.company_id = favc.object_id)
-                where favc.subject_id = :userId)
+          select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+          from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+          inner join public.accounts a ON (m.account_id = a.id)
+          INNER JOIN public.favorite_companies favc ON (a.company_id = favc.object_id)
+                where favc.subject_id = ANY(:ids) )
       	UNION ALL
         (
             SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
                      FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
                     INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
-                    WHERE favu.subject_id = :userId
+                    WHERE favu.subject_id = ANY(:ids) and n.publish_date < CURRENT_TIMESTAMP
         )
         UNION ALL
         (
@@ -342,19 +343,17 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
             inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
             INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
-                        WHERE favu.subject_id = :userId
+                        WHERE favu.subject_id = ANY(:ids)
         )
         UNION ALL
         (select row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id
-                    from public.news n inner join 
-		            public.accounts a ON (n.account_id = a.id and a.company_id is null)
-                    where a.user_id = :userId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                    from public.news n
+                    where n.account_id = ANY(:ids) and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
                 UNION ALL 
                 (
                     select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
-                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
-                    inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
-                        where a.user_id = :userId)
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid)
+                        where m.account_id = ANY(:ids))
     ) as foo
                     ORDER BY foo.date desc
                     LIMIT :limit 
@@ -362,7 +361,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $query = $db->prepare($str);
         $result = $query->execute([
-            'userId' => $userId,
+            'ids' => $account->getRelatedAccounts(),
             'limit' => $page_size,
             'offset' => $offset
         ]);
@@ -629,7 +628,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     $user = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
                     $newsWithAllElement['publisherUser'] = $user;
                 } else {
-                    $company = Companies::findUserInfoById($account->getCompanyId(),
+                    $company = Companies::findCompanyById($account->getCompanyId(),
                         Companies::shortColumns);
                     $newsWithAllElement['publisherCompany'] = $company;
                 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+use Phalcon\Db\RawValue;
 
 use App\Libs\ImageLoader;
 
@@ -33,8 +34,6 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     protected $image_path;
 
     protected $object_id;
-
-    protected $date_creation;
 
     const MAX_IMAGES = 10;
     const DEFAULT_RESULT_PER_PAGE = 10;

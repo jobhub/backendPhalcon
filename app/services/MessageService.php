@@ -6,6 +6,7 @@ use App\Controllers\AbstractHttpException;
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http401Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
+use App\Libs\SupportClass;
 use App\Models\Groups;
 use App\Models\Message;
 use App\Models\ChatHistory;
@@ -40,7 +41,7 @@ class MessageService extends AbstractService
             if (!isset($data["body"]) || empty(trim($data["body"]))) {
                 throw new Http400Exception(_('Bad request content'), AbstractHttpException::BAD_REQUEST_CONTENT);
             }
-            $chatHistory = $this->getChatHistoryByDataType($data, $is_group_msg);
+            $chatHistory = $this->getChatHistoryByDataType($data, $is_group_msg,true);
             if (is_null($chatHistory)) {
                 return [];
             }
@@ -61,6 +62,21 @@ class MessageService extends AbstractService
                 ]);
                 if ($exist)
                     $msg->setAnswerOf($other_msg);
+            }
+
+            switch ($data["type"]){
+                case Message::TYPE_FORWARD_IMAGE_USER:
+                    $image = $this->imageService->getImageById($data["attached_id"]);
+                    $msg->setAttachedId($data["attached_id"]);
+                    break;
+                case Message::TYPE_FORWARD_NEWS:
+                    $news = $this->newsService->getNewsById($data["attached_id"]);
+                    $msg->setAttachedId($data["attached_id"]);
+                    break;
+                case Message::TYPE_FORWARD_SERVICE:
+                    $service = $this->serviceService->getServiceById($data["attached_id"]);
+                    $msg->setAttachedId($data["attached_id"]);
+                    break;
             }
 
             $statut_array = [$data["sender"]];
@@ -100,7 +116,6 @@ class MessageService extends AbstractService
 
     public function deleteMessage($data, $is_group_msg = false)
     {
-
             $id_msg = $data['message_id'];
             try {
             $message = Message::findFirst($id_msg);
@@ -147,7 +162,7 @@ class MessageService extends AbstractService
 
             ]);
             $result = $messages->toArray();
-            return $result;
+            return Message::handleMessages($result);
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
@@ -193,9 +208,10 @@ class MessageService extends AbstractService
     /**
      * @param $data
      * @param $is_group_msg
+     * @param $createIfNoExist
      * @return ChatHistory
      */
-    public function getChatHistoryByDataType($data, $is_group_msg)
+    public function getChatHistoryByDataType($data, $is_group_msg, $createIfNoExist = false)
     {
         if (isset($data["group_id"]) && !is_null($data["group_id"]) && $is_group_msg) {
             $write = $this->groupService->isUserOnGroup($data['sender'], $data["group_id"]);
@@ -203,7 +219,7 @@ class MessageService extends AbstractService
                 throw new Http401Exception('User not allowed to access on this group', self::ERROR_NOT_ALLOWED);
             $chatHistory = $this->chatHistoryService->getChatHistoryFromGroup($data['group_id']);
         } elseif (isset($data["other_user_id"]) && !empty($data["other_user_id"]) && !$is_group_msg) {
-            $chatHistory = $this->privateChatService->getChatHistory($data['sender'], $data['other_user_id']);
+            $chatHistory = $this->privateChatService->getChatHistory($data['sender'], $data['other_user_id'],$createIfNoExist);
         } else {
             throw new Http400Exception(_('Bad request content : missing messaging id'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }

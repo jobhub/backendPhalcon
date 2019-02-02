@@ -517,10 +517,13 @@ $routes = [
         'prefix' => '/news',
         'resources' => [
             /**
-             * Возвращает новости для ленты текущего пользователя
-             * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             * Возвращает новости для ленты текущего пользователя или указанного аккаунта (компании)
+             *
              * @access private
              *
+             * @param $account_id
+             * @param $page
+             * @param $page_size
              * @method GET
              *
              * @return string - json array с новостями (или их отсутствием)
@@ -532,12 +535,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{page}',
+                'path' => '/get/{account_id}',
                 'action' => 'getNewsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/{page}/{page_size}',
+                'path' => '/get/{account_id}/{page}',
+                'action' => 'getNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{account_id}/{page}/{page_size}',
                 'action' => 'getNewsAction'
             ],
             /**
@@ -2297,12 +2305,12 @@ $routes = [
             [
                 'type' => 'delete',
                 'path' => '/delete/{type}/{object_id}',
-                'action' => 'addForwardAction'
+                'action' => 'deleteForwardAction'
             ],
             [
                 'type' => 'delete',
                 'path' => '/delete/{type}/{object_id}/{account_id}',
-                'action' => 'addForwardAction'
+                'action' => 'deleteForwardAction'
             ],
         ]
     ],

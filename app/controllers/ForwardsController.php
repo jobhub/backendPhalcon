@@ -82,6 +82,7 @@ class ForwardsController extends AbstractController
 
             $forward = $this->forwardService->createForward($data, $type);
 
+            $forward = $this->forwardService->getForwardByIds($data['account_id'],$forward->getObjectId(),$type);
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case ForwardService::ERROR_UNABLE_CREATE_FORWARD:
@@ -126,7 +127,7 @@ class ForwardsController extends AbstractController
             $userId = self::getUserId();
 
             if(is_null($account_id) || !SupportClass::checkInteger($account_id)){
-                $account_id = Accounts::findForUserDefaultAccount($userId);
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
             }
 
             if (!Accounts::checkUserHavePermission($userId, $account_id, 'deleteForward')) {

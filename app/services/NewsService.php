@@ -30,25 +30,29 @@ class NewsService extends AbstractService
      */
     public function createNews(array $newsData)
     {
-        $news = new News();
+        try {
+            $news = new News();
 
-        $this->fillNews($news, $newsData);
+            $this->fillNews($news, $newsData);
 
-        if ($news->create() == false) {
-            $errors = SupportClass::getArrayWithErrors($news);
-            if (count($errors) > 0)
-                throw new ServiceExtendedException('unable to create news',
-                    self::ERROR_UNABLE_CREATE_NEWS, null, null, $errors);
-            else {
-                throw new ServiceExtendedException('unable to create news',
-                    self::ERROR_UNABLE_CREATE_NEWS);
+            if ($news->create() == false) {
+                $errors = SupportClass::getArrayWithErrors($news);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('unable to create news',
+                        self::ERROR_UNABLE_CREATE_NEWS, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('unable to create news',
+                        self::ERROR_UNABLE_CREATE_NEWS);
+                }
             }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $news;
     }
 
-    public function getNewsById(int $newsId)
+    public function getNewsById($newsId)
     {
         $news = News::findFirstByNewsId($newsId);
 
@@ -60,15 +64,15 @@ class NewsService extends AbstractService
 
     public function fillNews(News $news, array $data)
     {
-        if (!empty(trim($data['news_text'])))
+        if (isset($data['news_text']))
             $news->setNewsText($data['news_text']);
-        if (!empty(trim($data['title'])))
+        if (isset($data['title']))
             $news->setTitle($data['title']);
         if (!empty(trim($data['publish_date'])))
             $news->setPublishDate(date('Y-m-d H:i:sO', strtotime($data['publish_date'])));
         if (!empty(trim($data['account_id'])))
             $news->setAccountId($data['account_id']);
-        if (!empty(trim($data['news_type'])))
+        if (!isset($data['news_type']))
             $news->setNewsType($data['news_type']);
     }
 
@@ -94,33 +98,40 @@ class NewsService extends AbstractService
 
     public function deleteNews(News $news)
     {
-        if ($news->delete() == false) {
-            $errors = SupportClass::getArrayWithErrors($news);
-            if (count($errors) > 0)
-                throw new ServiceExtendedException('unable to delete news',
-                    self::ERROR_UNABLE_DELETE_NEWS, null, null, $errors);
-            else {
-                throw new ServiceExtendedException('unable to delete news',
-                    self::ERROR_UNABLE_DELETE_NEWS);
+        try {
+            if ($news->delete() == false) {
+                $errors = SupportClass::getArrayWithErrors($news);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('unable to delete news',
+                        self::ERROR_UNABLE_DELETE_NEWS, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('unable to delete news',
+                        self::ERROR_UNABLE_DELETE_NEWS);
+                }
             }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
-
         return $news;
     }
 
-    public function changeNews(News $news,array $newsData)
+    public function changeNews(News $news, array $newsData)
     {
-        $this->fillNews($news, $newsData);
+        try {
+            $this->fillNews($news, $newsData);
 
-        if ($news->update() == false) {
-            $errors = SupportClass::getArrayWithErrors($news);
-            if (count($errors) > 0)
-                throw new ServiceExtendedException('unable to change news',
-                    self::ERROR_UNABLE_CHANGE_NEWS, null, null, $errors);
-            else {
-                throw new ServiceExtendedException('unable to change news',
-                    self::ERROR_UNABLE_CHANGE_NEWS);
+            if ($news->update() == false) {
+                $errors = SupportClass::getArrayWithErrors($news);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('unable to change news',
+                        self::ERROR_UNABLE_CHANGE_NEWS, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('unable to change news',
+                        self::ERROR_UNABLE_CHANGE_NEWS);
+                }
             }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $news;

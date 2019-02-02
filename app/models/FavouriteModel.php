@@ -193,7 +193,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
     {
         $account = Accounts::findFirstById($subjectId);
 
-        return $model::find(['subject_id = ANY :accounts and object_id = :objectId', 'bind' =>
+        return $model::findFirst(['subject_id = ANY (:accounts:) and object_id = :objectId:', 'bind' =>
             [
                 'accounts' => $account->getRelatedAccounts(),
                 'objectId' => $objectId
@@ -206,7 +206,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         $offset = ($page - 1) * $page_size;
         $account = Accounts::findFirstById($subjectId);
 
-        $favs = self::find(['subject_id = ANY (:subjectId)', 'bind' => [
+        $favs = self::find(['subject_id = ANY (:subjectId:)', 'bind' => [
             'subjectId' => $account->getRelatedAccounts()
         ], 'offset' => $offset, 'limit' => $page_size]);
 

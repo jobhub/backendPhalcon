@@ -84,7 +84,7 @@ class CompaniesAPIController extends AbstractController
 
             $company = $this->companyService->createCompany($data, $userId);
 
-            $this->accountService->createAccount([
+            $account_id = $this->accountService->createAccount([
                 'user_id' => $userId,
                 'company_id' => $company->getCompanyId(),
                 'company_role_id' => CompanyRole::ROLE_OWNER_ID
@@ -103,7 +103,11 @@ class CompaniesAPIController extends AbstractController
         }
         $this->db->commit();
 
-        return self::successResponse('Company was successfully created', ['company_id' => $company->getCompanyId()]);
+        return self::successResponse('Company was successfully created',
+            [
+                'company_id' => $company->getCompanyId(),
+                'account_id' => $account_id
+            ]);
     }
 
     /**

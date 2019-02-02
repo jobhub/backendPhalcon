@@ -217,7 +217,7 @@ class ForwardsInNewsModel extends \Phalcon\Mvc\Model
     public static function findByIds($model, $accountId, $objectId){
         $account = Accounts::findFirstById($accountId);
 
-        return $model::find(['account_id = ANY :accounts and object_id = :objectId','bind'=>
+        return $model::findFirst(['account_id = ANY (:accounts:) and object_id = :objectId:','bind'=>
         [
             'accounts'=>$account->getRelatedAccounts(),
             'objectId'=>$objectId
