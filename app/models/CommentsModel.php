@@ -231,7 +231,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
                                 'columns' => Companies::shortColumnsInStr,
                                 'bind' => ['companyId' => $comment->accounts->getCompanyId()]]);*/
                         $company = Companies::findCompanyById($account->getCompanyId(),
-                            Companies::shortColumnsInStr);
+                            Companies::shortColumns);
                         $handledComment['publisher_company'] = $company;
                     }
                 }

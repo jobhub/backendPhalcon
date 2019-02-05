@@ -72,7 +72,7 @@ class NewsService extends AbstractService
             $news->setPublishDate(date('Y-m-d H:i:sO', strtotime($data['publish_date'])));
         if (!empty(trim($data['account_id'])))
             $news->setAccountId($data['account_id']);
-        if (!isset($data['news_type']))
+        if (isset($data['news_type']))
             $news->setNewsType($data['news_type']);
     }
 

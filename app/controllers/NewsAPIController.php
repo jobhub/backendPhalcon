@@ -339,32 +339,40 @@ class NewsAPIController extends AbstractController
      *
      * @param $page
      * @param $page_size
-     * @param $company_id
+     * @param $account_id
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getOwnNewsAction($company_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
+    public function getOwnNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        $userId = self::getUserId();
+        try {
+            $userId = self::getUserId();
 
-        if ($company_id != null && SupportClass::checkInteger($company_id)) {
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getNews')) {
-                throw new Http403Exception('Permission error');
+            if ($account_id != null && SupportClass::checkInteger($account_id)) {
+                if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                    throw new Http403Exception('Permission error');
+                }
+
+            } else {
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
             }
 
-            $accountId = Accounts::findFirst(['user_id = :userId: and company_id = :companyId:', 'bind' =>
-                [
-                    'userId' => $userId,
-                    'companyId' => $company_id
-                ]])->getId();
+            $this->session->set('accountId', $account_id);
+            $account = $this->accountService->getAccountById($account_id);
 
-            $this->session->set('accountId', $accountId);
+            if($account->getCompanyId() != null){
+                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+            } else {
+                return News::findNewsByUser($userId, $page, $page_size);
+            }
 
-            return News::findNewsByCompany($company_id, $page, $page_size);
-        } else {
-            $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
-            $this->session->set('accountId', $accountId);
-            return News::findNewsByUser($userId, $page, $page_size);
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 

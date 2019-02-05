@@ -195,9 +195,23 @@ class ForwardsInNewsModel extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function handleObjectWithForwards($model, array $handledObject, $objectId, $accountId = null)
+    /**
+     * @param $model
+     * @param array $handledObject
+     * @param $objectId
+     * @param string|null $accountIds - related accounts in a postgres array format
+     * @return array
+     */
+    public static function handleObjectWithForwards($model, array $handledObject, $objectId, string $accountIds = null)
     {
         $handledObject['stats']['forwards'] = self::getCount($model,$objectId);
+        if($accountIds!=null){
+            $handledObject['forwarded'] = boolval($model::findFirst(['object_id = :objectId: and account_id = ANY(:ids:)',
+                'bind'=>[
+                    'objectId'=>$objectId,
+                    'ids'=>$accountIds
+                ]]));
+        }
         return $handledObject;
     }
 

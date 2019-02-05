@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Libs\SupportClass;
 use App\Models\FavouriteModel;
 use App\Models\Accounts;
+use App\Models\FavouriteServices;
+use App\Models\Services;
 use App\Services\FavouriteService;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -122,7 +124,6 @@ class FavouriteController extends AbstractController
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
-                case FavouriteService::ERROR_ACCOUNT_NOT_SUBSCRIBED:
                 case FavouriteService::ERROR_UNABLE_UNSUBSCRIBE:
                     $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
@@ -132,6 +133,7 @@ class FavouriteController extends AbstractController
         }catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                case FavouriteService::ERROR_ACCOUNT_NOT_SUBSCRIBED:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 case FavouriteService::ERROR_INVALID_FAVOURITE_TYPE:
                     $exception = new Http404Exception(
@@ -165,7 +167,7 @@ class FavouriteController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && is_integer(intval($account_id))){
+        if($account_id!=null && SupportClass::checkInteger($account_id)){
             if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
                 throw new Http403Exception('Permission error');
             }
@@ -210,5 +212,33 @@ class FavouriteController extends AbstractController
         self::setAccountId($account->getId());
 
         return FavouriteModel::findSubscriptions($account,$query,$page,$page_size);
+    }
+
+    /**
+     * Возвращает избранные услуги пользователя
+     *
+     * @method GET
+     *
+     * @param $account_id = null
+     * @param $page = 1
+     * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array с подписками (просто id-шники)
+     */
+    public function getFavouriteServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if($account_id!=null && SupportClass::checkInteger($account_id)){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        return FavouriteServices::findFavourites($account_id,$page,$page_size);
     }
 }

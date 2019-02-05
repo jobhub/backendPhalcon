@@ -104,7 +104,7 @@ class ImagesServices extends ImagesModel
         $offset = ($page - 1) * $page_size;
         return self::handleImages(
             self::find(['conditions'=>'object_id = :serviceId:','bind'=>['serviceId'=>$serviceId],
-                'limit'=>$page_size,'offset'=>$offset])
+                'limit'=>$page_size,'offset'=>$offset])->toArray()
         );
     }
 }

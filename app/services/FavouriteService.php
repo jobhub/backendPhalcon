@@ -13,6 +13,7 @@ use App\Libs\SupportClass;
 //models
 use App\Models\Userinfo;
 use App\Models\FavoriteCompanies;
+use App\Models\FavouriteServices;
 use App\Models\Settings;
 
 /**
@@ -36,31 +37,35 @@ class FavouriteService extends AbstractService {
     const ERROR_INVALID_FAVOURITE_TYPE = 4 + self::ADDED_CODE_NUMBER;
 
     public function subscribeTo($type, int $accountId, int $objectId){
-        switch ($type) {
-            case self::TYPE_USER:
-                $fav = new FavoriteUsers();
-                break;
-            case self::TYPE_COMPANY:
-                $fav = new FavoriteCompanies();
-                break;
-            case self::TYPE_SERVICE:
-                $fav = new FavouriteService();
-                break;
-            default:
-                throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FAVOURITE_TYPE);
-        }
-        $fav->setSubjectId($accountId);
-        $fav->setObjectId($objectId);
-
-        if(!$fav->create()){
-            $errors = SupportClass::getArrayWithErrors($fav);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable subscribe account to object',
-                    self::ERROR_UNABLE_SUBSCRIBE,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable subscribe account to object',
-                    self::ERROR_UNABLE_SUBSCRIBE);
+        try {
+            switch ($type) {
+                case self::TYPE_USER:
+                    $fav = new FavoriteUsers();
+                    break;
+                case self::TYPE_COMPANY:
+                    $fav = new FavoriteCompanies();
+                    break;
+                case self::TYPE_SERVICE:
+                    $fav = new FavouriteServices();
+                    break;
+                default:
+                    throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FAVOURITE_TYPE);
             }
+            $fav->setSubjectId($accountId);
+            $fav->setObjectId($objectId);
+
+            if (!$fav->create()) {
+                $errors = SupportClass::getArrayWithErrors($fav);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable subscribe account to object',
+                        self::ERROR_UNABLE_SUBSCRIBE, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable subscribe account to object',
+                        self::ERROR_UNABLE_SUBSCRIBE);
+                }
+            }
+        }catch(\PDOException $e){
+            throw new ServiceException($e->getMessage(), $e->getCode(),$e);
         }
     }
 
@@ -74,7 +79,7 @@ class FavouriteService extends AbstractService {
                 $model = 'App\Models\FavoriteCompanies';
                 break;
             case self::TYPE_SERVICE:
-                $model = 'App\Models\FavoriteServices';
+                $model = 'App\Models\FavouriteServices';
                 break;
             default:
                 throw new ServiceException('Invalid type of signing', self::ERROR_INVALID_FAVOURITE_TYPE);
@@ -83,7 +88,7 @@ class FavouriteService extends AbstractService {
         $fav = FavouriteModel::findByIds($model,$accountId,$objectId);
 
         if (!$fav) {
-            throw new ServiceException('Account don\'t subscribe to object', self::ERROR_ACCOUNT_NOT_SUBSCRIBED);
+            throw new ServiceException('Account not subscribed to object', self::ERROR_ACCOUNT_NOT_SUBSCRIBED);
         }
         return $fav;
     }

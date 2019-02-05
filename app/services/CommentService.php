@@ -25,9 +25,9 @@ use App\Controllers\HttpExceptions\Http500Exception;
  */
 class CommentService extends AbstractService {
 
-    const TYPE_USER_IMAGES = 'user-image';
+    const TYPE_USER_IMAGES = 'image-user';
     const TYPE_NEWS = 'news';
-    const TYPE_SERVICES = 'services';
+    const TYPE_SERVICES = 'service';
 
     const ADDED_CODE_NUMBER = 13000;
 

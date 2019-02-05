@@ -227,6 +227,10 @@ class Accounts extends \Phalcon\Mvc\Model
         return true;
     }
 
+    public static function findAccountsByUser($userId){
+        return self::findByUserId($userId);
+    }
+
     public function getUserInfomations(){
         if(!is_null($this->company_id)){
             return Companies::findCompanyById($this->company_id, Companies::shortColumns);
@@ -245,6 +249,20 @@ class Accounts extends \Phalcon\Mvc\Model
             }
         }
         return SupportClass::to_pg_array($accounts);
+    }
+
+    public static function checkAccountsRelated(Accounts $accountOne, Accounts $accountTwo)
+    {
+        if ($accountOne == null || $accountTwo == null)
+            return false;
+
+        if(($accountOne->getCompanyId()!= null && $accountTwo->getCompanyId()!= null
+            && $accountOne->getCompanyId() == $accountTwo->getCompanyId())
+            || ( $accountOne->getCompanyId() == null && $accountTwo->getCompanyId() == null
+            && $accountOne->getUserId() == $accountTwo->getUserId()))
+            return true;
+
+        return false;
     }
 
     public static function checkUserRelatesWithAccount($userId, $accountId)
@@ -303,6 +321,27 @@ class Accounts extends \Phalcon\Mvc\Model
 
         return false;
     }
+
+    public static function addInformationForCabinet(Accounts $account, $data, Accounts $currentAccount = null){
+        $data['countNews'] =  intval(News::getPublicationCount($account));
+
+        $data['countSubscribers'] = FavouriteModel::getSubscribersCount($account);
+
+        $data['countSubscriptions'] = intval(FavouriteModel::getSubscriptionsCount($account));
+
+        if ($currentAccount != null && !self::checkAccountsRelated($account,$currentAccount)) {
+
+            if($account->getCompanyId()!=null)
+                $subscribed = FavoriteCompanies::findByIds('App\Models\FavoriteCompanies',$currentAccount->getId(), $account->getCompanyId());
+            else
+                $subscribed = FavoriteUsers::findByIds('App\Models\FavoriteUsers',$currentAccount->getId(), $account->getUserId());
+
+            $data['subscribed'] = boolval($subscribed);
+        }
+
+        return $data;
+    }
+
     /**
      * Returns table name mapped in the model.
      *

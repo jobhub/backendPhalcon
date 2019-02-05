@@ -101,7 +101,7 @@ class Companies extends NotDeletedModelWithCascade
         'region_id', /*'user_id',*/
         'website', 'email', 'logotype', 'rating_executor', 'rating_client'];
 
-    const publicColumnsInStr = 'companyid, name, fullname, tin,
+    const publicColumnsInStr = 'company_id, name, full_name, tin,
         region_id, website, email, logotype, rating_executor, rating_client';
 
     const shortColumns = ['company_id', 'name', 'logotype'];

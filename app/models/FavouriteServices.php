@@ -77,8 +77,8 @@ class FavouriteServices extends FavouriteModel
         $result = $modelsManager->createBuilder()
             ->columns($columns)
             ->from(["s" => "App\Models\Services"])
-            ->join('App\Models\FavouriteServices','fav_serv.service_id = s.service_id','fav_serv')
-            ->where('fav_serv.account_id = ANY(:ids:) and s.deleted = false',
+            ->join('App\Models\FavouriteServices','fav_serv.object_id = s.service_id','fav_serv')
+            ->where('fav_serv.subject_id = ANY(:ids:) and s.deleted = false',
                 ['ids' => $account->getRelatedAccounts()])
             ->orderBy('fav_serv.favourite_date desc')
             ->limit($page_size)

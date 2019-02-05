@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 
+use App\Libs\SupportClass;
 use App\Models\AccountModel;
 use App\Models\CommentsModel;
 use App\Services\AccountService;
@@ -45,10 +46,10 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array массив комментариев
      */
-    public function getCommentsForImageAction($image_id)
+    /*public function getCommentsForImageAction($image_id)
     {
         return CommentsImagesUsers::getComments($image_id);
-    }
+    }*/
 
     /**
      * Добавляет комментарий к фотографии пользователя
@@ -63,7 +64,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array в формате Status + id созданного комментария
      */
-    public function addCommentForImageAction()
+    /*public function addCommentForImageAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['image_id'] = $inputData->object_id;
@@ -108,7 +109,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Comment was successfully created', ['comment' => $comment->toArray()]);
-    }
+    }*/
 
     /**
      * Удаляет комментарий, оставленный к фотографии пользователя
@@ -119,7 +120,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteCommentForImageAction($comment_id)
+    /*public function deleteCommentForImageAction($comment_id)
     {
         try {
             $auth = $this->session->get('auth');
@@ -151,7 +152,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Comment was successfully deleted');
-    }
+    }*/
 
     /**
      * Меняет лайкнутость текущим пользователем указанного комментария.
@@ -164,7 +165,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return Response
      */
-    public function toggleLikeCommentForImageAction()
+    /*public function toggleLikeCommentForImageAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['comment_id'] = $inputData->comment_id;
@@ -203,7 +204,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Like was toggled', ['liked' => $liked]);
-    }
+    }*/
 
     /**
      * Возвращает комментарии к указанной новости
@@ -214,10 +215,10 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array массив комментариев
      */
-    public function getCommentsForNewsAction($news_id)
+    /*public function getCommentsForNewsAction($news_id)
     {
         return CommentsNews::getComments($news_id);
-    }
+    }*/
 
     /**
      * Добавляет комментарий к новости
@@ -232,7 +233,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function addCommentForNewsAction()
+    /*public function addCommentForNewsAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['news_id'] = $inputData->object_id;
@@ -277,7 +278,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Comment was successfully created', ['comment' => $comment->toArray()]);
-    }
+    }*/
 
     /**
      * Удаляет комментарий, оставленный к фотографии пользователя
@@ -288,7 +289,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return string - json array в формате Status - результат операции
      */
-    public function deleteCommentForNewsAction($comment_id)
+    /*public function deleteCommentForNewsAction($comment_id)
     {
         try {
             $auth = $this->session->get('auth');
@@ -320,7 +321,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Comment was successfully deleted');
-    }
+    }*/
 
     /**
      * Меняет лайкнутость текущим пользователем указанного комментария.
@@ -333,7 +334,7 @@ class CommentsAPIController extends AbstractController
      *
      * @return Response
      */
-    public function toggleLikeCommentForNewsAction()
+    /*public function toggleLikeCommentForNewsAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['comment_id'] = $inputData->comment_id;
@@ -372,7 +373,7 @@ class CommentsAPIController extends AbstractController
         }
 
         return self::successResponse('Like was toggled', ['liked' => $liked]);
-    }
+    }*/
 
     /**
      * Добавляет комментарий к указанному объекту
@@ -508,7 +509,7 @@ class CommentsAPIController extends AbstractController
         try {
             if (self::isAuthorized()) {
                 $userId = self::getUserId();
-                if ($account_id == null || !is_integer(intval($account_id))) {
+                if ($account_id == null || !SupportClass::checkInteger($account_id)) {
                     $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
                 }
 
@@ -521,7 +522,7 @@ class CommentsAPIController extends AbstractController
                 $account_id = null;
 
 
-            if ($parent_id != null && is_integer(intval($parent_id))) {
+            if ($parent_id != null && SupportClass::checkInteger($parent_id)) {
                 $comments = $this->commentService->getChildComments($object_id, $type, $parent_id,$account_id, $page, $page_size);
             } else {
                 $comments = $this->commentService->getParentComments($object_id, $type,$account_id, $page, $page_size);

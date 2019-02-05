@@ -266,7 +266,8 @@ class News extends AccountWithNotDeletedWithCascade
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
                     INNER JOIN public.favorite_companies favc ON 
                                 (a.company_id = favc.object_id)
-                    WHERE favc.subject_id = ANY (:ids))
+                    WHERE favc.subject_id = ANY (:ids) and n.publish_date < CURRENT_TIMESTAMP
+                    )
         UNION ALL
         (
     select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
@@ -280,7 +281,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                      FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id AND a.company_id is null)
                     INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
-                    WHERE favu.subject_id = ANY (:ids)
+                    WHERE favu.subject_id = ANY (:ids) and n.publish_date < CURRENT_TIMESTAMP
         )
         UNION ALL
         (
@@ -619,6 +620,9 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
             $accountId = $session->get('accountId');
         }
 
+        $account = Accounts::findFirstById($accountId);
+        $relatedAccounts = $account->getRelatedAccounts();
+
         foreach ($news as $newsElement) {
             $newsWithAllElement = $newsElement;
             unset($newsWithAllElement['likes']);
@@ -647,7 +651,8 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
             //$newsWithAllElement['stats']['comments'] = count(CommentsNews::findByObjectId($newsElement['news_id']));
             $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, $accountId);
-            $newsWithAllElement = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsNews',$newsWithAllElement, $newsElement['news_id'], $accountId);
+            $newsWithAllElement = ForwardsInNewsModel::handleObjectWithForwards(
+                'App\Models\ForwardsNews',$newsWithAllElement, $newsElement['news_id'], $relatedAccounts);
 
             $newsWithAllElement['stats']['comments'] = CommentsModel::getCountOfComments('comments_news', $newsElement['news_id']);
 
@@ -827,5 +832,28 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         foreach (self::publicColumns as $info)
             $toRet[$info] = $news_data[$info];
         return $toRet;
+    }
+
+    public static function getPublicationCount(Accounts $account){
+        $db = DI::getDefault()->getDb();
+
+        $sql = 'Select SUM(count) from (
+                (  select COUNT(*) count
+                    from public.news n
+                    where n.account_id = ANY(:ids) and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL (
+                    select COUNT(*) count
+                    from public.forwards_in_news_model m
+                        where m.account_id = ANY(:ids))
+                ) foo';
+
+        $query = $db->prepare($sql);
+        $query->execute([
+            'ids' => $account->getRelatedAccounts(),
+        ]);
+
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result[0]['sum'];
     }
 }

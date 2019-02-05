@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Accounts;
 use App\Models\FavoriteUsers;
 use App\Models\Users;
 use App\Models\Group;
@@ -75,21 +76,21 @@ class UserInfoService extends AbstractService {
             $userInfo->setFirstName($data['first_name']);
         if(!empty(trim($data['last_name'])))
             $userInfo->setLastName($data['last_name']);
-        if(!empty(trim($data['patronymic'])))
+        if(isset($data['patronymic']))
             $userInfo->setPatronymic($data['patronymic']);
-        if(!empty(trim($data['male'])))
+        if(isset($data['male']))
             $userInfo->setMale($data['male']);
-        if(!empty(trim($data['address'])))
+        if(isset($data['address']))
             $userInfo->setAddress($data['address']);
         if(!empty(trim($data['birthday'])))
             $userInfo->setBirthday(date('Y-m-d H:i:sO', strtotime($data['birthday'])));
-        if(!empty(trim($data['about'])))
+        if(isset($data['about']))
             $userInfo->setAbout($data['about']);
-        if(!empty(trim($data['status'])))
+        if(isset($data['status']))
             $userInfo->setStatus($data['status']);
-        if(!empty(trim($data['email'])))
+        if(isset($data['email']))
             $userInfo->setEmail($data['email']);
-        if(!empty(trim($data['path_to_photo'])))
+        if(isset($data['path_to_photo']))
             $userInfo->setPathToPhoto($data['path_to_photo']);
     }
 
@@ -120,14 +121,14 @@ class UserInfoService extends AbstractService {
         return $user;
     }
 
-    public function getHandledUserInfoById(int $userId, int $userReceiver){
+    public function getHandledUserInfoById(int $userId, Accounts $accountReceiver){
         $userInfo = Userinfo::findUserInfoById($userId);
 
         if (!$userInfo || $userInfo == null) {
             throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
         }
 
-        return Userinfo::handleUserInfo($userInfo,$userReceiver);
+        return Userinfo::handleUserInfo($userInfo,$accountReceiver);
     }
 
     public function subscribeToCompany(int $userId, int $companyId){
@@ -148,7 +149,7 @@ class UserInfoService extends AbstractService {
     }
 
     public function getSigningToCompany(int $userId, int $companyId){
-        $fav = FavoriteCompanies::findByIds($userId,$companyId);
+        $fav = FavoriteCompanies::findByIds('App\Models\FavoriteCompanies',$userId,$companyId);
 
         if (!$fav) {
             throw new ServiceException('User don\'t subscribe to company', self::ERROR_USER_NOT_SUBSCRIBED_TO_COMPANY);
@@ -180,7 +181,7 @@ class UserInfoService extends AbstractService {
     }
 
     public function getSigningToUser(int $userId, int $userIdObject){
-        $fav = FavoriteUsers::findByIds($userIdObject,$userId);
+        $fav = FavoriteUsers::findByIds('App\Models\FavoriteUsers',$userIdObject,$userId);
 
         if (!$fav) {
             throw new ServiceException('User don\'t subscribed to user', self::ERROR_USER_NOT_SUBSCRIBED_TO_USER);

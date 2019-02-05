@@ -68,7 +68,7 @@ class AccountService extends AbstractService {
         $account = Accounts::findForUserDefaultAccount($userId);
 
         if(!$account)
-            throw new ServiceException('Account for user don\'t found',self::ERROR_ACCOUNT_NOT_FOUND);
+            throw new ServiceException('Account for user not found',self::ERROR_ACCOUNT_NOT_FOUND);
         return $account;
     }
 
@@ -80,7 +80,7 @@ class AccountService extends AbstractService {
             ]]);
 
         if(!$account)
-            throw new ServiceException('Account don\'t found',self::ERROR_ACCOUNT_NOT_FOUND);
+            throw new ServiceException('Account not found',self::ERROR_ACCOUNT_NOT_FOUND);
         return $account;
     }
 
@@ -88,7 +88,7 @@ class AccountService extends AbstractService {
         $account = Accounts::findFirstById($accountId);
 
         if(!$account)
-            throw new ServiceException('Account don\'t found',self::ERROR_ACCOUNT_NOT_FOUND);
+            throw new ServiceException('Account not found',self::ERROR_ACCOUNT_NOT_FOUND);
         return $account;
     }
 }

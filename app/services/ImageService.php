@@ -56,29 +56,33 @@ class ImageService extends AbstractService
 
     public function getImageById($id, $type)
     {
-        switch ($type) {
-            case self::TYPE_USER:
-                $image = ImagesUsers::findImageById($id);
-                break;
-            case self::TYPE_NEWS:
-                $image = ImagesNews::findImageById($id);
-                break;
-            case self::TYPE_REVIEW:
-                $image = ImagesReviews::findImageById($id);
-                break;
-            case self::TYPE_SERVICE:
-                $image = ImagesServices::findImageById($id);
-                break;
-            case self::TYPE_TEMP:
-                $image = ImagesTemp::findImageById($id);
-                break;
-            default:
-                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+        try {
+            switch ($type) {
+                case self::TYPE_USER:
+                    $image = ImagesUsers::findImageById($id);
+                    break;
+                case self::TYPE_NEWS:
+                    $image = ImagesNews::findImageById($id);
+                    break;
+                case self::TYPE_REVIEW:
+                    $image = ImagesReviews::findImageById($id);
+                    break;
+                case self::TYPE_SERVICE:
+                    $image = ImagesServices::findImageById($id);
+                    break;
+                case self::TYPE_TEMP:
+                    $image = ImagesTemp::findImageById($id);
+                    break;
+                default:
+                    throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+            }
+            if (!$image) {
+                throw new ServiceException('Image not found', self::ERROR_IMAGE_NOT_FOUND);
+            }
+            return $image;
+        }catch (\PDOException $e){
+            throw new ServiceException($e->getMessage(), $e->getCode(),$e);
         }
-        if (!$image) {
-            throw new ServiceException('Image not found', self::ERROR_IMAGE_NOT_FOUND);
-        }
-        return $image;
     }
 
     public function getImages(int $objectId, $type, $page = 1, $page_size = ImagesModel::DEFAULT_RESULT_PER_PAGE)
@@ -372,7 +376,7 @@ class ImageService extends AbstractService
         switch ($type) {
             case self::TYPE_USER:
                 $image = new ImagesUsers();
-                $image->setImageText($data['image_text']);
+                $image->setImageText($data/*['image_text']*/);
                 break;
             case self::TYPE_NEWS:
                 $image = new ImagesNews();

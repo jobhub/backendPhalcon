@@ -303,6 +303,32 @@ $routes = [
                 'path' => '/login',
                 'action' => 'indexAction'
             ],
+
+            /**
+             * Выдает текущую роль пользователя.
+             * @access public
+             * @method GET
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/role',
+                'action' => 'getCurrentRoleAction'
+            ],
+
+            /**
+             * Возвращает аккаунты текущего пользователя
+             *
+             * @access private
+             *
+             * @method GET
+             *
+             * @return array
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/accounts',
+                'action' => 'getAccountsAction'
+            ],
         ]
     ],
 
@@ -426,10 +452,15 @@ $routes = [
                 'path' => '/get/{user_id}',
                 'action' => 'getUserInfoAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/{user_id}/{account_id}',
+                'action' => 'getUserInfoAction'
+            ],
 
             /**
              * Меняет данные текущего пользоваателя.
-             * Приватный метод.
+             * @access private.
              *
              * @method PUT
              *
@@ -1026,11 +1057,11 @@ $routes = [
              *
              * @return Response с json ответом в формате Status
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/add/favourite',
                 'action' => 'setFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Отменяет подписку на услугу
@@ -1042,7 +1073,7 @@ $routes = [
              *
              * @return Response с json ответом в формате Status
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/delete/favourite/{service_id}',
                 'action' => 'deleteFavouriteAction'
@@ -1051,7 +1082,7 @@ $routes = [
                 'type' => 'delete',
                 'path' => '/delete/favourite/{service_id}/{account_id}',
                 'action' => 'deleteFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Возвращает избранные услуги пользователя
@@ -1064,7 +1095,7 @@ $routes = [
              *
              * @return string - json array с подписками (просто id-шники)
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/favourites',
                 'action' => 'getFavouritesAction'
@@ -1083,7 +1114,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/favourites/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesAction'
-            ],
+            ],*/
         ]
     ],
 
@@ -1322,9 +1353,9 @@ $routes = [
         'prefix' => '/comment',
         /**
          * Возможные значения для $type:
-         *      user-image
+         *      image-user
          *      news
-         *      services
+         *      service
          */
         'resources' => [
             /**
@@ -1479,22 +1510,6 @@ $routes = [
                 'type' => 'post',
                 'path' => '/add/{type}',
                 'action' => 'addCommentAction'
-            ],
-
-            /**
-             * Удаляет комментарий указаннного типа
-             *
-             * @method DELETE
-             *
-             * @param $type string - тип комментария
-             * @param $comment_id int id комментария
-             *
-             * @return string - json array в формате Status - результат операции
-             */
-            [
-                'type' => 'post',
-                'path' => '/delete/{type}/{comment_id}',
-                'action' => 'deleteCommentAction'
             ],
 
             /**
@@ -2227,12 +2242,12 @@ $routes = [
 
         /**
          * Возможные значения $type
-         *      'comment-user-image';
+         *      'comment-image-user';
          *      'comment-news';
          *      'comment-service';
          *      'news';
          *      'service';
-         *      'user-image';
+         *      'image-user';
          */
 
         'prefix' => '/like',
@@ -2266,7 +2281,7 @@ $routes = [
          * Возможные значения $type
          *      'news';
          *      'service';
-         *      'user-image';
+         *      'image-user';
          */
 
         'resources' => [
@@ -2436,6 +2451,38 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/subscriptions/{account_id}/{query}/{page}/{page_size}',
                 'action' => 'getSubscriptionsAction'
+            ],
+
+            /**
+             * Возвращает избранные услуги пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/service',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}/{page}',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouriteServicesAction'
             ],
         ]
     ],

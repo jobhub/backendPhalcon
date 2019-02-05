@@ -66,7 +66,7 @@ class MessageService extends AbstractService
 
             switch ($data["type"]){
                 case Message::TYPE_FORWARD_IMAGE_USER:
-                    $image = $this->imageService->getImageById($data["attached_id"]);
+                    $image = $this->imageService->getImageById($data["attached_id"],ImageService::TYPE_USER);
                     $msg->setAttachedId($data["attached_id"]);
                     break;
                 case Message::TYPE_FORWARD_NEWS:

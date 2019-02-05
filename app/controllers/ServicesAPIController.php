@@ -94,7 +94,7 @@ class ServicesAPIController extends AbstractController
     public function getOwnServicesAction($company_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
-        if ($company_id == null || !is_integer($company_id)) {
+        if ($company_id == null || !SupportClass::checkInteger($company_id)) {
             $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
             $this->session->set('accountId',$accountId);
             $services = Services::findServicesByUserId($userId,$page,$page_size);
@@ -1532,7 +1532,7 @@ class ServicesAPIController extends AbstractController
      *
      * @return Response с json ответом в формате Status
      */
-    public function setFavouriteAction()
+    /*public function setFavouriteAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['service_id'] = $inputData->service_id;
@@ -1571,7 +1571,7 @@ class ServicesAPIController extends AbstractController
         }
 
         return self::successResponse('Account was successfully subscribed to service');
-    }
+    }*/
 
 
     /**
@@ -1584,7 +1584,7 @@ class ServicesAPIController extends AbstractController
      *
      * @return Response с json ответом в формате Status
      */
-    public function deleteFavouriteAction($service_id, $account_id = null)
+    /*public function deleteFavouriteAction($service_id, $account_id = null)
     {
         try {
             $userId = self::getUserId();
@@ -1619,36 +1619,8 @@ class ServicesAPIController extends AbstractController
         }
 
         return self::successResponse('Account was successfully unsubscribed from service');
-    }
+    }*/
 
-
-    /**
-     * Возвращает избранные услуги пользователя
-     *
-     * @method GET
-     *
-     * @param $account_id = null
-     * @param $page = 1
-     * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
-     *
-     * @return string - json array с подписками (просто id-шники)
-     */
-    public function getFavouritesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
-    {
-        $userId = self::getUserId();
-
-        if($account_id!=null && SupportClass::checkInteger($account_id)){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
-                throw new Http403Exception('Permission error');
-            }
-        } else{
-            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
-        }
-
-        self::setAccountId($account_id);
-
-        return FavouriteServices::findFavourites($account_id,$page,$page_size);
-    }
     /*public
     function addImagesToAllServicesAction()
     {

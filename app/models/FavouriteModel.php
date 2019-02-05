@@ -106,21 +106,22 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             'account_id',
             new Callback(
                 [
-                    "message" => "Такой аккаунт не существует",
+                    "message" => "Такой аккаунт не существует или уже подписан",
                     "callback" => function ($fav_model) {
                         $account_exists = Accounts::findFirstById($fav_model->getSubjectId());
                         if ($account_exists) {
                             if ($account_exists->getCompanyId() != null) {
-                                $accounts = Accounts::findByCompanyId($account_exists->getCompanyId());
+                                /*$accounts = Accounts::findByCompanyId($account_exists->getCompanyId());
 
                                 $ids = [];
                                 foreach ($accounts as $account) {
                                     $ids[] = $account->getId();
                                 }
 
-                                $ids = SupportClass::to_pg_array($ids);
+                                $ids = SupportClass::to_pg_array($ids);*/
 
-                                $exists = self::findFirst(['subject_id = ANY(:ids:)', 'bind' => ['ids' => $ids]]);
+                                $exists = self::findFirst(['subject_id = ANY(:ids:) and object_id = :objectId:', 'bind' =>
+                                    ['ids' => $account_exists->getRelatedAccounts(), 'objectId'=>$fav_model->getObjectId()]]);
 
                                 return $exists ? false : true;
                             }
@@ -208,7 +209,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $favs = self::find(['subject_id = ANY (:subjectId:)', 'bind' => [
             'subjectId' => $account->getRelatedAccounts()
-        ], 'offset' => $offset, 'limit' => $page_size]);
+        ], 'offset' => $offset, 'limit' => $page_size, 'order'=>'favourite_date desc']);
 
         return self::handleFavourites($favs->toArray());
     }
@@ -242,7 +243,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         foreach ($favs as $fav) {
 
             $handledFav = self::handleSubscriber($fav, $account->getRelatedAccounts());
-            if($handledFav!=null)
+            if ($handledFav != null)
                 $handledFavs[] = $handledFav;
         }
         return $handledFavs;
@@ -259,7 +260,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             $subscriber = Companies::findCompanyById($account->getCompanyId(),
                 Companies::shortColumns);
 
-            if(!$subscriber)
+            if (!$subscriber)
                 return null;
 
             $handledFavUser = [
@@ -278,7 +279,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             $subscriber = Userinfo::findUserInfoById($account->getUserId(),
                 Userinfo::shortColumns);
 
-            if(!$subscriber)
+            if (!$subscriber)
                 return null;
 
             $handledFavUser = [
@@ -310,7 +311,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         foreach ($favs as $fav) {
 
             $handledFav = self::handleSubscription($fav);
-            if($handledFav!=null)
+            if ($handledFav != null)
                 $handledFavs[] = $handledFav;
         }
         return $handledFavs;
@@ -319,11 +320,11 @@ class FavouriteModel extends \Phalcon\Mvc\Model
     public static function handleSubscription($fav)
     {
 
-        if($fav['relation'] == 'favorite_companies') {
+        if ($fav['relation'] == 'favorite_companies') {
             $subscription = Companies::findCompanyById($fav['object_id'],
                 Companies::shortColumns);
 
-            if(!$subscription)
+            if (!$subscription)
                 return null;
 
             $handledFav = [
@@ -333,7 +334,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             $subscription = Userinfo::findUserInfoById($fav['object_id'],
                 Userinfo::shortColumns);
 
-            if(!$subscription)
+            if (!$subscription)
                 return null;
 
             $handledFav = [
@@ -530,5 +531,62 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         }
 
         return self::handleSubscriptions($result);
+    }
+
+    public static function getSubscribersCount(Accounts $account)
+    {
+        $db = DI::getDefault()->getDb();
+        if ($account->getCompanyId() != null) {
+
+            $sql = 'Select COUNT(*) FROM favorite_companies fav_comp where fav_comp.object_id = :companyId';
+
+            $query_sql = $db->prepare($sql);
+            $query_sql->execute([
+                'companyId' => $account->getCompanyId()
+            ]);
+
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+
+        } else {
+
+            $sql = 'Select COUNT(*) FROM favorite_users fav_users where fav_users.object_id = :userId';
+
+            $query_sql = $db->prepare($sql);
+            $query_sql->execute([
+                'userId' => $account->getUserId()
+            ]);
+
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return $result[0]['count'];
+    }
+
+    public static function getSubscriptionsCount(Accounts $account)
+    {
+        $db = DI::getDefault()->getDb();
+
+        $sql = 'Select SUM(count) FROM (
+    (
+    select COUNT(*) count from favorite_users as fav_user
+                inner join userinfo on (userinfo.user_id = fav_user.object_id)
+                inner join users on (users.user_id = userinfo.user_id)
+                where fav_user.subject_id = ANY(:ids) and users.deleted = false
+    )
+    UNION ALL
+    (select COUNT(*) count from favorite_companies as fav_comp
+                inner join companies c on (c.company_id = fav_comp.object_id)
+                where fav_comp.subject_id = ANY(:ids) and c.deleted = false
+    )
+    ) as foo';
+
+        $query_sql = $db->prepare($sql);
+        $query_sql->execute([
+            'ids' => $account->getRelatedAccounts()
+        ]);
+
+        $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+
+
+        return $result[0]['sum'];
     }
 }

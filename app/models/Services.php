@@ -1385,6 +1385,11 @@ class Services extends AccountWithNotDeletedWithCascade
             $accountId = $session->get('accountId');
         }
 
+        $currentAccount = Accounts::findFirstById($accountId);
+        $currentAccount = $currentAccount?$currentAccount:null;
+        if($currentAccount!=null)
+            $relatedAccountsWithCurrent =$currentAccount->getRelatedAccounts();
+
         $serviceAll = $service;
 
         $account = Accounts::findFirstById($service['account_id']);
@@ -1447,7 +1452,8 @@ class Services extends AccountWithNotDeletedWithCascade
         $serviceAll['last_comment'] = $last_comment;*/
 
         $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
-        $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $accountId);
+        $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',
+            $serviceAll, $service['service_id'], $relatedAccountsWithCurrent);
 
         return $serviceAll;
     }
@@ -1460,6 +1466,9 @@ class Services extends AccountWithNotDeletedWithCascade
             $session = DI::getDefault()->get('session');
             $accountId = $session->get('accountId');
         }
+
+        $cur_account = Accounts::findFirstById($accountId);
+        $relatedAccounts = $cur_account->getRelatedAccounts();
 
         foreach ($services as $service) {
             $serviceAll = $service;
@@ -1492,11 +1501,11 @@ class Services extends AccountWithNotDeletedWithCascade
                 $serviceAll['categories'] = $categories;
             }
 
-            $images = ImagesServices::findByServiceId($service['service_id']);
-            $serviceAll['images'] = [];
-            foreach ($images as $image) {
+            $images = ImagesServices::findImagesForService($service['service_id']);
+            $serviceAll['images'] = $images;
+            /*foreach ($images as $image) {
                 $serviceAll['images'][] = $image->getImagePath();
-            }
+            }*/
 
             $points = Services::getPointsForService($service['service_id']);
             $serviceAll['point'] = count($points) > 0 ?
@@ -1509,7 +1518,7 @@ class Services extends AccountWithNotDeletedWithCascade
 
             $serviceAll = LikeModel::handleObjectWithLikes($serviceAll, $service, $accountId);
             $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
-            $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $accountId);
+            $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $relatedAccounts);
 
             unset($serviceAll['likes']);
 

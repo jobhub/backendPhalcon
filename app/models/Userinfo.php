@@ -194,12 +194,12 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     public function setMale($male)
     {
-        if ($male == 'мужской' || $male == 'Мужской')
+        /*if ($male == 'мужской' || $male == 'Мужской')
             $this->male = 1;
         else if ($male == 'женский' || $male == 'Женский')
             $this->male = 0;
-        else
-            $this->male = $male;
+        else*/
+        $this->male = $male;
 
         return $this;
     }
@@ -535,33 +535,23 @@ class Userinfo extends \Phalcon\Mvc\Model
         }
     }
 
-    public static function handleUserInfo(Userinfo $userInfo, $userReceiverId)
+    public static function handleUserInfo(Userinfo $userInfo, Accounts $accountReceiver = null)
     {
         $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
-        $images = ImagesUsers::getImages($userInfo->getUserId());
+        $images = ImagesUsers::findImages('App\Models\ImagesUsers',$userInfo->getUserId());
 
-        $countNews = count(News::findByAccount(
-            Accounts::findForUserDefaultAccount($userInfo->getUserId())->getId()
-        ));
-        $countSubscribers = count(FavoriteUsers::findByUserObject($userInfo->getUserId()));
-        $countSubscriptions = count(FavoriteUsers::findByUserSubject($userInfo->getUserId()))
-            + count(FavoriteCompanies::findByUserId($userInfo->getUserId()));
+        $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
 
         $data = [
             'user_info' => $userInfo,
             'phones' => $phones,
             'images' => $images,
-            'countNews' => $countNews,
-            'countSubscribers' => $countSubscribers,
-            'countSubscriptions' => $countSubscriptions,
         ];
 
-        if ($userReceiverId != $userInfo->getUserId()) {
+        if(!$account)
+            return $data;
 
-            $subscribed = FavoriteUsers::findByIds($userInfo->getUserId(), $userReceiverId);
-
-            $data['subscribed'] = boolval($subscribed);
-        }
+        $data = Accounts::addInformationForCabinet($account,$data,$accountReceiver);
 
         return $data;
     }

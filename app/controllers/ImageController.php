@@ -61,7 +61,7 @@ class ImageController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if ($account_id != null && is_integer(intval($account_id))) {
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
             if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
@@ -114,7 +114,7 @@ class ImageController extends AbstractController
             //$inputData = $this->request->getJsonRawBody();
             $inputData = json_decode(json_encode($this->request->getPost()));
             $data['object_id'] = $inputData->object_id;
-            $data['image_text'] = $inputData->image_text;
+            $data['other_data'] = $inputData->image_text;
 
             $userId = self::getUserId();
 
@@ -125,7 +125,7 @@ class ImageController extends AbstractController
             }
 
 
-            $ids = $this->imageService->createImagesToObject($this->request->getUploadedFiles(), $object, $type, $data);
+            $ids = $this->imageService->createImagesToObject($this->request->getUploadedFiles(), $object, $type, $data['other_data']);
             //$ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(),$news);
 
             $this->imageService->saveImagesToObject($this->request->getUploadedFiles(), $object, $ids, $type);
@@ -198,7 +198,8 @@ class ImageController extends AbstractController
                     , $userId, 'deleteImage');
 
                 if (!$object) {
-                    throw new Http403Exception('Permission error');
+                    //throw new Http403Exception('Permission error');
+                    throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
                 }
                 $images[] = $image;
             }

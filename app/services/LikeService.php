@@ -28,12 +28,12 @@ use App\Controllers\HttpExceptions\Http500Exception;
  */
 class LikeService extends AbstractService
 {
-    const TYPE_COMMENT_USER_IMAGES = 'comment-user-image';
+    const TYPE_COMMENT_USER_IMAGES = 'comment-image-user';
     const TYPE_COMMENT_NEWS = 'comment-news';
     const TYPE_COMMENT_SERVICE = 'comment-service';
     const TYPE_NEWS = 'news';
     const TYPE_SERVICE = 'service';
-    const TYPE_USER_IMAGE = 'user-image';
+    const TYPE_USER_IMAGE = 'image-user';
 
     const ADDED_CODE_NUMBER = 14000;
 
@@ -195,8 +195,8 @@ class LikeService extends AbstractService
     {
         switch ($type) {
             case self::TYPE_COMMENT_USER_IMAGES:
-                $model = 'App\Models\CommentsUsersImages';
-                $name_id = 'image_id';
+                $model = 'App\Models\CommentsImagesUsers';
+                $name_id = 'comment_id';
                 break;
             case self::TYPE_COMMENT_NEWS:
                 $model = 'App\Models\CommentsNews';

@@ -132,7 +132,9 @@ class ImagesUsers extends ImagesModel
         $result = parent::delete($delete, $data, $whiteList);
 
         if ($result && $path != null && $delete = true) {
-            $userinfo = Userinfo::findFirstByUserId($this->getUserId());
+
+            $userinfo = Userinfo::findFirstByUserId($this->getObjectId());
+
             if ($userinfo->getPathToPhoto() == $path) {
                 $userinfo->setPathToPhoto(null);
                 $userinfo->update();
@@ -140,17 +142,6 @@ class ImagesUsers extends ImagesModel
         }
 
         return $result;
-    }
-
-    /**
-     * return formatted array with images
-     * @param $userId
-     * @return array
-     */
-    public static function getImages($userId)
-    {
-        $images = ImagesUsers::findByUserId($userId);
-        return self::handleImages($images->toArray());
     }
 
     /**
@@ -169,15 +160,19 @@ class ImagesUsers extends ImagesModel
         );
     }
 
-    public static function handleImage($image)
+    public static function handleImage($image, Accounts $account = null)
     {
         $handledImage = [
             'image_id' => $image['image_id'],
             'image_path' => $image['image_path']];
 
+        if($account!=null) {
+            $relatedAccounts = $account->getRelatedAccounts();
+            $accountId = $account->getId();
+        }
 
-        $handledImage['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $image['image_id']);
-        $handledImage = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsImagesUsers',$handledImage, $image['image_id'], $accountId);
+        $handledImage['stats']['comments'] = CommentsModel::getCountOfComments('comments_imagesusers', $image['image_id']);
+        $handledImage = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsImagesUsers',$handledImage, $image['image_id'], $relatedAccounts);
 
         $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
 
@@ -191,9 +186,14 @@ class ImagesUsers extends ImagesModel
         $session = DI::getDefault()->get('session');
         $accountId = $session->get('accountId');
 
+        $account = Accounts::findFirstById($accountId);
+
+        if(!$account)
+            $account = null;
+
         $handledImages = [];
         foreach ($images as $image) {
-            $handledImages[] = self::handleImage($image);
+            $handledImages[] = self::handleImage($image,$account);
         }
         return $handledImages;
     }
