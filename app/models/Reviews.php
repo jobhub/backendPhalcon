@@ -24,7 +24,7 @@ class Reviews extends NotDeletedModelWithCascade
      * @var string
      * @Column(type="string", nullable=true)
      */
-    protected $text_review;
+    protected $review_text;
 
     /**
      *
@@ -83,42 +83,28 @@ class Reviews extends NotDeletedModelWithCascade
     protected $fake_name;
 
     //куча костылей для того, чтобы можно было писать фейковые отзывы. Жесть
-    protected $subjectid;
-    protected $subjecttype;
-    protected $objectid;
-    protected $objecttype;
+    protected $subject_account_id;
+    protected $object_account_id;
 
-    const publicColumns = ['review_id', 'text_review', 'review_date', 'rating', 'binder_id',
+    const publicColumns = ['review_id', 'review_text', 'review_date', 'rating', 'binder_id',
         'binder_type', 'executor', 'fake_name',];
+
+    const DEFAULT_RESULT_PER_PAGE = 10;
 
     /**
      * Методы-костыли
      */
 
-    public function setSubjectId($subjectid)
+    public function setSubjectAccountId($subjectAccountId)
     {
-        $this->subjectid = $subjectid;
+        $this->subject_account_id = $subjectAccountId;
 
         return $this;
     }
 
-    public function setSubjectType($subjecttype)
+    public function setObjectAccountId($objectAccountId)
     {
-        $this->subjecttype = $subjecttype;
-
-        return $this;
-    }
-
-    public function setObjectId($objectid)
-    {
-        $this->objectid = $objectid;
-
-        return $this;
-    }
-
-    public function setObjectType($objecttype)
-    {
-        $this->objecttype = $objecttype;
+        $this->object_account_id = $objectAccountId;
 
         return $this;
     }
@@ -131,27 +117,17 @@ class Reviews extends NotDeletedModelWithCascade
 
     public function getSubjectId()
     {
-        return $this->subjectid;
-    }
-
-    public function getSubjectType()
-    {
-        return $this->subjecttype;
+        return $this->subject_account_id;
     }
 
     public function getObjectId()
     {
-        return $this->objectid;
+        return $this->object_account_id;
     }
 
     public function getFakeName()
     {
         return $this->fake_name;
-    }
-
-    public function getObjectType()
-    {
-        return $this->objecttype;
     }
 
     /**
@@ -173,9 +149,9 @@ class Reviews extends NotDeletedModelWithCascade
      * @param string $textreview
      * @return $this
      */
-    public function setTextReview($textreview)
+    public function setReviewText($textreview)
     {
-        $this->text_review = $textreview;
+        $this->review_text = $textreview;
 
         return $this;
     }
@@ -240,9 +216,9 @@ class Reviews extends NotDeletedModelWithCascade
      */
     public function setBinderType($bindertype)
     {
-        if ($bindertype == 0)
+        if ($bindertype == 1)
             $this->binder_type = 'task';
-        else if ($bindertype == 1)
+        else if ($bindertype == 2)
             $this->binder_type = 'request';
         $this->binder_type = $bindertype;
         return $this;
@@ -289,9 +265,9 @@ class Reviews extends NotDeletedModelWithCascade
      *
      * @return string
      */
-    public function getTextReview()
+    public function getReviewText()
     {
-        return $this->text_review;
+        return $this->review_text;
     }
 
     /**
@@ -397,7 +373,7 @@ class Reviews extends NotDeletedModelWithCascade
             )
         );
 
-        if ($this->getFake() == null || !$this->getFake())
+        /*if ($this->getFake() == null || !$this->getFake())
             $validator->add(
                 'user_id',
                 new Callback(
@@ -410,7 +386,7 @@ class Reviews extends NotDeletedModelWithCascade
                         }
                     ]
                 )
-            );
+            );*/
 
         $validator->add(
             'review_date',
@@ -443,18 +419,18 @@ class Reviews extends NotDeletedModelWithCascade
     {
         $result = parent::save($data, $whiteList);
 
-        if($result) {
+        if ($result) {
             //$this->updateRating();
         }
 
         return $result;
     }
 
-    public function delete($delete = false,$deletedCascade=false,$data = null, $whiteList = null)
+    public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
-        $result = parent::delete($delete,$deletedCascade,$data, $whiteList);
+        $result = parent::delete($delete, $deletedCascade, $data, $whiteList);
 
-        if($result) {
+        if ($result) {
             //$this->updateRating();
         }
 
@@ -465,15 +441,158 @@ class Reviews extends NotDeletedModelWithCascade
     {
         $result = parent::update($data, $whiteList);
 
-        if($result) {
+        if ($result) {
             //$this->updateRating();
         }
 
         return $result;
     }
 
-    public static function getReviewsForObject($subjectId, $subjectType){
-        $db = Phalcon\DI::getDefault()->getDb();
+    public static function findReviewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $db = DI::getDefault()->getDb();
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $columns = '';
+        foreach (self::publicColumns as $publicColumn) {
+            if ($columns != '')
+                $columns .= ', ';
+            $columns .= 'reviews.' . $publicColumn;
+        }
+
+        $query = $db->prepare("Select * FROM (
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join tasks 
+              ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = 'task' AND reviews.executor = true)
+              inner join accounts on (tasks.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userId)
+              UNION
+              --Отзывы оставленные на предложения данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join offers 
+              ON (reviews.binder_id = offers.task_id AND reviews.binder_type = 'task'
+                  AND reviews.executor = false AND offers.selected = true) 
+              inner join accounts on (offers.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userId) 
+              UNION
+              --Отзывы оставленные на заявки
+              (SELECT " . $columns . "
+              FROM reviews inner join requests
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
+                  AND reviews.executor = true)
+              inner join accounts on (requests.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userId)
+              UNION
+              --Отзывы оставленные на услуги
+              (SELECT " . $columns . "
+              FROM services inner join requests ON (requests.service_id = services.service_id)
+              inner join reviews
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
+                  AND reviews.executor = false)
+              inner join accounts on (services.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userId)
+              UNION
+              --фейковые отзывы
+              (SELECT " . $columns . "
+              FROM reviews
+              inner join accounts on (reviews.object_account_id = accounts.id)
+              WHERE accounts.user_id = :userId)
+              ) p0
+              ORDER BY p0.review_date desc
+              LIMIT :limit 
+              OFFSET :offset"
+        );
+
+        $query->execute([
+            'userId' => $userId,
+            'limit' => $page_size,
+            'offset'=>$offset
+        ]);
+
+        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
+    public static function findReviewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $db = DI::getDefault()->getDb();
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $columns = '';
+        foreach (self::publicColumns as $publicColumn) {
+            $columns .= 'reviews.' . $publicColumn . ',';
+        }
+        $columns[strlen($columns) - 1] = '';
+
+        $str = "Select * FROM (
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join tasks 
+              ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = 'task' AND reviews.executor = true)
+              inner join accounts on (tasks.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --Отзывы оставленные на предложения данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join offers 
+              ON (reviews.binder_id = offers.task_id AND reviews.binder_type = 'task'
+                  AND reviews.executor = false AND offers.selected = true) 
+              inner join accounts on (offers.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId) 
+              UNION
+              --Отзывы оставленные на заявки
+              (SELECT " . $columns . "
+              FROM reviews inner join requests
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
+                  AND reviews.executor = true)
+              inner join accounts on (requests.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --Отзывы оставленные на услуги
+              (SELECT " . $columns . "
+              FROM services inner join requests ON (requests.service_id = services.service_id)
+              inner join reviews
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
+                  AND reviews.executor = false)
+              inner join accounts on (services.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --фейковые отзывы
+              (SELECT " . $columns . "
+              FROM reviews
+              inner join accounts on (reviews.object_account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              ) p0
+              ORDER BY p0.review_date desc
+              LIMIT :limit 
+              OFFSET :offset";
+
+        $query = $db->prepare($str);
+
+        $query->execute([
+            'companyId' => $companyId,
+            'limit' => $page_size,
+            'offset'=>$offset
+        ]);
+
+        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
+    }
+
+    public static function reviewAlreadyExists($binderId, $binderType, $executor)
+    {
+        $review = Reviews::findFirst(['binder_id = :binderId: AND binder_type = :binderType: AND executor = :executor:',
+            'bind' => ['binderId' => $binderId, 'binderType' => $binderType, 'executor' => $executor ? "true" : "false"]]);
+
+        if ($review)
+            return true;
+        return false;
+    }
+
+    /*public static function findReviewsForObject($object_account_id)
+    {
+        $db = DI::getDefault()->getDb();
 
         $query = $db->prepare("Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
@@ -484,101 +603,87 @@ class Reviews extends NotDeletedModelWithCascade
               reviews.executor as executor
               FROM reviews inner join tasks 
               ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = 'task' AND reviews.executor = true)
-              WHERE tasks.subject_id = :subjectId AND tasks.subject_type = :subjectType)
+              WHERE tasks.account_id = :accountId)
               UNION
               --Отзывы оставленные на предложения данного субъекта
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
+              (SELECT reviews.review_id as id, 
+              reviews.text_review as text,
+              reviews.review_date as date,
               reviews.rating as rating,
               reviews.executor as executor 
               FROM reviews inner join offers 
-              ON (reviews.binderId = offers.taskId AND reviews.binderType = 'task'
+              ON (reviews.binder_id = offers.task_id AND reviews.binder_type = 'task'
                   AND reviews.executor = false AND offers.selected = true) 
-              WHERE offers.subjectId = :subjectId AND offers.subjectType = :subjectType) 
+              WHERE offers.account_id = :account_id) 
               UNION
               --Отзывы оставленные на заявки
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
+              (SELECT reviews.review_id as id, 
+              reviews.text_review as text,
+              reviews.review_date as date,
               reviews.rating as rating,
               reviews.executor as executor 
               FROM reviews inner join requests
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
                   AND reviews.executor = true)
-              WHERE requests.subjectId = :subjectId AND requests.subjectType = :subjectType) 
+              WHERE requests.account_id = :account_id) 
               UNION
               --Отзывы оставленные на услуги
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
+              (SELECT reviews.review_id as id, 
+              reviews.text_review as text,
+              reviews.review_date as date,
               reviews.rating as rating,
               reviews.executor as executor 
-              FROM services inner join requests ON (requests.serviceId = services.serviceId)
+              FROM services inner join requests ON (requests.service_id = services.service_id)
               inner join reviews
-              ON (reviews.binderId = requests.requestId AND reviews.binderType = 'request'
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
                   AND reviews.executor = false)
-              WHERE services.subjectId = :subjectId AND services.subjectType = :subjectType)
+              WHERE services.account_id = :account_id)
               UNION
               --фейковые отзывы
-              (SELECT reviews.reviewId as id, 
-              reviews.textReview as text,
-              reviews.reviewdate as date,
+              (SELECT reviews.review_id as id, 
+              reviews.text_review as text,
+              reviews.review_date as date,
               reviews.rating as rating,
               reviews.executor as executor 
               FROM reviews
-              WHERE reviews.objectId = :subjectId AND reviews.objectType = :subjectType)
+              WHERE reviews.object_account_id = :account_id)
               ) p0
               ORDER BY p0.date desc"
         );
 
         $query->execute([
-            'subjectId' => $subjectId,
-            'subjectType' => $subjectType,
+            'account_id' => $object_account_id,
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }*/
+
+    public static function findReviewsForService($serviceId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $columns = [];
+        foreach (self::publicColumns as $publicColumn) {
+            $columns[] = 'rev.' . $publicColumn;
+        }
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["rev" => 'App\Models\Reviews'])
+            ->join('App\Models\Requests', 'req.request_id = rev.binder_id and rev.binder_type = "request" and executor = false', 'req')
+            ->join('App\Models\Services', 's.service_id = req.service_id', 's')
+            ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
+            ->limit($page_size)
+            ->offset($offset)
+            ->getQuery()
+            ->execute();
+
+        return self::handleReviewsFromArray($result->toArray());
     }
 
-    public static function getReviewsForService($serviceId, $limit = null){
-        $db = DI::getDefault()->getDb();
-
-        $str = "Select * FROM (
-              --Отзывы оставленные на услуги
-              (SELECT ";
-        foreach(Reviews::publicColumns as $column){
-            $str .= 'reviews.'.$column . ',';
-        }
-        $str[strlen($str)-1] = ' ';
-        $str .= "FROM services inner join requests ON (requests.service_id = services.service_id)
-              inner join reviews
-              ON (reviews.binder_id = requests.request_id AND reviews.binderType = 'request'
-                  AND reviews.executor = false)
-              WHERE services.serviceId = :serviceId
-              )
-              UNION ALL
-              (SELECT ";
-        foreach(Reviews::publicColumns as $column){
-            $str .= 'reviews.'.$column . ',';
-        }
-        $str[strlen($str)-1] = ' ';
-
-        $str .= "FROM reviews where fake = true and bindertype = 'service' and binderid = :serviceId)
-        ) p0 ORDER BY p0.reviewdate desc";
-
-        if($limit != null && $limit > 0)
-            $str.= " LIMIT ". $limit;
-
-        $query = $db->prepare($str);
-
-        $query->execute([
-            'serviceId' => $serviceId,
-        ]);
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
-    public static function getReviewsForService2($serviceId, $limit = null){
+    /*public static function getReviewsForService2($serviceId, $limit = null)
+    {
         $db = Phalcon\DI::getDefault()->getDb();
 
         $str = "Select review, subject FROM (
@@ -609,8 +714,8 @@ class Reviews extends NotDeletedModelWithCascade
               WHERE reviews.binderId = :serviceId and reviews.bindertype = 'service' and reviews.fake = true)
             ) p0 ORDER BY p0.date";
 
-        if($limit!= null && $limit > 0)
-            $str.=' LIMIT '.$limit;
+        if ($limit != null && $limit > 0)
+            $str .= ' LIMIT ' . $limit;
         $query = $db->prepare($str);
 
 
@@ -619,52 +724,98 @@ class Reviews extends NotDeletedModelWithCascade
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }*/
+
+    public static function handleReviewsFromArray(array $reviews)
+    {
+        $handled_reviews = [];
+        foreach ($reviews as $review) {
+            if ($review['binder_type'] == 'task') {
+                $task = Tasks::findByTaskId($review['binder_id']);
+
+                if (!$task)
+                    continue;
+                if($review['executor']){
+                    $offer = Offers::findConfirmedOfferByTask($task->getTaskId());
+                    $account = $offer->accounts;
+                }else
+                    $account = $task->accounts;
+
+            } elseif ($review['binder_type'] == 'request') {
+                $request = Requests::findFirstByRequestId($review['binder_id']);
+
+                if (!$request)
+                    continue;
+                if($review['executor']) {
+                    $account = $request->services->accounts;
+                } else{
+                    $account = $request->accounts;
+                }
+            }
+
+            if($account!=null) {
+                if ($account->getCompanyId() == null) {
+                    $review['publisher_user'] = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
+                } else {
+                    $review['publisher_company'] = Companies::findCompanyById($account->getCompanyId(), Companies::shortColumns);
+                }
+            }
+
+
+            $review['images'] = ImagesReviews::findImagesForReview($review['review_id']);
+
+            $handled_reviews[] = $review;
+        }
+
+        return $handled_reviews;
     }
 
-
-
-    private function updateRating(){
+    /**
+     * It is not used now.
+     */
+    private function updateRating()
+    {
         if (!$this->getFake()) {
-            if($this->getBinderType() == 'task'){
-                if($this->getExecutor() === true){
+            if ($this->getBinderType() == 'task') {
+                if ($this->getExecutor() === true) {
                     $task = Tasks::findFirstByTaskid($this->getBinderId());
 
                     $subjectId = $task->getSubjectId();
                     $subjectType = $task->getSubjectType();
-                } else{
-                    $offer = Offers::findByTask($this->getBinderId());
+                } else {
+                    $offer = Offers::findConfirmedOfferByTask($this->getBinderId());
 
                     $subjectId = $offer->getSubjectId();
                     $subjectType = $offer->getSubjectType();
                 }
-            } elseif($this->getBinderType() == 'request'){
-                if($this->getExecutor() === true){
+            } elseif ($this->getBinderType() == 'request') {
+                if ($this->getExecutor() === true) {
                     $request = Requests::findFirstByRequestid($this->getBinderId());
                     $subjectId = $request->getSubjectId();
                     $subjectType = $request->getSubjectType();
-                } else{
+                } else {
                     $request = Requests::findFirstByRequestid($this->getBinderId());
                     $subjectId = $request->services->getSubjectId();
                     $subjectType = $request->services->getSubjectType();
 
-                    $reviews = Reviews::getReviewsForService($request->services->getServiceId());
+                    $reviews = Reviews::findReviewsForService($request->services->getServiceId());
                     $sum = 5;
-                    foreach($reviews as $review){
-                        $sum+=$review['rating'];
+                    foreach ($reviews as $review) {
+                        $sum += $review['rating'];
                     }
-                    $sum/=(count($reviews)+1);
+                    $sum /= (count($reviews) + 1);
                     $request->services->setRating($sum);
                     $request->services->update();
                 }
             }
 
-            $reviews = $this->getReviewsForObject($subjectId,$subjectType);
+            $reviews = $this->findReviewsForObject($subjectId, $subjectType);
             $sum = 5;
-            foreach($reviews as $review){
-                $sum+=$review['rating'];
+            foreach ($reviews as $review) {
+                $sum += $review['rating'];
             }
-            $sum/=(count($reviews)+1);
-            if($subjectType == 0) {
+            $sum /= (count($reviews) + 1);
+            if ($subjectType == 0) {
                 $userinfo = Userinfo::findFirstByUserid($subjectId);
 
                 //$sum = (($this->getRating() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
@@ -675,7 +826,7 @@ class Reviews extends NotDeletedModelWithCascade
                     $userinfo->setRatingClient($sum);
 
                 $userinfo->update();
-            } elseif($subjectType == 1){
+            } elseif ($subjectType == 1) {
                 $company = Companies::findFirstByCompanyid($subjectId);
 
                 //$sum = (($this->getRating() * ($reviews->count() + 4)) + $sum) / ($reviews->count() + 5);
@@ -698,5 +849,10 @@ class Reviews extends NotDeletedModelWithCascade
     public function getSource()
     {
         return 'reviews';
+    }
+
+    public function getSequenceName()
+    {
+        return "reviews_reviewid_seq";
     }
 }

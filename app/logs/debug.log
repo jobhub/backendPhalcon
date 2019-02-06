@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [Wed, 23 Jan 19 13:09:17 +0300][DEBUG] Cannot save Rastreniya
 [Wed, 23 Jan 19 13:10:42 +0300][DEBUG] Cannot save Rastreniya
 [Wed, 23 Jan 19 13:44:36 +0300][DEBUG] asdsd +318
@@ -100,3 +101,267 @@ LINE 1: ...id" = $1 AND "rastreniya_responses"."parent_id" = '' AND "ra...
 [Tue, 05 Feb 19 18:18:07 +0300][DEBUG] iciciic la1
 [Tue, 05 Feb 19 18:18:25 +0300][DEBUG] iciciic la 
 [Tue, 05 Feb 19 18:18:40 +0300][DEBUG] iciciic la 
+=======
+s
+[Sat, 29 Dec 18 13:23:01 +0300][CRITICAL] user id = 6
+[Sat, 29 Dec 18 13:23:21 +0300][CRITICAL] user id = 6
+[Sat, 29 Dec 18 16:05:15 +0300][CRITICAL] 6001 User already signed on this category
+[Sat, 29 Dec 18 16:05:42 +0300][CRITICAL] 6002 Unable to sign user to category
+[Sun, 30 Dec 18 15:33:28 +0300][CRITICAL] 7004 Unable save image
+[Sun, 30 Dec 18 15:34:16 +0300][CRITICAL] 7004 Unable save image
+[Sun, 30 Dec 18 15:35:15 +0300][CRITICAL] 7004 Unable save image
+[Sun, 30 Dec 18 16:05:09 +0300][CRITICAL] 7002 Image not found
+[Thu, 03 Jan 19 13:39:20 +0300][CRITICAL] 8001 unable to create news
+[Thu, 03 Jan 19 14:29:04 +0300][CRITICAL] 8002 News don't exists
+[Thu, 03 Jan 19 14:29:16 +0300][CRITICAL] 8002 News don't exists
+[Thu, 03 Jan 19 14:29:33 +0300][CRITICAL] 8002 News don't exists
+[Thu, 03 Jan 19 14:30:05 +0300][CRITICAL] 8002 News don't exists
+[Thu, 03 Jan 19 14:31:08 +0300][CRITICAL] 8002 News don't exists
+[Fri, 04 Jan 19 16:04:23 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:05:03 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:05:53 +0300][CRITICAL] 9004 Unable create service
+[Fri, 04 Jan 19 16:07:56 +0300][CRITICAL] 9004 Unable create service
+[Sat, 05 Jan 19 12:33:49 +0300][CRITICAL] 10003 Unable create tag for service
+[Sat, 05 Jan 19 12:34:20 +0300][CRITICAL] 10003 Unable create tag for service
+[Sat, 05 Jan 19 13:41:03 +0300][CRITICAL] 7002 Image not found
+[Sat, 05 Jan 19 13:41:51 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:00 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:05 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:42:12 +0300][CRITICAL] 9001 Service don't exists
+[Sat, 05 Jan 19 13:56:52 +0300][CRITICAL] 10003 Unable create tag for service
+[Sun, 06 Jan 19 17:45:33 +0300][CRITICAL] 1001 Unable to create account
+[Wed, 09 Jan 19 11:33:02 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:33:23 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:04 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:18 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:33 +0300][CRITICAL] 12001 Company don't exists
+[Wed, 09 Jan 19 11:34:50 +0300][CRITICAL] 12003 Unable change company
+[Wed, 09 Jan 19 11:35:00 +0300][CRITICAL] 12003 Unable change company
+[Wed, 09 Jan 19 16:22:10 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:22:30 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:22:42 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:23:09 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:23:59 +0300][CRITICAL] 11003 Unable create trade point
+[Wed, 09 Jan 19 16:37:08 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:37:24 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:40:11 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:40:50 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:48:44 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:49:40 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:49:57 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:39 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:46 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:53 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:51:57 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:52:00 +0300][CRITICAL] 11006 Unable change trade point
+[Wed, 09 Jan 19 16:52:13 +0300][CRITICAL] 11006 Unable change trade point
+[Thu, 10 Jan 19 15:04:57 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:05:09 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:05:20 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:05:41 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:05:52 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:06:35 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:06:57 +0300][CRITICAL] 13001 Comment don't exists
+[Thu, 10 Jan 19 15:29:38 +0300][CRITICAL] 13004 Unable create comment
+[Fri, 11 Jan 19 14:09:39 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:10:16 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:11:53 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 14:12:08 +0300][CRITICAL] 12005 Unable add phone to company
+[Fri, 11 Jan 19 14:18:58 +0300][CRITICAL] 12001 Unable add phone
+[Fri, 11 Jan 19 15:56:37 +0300][CRITICAL] 4005 Unable subscribe user to company
+[Fri, 11 Jan 19 15:58:47 +0300][CRITICAL] 4005 Unable subscribe user to company
+[Sat, 12 Jan 19 14:35:53 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 14:36:56 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 14:43:47 +0300][CRITICAL] 16001 unable to create request
+[Sat, 12 Jan 19 14:49:22 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 14:55:49 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 15:00:28 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:00:56 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:19 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:45 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:01:49 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:02:02 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:02:16 +0300][CRITICAL] 16002 Request don't exists
+[Sat, 12 Jan 19 15:27:54 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 12 Jan 19 15:42:14 +0300][DEBUG] creation of chat history id =61
+[Sat, 12 Jan 19 16:07:55 +0300][CRITICAL] 1002 Account for user don't found
+[Mon, 14 Jan 19 14:24:31 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:08 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:16 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:26:24 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:29:02 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:29:12 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:30:14 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:30:18 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:32:13 +0300][CRITICAL] 17001 Unable to create task
+[Mon, 14 Jan 19 14:32:26 +0300][CRITICAL] 17001 Unable to create task
+[Tue, 15 Jan 19 11:34:58 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:35:11 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:35:45 +0300][CRITICAL] 18002 Offer don't exists
+[Tue, 15 Jan 19 11:41:45 +0300][CRITICAL] 18002 Offer don't exists
+[Wed, 16 Jan 19 14:40:19 +0300][CRITICAL] 19001 Unable to create review
+[Wed, 16 Jan 19 15:56:50 +0300][CRITICAL] 10003 Unable create tag
+[Wed, 16 Jan 19 16:01:17 +0300][CRITICAL] 17002 Task don't exists
+[Wed, 16 Jan 19 16:03:42 +0300][CRITICAL] 17002 Task don't exists
+[Wed, 16 Jan 19 16:05:50 +0300][CRITICAL] 19001 Unable to create review
+[Wed, 16 Jan 19 16:09:08 +0300][CRITICAL] 19001 Unable to create review
+[Wed, 16 Jan 19 16:09:15 +0300][CRITICAL] 19001 Unable to create review
+[Thu, 17 Jan 19 17:10:34 +0300][CRITICAL] 4008 Unable subscribe user to user
+[Fri, 18 Jan 19 15:30:34 +0300][CRITICAL] 11003 Unable create trade point
+[Sat, 19 Jan 19 11:07:33 +0300][CRITICAL] 11006 Unable change trade point
+[Sat, 19 Jan 19 11:07:57 +0300][CRITICAL] 11006 Unable change trade point
+[Sat, 19 Jan 19 14:47:03 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 19 Jan 19 15:22:52 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 19 Jan 19 15:35:34 +0300][CRITICAL] 1002 Account for user don't found
+[Tue, 22 Jan 19 11:32:43 +0300][CRITICAL] 5003 Invalid login
+[Wed, 23 Jan 19 14:13:16 +0300][CRITICAL] 5003 Invalid login
+[Wed, 23 Jan 19 14:19:00 +0300][CRITICAL] 13004 Unable create comment
+[Wed, 23 Jan 19 15:11:16 +0300][CRITICAL] 13004 Unable create comment
+[Fri, 25 Jan 19 11:22:32 +0300][CRITICAL] 14005 Object for like not found
+[Fri, 25 Jan 19 11:23:56 +0300][CRITICAL] 14005 Object for like not found
+[Fri, 25 Jan 19 19:53:31 +0300][CRITICAL] 7001 Invalid type of image
+[Sat, 26 Jan 19 12:05:38 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:06:34 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:07:11 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:10:02 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:12:40 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:12:48 +0300][CRITICAL] 100003 Unable to send email
+[Sat, 26 Jan 19 12:17:39 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 10:38:46 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 10:43:32 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 28 Jan 19 13:01:09 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:13 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:14 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:15 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:01:16 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:21 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:22 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:23 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:24 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:25 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:26 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:02:26 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:18 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:19 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:03:20 +0300][CRITICAL] 2005 Time to resend did't come
+[Mon, 28 Jan 19 13:08:24 +0300][CRITICAL] 4001 Unable create info for user
+[Tue, 29 Jan 19 14:00:34 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:00:53 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:02:05 +0300][CRITICAL] 9007 User don't subscribed to service
+[Tue, 29 Jan 19 14:08:56 +0300][CRITICAL] 9005 Unable subscribe user to service
+[Tue, 29 Jan 19 14:10:41 +0300][CRITICAL] 9005 Unable subscribe user to service
+[Tue, 29 Jan 19 14:10:42 +0300][CRITICAL] 9005 Unable subscribe user to service
+[Wed, 30 Jan 19 13:26:01 +0300][CRITICAL] 4008 Unable subscribe user to user
+[Thu, 31 Jan 19 12:39:42 +0300][CRITICAL] 7001 Invalid type of image
+[Thu, 31 Jan 19 12:40:36 +0300][CRITICAL] 7001 Invalid type of image
+[Thu, 31 Jan 19 12:40:47 +0300][CRITICAL] 7001 Invalid type of image
+[Thu, 31 Jan 19 12:41:06 +0300][CRITICAL] 7001 Invalid type of image
+[Thu, 31 Jan 19 12:42:16 +0300][CRITICAL] 7001 Invalid type of image
+[Thu, 31 Jan 19 14:06:32 +0300][CRITICAL] 7003 Unable save image
+[Thu, 31 Jan 19 14:07:43 +0300][CRITICAL] 7003 Unable save image
+[Thu, 31 Jan 19 15:42:51 +0300][CRITICAL] 7003 Unable save image
+[Thu, 31 Jan 19 15:45:08 +0300][CRITICAL] 7005 Unable save image
+[Thu, 31 Jan 19 15:53:48 +0300][CRITICAL] 7008 Не удалось переместить временное изображение в новости
+[Thu, 31 Jan 19 15:56:32 +0300][CRITICAL] 7008 Не удалось переместить временное изображение в новости
+[Thu, 31 Jan 19 15:59:43 +0300][CRITICAL] 8004 unable to change news
+[Thu, 31 Jan 19 16:00:26 +0300][CRITICAL] 7008 Не удалось переместить временное изображение в новости
+[Thu, 31 Jan 19 16:05:07 +0300][CRITICAL] 8004 unable to change news
+[Thu, 31 Jan 19 16:05:15 +0300][CRITICAL] 8004 unable to change news
+[Thu, 31 Jan 19 16:08:22 +0300][CRITICAL] 7008 Не удалось переместить временное изображение в новости
+[Fri, 01 Feb 19 16:06:23 +0300][DEBUG] creation of chat history id =62
+[Fri, 01 Feb 19 16:43:51 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:43:58 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:44:27 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Fri, 01 Feb 19 16:56:11 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:22:31 +0300][DEBUG] creation of chat history id =63
+[Sat, 02 Feb 19 10:22:31 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:22:31 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:22:40 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:23:04 +0300][CRITICAL] 22001 SQLSTATE[22001]: String data, right truncated: 7 ERROR:  value too long for type character varying(10)
+[Sat, 02 Feb 19 10:23:47 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:24:07 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:24:29 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:25:00 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:34:12 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:35:36 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:36:44 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:37:16 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 10:40:32 +0300][DEBUG] user 6 send message to user 7
+[Sat, 02 Feb 19 10:44:59 +0300][DEBUG] user 6 send message to user 7
+[Sat, 02 Feb 19 10:51:44 +0300][CRITICAL] 22P02 SQLSTATE[22P02]: Invalid text representation: 7 ERROR:  invalid input syntax for integer: "qewr"
+[Sat, 02 Feb 19 11:13:47 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:14:07 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:14:43 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:15:17 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:16:29 +0300][CRITICAL] 8002 News don't exists
+[Sat, 02 Feb 19 11:23:57 +0300][CRITICAL] 20004 Unable create forward
+[Sat, 02 Feb 19 11:25:09 +0300][CRITICAL] 1002 Account for user don't found
+[Sat, 02 Feb 19 11:34:25 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Sat, 02 Feb 19 12:45:39 +0300][CRITICAL] 5003 User don't exists
+[Sat, 02 Feb 19 12:47:46 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 13:35:15 +0300][DEBUG] user 7 send message to user 6
+[Sat, 02 Feb 19 13:35:34 +0300][DEBUG] creation of chat history id =64
+[Sat, 02 Feb 19 13:43:23 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 14:12:43 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:15:13 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:28:11 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 14:36:17 +0300][CRITICAL] 7002 Image not found
+[Sat, 02 Feb 19 15:06:32 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 15:07:11 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 15:07:28 +0300][CRITICAL] 7004 Unable save image
+[Sat, 02 Feb 19 16:20:10 +0300][CRITICAL] 4003 User don't exists
+[Sat, 02 Feb 19 16:20:15 +0300][CRITICAL] 4003 User don't exists
+[Mon, 04 Feb 19 10:06:46 +0300][CRITICAL] 4003 User don't exists
+[Mon, 04 Feb 19 10:28:41 +0300][CRITICAL] 14003 Invalid type of like
+[Mon, 04 Feb 19 11:22:47 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 11:24:09 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 11:24:45 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 11:29:33 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 11:33:28 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "favourite_services" violates foreign key constraint "fkey_favourite_services_services_service_id"
+DETAIL:  Key (object_id)=(1243243) is not present in table "services".
+[Mon, 04 Feb 19 11:38:30 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 11:44:12 +0300][CRITICAL] 21003 Account didn't subscribed to object
+[Mon, 04 Feb 19 11:44:13 +0300][CRITICAL] 21003 Account didn't subscribed to object
+[Mon, 04 Feb 19 11:44:20 +0300][CRITICAL] 21003 Account didn't subscribed to object
+[Mon, 04 Feb 19 11:44:54 +0300][CRITICAL] 21003 Account didn't subscribed to object
+[Mon, 04 Feb 19 11:45:40 +0300][CRITICAL] 21003 Account not subscribed to object
+[Mon, 04 Feb 19 11:55:43 +0300][CRITICAL] 7002 Image not found
+[Mon, 04 Feb 19 12:00:08 +0300][CRITICAL] 22P02 SQLSTATE[22P02]: Invalid text representation: 7 ERROR:  invalid input syntax for integer: "aa"
+[Mon, 04 Feb 19 12:01:12 +0300][CRITICAL] 7002 Image not found
+[Mon, 04 Feb 19 13:26:16 +0300][CRITICAL] 13005 Invalid type of comment
+[Mon, 04 Feb 19 13:27:25 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:27:38 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:28:29 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:28:36 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:31:38 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:37:02 +0300][CRITICAL] 14005 Object for like not found
+[Mon, 04 Feb 19 13:45:39 +0300][CRITICAL] 14002 Unable to add like
+[Mon, 04 Feb 19 13:56:38 +0300][CRITICAL] 1002 Account for user don't found
+[Mon, 04 Feb 19 14:04:18 +0300][CRITICAL] 13004 Unable create comment
+[Mon, 04 Feb 19 14:10:49 +0300][CRITICAL] 22P02 SQLSTATE[22P02]: Invalid text representation: 7 ERROR:  invalid input syntax for integer: "asd"
+[Mon, 04 Feb 19 14:53:27 +0300][CRITICAL] 20004 Unable create forward
+[Mon, 04 Feb 19 14:53:59 +0300][CRITICAL] 20004 Unable create forward
+[Mon, 04 Feb 19 16:09:41 +0300][CRITICAL] 20001 Forward don't exists
+[Mon, 04 Feb 19 16:09:56 +0300][CRITICAL] 20001 Forward don't exists
+[Mon, 04 Feb 19 16:13:01 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:13:56 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:14:06 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:15:12 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:15:12 +0300][CRITICAL] 7001 Invalid type of image
+[Mon, 04 Feb 19 16:15:18 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:15:37 +0300][DEBUG] user 7 send message to user 6
+[Mon, 04 Feb 19 16:16:01 +0300][DEBUG] user 6 send message to user 7
+[Mon, 04 Feb 19 16:20:59 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 16:21:11 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 04 Feb 19 16:22:08 +0300][CRITICAL] 21003 Account not subscribed to object
+[Mon, 04 Feb 19 16:23:19 +0300][CRITICAL] 21003 Account not subscribed to object
+[Mon, 04 Feb 19 16:41:31 +0300][DEBUG] user 6 send message to user 7
+[Wed, 06 Feb 19 11:51:12 +0300][CRITICAL] 13001 Company don't exists
+[Wed, 06 Feb 19 14:40:09 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:40:28 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:42:04 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:48:42 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 16:35:41 +0300][CRITICAL] 5003 Invalid login
+[Wed, 06 Feb 19 16:35:56 +0300][CRITICAL] 5003 Invalid login
+[Wed, 06 Feb 19 16:36:43 +0300][CRITICAL] 1002 Account for user not found
+>>>>>>> changing_to_micro

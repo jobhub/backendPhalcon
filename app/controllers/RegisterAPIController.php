@@ -91,7 +91,7 @@ class RegisterAPIController extends AbstractController
             $tokens = $this->authService->createSession($resultUser);
 
             SupportClass::writeMessageInLogFile("Дошел до отправки кода активации");
-           // $this->authService->sendActivationCode($resultUser);
+            $this->authService->sendActivationCode($resultUser);
             SupportClass::writeMessageInLogFile("Отправил код активации");
 
             $tokens['role'] = $resultUser->getRole();
@@ -110,6 +110,7 @@ class RegisterAPIController extends AbstractController
                 case UserService::ERROR_UNABLE_CREATE_USER:
                 case AuthService::ERROR_UNABLE_SEND_TO_MAIL:
                 case AuthService::ERROR_UNABLE_TO_CREATE_ACTIVATION_CODE:
+                case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -166,42 +167,16 @@ class RegisterAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params (обязательные) firstname, lastname, male
+     * @params (обязательные) first_name, last_name, male
      * @params (Необязательные) patronymic, birthday, about (много текста о себе),
      * @return string - json array Status
      */
     public function confirmAction()
     {
         $data = json_decode($this->request->getRawBody(), true);
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
+        $userId = self::getUserId();
 
-        $user = Users::findFirst(['userid = :userId:', 'bind' =>
-            [
-                'userId' => $userId
-            ]
-        ]);
-
-        if (!$user) {
-            /*$response->setJsonContent(
-                [
-                    "status" => STATUS_UNRESOLVED_ERROR,
-                    "errors" => ['Пользователь не создан']
-                ]
-            );
-            return $response;*/
-            throw new Http500Exception('Пользователь не создан');
-        }
-
-        /*if ($user->getActivated()) {
-            throw new Http422Exception('Пользователь уже активирован');
-        }*/
-
-        /*$activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
-
-        if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > 3600)) {
-            throw new Http400Exception('Wrong activation code');
-        }*/
+        $user = $this->userService->getUserById($userId);
 
         $this->db->begin();
         try {
@@ -222,7 +197,13 @@ class RegisterAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
-            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
         $this->db->commit();
 
@@ -242,7 +223,9 @@ class RegisterAPIController extends AbstractController
      */
     public function activateLinkAction()
     {
-        $data = json_decode($this->request->getRawBody(), true);
+        $inputData = $this->request->getJsonRawBody();
+        $data['activation_code'] = $inputData->activation_code;
+        $data['login'] = $inputData->login;
 
         if (empty(trim($data['login']))) {
             $errors['login'] = 'Required login';
@@ -315,15 +298,12 @@ class RegisterAPIController extends AbstractController
     {
         $auth = $this->session->get('auth');
         $userId = $auth['id'];
+
         if (is_null($auth)) {
             throw new Http403Exception();
         }
 
-        $user = Users::findFirstByUserid($userId);
-
-        if (!$user) {
-            throw new Http403Exception();
-        }
+        $user = $this->userService->getUserById($userId);
 
         try {
             $this->authService->sendActivationCode($user);

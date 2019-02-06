@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CommentsImagesUsers;
 use App\Models\CommentsModel;
 use App\Models\CommentsNews;
+use App\Models\CommentsServices;
 use App\Models\CompanyRole;
 use Phalcon\DI\FactoryDefault as DI;
 
@@ -24,8 +25,9 @@ use App\Controllers\HttpExceptions\Http500Exception;
  */
 class CommentService extends AbstractService {
 
-    const TYPE_USER_IMAGES = 0;
-    const TYPE_NEWS = 1;
+    const TYPE_USER_IMAGES = 'image-user';
+    const TYPE_NEWS = 'news';
+    const TYPE_SERVICES = 'service';
 
     const ADDED_CODE_NUMBER = 13000;
 
@@ -36,13 +38,16 @@ class CommentService extends AbstractService {
     const ERROR_UNABLE_CREATE_COMMENT = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_INVALID_COMMENT_TYPE = 5 + self::ADDED_CODE_NUMBER;
 
-    public function createComment(array $commentData, int $type){
+    public function createComment(array $commentData, $type){
         switch ($type) {
             case self::TYPE_USER_IMAGES:
                 $comment = new CommentsImagesUsers();
                 break;
             case self::TYPE_NEWS:
                 $comment = new CommentsNews();
+                break;
+            case self::TYPE_SERVICES:
+                $comment = new CommentsServices();
                 break;
             default:
                 throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
@@ -64,7 +69,7 @@ class CommentService extends AbstractService {
         return $comment;
     }
 
-    public function changeComment(CommentsModel $comment, array $commentData, int $type){
+    public function changeComment(CommentsModel $comment, array $commentData, $type){
         $this->fillComment($comment,$commentData,$type);
         if ($comment->update() == false) {
             $errors = SupportClass::getArrayWithErrors($comment);
@@ -79,7 +84,7 @@ class CommentService extends AbstractService {
         return $comment;
     }
 
-    private function fillComment(CommentsModel $comment, array $data, int $type){
+    private function fillComment(CommentsModel $comment, array $data, $type){
         if(!empty(trim($data['account_id'])))
             $comment->setAccountId($data['account_id']);
         if(!empty(trim($data['reply_id'])))
@@ -89,29 +94,21 @@ class CommentService extends AbstractService {
         if(!empty(trim($data['comment_text'])))
             $comment->setCommentText($data['comment_text']);
         if(!empty(trim($data['comment_date'])))
-            $comment->setCommentDate(date('Y-m-d H:i:s', strtotime($data['comment_date'])));
-
-        switch ($type) {
-            case self::TYPE_USER_IMAGES:
-                if(!empty(trim($data['image_id'])))
-                    $comment->setImageId($data['image_id']);
-                break;
-            case self::TYPE_NEWS:
-                if(!empty(trim($data['news_id'])))
-                    $comment->setNewsId($data['news_id']);
-                break;
-            default:
-                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
-        }
+            $comment->setCommentDate(date('Y-m-d H:i:sO', strtotime($data['comment_date'])));
+        if(!empty(trim($data['object_id'])))
+            $comment->setObjectId($data['object_id']);
     }
 
-    public function getCommentById(int $commentId, int $type){
+    public function getCommentById(int $commentId, $type){
         switch ($type) {
             case self::TYPE_USER_IMAGES:
                 $comment = CommentsImagesUsers::findFirstByCommentId($commentId);
                 break;
             case self::TYPE_NEWS:
                 $comment = CommentsNews::findFirstByCommentId($commentId);
+                break;
+            case self::TYPE_SERVICES:
+                $comment = CommentsServices::findFirstByCommentId($commentId);
                 break;
             default:
                 throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
@@ -121,6 +118,46 @@ class CommentService extends AbstractService {
             throw new ServiceException('Comment don\'t exists', self::ERROR_COMMENT_NOT_FOUND);
         }
         return $comment;
+    }
+
+    public function getParentComments(int $objectId, $type,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
+        switch ($type) {
+            case self::TYPE_USER_IMAGES:
+                $model = 'CommentsImagesUsers';
+                break;
+            case self::TYPE_NEWS:
+                $model = 'CommentsNews';
+                break;
+            case self::TYPE_SERVICES:
+                $model = 'CommentsServices';
+                break;
+            default:
+                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
+        }
+
+        $comments = CommentsModel::findParentComments($model,$objectId,$page,$page_size,$accountId);
+
+        return $comments;
+    }
+
+    public function getChildComments(int $objectId, $type, $parentId,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
+        switch ($type) {
+            case self::TYPE_USER_IMAGES:
+                $model = 'CommentsImagesUsers';
+                break;
+            case self::TYPE_NEWS:
+                $model = 'CommentsNews';
+                break;
+            case self::TYPE_SERVICES:
+                $model = 'CommentsServices';
+                break;
+            default:
+                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
+        }
+
+        $comments = CommentsModel::findChildComments($model,$objectId,$parentId,$page,$page_size,$accountId);
+
+        return $comments;
     }
 
     public function deleteComment(CommentsModel $comment){

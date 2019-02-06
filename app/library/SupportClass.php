@@ -9,6 +9,7 @@
 namespace App\Libs;
 
 use Phalcon\Http\Response;
+use App\Services\ServiceExtendedException;
 
 class SupportClass
 {
@@ -105,9 +106,29 @@ class SupportClass
         return acos($dist) / $rad * 60 * 1853;
     }
 
+    public static function translateInPhpArrFromPostgreJsonObject($str)
+    {
+        //$str = json_decode($str);
+        if (is_null($str))
+            return [];
+
+        /*$str[0] = '[';
+        $str[strlen($str) - 1] = ']';*/
+
+        $str = str_replace('"{', '{', $str);
+        $str = str_replace('}"', '}', $str);
+        //$str = stripslashes($str);
+
+        $str = json_decode($str, true);
+        return $str;
+    }
+
     public static function translateInPhpArrFromPostgreArr($str)
     {
         //$str = json_decode($str);
+        if (is_null($str))
+            return [];
+
         $str[0] = '[';
         $str[strlen($str) - 1] = ']';
 
@@ -156,6 +177,18 @@ class SupportClass
         return $errors;
     }
 
+    public static function getErrorsWithException($object, $code, $msg)
+    {
+        $errors = SupportClass::getArrayWithErrors($object);
+        if (count($errors) > 0)
+            throw new ServiceExtendedException($msg,
+                $code, null, null, $errors);
+        else {
+            throw new ServiceExtendedException($msg,
+                $code);
+        }
+    }
+
     public static function getResponseWithErrorsFromArray($errors)
     {
         $response = new Response();
@@ -180,7 +213,7 @@ class SupportClass
         $result = array();
         foreach ($set as $t) {
             if (is_array($t)) {
-                $result[] = to_pg_array($t);
+                $result[] = self::to_pg_array($t);
             } else {
                 $t = str_replace('"', '\\"', $t); // escape double quote
                 if (!is_numeric($t)) // quote only non-numeric values
@@ -248,5 +281,13 @@ class SupportClass
         if ($index !== false) {
             unset($array[$index]);
         }
+    }
+
+    public static function getCertainColumnsFromArray(array $data, array $columns)
+    {
+        $toRet = [];
+        foreach ($columns as $info)
+            $toRet[$info] = $data[$info];
+        return $toRet;
     }
 }

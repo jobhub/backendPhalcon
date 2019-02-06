@@ -13,7 +13,7 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      *
@@ -52,12 +52,12 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserid($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -122,9 +122,9 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
      *
      * @return integer
      */
-    public function getUserid()
+    public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -177,13 +177,13 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Пользователь не существует",
                     "callback" => function ($resetcode
                     ) {
-                        $user = Users::findFirst(['userid = :userId:', 'bind' => ['userId' => $resetcode
+                        $user = Users::findFirst(['user_id = :userId:', 'bind' => ['userId' => $resetcode
                             ->getUserId()]],
                             false);
                         if (!$user)
@@ -247,7 +247,7 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("password_reset_codes");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**

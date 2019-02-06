@@ -44,7 +44,7 @@ abstract class AccountModel extends \Phalcon\Mvc\Model
                 [
                     "message" => "Такой аккаунт не существует",
                     "callback" => function ($account_model) {
-                        return Accounts::findFirstById($account_model->getAccountId())?true:false;
+                        return Accounts::findFirstById($account_model->getAccountId()) ? true : false;
                     }
                 ]
             )
@@ -52,7 +52,8 @@ abstract class AccountModel extends \Phalcon\Mvc\Model
         return $this->validate($validator);
     }
 
-    public function initialize(){
+    public function initialize()
+    {
         $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'Accounts']);
     }
 }

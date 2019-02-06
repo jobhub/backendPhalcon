@@ -9,38 +9,6 @@ use Phalcon\Validation\Validator\Callback;
 class ImagesReviews extends ImagesModel
 {
     /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $review_id;
-
-    const MAX_IMAGES = 3;
-
-    /**
-     * Method to set the value of field reviewid
-     *
-     * @param integer $review_id
-     * @return $this
-     */
-    public function setReviewId($review_id)
-    {
-        $this->review_id = $review_id;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field reviewid
-     *
-     * @return integer
-     */
-    public function getReviewId()
-    {
-        return $this->review_id;
-    }
-
-    /**
      * Validations and business logic
      *
      * @return boolean
@@ -50,12 +18,12 @@ class ImagesReviews extends ImagesModel
         $validator = new Validation();
 
         $validator->add(
-            'review_id',
+            'object_id',
             new Callback(
                 [
                     "message" => "Такой отзыв не существует",
                     "callback" => function ($image) {
-                        $service = Reviews::findFirstByReviewId($image->getReviewId());
+                        $service = Reviews::findFirstByReviewId($image->getObjectId());
                         if ($service)
                             return true;
                         return false;
@@ -73,8 +41,8 @@ class ImagesReviews extends ImagesModel
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("imagesreviews");
-        $this->belongsTo('review_id', '\Reviews', 'review_id', ['alias' => 'Reviews']);
+        $this->setSource("images_reviews");
+        $this->belongsTo('object_id', '\Reviews', 'review_id', ['alias' => 'Reviews']);
     }
 
     /**
@@ -84,7 +52,12 @@ class ImagesReviews extends ImagesModel
      */
     public function getSource()
     {
-        return 'imagesreviews';
+        return 'images_reviews';
+    }
+
+    public function getSequenceName()
+    {
+        return "imagesreviews_imageid_seq";
     }
 
     /**
@@ -112,9 +85,16 @@ class ImagesReviews extends ImagesModel
     /**
      * return non formatted images objects
      * @param $reviewId
+     * @param $page
+     * @param $page_size
      * @return mixed
      */
-    public static function findImagesForReview($reviewId){
-        return self::findByReviewId($reviewId);
+    public static function findImagesForReview($reviewId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return self::handleImages(
+            self::find(['conditions'=>'object_id = :reviewId:','bind'=>['reviewId'=>$reviewId],
+                'limit'=>$page_size,'offset'=>$offset])
+        );
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Controllers;
 
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Libs\SupportClass;
+use App\Models\Users;
 use App\Models\Userinfo;
 use App\Models\PhonesUsers;
 use App\Models\ImagesUsers;
 use App\Models\News;
 use App\Models\FavoriteUsers;
 use App\Models\FavoriteCompanies;
+use App\Models\Accounts;
 
 use App\Services\ImageService;
 use App\Services\UserInfoService;
@@ -35,278 +39,6 @@ use App\Services\ServiceExtendedException;
  */
 class UserinfoAPIController extends AbstractController
 {
-    /*public function indexAction()
-    {
-        $auth = $this->session->get("auth");
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $userinfo = Userinfo::findFirstByUserid($auth['id']);
-            if (!$userinfo) {
-                $response->setJsonContent(
-                    [
-                        "status" => "FAIL"
-                    ]);
-
-                return $response;
-            }
-            $user = Users::findFirstByuserid($auth['id']);
-            if (!$user) {
-                $response->setJsonContent(
-                    [
-                        "status" => "FAIL"
-                    ]);
-                return $response;
-            }
-            $user_min['email'] = $user->getEmail();
-            $user_min['phone'] = $user->getPhone();
-
-            $settings = Settings::findFirstByuserid($auth['id']);
-            if (!$settings) {
-
-                $response->setJsonContent(
-                    [
-                        "status" => "FAIL"
-                    ]);
-
-                return $response;
-            }
-            $info['Userinfo'] = $userinfo;
-            $info['user'] = $user_min;
-            $info['settings'] = $settings;
-
-            return json_encode($info);
-        } else if ($this->request->isPost()) {
-            $response = new Response();
-
-            $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserid($userId);
-
-            if (!$userinfo) {
-                $errors[] = "Пользователь не авторизован";
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => "FAIL"
-                    ]);
-
-                return $response;
-            }
-
-            $userinfo->setFirstname($this->request->getPost("firstname"));
-            $userinfo->setPatronymic($this->request->getPost("patronymic"));
-            $userinfo->setLastname($this->request->getPost("lastname"));
-            $userinfo->setAddress($this->request->getPost("address"));
-            $userinfo->setBirthday(date('Y-m-d H:m', strtotime($this->request->getPost("birthday"))));
-            $userinfo->setMale($this->request->getPost("male"));
-
-            if (!$userinfo->save()) {
-                $errors = [];
-                foreach ($userinfo->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => STATUS_WRONG
-                    ]);
-
-                return $response;
-            }
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]);
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }*/
-
-    /*public function aboutAction()
-    {
-        $auth = $this->session->get("auth");
-
-        if ($this->request->isPost()) {
-            $response = new Response();
-
-            $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserid($userId);
-
-            if (!$userinfo) {
-                $errors[] = "Пользователь не авторизован";
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => STATUS_WRONG
-                    ]);
-
-                return $response;
-            }
-
-            $userinfo->setAbout($this->request->getPost("about"));
-
-            if (!$userinfo->save()) {
-
-                foreach ($userinfo->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => "WRONG_DATA"
-                    ]);
-
-                return $response;
-            }
-            $response->setJsonContent(
-                [
-                    "status" => "OK"
-                ]);
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }
-
-    public function settingsAction()
-    {
-        $auth = $this->session->get("auth");
-        if ($this->request->isPost()) {
-
-            $response = new Response();
-
-            $userId = $auth['id'];
-            $settings = Settings::findFirstByuserid($userId);
-
-            if (!$settings) {
-                $errors[] = "Пользователь не авторизован";
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => "FAIL"
-                    ]);
-
-                return $response;
-            }
-            if (isset($_POST["notificationEmail"]))
-                $settings->setNotificationEmail($this->request->getPost("notificationEmail"));
-            if (isset($_POST["notificationSms"]))
-                $settings->setNotificationSms($this->request->getPost("notificationSms"));
-            if (isset($_POST["notificationPush"]))
-                $settings->setNotificationPush($this->request->getPost("notificationPush"));
-
-
-            if (!$settings->save()) {
-
-                foreach ($settings->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "errors" => $errors,
-                        "status" => "WRONG_DATA"
-                    ]);
-
-                return $response;
-            }
-            $response->setJsonContent(
-                [
-                    "status" => "OK"
-                ]);
-
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-    }*/
-
-    /*public function handlerAction()
-    {
-        $response = new Response();
-        include('../library/SimpleImage.php');
-// Проверяем установлен ли массив файлов и массив с переданными данными
-        if (isset($_FILES) && isset($_FILES['image'])) {
-            // echo $_FILES;
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $userinfo = Userinfo::findFirstByuserid($userId);
-            if ($userinfo) {
-                $userinfo->setUserid($auth['id']);
-
-
-                if (($_FILES['image']['size'] > 5242880)) {
-                    $response->setJsonContent(
-                        [
-                            "error" => ['Размер файла слишком большой'],
-                            "status" => "WRONG_DATA"
-                        ]
-                    );
-                    return $response;
-                }
-                $image = new SimpleImage();
-                $image->load($_FILES['image']['tmp_name']);
-                $image->resizeToWidth(200);
-
-                $imageFormat = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                $format = $imageFormat;
-                if ($imageFormat == 'jpeg' || 'jpg')
-                    $imageFormat = IMAGETYPE_JPEG;
-                elseif ($imageFormat == 'png')
-                    $imageFormat = IMAGETYPE_PNG;
-                elseif ($imageFormat == 'gif')
-                    $imageFormat = IMAGETYPE_GIF;
-                else {
-                    $response->setJsonContent(
-                        [
-                            "error" => ['Данный формат не поддерживается'],
-                            "status" => "WRONG_DATA"
-                        ]
-                    );
-                    return $response;
-                }
-                $filename = $_SERVER['DOCUMENT_ROOT'] . '/public/img/' . hash('crc32', $userinfo->getUserId()) . '.' . $format;
-                //if()
-                {
-                    $image->save($filename, $imageFormat);
-                    $imageFullName = str_replace('C:/OpenServer/domains/simpleMod2', '', $filename);
-                    $userinfo->setPathToPhoto($imageFullName);
-                    $userinfo->save();
-
-
-                    //return $userinfo->getPathToPhoto();
-                    $response->setJsonContent(
-                        [
-                            'pathToPhoto' => $userinfo->getPathToPhoto(),
-                            "status" => "OK"
-                        ]
-                    );
-                    return $response;
-                }
-
-            }
-            $response->setJsonContent(
-                [
-                    "status" => "WRONG_DATA"
-                ]
-            );
-            return $response;
-        }
-        $response->setJsonContent(
-            [
-                "status" => "WRONG_DATA"
-            ]
-        );
-        return $response;
-    }*/
-
     /**
      * Устанавливает одну из фотографий пользователя, как основную.
      * @access private
@@ -353,66 +85,47 @@ class UserinfoAPIController extends AbstractController
     }
 
     /**
-     * Удаляет пользователя
+     * Удаляет текущего пользователя
      *
      * @method DELETE
      *
-     * @param $userId
-     *
      * @return string - json array - объект Status - результат операции
      */
-    /*public function deleteUserAction($userId)
+    public function deleteUserAction()
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $auth = $this->session->get('auth');
-            $currentUserId = $auth['id'];
-            $response = new Response();
+        try {
+            $userId = self::getUserId();
 
-            $user = Users::findFirstByUserid($userId);
+            $user = $this->userService->getUserById($userId);
 
-            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->userService->deleteUser($user);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_UNABLE_DELETE_USER:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$user->delete()) {
-                $errors = [];
-                foreach ($user->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
-    }*/
+
+        return self::successResponse('User was successfully deleted');
+    }
 
     /**
      * Восстанавливает пользователя
      *
      * @method POST
      *
-     * @param userId
+     * @param user_id
      *
      * @return string - json array - объект Status - результат операции
      */
@@ -469,29 +182,97 @@ class UserinfoAPIController extends AbstractController
      *
      * @method GET
      *
+     * @param $account_id
      * @param $user_id
      *
      * @return array [userinfo, [phones], [images], countNews, countSubscribers,
      *          countSubscriptions];
      */
-    public function getUserInfoAction($user_id = null)
+    public function getUserInfoAction($user_id = null, $account_id = null)
     {
-        try{
-            $currentUserId = $this->session->get('auth')['id'];
+        try {
+            $currentUserId = self::getUserId();
+            SupportClass::writeMessageInLogFile('При получении инфы о пользователе');
 
-            $res_user_id = $user_id == null?$currentUserId:$user_id;
+            if ($account_id != null && SupportClass::checkInteger($account_id)) {
+                if (!Accounts::checkUserHavePermission($currentUserId, $account_id, 'getNews')) {
+                    throw new Http403Exception('Permission error');
+                }
 
-            $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id);
+                $account = Accounts::findFirstById($account_id);
+            } else {
+                $account = Accounts::findForUserDefaultAccount($currentUserId);
+            }
+
+            $res_user_id = ($user_id == null || !SupportClass::checkInteger($user_id)) ? $currentUserId : $user_id;
+
+            if(!$account)
+                $account = null;
+
+            $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id, $account);
 
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
 
-        return self::successResponse('',$userInfo);
+        return self::successResponse('', $userInfo);
+    }
+
+    /**
+     * Возвращает результат поиска пользователей.
+     * Публичный метод.
+     *
+     * @method POST
+     *
+     * @params string query
+     * @params age_min - минимальный возраст
+     * @params age_max - максимальный возраст
+     * @params male - пол
+     * @params has_photo - фильтр, имеется ли у него фотография
+     * @params page - номер страницы
+     * @params page_size - размер страницы
+     *
+     * @return array [userinfo, [phones], [images], countNews, countSubscribers,
+     *          countSubscriptions];
+     */
+    public function findUsersWithFiltersAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['query'] = $inputData->query;
+
+        if($inputData->age_min!=null) {
+            $data['age_min'] = $inputData->age_min;
+        }
+        $data['age_max'] = $inputData->age_max;
+
+        $data['male'] = $inputData->male;
+
+        $data['has_photo'] = $inputData->has_photo;
+        /*if(!is_null($inputData->has_photo) && $inputData->has_photo != "false")
+            $data['has_photo'] = true;
+        elseif($inputData->has_photo == "false")
+            $data['has_photo'] = false;*/
+
+        if (is_null($inputData->page))
+            $data['page'] = 1;
+        else
+            $data['page'] = $inputData->page;
+        if (is_null($inputData->page_size))
+            $data['page_size'] = Userinfo::DEFAULT_RESULT_PER_PAGE;
+        else
+            $data['page_size'] = $inputData->page_size;
+
+        $users = Userinfo::findUsersByQueryWithFilters($data['query'],
+            $data['page'], $data['page_size'],
+            $data['age_min'], $data['age_max'],
+            $data['male'], $data['has_photo']);
+
+        return $users;
     }
 
     /**
@@ -515,12 +296,11 @@ class UserinfoAPIController extends AbstractController
     {
         $data = json_decode($this->request->getRawBody(), true);
 
-        if(!isset($data['path_to_photo']))
+        if (!isset($data['path_to_photo']))
             unset($data['path_to_photo']);
 
-        try{
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        try {
+            $userId = self::getUserId();
 
             $userInfo = $this->userInfoService->getUserInfoById($userId);
 
@@ -543,7 +323,7 @@ class UserinfoAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('User\'s info successfully changed',$userInfo);
+        return self::successResponse('User\'s info successfully changed', $userInfo);
     }
 
     /**
@@ -552,14 +332,17 @@ class UserinfoAPIController extends AbstractController
      * @access private
      *
      * @method POST
-     *
+     * @params image_texts - тексты к каждому изображению
      * @params (обязательно) изображения. Именование не важно.
      *
      * @return string - json array в формате Status - результат операции
      */
     public function addImagesAction()
     {
-        try{
+        $inputData = $this->request->getJsonRawBody();
+        $data = /*$inputData->image_text*/
+            $this->request->getPost('image_texts');
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
@@ -569,9 +352,9 @@ class UserinfoAPIController extends AbstractController
 
             $this->db->begin();
 
-            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(),$user);
+            $ids = $this->imageService->createImagesToUser($this->request->getUploadedFiles(), $user, $data);
 
-            $this->imageService->saveImagesToUser($this->request->getUploadedFiles(),$user,$ids);
+            $this->imageService->saveImagesToUser($this->request->getUploadedFiles(), $user, $ids);
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
@@ -727,11 +510,11 @@ class UserinfoAPIController extends AbstractController
      */
     public function deleteImageAction($image_id)
     {
-        try{
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = $this->imageService->getImageById($image_id,ImageService::TYPE_USER);
+            $image = $this->imageService->getImageById($image_id, ImageService::TYPE_USER);
 
             if ($image->getUserId() != $userId) {
                 throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
@@ -763,10 +546,11 @@ class UserinfoAPIController extends AbstractController
 
     /*public function addUsersAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
+        $userId = $this->getUserId();
 
-            $response = new Response();
-
+        if($userId!=6) {
+            throw new Http403Exception('Permission error');
+        }
             $users = [];
 
             //юзеры
@@ -849,10 +633,5 @@ class UserinfoAPIController extends AbstractController
 
             return $response;
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
     }*/
 }

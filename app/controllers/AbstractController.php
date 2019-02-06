@@ -37,9 +37,18 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
         return ['success' => true, 'msg' => $msg, 'data' => $data];
     }
 
-    public function getUserid(){
+    public function isAuthorized(){
+        $payload = $this->session->get('auth');
+        return $payload!=null && $payload['id']!=null;
+    }
+
+    public function getUserId(){
         $payload = $this->session->get('auth');
         $current_user_id = $payload['id'];
         return $current_user_id;
+    }
+
+    public function setAccountId($accountId){
+        $this->session->set('accountId',$accountId);
     }
 }

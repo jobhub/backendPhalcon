@@ -19,7 +19,7 @@ class PrivateChatController extends AbstractController {
      */
     public function spamTogglePrivateChatAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->privateChatService->togglePrivateChatToSpam($user_id, $data['messaging_id']);
         } catch (ServiceException $e) {
@@ -36,7 +36,7 @@ class PrivateChatController extends AbstractController {
      */
     public function hiddenTogglePrivateChatAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->privateChatService->togglePrivateChatToHidden($user_id, $data['messaging_id']);
         } catch (ServiceException $e) {

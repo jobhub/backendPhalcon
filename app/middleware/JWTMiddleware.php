@@ -29,6 +29,7 @@ class JWTMiddleware implements MiddlewareInterface
     {
         $di = DI::getDefault();
         $tokenRecieved = self::getTokenFromHeader();
+        SupportClass::writeMessageInLogFile('token is '.$tokenRecieved);
         $info = json_decode($di->getAuthService()->checkToken($tokenRecieved), true);
 
         if (!$info) {
@@ -308,12 +309,17 @@ class JWTMiddleware implements MiddlewareInterface
         } catch (Exception $e) {
         }
 
-        if (isset(getallheaders()['Authorization'])) {
-            $tokenRecieved = getallheaders()['Authorization'];
+        if (isset(getallheaders()['Authorization']) || isset(getallheaders()['authorization'])) {
+            $tokenRecieved = getallheaders()['Authorization']==null?getallheaders()['authorization']:getallheaders()['Authorization'];
         }
 
         if ($tokenRecieved == null)
             $tokenRecieved = "aaa";
+
+        $dump = var_export(getallheaders(), true);
+
+        SupportClass::writeMessageInLogFile('Headers '.$dump);
+
         return $tokenRecieved;
     }
 

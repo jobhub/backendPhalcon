@@ -81,6 +81,15 @@ $di->setShared('pointService', '\App\Services\PointService');
 $di->setShared('companyService', '\App\Services\CompanyService');
 $di->setShared('commentService', '\App\Services\CommentService');
 $di->setShared('likeService', '\App\Services\LikeService');
+$di->setShared('userLocationService', '\App\Services\UserLocationService');
+$di->setShared('requestService', '\App\Services\RequestService');
+$di->setShared('taskService', '\App\Services\TaskService');
+$di->setShared('offerService', '\App\Services\OfferService');
+$di->setShared('reviewService', '\App\Services\ReviewService');
+$di->setShared('forwardService', '\App\Services\ForwardService');
+$di->setShared('favouriteService', '\App\Services\FavouriteService');
+$di->setShared('markerService', '\App\Services\MarkerService');
+
 $di->setShared('channelService', '\App\Services\ChannelService');
 $di->setShared('groupService', '\App\Services\GroupService');
 $di->setShared('rastreniyaService', '\App\Services\RastreniyaService');

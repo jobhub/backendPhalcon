@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Markers;
 use App\Models\Services;
 use App\Models\TradePoints;
 use App\Models\ServicesPoints;
@@ -83,6 +84,8 @@ class PointService extends AbstractService
     {
         $point = new TradePoints();
 
+        $marker = $this->markerService->createMarker($data['longitude'],$data['latitude']);
+        $data['marker_id'] = $marker->getMarkerId();
         $this->fillPoint($point, $data);
 
         if ($point->save() == false) {
@@ -120,10 +123,7 @@ class PointService extends AbstractService
     {
         if (!empty(trim($data['name'])))
             $point->setName($data['name']);
-        if (!empty(trim($data['longitude'])))
-            $point->setLongitude($data['longitude']);
-        if (!empty(trim($data['latitude'])))
-            $point->setLatitude($data['latitude']);
+
         if (!empty(trim($data['fax'])))
             $point->setFax($data['fax']);
         if (!empty(trim($data['time'])))
@@ -140,6 +140,13 @@ class PointService extends AbstractService
             $point->setPositionVariable($data['position_variable']);
         if (!empty(trim($data['account_id'])))
             $point->setAccountId($data['account_id']);
+
+        /*if (!empty(trim($data['longitude'])))
+            $point->setLongitude($data['longitude']);
+        if (!empty(trim($data['latitude'])))
+            $point->setLatitude($data['latitude']);*/
+        if(!empty(trim($data['marker_id'])))
+            $point->setMarkerId($data['marker_id']);
     }
 
     public function deletePoint(TradePoints $point)

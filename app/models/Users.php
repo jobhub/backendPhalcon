@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use http\Client\Curl\User;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
@@ -11,6 +12,7 @@ use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 use Phalcon\DI\FactoryDefault as DI;
+use App\Libs\ImageLoader;
 
 class Users extends NotDeletedModelWithCascade
 {
@@ -306,249 +308,89 @@ class Users extends NotDeletedModelWithCascade
     }
 
     public function getSequenceName() {
-        return "\"users_userid_seq\"";
+        return "users_userid_seq";
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
     {
-        try {
-            // Создаем менеджера транзакций
-            $manager = new TxManager();
-            // Запрос транзакции
-            $transaction = $manager->get();
-            $this->setTransaction($transaction);
+        if (!$delete) {
+            try {
+                // Создаем менеджера транзакций
+                $manager = new TxManager();
+                // Запрос транзакции
+                $transaction = $manager->get();
+                $this->setTransaction($transaction);
 
-            if (!$delete) {
-                //каскадное 'удаление' точек оказания услуг
-                $tradePoints = TradePoints::findBySubject($this->getUserId(), 0);
-                foreach ($tradePoints as $tradePoint) {
-                    $tradePoint->setTransaction($transaction);
-                    if (!$tradePoint->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить точки оказания услуг"
-                        );
-                        return false;
-                    }
-                }
-
-                //каскадное 'удаление' новостей
-                $news = News::find(["subjectid = :userId: AND subjecttype = 0",
-                    'bind' =>
-                        ['userId' => $this->getUserId()
-                        ]]);
-                foreach ($news as $new) {
-                    $new->setTransaction($transaction);
-                    if (!$new->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить новости пользователя"
-                        );
-                        return false;
-                    }
-                }
-
-                //каскадное 'удаление' услуг
-                $services = Services::find(["subjectid = :userId: AND subjecttype = 0",
-                    'bind' =>
-                        ['userId' => $this->getUserId()
-                        ]]);
-                foreach ($services as $service) {
-                    $service->setTransaction($transaction);
-                    if (!$service->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить услуги пользователя"
-                        );
-                        return false;
-                    }
-                }
-
-                //каскадное 'удаление' запросов
-                $requests = Requests::find(["subjectid = :userId: AND subjecttype = 0",
-                    'bind' =>
-                        ['userId' => $this->getUserId()
-                        ]]);
-                foreach ($requests as $request) {
-                    $request->setTransaction($transaction);
-                    if (!$request->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить запросы пользователя"
-                        );
-                        return false;
-                    }
-                }
-
-                //каскадное 'удаление' заданий
-                $tasks = Tasks::find(["subjectid = :userId: AND subjecttype = 0",
-                    'bind' =>
-                        ['userId' => $this->getUserId()
-                        ]]);
-                foreach ($tasks as $task) {
-                    $task->setTransaction($transaction);
-                    if (!$task->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить задания пользователя"
-                        );
-                        return false;
-                    }
-                }
-
-                //каскадное 'удаление' предложений
-                $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0",
-                    'bind' =>
-                        ['userId' => $this->getUserId()
-                        ]]);
-                foreach ($offers as $offer) {
-                    $offer->setTransaction($transaction);
-                    if (!$offer->delete(false, true)) {
-                        $transaction->rollback(
-                            "Невозможно удалить предложения пользователя"
-                        );
-                        return false;
-                    }
-                }
+                Accounts::cascadeDeletingByAccountIds($this->getRelatedAccounts(),$transaction);
 
                 $result = parent::delete($delete, false, $data, $whiteList);
 
                 if (!$result) {
                     $transaction->rollback(
-                        "Невозможно удалить пользователя"
+                        "Невозможно удалить компанию"
                     );
                     return $result;
                 }
 
                 $transaction->commit();
                 return true;
-            } else {
-                $path = null;
-                if ($this->userinfo != null) {
-                    $path = $this->userinfo->getPathToPhoto();
-                }
+            } catch (TxFailed $e) {
+                $message = new Message(
+                    $e->getMessage()
+                );
 
-                $result = parent::delete($delete, false, $data, $whiteList);
-
-                if ($result && $path != null) {
-                    ImageLoader::delete($path);
-                }
-
-                $transaction->commit();
-                return $result;
+                $this->appendMessage($message);
+                return false;
             }
-        } catch (TxFailed $e) {
-            return false;
+        } else {
+            $logo = $this->getLogotype();
+
+            $result = parent::delete($delete, false, $data, $whiteList);
+
+            if ($result) {
+                ImageLoader::delete($logo);
+            }
+
+            return $result;
         }
     }
 
+    /**
+     * Восстанавливает отмеченного как удаленного пользователя
+     * @return bool
+     */
     public function restore()
     {
-        $manager = new TxManager();
-        // Запрос транзакции
-        $transaction = $manager->get();
-        $this->setTransaction($transaction);
-        if (!parent::restore()) {
-            $transaction->rollback(
-                "Невозможно восстановить пользователя"
+        try {
+            $manager = new TxManager();
+            // Запрос транзакции
+            $transaction = $manager->get();
+            $this->setTransaction($transaction);
+            if (!parent::restore()) {
+                $transaction->rollback(
+                    "Невозможно восстановить компанию"
+                );
+                return false;
+            }
+
+            //Каскадное восстановление точек оказания услуг
+            Accounts::cascadeRestoringByAccountIds($this->getRelatedAccounts(), $transaction);
+
+            $transaction->commit();
+            return true;
+        } catch (TxFailed $e) {
+            $message = new Message(
+                $e->getMessage()
             );
+
+            $this->appendMessage($message);
             return false;
         }
-
-        //Каскадное восстановление точек оказания услуг
-        $tradePoints = TradePoints::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($tradePoints as $tradePoint) {
-            $tradePoint->setTransaction($transaction);
-            if (!$tradePoint->restore()) {
-                $transaction->rollback(
-                    "Невозможно восстановить точки оказания услуг"
-                );
-                return false;
-            }
-        }
-
-        //каскадное восстановление новостей
-        $news = News::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($news as $new) {
-            $new->setTransaction($transaction);
-            if (!$new->restore()) {
-                $transaction->rollback(
-                    "Не удалось восстановить новости пользователя"
-                );
-                return false;
-            }
-        }
-
-        //каскадное 'удаление' услуг
-        $services = Services::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($services as $service) {
-            $service->setTransaction($transaction);
-            if (!$service->restore()) {
-                $transaction->rollback(
-                    "Не удалось восстановить услуги пользователя"
-                );
-                return false;
-            }
-        }
-
-        //каскадное восстановление запросов
-        $requests = Requests::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($requests as $request) {
-            $request->setTransaction($transaction);
-            if (!$request->restore()) {
-                $transaction->rollback(
-                    "Не удалось восстановить запросы пользователя"
-                );
-                return false;
-            }
-        }
-
-        //каскадное восстановление заданий
-        $tasks = Tasks::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($tasks as $task) {
-            $task->setTransaction($transaction);
-            if (!$task->restore()) {
-                $transaction->rollback(
-                    "Не удалось восстановить задания пользователя"
-                );
-                return false;
-            }
-        }
-
-        //каскадное восстановление предложений
-        $offers = Offers::find(["subjectid = :userId: AND subjecttype = 0 AND deleted = true AND deletedcascade = true",
-            'bind' =>
-                ['userId' => $this->getUserId()
-                ]], false);
-        foreach ($offers as $offer) {
-            $offer->setTransaction($transaction);
-            if (!$offer->restore()) {
-                $transaction->rollback(
-                    "Не удалось восстановить предложения пользователя"
-                );
-                return false;
-            }
-        }
-
-        $transaction->commit();
-        return true;
     }
 
     public function getFinishedTasks()
     {
         // $query = $this->modelsManager->createQuery('SELECT COUNT(*) AS c FROM offers, auctions, tasks, users WHERE offers.userId=users.userId AND users.userId=:userId: AND auctions.selectedOffer=offers.offerId AND tasks.taskId=auctions.taskId AND tasks.status=\'Завершено\'');
-
-
         $query = $this->modelsManager->createQuery(
             'SELECT COUNT(*) AS c FROM offers INNER JOIN auctions ON offers.auctionId = auctions.auctionId
               INNER JOIN tasks ON auctions.taskId = auctions.taskId
@@ -591,7 +433,20 @@ class Users extends NotDeletedModelWithCascade
             ];
 
             return $userInfo->toArray();
+    }
 
+    /**
+     * @return string - array of accounts in postgresql format
+     */
+    public function getRelatedAccounts()
+    {
+        $accounts_obj = Accounts::findFirst(['user_id = :userId: and company_id is null',
+            'bind'=>[
+                'userId'=>$this->getUserId()
+            ]]);
+
+        $accounts[] = $accounts_obj->getId();
+        return SupportClass::to_pg_array($accounts);
     }
 
     /**

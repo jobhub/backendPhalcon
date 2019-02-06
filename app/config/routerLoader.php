@@ -197,7 +197,7 @@ $routes = [
              *
              * @method POST
              *
-             * @params (обязательные) firstname, lastname, male
+             * @params (обязательные) first_name, last_name, male
              * @params (Необязательные) patronymic, birthday, about (много текста о себе),
              * @return string - json array Status
              */
@@ -303,6 +303,32 @@ $routes = [
                 'path' => '/login',
                 'action' => 'indexAction'
             ],
+
+            /**
+             * Выдает текущую роль пользователя.
+             * @access public
+             * @method GET
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/role',
+                'action' => 'getCurrentRoleAction'
+            ],
+
+            /**
+             * Возвращает аккаунты текущего пользователя
+             *
+             * @access private
+             *
+             * @method GET
+             *
+             * @return array
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/accounts',
+                'action' => 'getAccountsAction'
+            ],
         ]
     ],
 
@@ -406,6 +432,19 @@ $routes = [
             ],
 
             /**
+             * Удаляет текущего пользователя
+             *
+             * @method DELETE
+             *
+             * @return string - json array - объект Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete',
+                'action' => 'deleteUserAction'
+            ],
+
+            /**
              * Возвращает публичные данные о пользователе.
              * Публичный метод.
              *
@@ -426,10 +465,15 @@ $routes = [
                 'path' => '/get/{user_id}',
                 'action' => 'getUserInfoAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/{user_id}/{account_id}',
+                'action' => 'getUserInfoAction'
+            ],
 
             /**
              * Меняет данные текущего пользоваателя.
-             * Приватный метод.
+             * @access private.
              *
              * @method PUT
              *
@@ -456,7 +500,7 @@ $routes = [
              * @access private
              *
              * @method POST
-             *
+             * @params image_text - текст к изображению
              * @params (обязательно) изображения. Именование не важно.
              *
              * @return string - json array в формате Status - результат операции
@@ -481,6 +525,35 @@ $routes = [
                 'path' => '/delete/image/{image_id}',
                 'action' => 'deleteImageAction'
             ],
+
+            [
+                'type' => 'post',
+                'path' => '/moderator/add-users',
+                'action' => 'addUsersAction'
+            ],
+
+            /**
+             * Возвращает результат поиска пользователей.
+             * Публичный метод.
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params age_min - минимальный возраст
+             * @params age_max - максимальный возраст
+             * @params male - пол
+             * @params has_photo - фильтр, имеется ли у него фотография
+             * @params page - номер страницы
+             * @params page_size - размер страницы
+             *
+             * @return array [userinfo, [phones], [images], countNews, countSubscribers,
+             *          countSubscriptions];
+             */
+            [
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findUsersWithFiltersAction'
+            ],
         ]
     ],
 
@@ -488,10 +561,13 @@ $routes = [
         'prefix' => '/news',
         'resources' => [
             /**
-             * Возвращает новости для ленты текущего пользователя
-             * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             * Возвращает новости для ленты текущего пользователя или указанного аккаунта (компании)
+             *
              * @access private
              *
+             * @param $account_id
+             * @param $page
+             * @param $page_size
              * @method GET
              *
              * @return string - json array с новостями (или их отсутствием)
@@ -499,6 +575,21 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get',
+                'action' => 'getNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{account_id}',
+                'action' => 'getNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{account_id}/{page}',
+                'action' => 'getNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{account_id}/{page}/{page_size}',
                 'action' => 'getNewsAction'
             ],
             /**
@@ -515,6 +606,16 @@ $routes = [
                 'path' => '/get/all',
                 'action' => 'getAllNewsAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/all/{page}',
+                'action' => 'getAllNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/all/{page}/{page_size}',
+                'action' => 'getAllNewsAction'
+            ],
 
             /**
              * Создает новость компании или пользователя.
@@ -527,6 +628,11 @@ $routes = [
              * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
              * @params string news_text
              * @params string title
+             * @params string publish_date
+             * @params string news_type
+             *
+             * @params array temp_images - массив с id временных изображений, которые должны быть добавлены в новость
+             *
              * @params файлы изображений.
              * @return string - json array объекта Status
              */
@@ -586,17 +692,34 @@ $routes = [
                 'path' => '/get/own',
                 'action' => 'getOwnNewsAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}/{page_size}',
+                'action' => 'getOwnNewsAction'
+            ],
 
             /**
              * Возвращает новости указанного объекта
              *
              * @method GET
-             *
+             * @param $page
+             * @param $page_size
              * @param $id
-             * @param $is_company (Можно не указывать, значение по умолчанию false)
+             * @param $is_company (Можно не указывать, значение по умолчанию 0)
+             * @param $account_id - аккаунт от имени которого совершаются действия.
              *
              * @return string - json array объектов news или Status, если ошибка
              */
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
             [
                 'type' => 'get',
                 'path' => '/get/by-subject/{id}/{is_company}',
@@ -604,7 +727,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/by-subject/{id}',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
                 'action' => 'getSubjectsNewsAction'
             ],
 
@@ -654,6 +787,9 @@ $routes = [
              *
              * @param $id
              * @param $is_company
+             * @param $page
+             * @param $page_size
+             * @param $account_id
              * @return string -  массив услуг в виде:
              *      [{serviceid, description, datepublication, pricemin, pricemax,
              *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
@@ -664,6 +800,27 @@ $routes = [
                 'path' => '/get/for-subject/{id}/{is_company}',
                 'action' => 'getServicesForSubjectAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}/{page}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
+                'action' => 'getServicesForSubjectAction'
+            ],
+
             /**
              * Возвращает все услуги данного юзера (или его компании).
              *
@@ -685,6 +842,16 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/own/{company_id}',
+                'action' => 'getOwnServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}',
+                'action' => 'getOwnServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}/{page}/{page_size}',
                 'action' => 'getOwnServicesAction'
             ],
 
@@ -892,6 +1059,75 @@ $routes = [
                 'path' => '/get/info/{service_id}',
                 'action' => 'getServiceInfoAction'
             ],
+
+            /**
+             * Подписывает текущего пользователя или его аккаунт (компанию) на услугу
+             *
+             * @method POST
+             *
+             * @params service_id
+             * @params account_id = null
+             *
+             * @return Response с json ответом в формате Status
+             */
+            /*[
+                'type' => 'post',
+                'path' => '/add/favourite',
+                'action' => 'setFavouriteAction'
+            ],*/
+
+            /**
+             * Отменяет подписку на услугу
+             *
+             * @method DELETE
+             *
+             * @param $service_id
+             * @param $account_id = null
+             *
+             * @return Response с json ответом в формате Status
+             */
+            /*[
+                'type' => 'delete',
+                'path' => '/delete/favourite/{service_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/favourite/{service_id}/{account_id}',
+                'action' => 'deleteFavouriteAction'
+            ],*/
+
+            /**
+             * Возвращает избранные услуги пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            /*[
+                'type' => 'get',
+                'path' => '/get/favourites',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}/{page}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/favourites/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesAction'
+            ],*/
         ]
     ],
 
@@ -942,6 +1178,21 @@ $routes = [
                 'type' => 'delete',
                 'path' => '/delete/{company_id}',
                 'action' => 'deleteCompanyAction'
+            ],
+
+            /**
+             * Восстанавливает компанию
+             *
+             * @method POST
+             *
+             * @params company_id
+             *
+             * @return string - данные компании
+             */
+            [
+                'type' => 'post',
+                'path' => '/restore',
+                'action' => 'restoreCompanyAction'
             ],
 
             /**
@@ -1116,11 +1367,24 @@ $routes = [
                 'path' => '/get/info/{point_id}',
                 'action' => 'getPointInfoAction'
             ],
+
+
+            [
+                'type' => 'post',
+                'path' => '/moderator/change-to-markers',
+                'action' => 'changePointsAction'
+            ],
         ]
     ],
 
     '\App\Controllers\CommentsAPIController'=>[
         'prefix' => '/comment',
+        /**
+         * Возможные значения для $type:
+         *      image-user
+         *      news
+         *      service
+         */
         'resources' => [
             /**
              * Возвращает комментарии к указанной фотографии пользователя
@@ -1131,11 +1395,11 @@ $routes = [
              *
              * @return string - json array массив комментариев
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/images-users/get/{image_id}',
                 'action' => 'getCommentsForImageAction'
-            ],
+            ],*/
 
             /**
              * Возвращает комментарии к указанной новости
@@ -1146,11 +1410,11 @@ $routes = [
              *
              * @return string - json array массив комментариев
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/news/get/{news_id}',
                 'action' => 'getCommentsForNewsAction'
-            ],
+            ],*/
 
             /**
              * Добавляет комментарий к фотографии пользователя
@@ -1165,11 +1429,11 @@ $routes = [
              *
              * @return string - json array в формате Status + id созданного комментария
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/images-users/add',
                 'action' => 'addCommentForImageAction'
-            ],
+            ],*/
 
             /**
              * Удаляет комментарий, оставленный к фотографии пользователя
@@ -1180,17 +1444,88 @@ $routes = [
              *
              * @return string - json array в формате Status - результат операции
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/images-users/delete/{comment_id}',
                 'action' => 'deleteCommentForImageAction'
-            ],
+            ],*/
 
             /**
              * Добавляет комментарий к новости
              * @access private
              *
              * @method POST
+             *
+             * @params object_id - id новости
+             * @params comment_text - текст комментария
+             * @params account_id - int id аккаунта, от имени которого добавляется комментарий.ыфя
+             * Если не указан, то от имени текущего пользователя по умолчанию.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            /*[
+                'type' => 'post',
+                'path' => '/news/add',
+                'action' => 'addCommentForNewsAction'
+            ],*/
+
+            /**
+             * Удаляет комментарий, оставленный к фотографии пользователя
+             *
+             * @method DELETE
+             *
+             * @param $comment_id int id комментария
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            /*[
+                'type' => 'delete',
+                'path' => '/news/delete/{comment_id}',
+                'action' => 'deleteCommentForNewsAction'
+            ],*/
+
+            /**
+             * Меняет лайкнутость текущим пользователем указанного комментария.
+             *
+             * @method POST
+             *
+             * @params comment_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            /*[
+                'type' => 'post',
+                'path' => '/images-users/like/toggle',
+                'action' => 'toggleLikeCommentForImageAction'
+            ],*/
+
+            /**
+             * Меняет лайкнутость текущим пользователем указанного комментария.
+             *
+             * @method POST
+             *
+             * @params comment_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            /*[
+                'type' => 'post',
+                'path' => '/news/like/toggle',
+                'action' => 'toggleLikeCommentForNewsAction'
+            ],*/
+
+
+            /**
+             * Добавляет комментарий к указанному объекту
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type
              *
              * @params object_id - id новости
              * @params comment_text - текст комментария
@@ -1201,57 +1536,62 @@ $routes = [
              */
             [
                 'type' => 'post',
-                'path' => '/news/add',
-                'action' => 'addCommentForNewsAction'
+                'path' => '/add/{type}',
+                'action' => 'addCommentAction'
             ],
 
             /**
-             * Удаляет комментарий, оставленный к фотографии пользователя
+             * Удаляет комментарий указаннного типа
              *
              * @method DELETE
              *
+             * @param $type string - тип комментария
              * @param $comment_id int id комментария
              *
              * @return string - json array в формате Status - результат операции
              */
             [
                 'type' => 'delete',
-                'path' => '/news/delete/{comment_id}',
-                'action' => 'deleteCommentForNewsAction'
+                'path' => '/delete/{type}/{comment_id}',
+                'action' => 'deleteCommentAction'
             ],
 
             /**
-             * Меняет лайкнутость текущим пользователем указанного комментария.
+             * Возвращает комментарии к указанному объекту
              *
-             * @method POST
-             *
-             * @params comment_id - int id комментария
-             * @params account_id - int id аккаунта, от имени которого совершается данное действие
-             * (если не указан, значит берется по умолчанию для пользователя)
-             *
-             * @return Response
+             * @method GET
+             * @param $type
+             * @param $object_id
+             * @param $parent_id
+             * @param $account_id
+             * @param $page
+             * @param $page_size
+             * @return string - json array массив комментариев
              */
             [
-                'type' => 'post',
-                'path' => '/images-users/like/toggle',
-                'action' => 'toggleLikeCommentForImageAction'
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}',
+                'action' => 'getCommentsAction'
             ],
-
-            /**
-             * Меняет лайкнутость текущим пользователем указанного комментария.
-             *
-             * @method POST
-             *
-             * @params comment_id - int id комментария
-             * @params account_id - int id аккаунта, от имени которого совершается данное действие
-             * (если не указан, значит берется по умолчанию для пользователя)
-             *
-             * @return Response
-             */
             [
-                'type' => 'post',
-                'path' => '/news/like/toggle',
-                'action' => 'toggleLikeCommentForNewsAction'
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}/{page}',
+                'action' => 'getCommentsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{parent_id}/{account_id}/{page}/{page_size}',
+                'action' => 'getCommentsAction'
             ],
         ]
     ],
@@ -1411,6 +1751,943 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/favourite/companies',
                 'action' => 'getFavouritesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\FavouriteUsersAPIController'=>[
+        'prefix' => '/user/info',
+        'resources' => [
+            /**
+             * Подписывает текущего пользователя на указанного
+             * @method POST
+             * @params user_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/subscribe-to/user',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку на пользователя
+             * @method
+             * @param $user_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/unsubscribe-from/user/{user_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает подписки текущего пользователя
+             * @method GET
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/favourite/users',
+                'action' => 'getFavouritesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\RequestsAPIController'=>[
+        'prefix' => '/request',
+        'resources' => [
+            /**
+             * Добавляет запрос на получение услуги
+             *
+             * @method POST
+             *
+             * @params service_id, description, date_end.
+             * @params (необязательный) account_id
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addRequestAction'
+            ],
+
+            /**
+             * Удаляет заявку
+             *
+             * @method DELETE
+             *
+             * @param $request_id
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{request_id}',
+                'action' => 'deleteRequestAction'
+            ],
+
+            /**
+             * Редактирует заявку
+             *
+             * @method PUT
+             *
+             * @params request_id, description, date_end
+             * @return Response с json массивом в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editRequestAction'
+            ],
+
+            /**
+             * Редактирует заявку
+             *
+             * @method GET
+             *
+             * @param $company_id (необязательный)
+             * @return string - json массив с объектами Requests и Status-ом
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getRequestsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{company_id}',
+                'action' => 'getRequestsAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\TasksAPIController'=>[
+        'prefix' => '/task',
+        'resources' => [
+            /**
+             * Добавляет заказ
+             *
+             * @method POST
+             *
+             * @params (обязательные) category_id, name, price, date_end.
+             * @params (необязательные) account_id, description, deadline, polygon, region_id, longitude, latitude.
+             *
+             * @return string - json array  формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addTaskAction'
+            ],
+
+            /**
+             * Возвращает все задания субъекта (для него самого)
+             *
+             * @method GET
+             *
+             * @param $company_id
+             *
+             * @return string - массив заданий (Tasks) и Status
+             *
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/own',
+                'action' => 'getTasksForCurrentUserAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{company_id}',
+                'action' => 'getTasksForCurrentUserAction'
+            ],
+
+            /**
+             * Возвращает все задания указанного субъекта
+             *
+             * @method GET
+             *
+             * @param $id
+             * @param $is_company
+             *
+             * @return string - массив заданий (Tasks)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getTasksForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}',
+                'action' => 'getTasksForSubjectAction'
+            ],
+
+            /**
+             * Удаление заказа
+             *
+             * @method DELETE
+             * @param $task_id
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{task_id}',
+                'action' => 'deleteTaskAction'
+            ],
+
+            /**
+             * Редактирование задания
+             *
+             * @method PUT
+             * @params (обязательные) task_id.
+             * @params (необязательные)  description, deadline, polygon,
+             *                           region_id, longitude, latitude,
+             *                           category_id, name, price, date_end.
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editTaskAction'
+            ],
+
+            /**
+             * Выбирает предложение для выполнения заказа
+             *
+             * @method POST
+             * @params offer_id
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/select-offer',
+                'action' => 'selectOfferAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\OffersAPIController'=>[
+        'prefix' => '/offer',
+        'resources' => [
+            /**
+             * Возвращает предложения для определенного задания
+             * @method GET
+             * @param $task_id
+             *
+             * @return string - json array объектов Offers
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-task/{task_id}',
+                'action' => 'getForTaskAction'
+            ],
+
+            /**
+             * Добавляет предложение на выполнение указанного задания
+             *
+             * @method POST
+             *
+             * @params (Обязательные) task_id, deadline, price.
+             * @params (Необязательные) description, account_id.
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addOfferAction'
+            ],
+
+            /**
+             * Возвращает офферсы субъекта
+             *
+             * @method GET
+             *
+             * @param $company_id (необязательный). Если не отправить, будут возвращены для текущего пользователя
+             *
+             * @return string - json array объектов Offers
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-current',
+                'action' => 'getForCurrentUserAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-current/{company_id}',
+                'action' => 'getForCurrentUserAction'
+            ],
+
+            /**
+             * Удаляет предложение на выполнение заявки
+             *
+             * @method DELETE
+             * @param $offer_id
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{offer_id}',
+                'action' => 'deleteOfferAction'
+            ],
+
+            /**
+             * Редактирует предложение на выполнение указанного задания
+             *
+             * @method PUT
+             *
+             * @params (Обязательные) offer_id, deadline, price.
+             * @params (Необязательные) description.
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editOfferAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\ReviewsAPIController'=>[
+        'prefix' => '/review',
+        'resources' => [
+            /**
+             * Добавляет отзыв.
+             *
+             * @method POST
+             *
+             * @params int binder_id, int binder_type, bool executor, int rating, string text_review
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addReviewAction'
+            ],
+
+            /**
+             * Редактирует отзыв.
+             *
+             * @method PUT
+             *
+             * @params int rating, review_id
+             * @param (Необязатальные) review_text.
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editReviewAction'
+            ],
+
+            /**
+             * Удаляет отзыв.
+             *
+             * @method DELETE
+             *
+             * @param $review_id
+             *
+             * @return Response - Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{review_id}',
+                'action' => 'deleteReviewAction'
+            ],
+
+            /**
+             * Возвращает отзывы об указанном субъекте, будь то пользователь или компания.
+             *
+             * @method GET
+             *
+             * @param $id - id субъекта
+             * @param $is_company - тип субъекта
+             *
+             * @return string - json array [status,[reviews]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-subject/{id}/{is_company}/{page}/{page_size}',
+                'action' => 'getReviewsForSubjectAction'
+            ],
+
+            /**
+             * Возвращает отзывы, связанные с указанной услугой.
+             *
+             * @method GET
+             *
+             * @param $serviceId - id услуги
+             * @param $numPage - номер страницы
+             * @param $widthPage - размер страницы
+             *
+             * @return string - json array [status,reviews => [review,{userinfo or company}]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}/{page}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-service/{service_id}/{page}/{page_size}',
+                'action' => 'getReviewsForServiceAction'
+            ],
+
+            /**
+             * Добавляет все прикрепленные изображения к отзыву. Но суммарно изображений для отзыва не больше 3.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params (обязательно) review_id
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/images',
+                'action' => 'addImagesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\ImageController'=>[
+        'prefix' => '/image',
+        'resources' => [
+            /**
+             * Возвращает изображения для указанного объекта.
+             * Тип может быть:
+             *      user
+             *      news
+             *      review
+             *      service
+             *      company (пока еще не реализовано)
+             *      temp
+             *
+             * @access private
+             *
+             * @method GET
+             * @param $type string
+             * @param $object_id int
+             * @param $page
+             * @param $page_size
+             * @param $account_id
+             * @params (обязательно) изображения. Именование не важно.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{account_id}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{account_id}/{page}',
+                'action' => 'getImagesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{object_id}/{account_id}/{page}/{page_size}',
+                'action' => 'getImagesAction'
+            ],
+
+            /**
+             * Добавляет все прикрепленные изображения к указанному объекту.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type;
+             *
+             * @params object_id
+             *
+             * @params image_text в случае изображения пользователя
+             *
+             * @params (обязательно) изображения.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'addImagesAction'
+            ],
+
+            /**
+             * Удаляет картинку из списка изображений
+             * @access private
+             *
+             * @method DELETE
+             *
+             * @param $type
+             * @params (посылается в теле запроса) $image_id id изображения или же массив id-шников изображений
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}',
+                'action' => 'deleteImageByIdAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\LikeController'=>[
+
+        /**
+         * Возможные значения $type
+         *      'comment-image-user';
+         *      'comment-news';
+         *      'comment-service';
+         *      'news';
+         *      'service';
+         *      'image-user';
+         */
+
+        'prefix' => '/like',
+        'resources' => [
+
+            /**
+             * Меняет лайкнутость текущим пользователем указанного объекта
+             *
+             * @method POST
+             *
+             * @param $type
+             * @params object_id - int id комментария
+             * @params account_id - int id аккаунта, от имени которого совершается данное действие
+             * (если не указан, значит берется по умолчанию для пользователя)
+             *
+             * @return Response
+             */
+            [
+                'type' => 'post',
+                'path' => '/toggle/{type}',
+                'action' => 'toggleLikeAction'
+            ],
+
+        ]
+    ],
+
+    '\App\Controllers\ForwardsController'=>[
+        'prefix' => '/forward',
+
+        /**
+         * Возможные значения $type
+         *      'news';
+         *      'service';
+         *      'image-user';
+         */
+
+        'resources' => [
+            /**
+             * Создает репост
+             * @access private
+             *
+             * @method POST
+             *
+             * @param $type
+             *
+             * @params object_id - id объекта
+             * @params forward_text - текст репоста
+             * @params account_id - int id аккаунта
+             * Если не указан, то от имени текущего пользователя по умолчанию.
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'addForwardAction'
+            ],
+
+            /**
+             * Удаляет репост
+             *
+             * @method DELETE
+             *
+             * @param $type string - тип репоста
+             * @param $object_id int id объекта
+             * @param $account_id int id аккаунта
+             *
+             * @return string - json array в формате Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}',
+                'action' => 'deleteForwardAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}/{account_id}',
+                'action' => 'deleteForwardAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\FavouriteController'=>[
+        'prefix' => '/favourite',
+
+        /**
+         * Возможные значения $type
+         *      'user';
+         *      'service';
+         *      'company';
+         */
+
+        'resources' => [
+            /**
+             * Подписывает текущего пользователя на что-либо
+             * @method POST
+             *
+             * @param $type
+             *
+             * @params account_id = null
+             * @params object_id = null
+             *
+             * @return string - json array Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/{type}',
+                'action' => 'setFavouriteAction'
+            ],
+
+            /**
+             * Отменяет подписку
+             * @method
+             * @param $object_id
+             * @param $type
+             * @param $account_id = null
+             * @return string - json array Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+            [
+                'type' => 'delete',
+                'path' => '/delete/{type}/{object_id}/{account_id}',
+                'action' => 'deleteFavouriteAction'
+            ],
+
+            /**
+             * Возвращает всех подписчиков на текущий аккаунт (а именно, компанию или пользователя)
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $query = null
+             * @param $page = 1
+             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}/{page}',
+                'action' => 'getSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{account_id}/{query}/{page}/{page_size}',
+                'action' => 'getSubscribersAction'
+            ],
+
+            /**
+             * Возвращает все подписки текущего аккаунта (или всех аккаунтов компании, если аккаунт с ней связан)
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $query = null
+             * @param $page = 1
+             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}/{page}',
+                'action' => 'getSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{account_id}/{query}/{page}/{page_size}',
+                'action' => 'getSubscriptionsAction'
+            ],
+
+            /**
+             * Возвращает избранные услуги пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Services::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/service',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}/{page}',
+                'action' => 'getFavouriteServicesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/service/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouriteServicesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\UserLocationAPIController'=>[
+        'prefix' => '/user/location',
+        'resources' => [
+            /**
+             * Устанавливает текущее местоположение текущего пользователя.
+             *
+             * @access private.
+             *
+             * @method POST
+             * @params latitude;
+             * @params longitude;
+             * @return string - json array результат операции.
+             */
+            [
+                'type' => 'post',
+                'path' => '/set',
+                'action' => 'setLocationAction'
+            ],
+
+            /**
+             * Ищет пользователей по поисковой строке и внутри заданных координат.
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findUsersAction'
+            ],
+
+            /**
+             * Ищет пользователей по поисковой строке и внутри заданных координат.
+             * С заданным фильтром.
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @params age_min - минимальный возраст
+             * @params age_max - максимальный возраст
+             * @params male - пол
+             * @params has_photo - фильтр, имеется ли у него фотография
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/find/with-filters',
+                'action' => 'findUsersWithFiltersAction'
+            ],
+
+            /**
+             * Возвращает данные для автокомплита поиска по пользователям.
+             *
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, firstname, lastname, patronymic,status]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/get/autocomplete',
+                'action' => 'getAutoCompleteForSearchAction'
+            ],
+
+            /**
+             * Возвращает данные по id пользователя аналогичные поиску, но без поиска.
+             *
+             * @access public
+             *
+             * @method GET
+             *
+             * @param int $user_id
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime, male, birthday, pathtophoto,status]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{user_id}',
+                'action' => 'getUserByIdAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\TestController'=>[
+        'prefix' => '/moderator/test',
+        'resources' => [
+            [
+                'type' => 'post',
+                'path' => '/add-users',
+                'action' => 'addUsersAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-accounts',
+                'action' => 'addAccountsAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-news',
+                'action' => 'addNewsAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-likes/{offset}/{count}',
+                'action' => 'addLikesAction'
+            ],
+
+            [
+                'type' => 'post',
+                'path' => '/add-array-like/{news_id}/{user_id}',
+                'action' => 'addArrayLikeAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked/{news_id}/{user_id}',
+                'action' => 'getLikedArrayAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked/{news_id}/{user_id}',
+                'action' => 'getLikedTableAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked-cycle/{news_limit}/{users_limit}',
+                'action' => 'getLikedArrayInCycleAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-array-liked-cycle/{news_limit}/{users_limit}/{offset}',
+                'action' => 'getLikedArrayInCycleAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked-cycle/{news_limit}/{users_limit}',
+                'action' => 'getLikedTableInCycleAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-table-liked-cycle/{news_limit}/{users_limit}/{offset}',
+                'action' => 'getLikedTableInCycleAction'
+            ],
+
+
+            [
+                'type' => 'post',
+                'path' => '/send-message-to-email',
+                'action' => 'sendMessageAction'
             ],
         ]
     ],

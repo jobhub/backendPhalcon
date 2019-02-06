@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Models\Tasks;
+use App\Services\OfferService;
+use App\Services\TaskService;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -8,6 +13,20 @@ use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
+use App\Models\ImagesUsers;
+use App\Models\News;
+use App\Models\Accounts;
+
+use App\Services\ImageService;
+use App\Services\NewsService;
+use App\Services\AccountService;
+
+use App\Controllers\HttpExceptions\Http400Exception;
+use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http500Exception;
+use App\Services\ServiceException;
+use App\Services\ServiceExtendedException;
 /**
  * Class TasksAPIController
  * Контроллер для работы с заказами.
@@ -16,84 +35,69 @@ use Phalcon\Mvc\Dispatcher;
  *      - отмена заказа;
  *      - подтверждение выполнения заказа;
  */
-class TasksAPIController extends Controller
+class TasksAPIController extends AbstractController
 {
     /**
      * Добавляет заказ
      *
      * @method POST
      *
-     * @params (обязательные) categoryId, name, price, dateEnd.
-     * @params (необязательные) companyId, description, deadline, polygon, regionId, longitude, latitude.
+     * @params (обязательные) category_id, name, price, date_end.
+     * @params (необязательные) account_id, description, deadline, polygon, region_id, longitude, latitude.
      *
      * @return string - json array  формате Status
      */
     public function addTaskAction()
     {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $inputData = $this->request->getJsonRawBody();
+        $data['category_id'] = $inputData->category_id;
+        $data['name'] = $inputData->name;
+        $data['price'] = $inputData->price;
+        $data['date_end'] = $inputData->date_end;
+        $data['account_id'] = $inputData->account_id;
+        $data['description'] = $inputData->description;
+        $data['deadline'] = $inputData->deadline;
+        $data['polygon'] = $inputData->polygon;
+        $data['region_id'] = $inputData->region_id;
+        $data['longitude'] = $inputData->longitude;
+        $data['latitude'] = $inputData->latitude;
 
-            $task = new Tasks();
+        try {
+            $userId = self::getUserId();
 
-            if ($this->request->getPost("companyId")) {
-                //Значит, от лица компании
-                if (!Companies::checkUserHavePermission($userId,
-                    $this->request->getPost("companyId"), 'addTask')) {
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-                $task->setSubjectId($this->request->getPost("companyId"));
-                $task->setSubjectType(1);
-            } else {
-                $task->setSubjectId($userId);
-                $task->setSubjectType(0);
+            //проверки
+            if (empty(trim($data['account_id']))) {
+                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
             }
 
-            $task->setCategoryid($this->request->getPost("categoryId"));
-            $task->setName($this->request->getPost("name"));
-            $task->setDescription($this->request->getPost("description"));
-            $task->setDeadline(date('Y-m-d H:i:s', strtotime($this->request->getPost("deadline"))));
-            $task->setPrice($this->request->getPost("price"));
-            $task->setStatus(STATUS_ACCEPTING);
-            $task->setPolygon($this->request->getPost("polygon"));
-            $task->setRegionId($this->request->getPost("regionId"));
-            $task->setLatitude($this->request->getPost("latitude"));
-            $task->setLongitude($this->request->getPost("longitude"));
-            $task->setDateStart(date('Y-m-d H:i:s'));
-            $task->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPost("dateEnd"))));
-
-            if (!$task->save()) {
-                $errors = [];
-                foreach ($task->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addRequest')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
+            $data['status'] = STATUS_ACCEPTING;
+            $data['date_start'] = date('Y-m-d H:i:s');
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            $task = $this->taskService->createTask($data);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_UNABLE_CREATE_TASK:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Task was successfully created', ['task' => $task->toArray()]);
     }
 
     /**
@@ -101,47 +105,24 @@ class TasksAPIController extends Controller
      *
      * @method GET
      *
-     * @param $companyId
+     * @param $company_id
      *
      * @return string - массив заданий (Tasks) и Status
      *
      */
-    public function getTasksForCurrentUserAction($companyId = null)
+    public function getTasksForCurrentUserAction($company_id = null)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        $userId = self::getUserId();
 
-            if ($companyId == null)
-                $tasks = Tasks::findBySubject($userId, 0,"status ASC");
-            else {
-                if (!Companies::checkUserHavePermission($userId, $companyId, 'getTasks')) {
-
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_WRONG,
-                            "errors" => ['permission error']
-                        ]
-                    );
-                    return $response;
-                }
-
-                $tasks = Tasks::findBySubject($companyId,1,"status ASC");
+        if ($company_id != null) {
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getTask')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                    "tasks" => $tasks
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+            return Tasks::findTasksByCompany($company_id);
         }
-
+        else
+            return Tasks::findTasksByUser($userId);
     }
 
     /**
@@ -149,258 +130,187 @@ class TasksAPIController extends Controller
      *
      * @method GET
      *
-     * @param $subjectId
-     * @param $subjectType
+     * @param $id
+     * @param $is_company
      *
      * @return string - массив заданий (Tasks)
      */
-    public function getTasksForSubjectAction($subjectId, $subjectType)
+    public function getTasksForSubjectAction($id, $is_company = false)
     {
-        if ($this->request->isGet()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-
-            $tasks = Tasks::find(["subjectid = :subjectId: AND subjecttype = 0 AND status = :status:",
-                "bind" => ["subjectId" => $userId, 'status' => STATUS_ACCEPTING],
-                "order" => "status ASC"]);
-
-            return json_encode($tasks);
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
-        }
-
+        if ($is_company && strtolower($is_company)!="false")
+            return Tasks::findAcceptingTasksByCompany($id);
+        else
+            return Tasks::findAcceptingTasksByUser($id);
     }
 
     /**
      * Удаление заказа
      *
      * @method DELETE
-     * @param $taskId
+     * @param $task_id
      * @return string - json array в формате Status
      */
-    public function deleteTaskAction($taskId)
+    public function deleteTaskAction($task_id)
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+        try {
+            $userId = self::getUserId();
 
-            $task = Tasks::findFirstByTaskid($taskId);
+            $task = $this->taskService->getTaskById($task_id);
 
-            if (!$task) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Задание не существует']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermission($userId, $task->getAccountId(), 'deleteTask')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!Tasks::checkUserHavePermission($userId, $taskId, 'deleteTask')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->taskService->deleteTask($task);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_UNABLE_DELETE_TASK:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$task->delete()) {
-                $errors = [];
-                foreach ($task->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_TASK_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
         }
+
+        return self::successResponse('Task was successfully deleted');
     }
 
     /**
      * Редактирование задания
      *
      * @method PUT
-     * @params (обязательные) taskId, categoryId, name, price, dateEnd.
-     * @params (необязательные)  description, deadline, polygon, regionId, longitude, latitude.
+     * @params (обязательные) task_id.
+     * @params (необязательные)  description, deadline, polygon,
+     *                           region_id, longitude, latitude,
+     *                           category_id, name, price, date_end.
      * @return string - json array в формате Status
      */
     public function editTaskAction()
     {
-        if ($this->request->isPut()) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $task = Tasks::findFirstByTaskid($this->request->getPut("taskId"));
+        $inputData = $this->request->getJsonRawBody();
+        $data['task_id'] = $inputData->task_id;
+        $data['description'] = $inputData->description;
+        $data['deadline'] = $inputData->deadline;
+        $data['polygon'] = $inputData->polygon;
+        $data['region_id'] = $inputData->region_id;
+        $data['longitude'] = $inputData->longitude;
+        $data['latitude'] = $inputData->latitude;
+        $data['category_id'] = $inputData->category_id;
+        $data['name'] = $inputData->name;
+        $data['price'] = $inputData->price;
+        $data['date_end'] = $inputData->date_end;
 
-            if (!$task) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Задание не существует']
-                    ]
-                );
-                return $response;
+        try {
+            //validation
+            if (empty(trim($data['task_id']))) {
+                $errors['task_id'] = 'Missing required parameter "task_id"';
             }
 
-            if (!Tasks::checkUserHavePermission($userId, $task->getTaskId(), 'editTask')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
             }
 
-            $task->setCategoryid($this->request->getPut("categoryId"));
-            $task->setName($this->request->getPut("name"));
-            $task->setDescription($this->request->getPut("description"));
-            $task->setDeadline(date('Y-m-d H:i:s', strtotime($this->request->getPut("deadline"))));
-            $task->setPrice($this->request->getPut("price"));
-            $task->setPolygon($this->request->getPut("polygon"));
-            $task->setRegionId($this->request->getPut("regionId"));
-            $task->setLatitude($this->request->getPut("latitude"));
-            $task->setLongitude($this->request->getPut("longitude"));
-            $task->setDateEnd(date('Y-m-d H:i:s', strtotime($this->request->getPut("dateEnd"))));
+            $userId = self::getUserId();
 
-            if (!$task->save()) {
-                $errors = [];
-                foreach ($task->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $task = $this->taskService->getTaskById($data['task_id']);
+
+            if (!Accounts::checkUserHavePermission($userId, $task->getAccountId(), 'editTask')) {
+                throw new Http403Exception('Permission error');
             }
 
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
+            unset($data['task_id']);
 
+            $this->taskService->changeTask($task, $data);
 
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_UNABLE_CHANGE_TASK:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_TASK_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Task was successfully changed');
     }
 
     /**
      * Выбирает предложение для выполнения заказа
      *
      * @method POST
-     * @params taskId, offerId
+     * @params offer_id
      * @return string - json array в формате Status
      */
     public function selectOfferAction(){
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
 
-            $task = Tasks::findFirstByTaskid($this->request->getPost('taskId'));
-            if(!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId,$task->getSubjectId(),$task->getSubjectType(),'selectOffer')){
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+        $inputData = $this->request->getJsonRawBody();
+        $data['offer_id'] = $inputData->offer_id;
+
+        try {
+            //validation
+            if (empty(trim($data['offer_id']))) {
+                $errors['offer_id'] = 'Missing required parameter "offer_id"';
             }
 
-            $offer = Offers::findFirstByOfferid($this->request->getPost('offerId'));
-
-            if(!$offer || $offer->getTaskId() != $this->request->getPost('taskId')){
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Предложение не существует или не относится к указанному заданию']
-                    ]
-                );
-                return $response;
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
             }
 
-            $offer->setSelected(true);
+            $userId = self::getUserId();
 
-            $task = $offer->tasks;
+            $offer = $this->offerService->getOfferById($data['offer_id']);
 
-            $task->setStatus(STATUS_WAITING_CONFIRM);
+            if (!Accounts::checkUserHavePermission($userId, $offer->tasks->getAccountId(), 'selectOffer')) {
+                throw new Http403Exception('Permission error');
+            }
             $this->db->begin();
 
-            if (!$offer->save()) {
-                $errors = [];
-                $this->db->rollback();
-                foreach ($task->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $this->taskService->selectOffer($offer);
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case OfferService::ERROR_UNABLE_CHANGE_OFFER:
+                case TaskService::ERROR_UNABLE_CHANGE_TASK:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$task->save()) {
-                $this->db->rollback();
-                $errors = [];
-                foreach ($task->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case OfferService::ERROR_OFFER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $this->db->commit();
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
+        $this->db->commit();
+        return self::successResponse('Offer was successfully selected');
     }
 
+    //TODO доделать это позже
     /**
      * Отменяет заказ
      *

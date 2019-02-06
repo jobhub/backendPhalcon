@@ -5,114 +5,8 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class FavoriteCompanies extends \Phalcon\Mvc\Model
+class FavoriteCompanies extends FavouriteModel
 {
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $company_id;
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
-
-    /**
-     * Method to set the value of field companyId
-     *
-     * @param integer $company_id
-     * @return $this
-     */
-    public function setCompanyId($company_id)
-    {
-        $this->company_id = $company_id;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field userId
-     *
-     * @param integer $user_id
-     * @return $this
-     */
-    public function setUserId($user_id)
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
-
-    /**
-     * Returns the value of field companyId
-     *
-     * @return integer
-     */
-    public function getCompanyId()
-    {
-        return $this->company_id;
-    }
-
-    /**
-     * Returns the value of field userId
-     *
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * Validations and business logic
-     *
-     * @return boolean
-     */
-    public function validation()
-    {
-        $validator = new Validation();
-
-        $validator->add(
-            'user_id',
-            new Callback(
-                [
-                    "message" => "Пользователь подписчик не существует",
-                    "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserId($favCompany->getUserId());
-
-                        if($user)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'companyid',
-            new Callback(
-                [
-                    "message" => "Такая компания не существует",
-                    "callback" => function($favCompany) {
-                        $company = Companies::findFirstByCompanyId($favCompany->getCompanyId());
-
-                        if($company)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
-
-        return $this->validate($validator);
-    }
 
     /**
      * Initialize method for model.
@@ -120,9 +14,9 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
     public function initialize()
     {
         //$this->setSchema("public");
-        $this->setSource("favouriteCompanies");
-        $this->belongsTo('company_id', 'App\Models\Companies', 'company_id', ['alias' => 'Companies']);
-        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->setSource("favorite_companies");
+        $this->belongsTo('object_id', 'App\Models\Companies', 'company_id', ['alias' => 'object']);
+        $this->belongsTo('subject_id', 'App\Models\Accounts', 'id', ['alias' => 'subject']);
     }
 
     /**
@@ -132,7 +26,7 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favoriteCompanies';
+        return 'favorite_companies';
     }
 
     /**
@@ -157,13 +51,22 @@ class FavoriteCompanies extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($userId,$companyId)
+    public static function handleSubscriptions($favs)
     {
-        return FavoriteCompanies::findFirst(["user_id = :userId: AND company_id = :companyId:",
-            "bind" => [
-                "userId" => $userId,
-                "companyId" => $companyId,
-            ]
-        ]);
+        $handledFavs = [];
+        foreach ($favs as $fav) {
+            $handledFavs[] = self::handleSubscription($fav);
+        }
+        return $handledFavs;
+    }
+
+
+
+    public static function handleSubscription($fav)
+    {
+        $handledFavUser = [
+            'subscription' => Companies::findCompanyById($fav['object_id'],Companies::shortColumnsInStr),
+        ];
+        return $handledFavUser;
     }
 }

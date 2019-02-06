@@ -19,7 +19,7 @@ class ChannelController extends AbstractController {
      */
     public function createChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->createChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -53,7 +53,7 @@ class ChannelController extends AbstractController {
      */
     public function subscribePublicChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->subscribeToPublicChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -69,7 +69,7 @@ class ChannelController extends AbstractController {
      */
     public function sendMessageAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->sendMessageToChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -85,7 +85,7 @@ class ChannelController extends AbstractController {
      */
     public function getUsersOfChannelAction($data) {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $channel_id = $this->request->getQuery('channel_id');
             $data = $this->channelService->getUsersChannel($user_id, $channel_id);
         } catch (ServiceException $e) {
@@ -101,7 +101,7 @@ class ChannelController extends AbstractController {
      */
     public function getUserChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $response = $this->channelService->getUserChannels($user_id);
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
@@ -117,7 +117,7 @@ class ChannelController extends AbstractController {
     public function getChannelMessageAction($params) {
         try {
 
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = [];
             $data['channel_id'] = $this->request->getQuery('channel_id', null);
             $page= $this->request->getQuery('page');
@@ -136,7 +136,7 @@ class ChannelController extends AbstractController {
      */
     public function addUsersToChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->addUsersToChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -152,7 +152,7 @@ class ChannelController extends AbstractController {
      */
     public function adminChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->manageAdminUserChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -168,7 +168,7 @@ class ChannelController extends AbstractController {
      */
     public function removeUserToChannelAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $data = json_decode($this->request->getRawBody(), true);
             $this->channelService->removeUsersToChannel($user_id, $data);
         } catch (ServiceException $e) {
@@ -184,7 +184,7 @@ class ChannelController extends AbstractController {
      */
     public function deleteHistoryAction() {
         try {
-            $user_id = $this->getUserid();
+            $user_id = $this->getUserId();
             $channel_id = $this->request->getQuery('channel_id', null);
             $this->channelService->deleteChannelHistory($user_id, $channel_id);
         } catch (ServiceException $e) {

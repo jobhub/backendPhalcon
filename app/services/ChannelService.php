@@ -4,11 +4,14 @@ namespace App\Services;
 
 use App\Controllers\AbstractHttpException;
 use App\Controllers\HttpExceptions\Http400Exception;
+use App\Libs\SupportClass;
 use App\Models\ChannelMessages;
 use App\Models\Channels;
 use App\Models\ChannelUsersSubscriber;
 use App\Models\Userinfo;
 use App\Models\Users;
+
+use App\Services\ServiceExtendedException;
 
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
@@ -58,6 +61,8 @@ class ChannelService extends AbstractService
                 ->setStatus($data['status']);
             $channel->setIsPublic($data['is_public']);
             if ($channel->save() === false) {
+
+
                 $transaction->rollback(
                     'Cannot save Channels'
                 );

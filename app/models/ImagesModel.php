@@ -5,8 +5,10 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+use Phalcon\Db\RawValue;
 
 use App\Libs\ImageLoader;
+
 /**
  *  Model with basic functions for all models with images
  *
@@ -19,17 +21,9 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
     /**
      *
      * @var integer
-     * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $image_id;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
+    protected $object_id;
 
     /**
      *
@@ -38,7 +32,57 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     protected $image_path;
 
+    /**
+     *
+     * @var integer
+     * @Primary
+     * @Identity
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $image_id;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=false)
+     */
+    protected $date_creation;
+
     const MAX_IMAGES = 10;
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return mixed
+     */
+    public function getDateCreation()
+    {
+        return $this->date_creation;
+    }
+
+    /**
+     * @param mixed $date_creation
+     */
+    public function setDateCreation($date_creation)
+    {
+        $this->date_creation = $date_creation;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getObjectId()
+    {
+        return $this->object_id;
+    }
+
+    /**
+     * @param mixed $object_id
+     */
+    public function setObjectId($object_id)
+    {
+        $this->object_id = $object_id;
+    }
+
 
     /**
      * Method to set the value of field imageid
@@ -124,14 +168,27 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
+        $this->setSchema("public");
+        $this->setSource("images_model");
     }
 
-    public static function getComments($imageId)
+    public function getSequenceName()
+    {
+        return "images_model_image_id_seq1";
+    }
+
+    public function getSource()
+    {
+        return 'images_model';
+    }
+
+
+    /*public static function getComments($imageId)
     {
         $comments = CommentsImagesUsers::findByImageId($imageId);
 
         return $comments;
-    }
+    }*/
 
     public function delete($delete = false, $data = null, $whiteList = null)
     {
@@ -146,19 +203,39 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
         return $result;
     }
 
+    /**
+     * @param /ResultSet $images
+     * @return array
+     */
     public static function handleImages($images)
     {
         $handledImages = [];
         foreach ($images as $image) {
-            $handledImage = [
-                'imageid' => $image->getImageId(),
-                'imagepath' => $image->getImagePath()];
-            $handledImages[] = $handledImage;
+            $handledImages[] = self::handleImage($image);
         }
         return $handledImages;
     }
 
-    public static function findImageById($imageId){
+    public static function handleImage($image)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path']];
+        return $handledImage;
+    }
+
+    public static function findImageById($imageId)
+    {
         return self::findFirstByImageId($imageId);
+    }
+
+    public static function findImages($model, $objectId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return $model::handleImages(
+            $model::find(['conditions' => 'object_id = :objectId:', 'bind' => ['objectId' => $objectId],
+                'limit' => $page_size, 'offset' => $offset, 'order'=>'image_id desc'])->toArray()
+        );
     }
 }

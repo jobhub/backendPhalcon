@@ -8,7 +8,7 @@ use App\Libs\PHPMailerApp;
  * Class AbstractService
  *
  * @property \Phalcon\Db\Adapter\Pdo\Postgresql $db
- * @property \Phalcon\Config                    $config
+ * @property \Phalcon\Config $config
  */
 abstract class AbstractService extends \Phalcon\DI\Injectable
 {
@@ -24,11 +24,12 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
 
     const ERROR_UNABLE_SEND_TO_MAIL = 100003;
 
-    public function sendMail($action, $view, $data, $title){
+    public function sendMail($action, $view, $data, $title)
+    {
         $mailer = new PHPMailerApp($this->config['mail']);
-        $newTo = 'titow.german@yandex.ru';//$this->config['mail']['from']['email'];
+        //$newTo = 'titow.german@yandex.ru';//$this->config['mail']['from']['email'];
         $res = $mailer->createMessageFromView($view, $action, $data)
-            ->to($newTo)
+            ->to(/*$newTo*/$data['email'])
             ->subject($title)
             ->send();
 
@@ -39,7 +40,8 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
         }
     }
 
-    public function log($message){
+    public function log($message)
+    {
         $this->logger->log($message);
-}
+    }
 }

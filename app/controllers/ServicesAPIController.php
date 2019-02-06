@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\HttpExceptions\Http403Exception;
 use App\Models\Accounts;
+use App\Models\FavouriteServices;
 use App\Services\AccountService;
 use App\Services\CategoryService;
 use App\Services\PhoneService;
@@ -16,6 +17,8 @@ use Phalcon\Paginator\Adapter\Model as Paginator;
 use Phalcon\Mvc\Model\Query;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
+
+use App\Libs\SupportClass;
 
 use App\Models\Services;
 
@@ -44,17 +47,32 @@ class ServicesAPIController extends AbstractController
      *
      * @param $id
      * @param $is_company
+     * @param $page
+     * @param $page_size
+     * @param $account_id
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getServicesForSubjectAction($id, $is_company)
+    public function getServicesForSubjectAction($id, $is_company = false, $account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
+        $userId = self::getUserId();
+
+        if($account_id!=null && is_integer(intval($account_id))){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getServices')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
         if ($is_company && strtolower($is_company) != "false") {
-            $services = Services::findServicesByCompanyId($id);
+            $services = Services::findServicesByCompanyId($id,$page,$page_size);
         } else {
-            $services = Services::findServicesByUserId($id);
+            $services = Services::findServicesByUserId($id,$page,$page_size);
         }
         return $services;
     }
@@ -66,24 +84,35 @@ class ServicesAPIController extends AbstractController
      *
      * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
      *        Иначе компании, в которой он должен быть хотя бы менеджером.
-     *
+     * @param $page
+     * @param $page_size
      * @return string -  массив услуг в виде:
      *      [{serviceid, description, datepublication, pricemin, pricemax,
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getOwnServicesAction($company_id = null)
+    public function getOwnServicesAction($company_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        if ($company_id == null) {
-            $services = Services::findServicesByUserId($userId);
+        $userId = self::getUserId();
+        if ($company_id == null || !SupportClass::checkInteger($company_id)) {
+            $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
+            $this->session->set('accountId',$accountId);
+            $services = Services::findServicesByUserId($userId,$page,$page_size);
         } else {
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getServices')) {
+            if(!Accounts::checkUserHavePermissionToCompany($userId,$company_id,'getServices')){
                 throw new Http403Exception('Permission error');
             }
-            $services = Services::findServicesByCompanyId($company_id);
+
+            $accountId = Accounts::findFirst(['user_id = :userId: and company_id = :companyId:','bind'=>
+                [
+                    'userId'=>$userId,
+                    'companyId'=>$company_id
+                ]])->getId();
+
+            $this->session->set('accountId',$accountId);
+            $services = Services::findServicesByCompanyId($company_id,$page,$page_size);
         }
+
         return $services;
     }
 
@@ -232,7 +261,12 @@ class ServicesAPIController extends AbstractController
 
             $result['services'] = Services::getServicesByQueryByTags($data['user_query'],
                 $data['center'], $data['diagonal'], $data['regions_id']);
-        } else {
+        } elseif($data['type_query'] == 7) {
+
+            $result['services'] = Services::getServicesInClustersByQueryByTags($data['user_query'],
+                $data['low_left'], $data['high_right']);
+        }
+        else {
             $exception = new Http400Exception('Invalid some parameters');
             throw $exception->addErrorDetails(['type_query' => 'user query must contain at least 3 characters']);
         }
@@ -468,7 +502,7 @@ class ServicesAPIController extends AbstractController
         $data['tags'] = $inputData->tags;
         $data['old_points'] = $inputData->old_points;
         $data['new_points'] = $inputData->new_points;
-
+        $this->db->begin();
         try {
             //validation
             /*if(empty(trim($data['service_id']))) {
@@ -491,8 +525,6 @@ class ServicesAPIController extends AbstractController
             if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addService')) {
                 throw new Http403Exception('Permission error');
             }
-
-            $this->db->begin();
 
             if (!empty(trim($data['price']))) {
                 $data['price_min'] = $data['price'];
@@ -1420,7 +1452,7 @@ class ServicesAPIController extends AbstractController
             throw new Http400Exception('Service not found', ServiceService::ERROR_SERVICE_NOT_FOUND);
         }
 
-        return Services::handleServiceFromArray([$service]);
+        return Services::handleServiceFromArray([$service->toArray()]);
         //$reviews = Reviews::getReviewsForService2($service_id, 2);
 
         //$reviews = Reviews::getReviewsForService2($serviceId);
@@ -1489,6 +1521,105 @@ class ServicesAPIController extends AbstractController
 
         return $response;
     }
+
+    /**
+     * Подписывает текущего пользователя или его аккаунт (компанию) на услугу
+     *
+     * @method POST
+     *
+     * @params service_id
+     * @params account_id = null
+     *
+     * @return Response с json ответом в формате Status
+     */
+    /*public function setFavouriteAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['service_id'] = $inputData->service_id;
+        $data['account_id'] = $inputData->account_id;
+
+        try {
+            $userId = self::getUserId();
+
+            if(is_null($data['account_id']) || !is_integer($data['account_id'])){
+                $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'setFavouriteService')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            if (empty(trim($data['service_id']))) {
+                $errors['service_id'] = 'Missing required parameter "service_id"';
+            }
+
+            if ($errors != null) {
+                $exception = new Http400Exception("Invalid some parameters");
+                throw $exception->addErrorDetails($errors);
+            }
+
+            $this->serviceService->subscribeToService($data['account_id'], $data['service_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Account was successfully subscribed to service');
+    }*/
+
+
+    /**
+     * Отменяет подписку на услугу
+     *
+     * @method DELETE
+     *
+     * @param $service_id
+     * @param $account_id = null
+     *
+     * @return Response с json ответом в формате Status
+     */
+    /*public function deleteFavouriteAction($service_id, $account_id = null)
+    {
+        try {
+            $userId = self::getUserId();
+
+            if(is_null($account_id) || !is_integer($account_id)){
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'deleteFavouriteService')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $fafServ = $this->serviceService->getSigningToService($account_id,$service_id);
+
+            $this->serviceService->unsubscribeFromService($fafServ);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Account was successfully unsubscribed from service');
+    }*/
 
     /*public
     function addImagesToAllServicesAction()

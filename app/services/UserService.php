@@ -190,17 +190,11 @@ class UserService extends AbstractService
     /**
      * Delete an existing user
      *
-     * @param int $userId
+     * @param Users $user
      */
-    public function deleteUser($userId)
+    public function deleteUser(Users $user)
     {
         try {
-            $user = Users::findFirstByUserid($userId);
-
-            if (!$user) {
-                throw new ServiceException("User not found", self::ERROR_USER_NOT_FOUND);
-            }
-
             $result = $user->delete();
 
             if (!$result) {
@@ -227,7 +221,7 @@ class UserService extends AbstractService
     public function deleteActivationCode(int $userId)
     {
         try {
-            $code = ActivationCodes::findFirstByUserid($userId);
+            $code = ActivationCodes::findFirstByUserId($userId);
 
             if (!$code) {
                 return true;
@@ -243,6 +237,8 @@ class UserService extends AbstractService
                         self::ERROR_UNABLE_DELETE_ACTIVATION_CODE);
                 }
             }
+
+            return true;
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
@@ -250,9 +246,9 @@ class UserService extends AbstractService
 
     public function checkActivationCode(string $code, int $userId)
     {
-        $activationCode = ActivationCodes::findFirstByUserid($userId);
+        $activationCode = ActivationCodes::findFirstByUserId($userId);
 
-        if (!$activationCode || (strtotime(time() - $activationCode->getTime()) > ActivationCodes::TIME_LIFE)) {
+        if (!$activationCode || ((time() - strtotime($activationCode->getTime())) > ActivationCodes::TIME_LIFE)) {
             return self::WRONG_ACTIVATION_CODE;
         }
 

@@ -28,11 +28,12 @@ class Binders
             } else{
                 $binder = $task;
             }
-            return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
+
+            return Accounts::checkUserHavePermission($userId, $binder->getAccountId(),$right);
         } else if ($binderType == 'request') {
             //связующий объект - заявка
 
-            $request = Requests::findFirstByRequestid($binderId);
+            $request = Requests::findFirstByRequestId($binderId);
             if(!$request)
                 return false;
 
@@ -46,7 +47,7 @@ class Binders
                 $binder = $request;
             }
 
-            return SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $binder->getSubjectId(),$binder->getSubjectType(),$right);
+            return Accounts::checkUserHavePermission($userId, $binder->getAccountId(),$right);
         }
 
         return false;
@@ -55,16 +56,16 @@ class Binders
     public static function checkBinderExists($binderId, $binderType)
     {
         if ($binderType == 'task') {
-            $task = Tasks::findFirstByTaskid($binderId);
+            $task = Tasks::findFirstByTaskId($binderId);
             if (!$task)
                 return false;
-            $offer = Offers::findFirst(['taskid = :taskId: AND selected = true',
+            $offer = Offers::findFirst(['task_id = :taskId: AND selected = true',
                 'bind' => ['taskId' => $task->getTaskId()]]);
             if (!$offer)
                 return false;
             return true;
         } else if ($binderType == 'request') {
-            $request = Requests::findFirstByRequestid($binderId);
+            $request = Requests::findFirstByRequestId($binderId);
             if ($request && $request->services)
                 return true;
             return false;

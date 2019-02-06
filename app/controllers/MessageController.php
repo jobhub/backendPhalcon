@@ -20,7 +20,7 @@ class MessageController extends AbstractController {
      */
     public function sendMessageAction() {
         $data = json_decode($this->request->getRawBody(), true);
-        $data["sender"] = $this->getUserid();
+        $data["sender"] = $this->getUserId();
         try {
             $this->messageService->sendMessage($data);
         } catch (ServiceException $e) {
@@ -37,7 +37,7 @@ class MessageController extends AbstractController {
      */
     public function getChatBoxAction() {
         $data = json_decode($this->request->getRawBody(), true);
-        $data["sender"] = $this->getUserid();
+        $data["sender"] = $this->getUserId();
         try {
            $response = $this->messageService->getMessages($data);
         } catch (ServiceException $e) {
@@ -55,7 +55,7 @@ class MessageController extends AbstractController {
     public function setAllToReadAction() {
         $data = [];
         $jsonData = $this->request->getJsonRawBody();
-        $data["sender"] = $this->getUserid();
+        $data["sender"] = $this->getUserId();
         $data["reciever"] = $jsonData->reciever;     
        
         try {

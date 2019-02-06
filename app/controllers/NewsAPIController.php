@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Libs\SupportClass;
+use App\Models\ImagesTemp;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -32,19 +34,34 @@ use App\Services\ServiceExtendedException;
 class NewsAPIController extends AbstractController
 {
     /**
-     * Возвращает новости для ленты текущего пользователя
-     * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+     * Возвращает новости для ленты текущего пользователя или указанного аккаунта (компании)
      * @access private
      *
+     * @param $account_id
+     * @param $page
+     * @param $page_size
      * @method GET
      *
      * @return string - json array с новостями (или их отсутствием)
      */
-    public function getNewsAction()
+    public function getNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        return News::findNewsForCurrentUser($userId);
+        $userId = self::getUserId();
+
+        if ($account_id != null && is_integer(intval($account_id))) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($account_id);
+
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
+        self::setAccountId($account->getId());
+
+        return News::findNewsForCurrentAccount($account, $page, $page_size);
     }
 
     /**
@@ -52,17 +69,32 @@ class NewsAPIController extends AbstractController
      * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
      *
      * @access private
+     *
      * @method GET
      *
+     * @param $account_id
+     * @param $page
+     * @param $page_size
      * @return string - json array с новостями (или их отсутствием)
      */
-    public function getAllNewsAction()
+    public function getAllNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        $response = new Response();
+        $userId = self::getUserId();
 
-        return News::findAllNewsForCurrentUser($userId);
+        if ($account_id != null && is_integer(intval($account_id))) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($account_id);
+
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
+        self::setAccountId($account->getId());
+
+        return News::findAllNewsForCurrentUser($account, $page, $page_size);
     }
 
     /**
@@ -76,20 +108,31 @@ class NewsAPIController extends AbstractController
      * @params int account_id (если не передать, то от имени аккаунта юзера по умолчанию)
      * @params string news_text
      * @params string title
+     * @params string publish_date
+     * @params string news_type
+     *
+     * @params array temp_images - массив с id временных изображений, которые должны быть добавлены в новость
+     *
      * @params файлы изображений.
      * @return string - json array объекта Status
      */
     public function addNewsAction()
     {
         $inputData = $this->request->getJsonRawBody();
+        //$inputData = json_decode(json_encode($this->request->getPost()));
         $data['news_text'] = $inputData->news_text;
         $data['title'] = $inputData->title;
         $data['account_id'] = $inputData->account_id;
+        $data['news_type'] = $inputData->news_type;
+
+        $data['temp_images'] = $inputData->temp_images;
+
+        if (!is_null($inputData->publish_date))
+            $data['publish_date'] = date('Y-m-d H:i:sO', strtotime($inputData->publish_date));
 
         $this->db->begin();
         try {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $userId = self::getUserId();
 
             //проверки
             if (empty(trim($data['account_id']))) {
@@ -100,14 +143,56 @@ class NewsAPIController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $data['publish_date'] = date('Y-m-d H:i:s');
+            if (!is_null($data['publish_date']) && (time() - strtotime($data['publish_date']) > 3600)) {
+
+                if (strtotime($data['publish_date']) == 0)
+                    $errors['publish_date'] = 'date of publication have invalid format';
+                else
+                    $errors['publish_date'] = 'date of publication too early';
+            }
+
+            if (!is_null($errors)) {
+                $errors['errors'] = true;
+                $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+                throw $exception->addErrorDetails($errors);
+            }
 
             $news = $this->newsService->createNews($data);
+            $news = $this->newsService->getNewsById($news->getNewsId());
 
             if ($this->request->hasFiles()) {
                 $files = $this->request->getUploadedFiles();
-                $ids = $this->imageService->createImagesToUser($files, $news);
-                $this->imageService->saveImagesToUser($files, $news, $ids);
+                $ids = $this->imageService->createImagesToNews($files, $news);
+                $this->imageService->saveImagesToNews($files, $news, $ids);
+            }
+
+            $new_news_text = $news->getNewsText();
+            $tempImages = [];
+            $filenames = [];
+            if ($data['temp_images'] != null) {
+                foreach ($data['temp_images'] as $temp_image_id) {
+                    $tempImage = ImagesTemp::findFirstByImageId($temp_image_id);
+
+                    if ($tempImage->getObjectId() != $news->getAccountId())
+                        throw new Http403Exception('Permission error');
+
+                    $oldPath = $tempImage->getImagePath();
+
+                    $newPath = $this->imageService->transferTempImageToNewsObject($tempImage, $news->getNewsId());
+
+                    $filenames[] = $newPath;
+                    $new_news_text = str_replace($oldPath, $newPath, $new_news_text);
+                    $tempImages[] = $tempImage;
+                }
+
+                $new_data['news_text'] = $new_news_text;
+                $this->newsService->changeNews($news, $new_data);
+
+                $i = 0;
+                foreach ($tempImages as $tempImage) {
+                    $newPath = $this->imageService->transferTempImageToNewsFile($tempImage, $news->getNewsId(), $filenames[$i]);
+                    $i++;
+                }
             }
 
         } catch (ServiceExtendedException $e) {
@@ -117,6 +202,7 @@ class NewsAPIController extends AbstractController
                 case ImageService::ERROR_UNABLE_CREATE_IMAGE:
                 case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                 case NewsService::ERROR_UNABLE_CREATE_NEWS:
+                case NewsService::ERROR_UNABLE_CHANGE_NEWS:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -128,15 +214,16 @@ class NewsAPIController extends AbstractController
                 case ImageService::ERROR_INVALID_IMAGE_TYPE:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
-                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
         $this->db->commit();
 
-        return self::successResponse('News was successfully created',['news_id'=>$news->getNewsId()]);
+        return self::successResponse('News was successfully created',
+            ['news_id' => SupportClass::getCertainColumnsFromArray($news->toArray(), News::publicColumns)]);
     }
 
     /**
@@ -202,7 +289,7 @@ class NewsAPIController extends AbstractController
         try {
 
             //validation
-            if(empty(trim($data['news_id']))) {
+            if (empty(trim($data['news_id']))) {
                 $errors['news_id'] = 'Missing required parameter "news_id"';
             }
 
@@ -226,7 +313,6 @@ class NewsAPIController extends AbstractController
             $this->newsService->changeNews($news, $data);
 
         } catch (ServiceExtendedException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case NewsService::ERROR_UNABLE_CHANGE_NEWS:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -235,10 +321,9 @@ class NewsAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case NewsService::ERROR_NEWS_NOT_FOUND:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
@@ -252,18 +337,42 @@ class NewsAPIController extends AbstractController
      *
      * @method GET
      *
-     * @param $company_id
+     * @param $page
+     * @param $page_size
+     * @param $account_id
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getOwnNewsAction($company_id = null)
+    public function getOwnNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        if ($company_id != null) {
-            return News::findNewsByCompany($company_id);
-        } else {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            return News::findNewsByUser($userId);
+        try {
+            $userId = self::getUserId();
+
+            if ($account_id != null && SupportClass::checkInteger($account_id)) {
+                if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                    throw new Http403Exception('Permission error');
+                }
+
+            } else {
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            $this->session->set('accountId', $account_id);
+            $account = $this->accountService->getAccountById($account_id);
+
+            if($account->getCompanyId() != null){
+                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+            } else {
+                return News::findNewsByUser($userId, $page, $page_size);
+            }
+
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 
@@ -271,18 +380,33 @@ class NewsAPIController extends AbstractController
      * Возвращает новости указанного объекта
      *
      * @method GET
-     *
+     * @param $page
+     * @param $page_size
      * @param $id
      * @param $is_company (Можно не указывать, значение по умолчанию 0)
+     * @param $account_id - аккаунт от имени которого совершаются действия.
      *
      * @return string - json array объектов news или Status, если ошибка
      */
-    public function getSubjectsNewsAction($id, $is_company = false)
+    public function getSubjectsNewsAction($id, $is_company = false, $account_id = null,
+                                          $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
-        if ($is_company && strtolower($is_company)!="false")
-            return $news = News::findNewsByCompany($id);
+        $userId = self::getUserId();
+
+        if ($account_id != null && is_integer(intval($account_id))) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+        } else {
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        if ($is_company && strtolower($is_company) != "false")
+            return $news = News::findNewsByCompany($id, $page, $page_size);
         else
-            return $news = News::findNewsByUser($id);
+            return $news = News::findNewsByUser($id, $page, $page_size);
     }
 
     /**
@@ -304,12 +428,12 @@ class NewsAPIController extends AbstractController
 
             $data['news_id'] = $sender->news_id;*/
 
-            $data['news_id'] = $this->request->getPost('news_id');
+            $data['object_id'] = $this->request->getPost('object_id');
 
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $news = $this->newsService->getNewsById($data['news_id']);
+            $news = $this->newsService->getNewsById($data['object_id']);
 
             if (!Accounts::checkUserHavePermission($userId, $news->getAccountId(), 'editNews')) {
                 throw new Http403Exception('Permission error');
@@ -317,9 +441,9 @@ class NewsAPIController extends AbstractController
 
             $this->db->begin();
 
-            $ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(),$news);
+            $ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(), $news);
 
-            $this->imageService->saveImagesToNews($this->request->getUploadedFiles(),$news,$ids);
+            $this->imageService->saveImagesToNews($this->request->getUploadedFiles(), $news, $ids);
 
             $this->db->commit();
         } catch (ServiceExtendedException $e) {
@@ -619,11 +743,11 @@ class NewsAPIController extends AbstractController
      */
     public function deleteImageByIdAction($image_id)
     {
-        try{
+        try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $image = $this->imageService->getImageById($image_id,ImageService::TYPE_NEWS);
+            $image = $this->imageService->getImageById($image_id, ImageService::TYPE_NEWS);
 
             if (!Accounts::checkUserHavePermission($userId, $image->news->getAccountId(), 'editNews')) {
                 throw new Http403Exception('Permission error');

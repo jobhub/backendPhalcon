@@ -2,42 +2,51 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
 
 class ImagesUsers extends ImagesModel
 {
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
+    protected $image_text;
+
+    protected $likes;
 
     const MAX_IMAGES = 10;
 
     /**
-     * Method to set the value of field userid
-     *
-     * @param integer $user_id
-     * @return $this
+     * @return mixed
      */
-    public function setUserId($user_id)
+    public function getImageText()
     {
-        $this->user_id = $user_id;
-
-        return $this;
+        return $this->image_text;
     }
 
     /**
-     * Returns the value of field userid
-     *
-     * @return integer
+     * @param mixed $image_text
      */
-    public function getUserId()
+    public function setImageText($image_text)
     {
-        return $this->user_id;
+        $this->image_text = $image_text;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param mixed $likes
+     */
+    public function setLikes($likes)
+    {
+        $this->likes = $likes;
     }
 
     /**
@@ -50,12 +59,12 @@ class ImagesUsers extends ImagesModel
         $validator = new Validation();
 
         $validator->add(
-            'user_id',
+            'object_id',
             new Callback(
                 [
                     "message" => "Такая услуга не существует",
                     "callback" => function ($image) {
-                        $user = Users::findFirstByUserId($image->getUserId());
+                        $user = Users::findFirstByUserId($image->getObjectId());
                         if ($user)
                             return true;
                         return false;
@@ -74,8 +83,8 @@ class ImagesUsers extends ImagesModel
     {
         parent::initialize();
         $this->setSchema("public");
-        $this->setSource("imagesusers");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->setSource("image_susers");
+        $this->belongsTo('object_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -85,8 +94,14 @@ class ImagesUsers extends ImagesModel
      */
     public function getSource()
     {
-        return 'imagesusers';
+        return 'images_users';
     }
+
+    public function getSequenceName()
+    {
+        return "imagesusers_image_id_seq";
+    }
+
 
     /**
      * Allows to query a set of records that match the specified conditions
@@ -117,7 +132,9 @@ class ImagesUsers extends ImagesModel
         $result = parent::delete($delete, $data, $whiteList);
 
         if ($result && $path != null && $delete = true) {
-            $userinfo = Userinfo::findFirstByUserId($this->getUserId());
+
+            $userinfo = Userinfo::findFirstByUserId($this->getObjectId());
+
             if ($userinfo->getPathToPhoto() == $path) {
                 $userinfo->setPathToPhoto(null);
                 $userinfo->update();
@@ -128,37 +145,55 @@ class ImagesUsers extends ImagesModel
     }
 
     /**
-     * return formatted array with images
-     * @param $userId
-     * @return array
-     */
-    public static function getImages($userId)
-    {
-        $images = ImagesUsers::findByUserId($userId);
-        return self::handleImages($images);
-    }
-
-    /**
      * return non formatted images objects
      * @param $userId
+     * @param $page
+     * @param $page_size
      * @return mixed
      */
-    public static function findImagesForUser($userId){
-        return self::findByUserId($userId);
+    public static function findImagesForUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE){
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+        return self::handleImages(
+            self::find(['conditions'=>'object_id = :user_id:','bind'=>['user_id'=>$userId],
+                'limit'=>$page_size,'offset'=>$offset,'order'=>'image_id desc'])->toArray()
+        );
+    }
+
+    public static function handleImage($image, Accounts $account = null)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path']];
+
+        if($account!=null) {
+            $relatedAccounts = $account->getRelatedAccounts();
+            $accountId = $account->getId();
+        }
+
+        $handledImage['stats']['comments'] = CommentsModel::getCountOfComments('comments_imagesusers', $image['image_id']);
+        $handledImage = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsImagesUsers',$handledImage, $image['image_id'], $relatedAccounts);
+
+        $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
+
+        $handledImage['image_text'] = $image['image_text'];
+
+        return $handledImage;
     }
 
     public static function handleImages($images)
     {
+        $session = DI::getDefault()->get('session');
+        $accountId = $session->get('accountId');
+
+        $account = Accounts::findFirstById($accountId);
+
+        if(!$account)
+            $account = null;
+
         $handledImages = [];
         foreach ($images as $image) {
-            $handledImage = [
-                'image_id' => $image->getImageId(),
-                'image_path' => $image->getImagePath()];
-
-            $handledImage['stats'] = new Stats();
-            $handledImage['comments'] = CommentsImagesUsers::getComments($image->getImageId());
-            $handledImage['stats']->setComments(count($handledImage['comments']));
-            $handledImages[] = $handledImage;
+            $handledImages[] = self::handleImage($image,$account);
         }
         return $handledImages;
     }

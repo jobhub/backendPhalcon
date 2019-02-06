@@ -75,6 +75,14 @@ class ImageLoader
             $filename,$userId,750);
     }
 
+    public static function loadTempImage($tempname, $name,$userId, $imageId)
+    {
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$imageId);
+        return ImageLoader::load('accounts/temp',$tempname,
+            $filename,$userId,null);
+    }
+
     public static function loadEventImage($tempname, $name, $eventId,$imageId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);

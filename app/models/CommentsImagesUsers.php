@@ -77,7 +77,7 @@ class CommentsImagesUsers extends CommentsModel
     {
         parent::initialize();
         $this->setSource("comments_imagesusers");
-        $this->belongsTo('image_id', 'App\Models\ImagesUsers', 'image_id', ['alias' => 'ImagesUsers']);
+        $this->belongsTo('object_id', 'App\Models\ImagesUsers', 'image_id', ['alias' => 'ImagesUsers']);
     }
 
     public function getSequenceName()
@@ -94,16 +94,5 @@ class CommentsImagesUsers extends CommentsModel
     public function getSource()
     {
         return 'comments_imagesusers';
-    }
-
-    public static function getComments($imageId){
-        $comments = CommentsImagesUsers::find(['image_id = :imageId:','bind' =>['imageId'=> $imageId],
-            'order' => 'comment_date DESC'],false);
-
-        $comments_arr =  CommentsModel::handleComments($comments->toArray());
-        for($i = 0; $i < count($comments_arr);$i++){
-            $comments_arr[$i]['likes'] = count(LikesCommentsImagesUsers::findByCommentId($comments_arr[$i]['comment_id']));
-        }
-        return $comments_arr;
     }
 }

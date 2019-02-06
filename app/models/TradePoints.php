@@ -86,16 +86,23 @@ class TradePoints extends AccountWithNotDeletedWithCascade
 
     /**
      *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $marker_id;
+
+    /**
+     *
      * @var string
      * @Column(type="string", nullable=true)
      */
     protected $position_variable;
 
     const publicColumns = ['point_id', 'name', 'longitude', 'latitude', 'time',
-        'email', 'user_manager', 'website', 'address', 'position_variable'];
+        'email', 'user_manager', 'website', 'address', 'position_variable', 'marker_id'];
 
     const publicColumnsInStr = ['point_id, name, longitude, latitude, time,
-        email, user_manager, website, address, position_variable'];
+        email, user_manager, website, address, position_variable, marker_id'];
 
     /**
      * Method to set the value of field pointId
@@ -350,6 +357,19 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         return $this->address;
     }
 
+    public function getMarkerId()
+    {
+        return $this->marker_id;
+    }
+
+    /**
+     * @param int $marker_id
+     */
+    public function setMarkerId(int $marker_id)
+    {
+        $this->marker_id = $marker_id;
+    }
+
     /**
      * Validations and business logic
      *
@@ -381,7 +401,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
             );*/
 
         //Предположим, что это правильная регулярка.
-        if ($this->getWebSite() != null)
+        /*if ($this->getWebSite() != null)
             $validator->add(
                 'website',
                 new Regex(
@@ -390,7 +410,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                         "message" => "Введите, пожалуйста, корректный URL",
                     ]
                 )
-            );
+            );*/
 
 
         if ($this->getUserManager() != null) {
@@ -402,6 +422,40 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                         "callback" => function ($company) {
                             $user = Users::findFirstByUserId($company->getUserManager());
                             if ($user)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        if ($this->getUserManager() != null) {
+            $validator->add(
+                'user_manager',
+                new Callback(
+                    [
+                        "message" => "Такого пользователя не существует",
+                        "callback" => function ($company) {
+                            $user = Users::findFirstByUserId($company->getUserManager());
+                            if ($user)
+                                return true;
+                            return false;
+                        }
+                    ]
+                )
+            );
+        }
+
+        if ($this->getMarkerId() != null) {
+            $validator->add(
+                'marker_id',
+                new Callback(
+                    [
+                        "message" => "Маркер не был создан",
+                        "callback" => function ($point) {
+                            $marker = Markers::findFirstByMarkerId($point->getMarkerId());
+                            if ($marker)
                                 return true;
                             return false;
                         }
@@ -427,7 +481,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
             );
         }*/
 
-        return $this->validate($validator) && parent::validation();
+        return $this->validate($validator) /*&& parent::validation()*/;
     }
 
     /**
@@ -439,6 +493,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         $this->setSource("tradePoints");
         $this->hasMany('point_id', 'App\Models\PhonesPoints', 'point_id', ['alias' => 'PhonesPoints']);
         $this->belongsTo('user_manager', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('marker_id', 'App\Models\Markers', 'marker_id', ['alias' => 'Markers']);
     }
 
     /**
@@ -500,6 +555,12 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         foreach ($points as $point) {
             $point['phones'] = PhonesPoints::findPhonesForPoint($point['point_id']);
             $result[] = $point;
+
+            if(!is_null($point['marker_id'])){
+                $marker = Markers::findFirstByMarkerId($point['marker_id']);
+                $point['latitude'] = $marker->getLatitude();
+                $point['longitude'] = $marker->getLongitude();
+            }
 
             if($point['email'] == null || $point['website'] == null){
                 $account = Accounts::findFirstById($point['account_id']);

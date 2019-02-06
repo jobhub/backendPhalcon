@@ -101,6 +101,7 @@ class TradePointsAPIController extends AbstractController
         $data['company_id'] = $inputData->company_id;
         $data['account_id'] = $inputData->account_id;
 
+        $this->db->begin();
         try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -114,6 +115,7 @@ class TradePointsAPIController extends AbstractController
             $point = $this->pointService->createPoint($data);
 
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case PointService::ERROR_UNABLE_CREATE_POINT:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -122,7 +124,7 @@ class TradePointsAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
+        $this->db->commit();
         return self::successResponse('Trade point was successfully created', ['point_id' => $point->getPointId()]);
     }
 
@@ -341,5 +343,38 @@ class TradePointsAPIController extends AbstractController
 
         $point = TradePoints::handlePointsFromArray([$point->toArray()]);
         return ['point' => $point, 'services' => Services::findServicesForPoint($point_id)];
+    }
+
+    public function changePointsAction()
+    {
+        $userId = self::getUserId();
+
+        if($userId!=6){
+            throw new Http403Exception('Permission error');
+        }
+        $this->db->begin();
+        try {
+            $tradePoints = TradePoints::find();
+
+            foreach ($tradePoints as $point) {
+                if ($point->getMarkerId() == null) {
+                    $marker = $this->pointService->createMarker($point->getLongitude(),$point->getLatitude());
+                    $this->pointService->changePoint($point, ['marker_id'=>$marker->getMarkerId()]);
+                }
+            }
+        }catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case PointService::ERROR_UNABLE_CREATE_MARKER:
+                case PointService::ERROR_UNABLE_CHANGE_POINT:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        $this->db->commit();
+        return self::successResponse('All ok');
     }
 }

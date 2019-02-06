@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Accounts;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 
@@ -47,7 +48,7 @@ class SessionAPIController extends AbstractController
     /**
      * Выдает текущую роль пользователя.
      * @access public
-     * @method POST
+     * @method GET
      */
     public function getCurrentRoleAction()
     {
@@ -76,6 +77,38 @@ class SessionAPIController extends AbstractController
     }
 
     /**
+     * Возвращает аккаунты текущего пользователя
+     *
+     * @access private
+     *
+     * @method GET
+     *
+     * @return array
+     */
+    public function getAccountsAction()
+    {
+        try {
+            $userId = self::getUserId();
+
+            $accounts = Accounts::findAccountsByUser($userId);
+
+            $accountsRes = [];
+            foreach ($accounts as $account){
+                $accountsRes[] = ['account'=> $account->toArray(),
+                    'info'=>$account->getUserInfomations()->toArray()];
+            }
+
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return $accountsRes;
+    }
+
+    /**
      * Авторизует пользователя в системе
      *
      * @method POST
@@ -86,11 +119,29 @@ class SessionAPIController extends AbstractController
     {
         $data = json_decode($this->request->getRawBody(), true);
 
+        if (empty($data['login'])) {
+            $errors['login'] = 'Missing required parameter \'login\'';
+        }
+
+        if (empty($data['password'])) {
+            $errors['password'] = 'Missing required parameter \'password\'';
+        }
+
+        if (!is_null($errors)) {
+            $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+            throw $exception->addErrorDetails($errors);
+        }
+
         try {
             $user = $this->userService->getUserByLogin($data['login']);
+            SupportClass::writeMessageInLogFile('email пользователя ' . $user->getEmail());
             SupportClass::writeMessageInLogFile('Юзер найден в бд');
             $this->authService->checkPassword($user, $data['password']);
             $result = $this->authService->createSession($user);
+
+            $userInfo = $this->userInfoService->getHandledUserInfoById($user->getUserId());
+
+            $result['info'] = $userInfo;
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
@@ -102,7 +153,7 @@ class SessionAPIController extends AbstractController
         }
 
         $result['role'] = $user->getRole();
-        return self::successResponse('Successfully login',$result);
+        return self::successResponse('Successfully login', $result);
     }
 
     /**

@@ -116,22 +116,22 @@ class AuthService extends AbstractService
      */
     public function createActivationCode(Users $user)
     {
-        $activationCode = ActivationCodes::findFirstByUserid($user->getUserId());
+        $activationCode = ActivationCodes::findFirstByUserId($user->getUserId());
 
         if (!$activationCode) {
             $activationCode = new ActivationCodes();
             $activationCode->setUserId($user->getUserId());
         } else {
-            if (strtotime($activationCode->getTime()) > strtotime(date('Y-m-d H:i:s') . '+00') - ActivationCodes::RESEND_TIME) {
+            if (strtotime($activationCode->getTime()) > strtotime(date('Y-m-d H:i:sO')) - ActivationCodes::RESEND_TIME) {
                 throw new ServiceExtendedException('Time to resend did\'t come', self::ERROR_NO_TIME_TO_RESEND, null, null,
                     ['time_left' => strtotime($activationCode->getTime())
-                        - (strtotime(date('Y-m-d H:i:s' . '+00')) - ActivationCodes::RESEND_TIME)]);
+                        - (strtotime(date('Y-m-d H:i:sO')) - ActivationCodes::RESEND_TIME)]);
             }
         }
 
         $activationCode->setActivation($this->generateActivation($user));
         $activationCode->setDeactivation($this->generateDeactivation($user));
-        $activationCode->setTime(date('Y-m-d H:i:s'));
+        $activationCode->setTime(date('Y-m-d H:i:sO'));
 
         if (!$activationCode->save()) {
             $errors = SupportClass::getArrayWithErrors($activationCode);
@@ -253,6 +253,11 @@ class AuthService extends AbstractService
     public function checkToken($token)
     {
         $data = explode('.', $token);
+
+        if(count($data) < 3){
+            return false;
+        }
+
         //openssl_public_encrypt($header.$payload,$signature,PRIVATE_KEY,OPENSSL_PKCS1_PADDING);
         $di = DI::getDefault();
 
