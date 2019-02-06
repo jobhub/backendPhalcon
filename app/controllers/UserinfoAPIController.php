@@ -85,66 +85,47 @@ class UserinfoAPIController extends AbstractController
     }
 
     /**
-     * Удаляет пользователя
+     * Удаляет текущего пользователя
      *
      * @method DELETE
      *
-     * @param $userId
-     *
      * @return string - json array - объект Status - результат операции
      */
-    /*public function deleteUserAction($userId)
+    public function deleteUserAction()
     {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-            $auth = $this->session->get('auth');
-            $currentUserId = $auth['id'];
-            $response = new Response();
+        try {
+            $userId = self::getUserId();
 
-            $user = Users::findFirstByUserid($userId);
+            $user = $this->userService->getUserById($userId);
 
-            if (!$user || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($currentUserId, $userId, 0, 'deleteUser')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            $this->userService->deleteUser($user);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_UNABLE_DELETE_USER:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            if (!$user->delete()) {
-                $errors = [];
-                foreach ($user->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
         }
-    }*/
+
+        return self::successResponse('User was successfully deleted');
+    }
 
     /**
      * Восстанавливает пользователя
      *
      * @method POST
      *
-     * @param userId
+     * @param user_id
      *
      * @return string - json array - объект Status - результат операции
      */
@@ -211,6 +192,7 @@ class UserinfoAPIController extends AbstractController
     {
         try {
             $currentUserId = self::getUserId();
+            SupportClass::writeMessageInLogFile('При получении инфы о пользователе');
 
             if ($account_id != null && SupportClass::checkInteger($account_id)) {
                 if (!Accounts::checkUserHavePermission($currentUserId, $account_id, 'getNews')) {
@@ -218,12 +200,14 @@ class UserinfoAPIController extends AbstractController
                 }
 
                 $account = Accounts::findFirstById($account_id);
-
             } else {
                 $account = Accounts::findForUserDefaultAccount($currentUserId);
             }
 
             $res_user_id = ($user_id == null || !SupportClass::checkInteger($user_id)) ? $currentUserId : $user_id;
+
+            if(!$account)
+                $account = null;
 
             $userInfo = $this->userInfoService->getHandledUserInfoById($res_user_id, $account);
 

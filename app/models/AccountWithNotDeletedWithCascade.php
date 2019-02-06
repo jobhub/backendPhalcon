@@ -7,6 +7,7 @@ use Phalcon\DI\FactoryDefault as DI;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
+
 class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
 {
     /**
@@ -146,5 +147,67 @@ class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
         }
 
         return self::findByTemplate($columns,$model,$result_condition,$result_bind);
+    }
+
+    /**
+     * Отмечает как удаленные все объекты данной модели, созданные одним из указанных аккаунтов
+     *
+     * @param string $accountIds - array of accounts in postgres format
+     * @param $transaction - объект транзакции для отката изменений
+     *
+     * @exception Phalcon\Mvc\Model\Transaction\Failed - в случае неудачи установки отметки об удалении
+     *
+     * @return bool - результат операции.
+     */
+    public static function cascadeDeletingByAccountIds(string $accountIds, $transaction){
+        $objects = self::find(['account_id = ANY(:ids:)','bind'=>['ids'=>$accountIds]]);
+        foreach($objects as $object){
+            $object->setTransaction($transaction);
+            if (!$object->delete(false, true)) {
+                $message = 'Невозможно удалить объект из таблицы '.$object->getSource().' со следующими ошибками: ';
+
+                foreach ($object->getMessages() as $message){
+                    $message .= $message->getMessage().'; ';
+                }
+                $transaction->rollback(
+                    $message
+                );
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Восстанавливает (убирает отметку об удалении) все объекты данной модели, созданные одним из указанных аккаунтов
+     *
+     * @param string $accountIds - array of accounts in postgres format
+     * @param $transaction - объект транзакции для отката изменений
+     *
+     * @exception Phalcon\Mvc\Model\Transaction\Failed - в случае неудачи установки отметки об удалении
+     *
+     * @return bool - результат операции.
+     */
+    public static function cascadeRestoringByAccountIds(string $accountIds, $transaction){
+        $objects = self::find(["account_id = ANY(:ids:) AND deleted = true AND deleted_cascade = true",
+            'bind' =>
+                ['ids' => $accountIds
+                ]], false);
+        foreach ($objects as $object) {
+            $object->setTransaction($transaction);
+
+            if (!$object->restore()) {
+                $message = 'Невозможно восстановить объект из таблицы '.$object->getSource().' со следующими ошибками: ';
+
+                foreach ($object->getMessages() as $message){
+                    $message .= $message->getMessage().'; ';
+                }
+                $transaction->rollback(
+                    $message
+                );
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -6,6 +6,8 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 class UserLocation extends \Phalcon\Mvc\Model
 {
 
@@ -20,16 +22,9 @@ class UserLocation extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=53, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
-    protected $longitude;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=53, nullable=false)
-     */
-    protected $latitude;
+    protected $marker_id;
 
     /**
      *
@@ -47,32 +42,6 @@ class UserLocation extends \Phalcon\Mvc\Model
     public function setUserId($userid)
     {
         $this->user_id = $userid;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field longitude
-     *
-     * @param string $longitude
-     * @return $this
-     */
-    public function setLongitude($longitude)
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field latitude
-     *
-     * @param string $latitude
-     * @return $this
-     */
-    public function setLatitude($latitude)
-    {
-        $this->latitude = $latitude;
 
         return $this;
     }
@@ -101,26 +70,6 @@ class UserLocation extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field longitude
-     *
-     * @return string
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
-    }
-
-    /**
-     * Returns the value of field latitude
-     *
-     * @return string
-     */
-    public function getLatitude()
-    {
-        return $this->latitude;
-    }
-
-    /**
      * Returns the value of field lasttime
      *
      * @return string
@@ -128,6 +77,22 @@ class UserLocation extends \Phalcon\Mvc\Model
     public function getLastTime()
     {
         return $this->last_time;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarkerId(): string
+    {
+        return $this->marker_id;
+    }
+
+    /**
+     * @param string $marker_id
+     */
+    public function setMarkerId(string $marker_id)
+    {
+        $this->marker_id = $marker_id;
     }
 
     /**
@@ -152,37 +117,6 @@ class UserLocation extends \Phalcon\Mvc\Model
                     }
                 ]
             )
-        );
-
-        $validator->add(
-            'longitude',
-            new Callback([
-                "message" => "Не указана долгота",
-                "callback" => function ($userlocation) {
-                    if ($userlocation->getLongitude() != null && is_double($userlocation->getLongitude()))
-                        return true;
-                    return false;
-                }
-            ])
-        );
-
-        $validator->add(
-            'latitude',
-            new Callback([
-                "message" => "Не указана широта",
-                "callback" => function ($userlocation) {
-                    if ($userlocation->getLatitude() != null && is_double($userlocation->getLatitude()))
-                        return true;
-                    return false;
-                }
-            ])
-        );
-
-        $validator->add(
-            'last_time',
-            new PresenceOf([
-                "message" => "Должны быть указаны дата и время, когда местоположение было актуально"
-            ])
         );
 
         /*$validator->add(
@@ -210,6 +144,7 @@ class UserLocation extends \Phalcon\Mvc\Model
         $this->setSchema("public");
         $this->setSource("user_location");
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('marker_id', 'App\Models\Markers', 'marker_id', ['alias' => 'Markers']);
     }
 
     /**
@@ -244,7 +179,7 @@ class UserLocation extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findUsersByQuery($query, $longitudeRH, $latitudeRH,
+    /*public static function findUsersByQuery($query, $longitudeRH, $latitudeRH,
                                             $longitudeLB, $latitudeLB)
     {
 
@@ -283,13 +218,13 @@ class UserLocation extends \Phalcon\Mvc\Model
         SupportClass::writeMessageInLogFile('Результат поиска по юзерам:');
         SupportClass::writeMessageInLogFile($str);
         return $result;
-    }
+    }*/
 
     public static function findUsersByQueryWithFilters($query, $longitudeRH, $latitudeRH,
-                                            $longitudeLB, $latitudeLB,$ageMin = null, $ageMax = null,
+                                                       $longitudeLB, $latitudeLB, $ageMin = null, $ageMax = null,
                                                        $male = null, $hasPhoto = null)
     {
-        $db = Phalcon\DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();
 
         $query = str_replace('!', '', $query);
         $query = str_replace('|', '', $query);
@@ -303,11 +238,11 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $str = implode(' ', $res2);
 
-        $sqlQuery = "select userid, email, phone,
-    firstname,lastname, patronymic, longitude, latitude, lasttime,
-    male, birthday,pathtophoto,status from get_users_for_search_like_2(:str,:longituderh,
+        $sqlQuery = "select user_id, email, phone,
+    first_name,last_name, patronymic, longitude, latitude, last_time,
+    male, birthday,path_to_photo,status from get_users_for_search_like_2(:str,:longituderh,
             :latituderh, :longitudelb, :latitudelb) 
-            where lasttime > :lasttime";
+            where last_time > (:last_time)::date";
 
         $params = [
             'str' => $str,
@@ -315,48 +250,74 @@ class UserLocation extends \Phalcon\Mvc\Model
             'latituderh' => $latitudeRH,
             'longitudelb' => $longitudeLB,
             'latitudelb' => $latitudeLB,
-            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
+            'last_time' => date('Y-m-d H:i:sO', time() + -3600),
         ];
-        if($ageMin!=null){
-            $dateMin = date('Y-m-d H:i:s', mktime(date('H'),date('i'),date('s'),
-                date('m'),date('d'),date('Y') - $ageMin));
-            $sqlQuery.= " and birthday >= :dateMin";
-            $params['dateMin'] = $dateMin;
+
+        $whereExists = false;
+
+        if ($ageMin != null && $ageMin != false) {
+            $dateMin = date('Y-m-d H:i:sO', mktime(date('H'), date('i'), date('s'),
+                date('m'), date('d'), date('Y') - $ageMin));
+            if ($whereExists)
+                $sqlQuery .= " and birthday <= '" . $dateMin . '\'::date';
+            else {
+                $whereExists = true;
+                $sqlQuery .= "where birthday <= '" . $dateMin . '\'::date';
+            }
+            //$params['dateMin'] = $dateMin;
         }
 
-        if($ageMax!=null){
-            $dateMax = date('Y-m-d H:i:s', mktime(date('H'),date('i'),date('s'),
-                date('m'),date('d'),date('Y') - $ageMax));
-            $sqlQuery.= " and birthday <= :dateMax";
-            $params['dateMax'] = $dateMax;
+        if ($ageMax != null && $ageMax != false) {
+            $dateMax = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'),
+                date('m'), date('d'), date('Y') - $ageMax));
+            if ($whereExists)
+                $sqlQuery .= " and birthday >= '" . $dateMax . '\'::date';
+            else {
+                $whereExists = true;
+                $sqlQuery .= "where birthday >= '" . $dateMax . '\'::date';
+            }
+
+            /*$params['dateMax'] = $dateMax;*/
         }
 
-        if($male!=null){
-            $sqlQuery.= " and male = :male";
+        if ($male != null && $male != false || is_integer($male)) {
+            if ($whereExists)
+                $sqlQuery .= " and male = :male";
+            else {
+                $whereExists = true;
+                $sqlQuery .= " where male = :male";
+            }
             $params['male'] = $male;
         }
 
-        if($hasPhoto!=null){
-            if($hasPhoto)
-                $sqlQuery.= " and not (pathtophoto is null)";
-            else{
-                $sqlQuery.= " and (pathtophoto is null)";
+        if (!is_null($hasPhoto) || is_bool($hasPhoto)) {
+            if ($whereExists) {
+                if ($hasPhoto)
+                    $sqlQuery .= " and not (path_to_photo is null)";
+                else {
+                    $sqlQuery .= " and (path_to_photo is null)";
+                }
+            } else {
+                $whereExists = true;
+                if ($hasPhoto)
+                    $sqlQuery .= " where not (path_to_photo is null)";
+                else {
+                    $sqlQuery .= " where (path_to_photo is null)";
+                }
             }
         }
-
-        $sqlQuery.=" LIMIT 50";
 
         $query = $db->prepare($sqlQuery);
 
         $query->execute($params);
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-        $str = var_export($result, true);
+
         return $result;
     }
 
 
-
-    function calculate_age($birthday) {
+    function calculate_age($birthday)
+    {
         $birthday_timestamp = strtotime($birthday);
         $age = date('Y') - date('Y', $birthday_timestamp);
         if (date('md', $birthday_timestamp) > date('md')) {
@@ -429,5 +390,28 @@ class UserLocation extends \Phalcon\Mvc\Model
         ]);
 
         return $query->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function handleUserLocations(array $locations)
+    {
+        $handledLocations = [];
+        foreach ($locations as $location) {
+            $handledLocations[] = self::handleUserLocation($location);
+        }
+
+        return $handledLocations;
+    }
+
+    public static function handleUserLocation(array $location)
+    {
+        $marker = Markers::findFirstByMarkerId($location['marker_id']);
+        $handledLocation = [
+            'user_id' => $location['user_id'],
+            'last_time' => $location['last_time'],
+            'longitude' => $marker->getLongitude(),
+            'latitude' => $marker->getLatitude()
+        ];
+
+        return $handledLocation;
     }
 }

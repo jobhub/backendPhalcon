@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libs\SupportClass;
 use App\Models\CompanyRole;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -82,7 +83,7 @@ class CompaniesAPIController extends AbstractController
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
 
-            $company = $this->companyService->createCompany($data, $userId);
+            $company = $this->companyService->createCompany($data);
 
             $account_id = $this->accountService->createAccount([
                 'user_id' => $userId,
@@ -120,14 +121,13 @@ class CompaniesAPIController extends AbstractController
     public function deleteCompanyAction($company_id)
     {
         try {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $userId = self::getUserId();
 
-            $company = $this->companyService->getCompanyById($company_id);
-
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'deleteCompany')) {
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'deleteCompany')) {
                 throw new Http403Exception('Permission error');
             }
+
+            $company = $this->companyService->getCompanyById($company_id);
 
             $this->companyService->deleteCompany($company);
 
@@ -396,56 +396,47 @@ class CompaniesAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params companyId
+     * @params company_id
      *
      * @return string - json array - объект Status - результат операции
      */
     public function restoreCompanyAction()
     {
-        //TODO Необходимо сделать восстановление компании, когда будут переделаны все основные контроллеры (и модели).
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-            $response = new Response();
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
 
-            $company = Companies::findFirst(['companyid = :companyId:',
-                'bind' => ['companyId' => $this->request->getPost('companyId')]], false);
+        try {
+            $userId = self::getUserId();
 
-            if (!$company || !Companies::checkUserHavePermission($userId, $company->getCompanyId(), 'restoreCompany')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $data['company_id'], 'restoreCompany')) {
+                throw new Http403Exception('Permission error');
             }
 
-            if (!$company->restore()) {
-                $errors = [];
-                foreach ($company->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
+            $company = $this->companyService->getDeletedCompanyById($data['company_id']);
+
+            $this->companyService->restoreCompany($company);
+
+            $company = $this->companyService->getCompanyById($data['company_id']);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_RESTORE_COMPANY:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK,
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-            throw $exception;
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
+
+        return self::successResponse('Company was successfully restored',
+            SupportClass::getCertainColumnsFromArray($company->toArray(),Companies::publicColumns));
     }
 
     /*public function deleteCompanyTestAction($companyId)

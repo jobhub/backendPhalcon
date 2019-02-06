@@ -121,7 +121,7 @@ class UserInfoService extends AbstractService {
         return $user;
     }
 
-    public function getHandledUserInfoById(int $userId, Accounts $accountReceiver){
+    public function getHandledUserInfoById(int $userId, Accounts $accountReceiver = null){
         $userInfo = Userinfo::findUserInfoById($userId);
 
         if (!$userInfo || $userInfo == null) {

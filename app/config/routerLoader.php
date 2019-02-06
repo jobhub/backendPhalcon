@@ -197,7 +197,7 @@ $routes = [
              *
              * @method POST
              *
-             * @params (обязательные) firstname, lastname, male
+             * @params (обязательные) first_name, last_name, male
              * @params (Необязательные) patronymic, birthday, about (много текста о себе),
              * @return string - json array Status
              */
@@ -429,6 +429,19 @@ $routes = [
                 'type' => 'post',
                 'path' => '/set-photo',
                 'action' => 'setPhotoAction'
+            ],
+
+            /**
+             * Удаляет текущего пользователя
+             *
+             * @method DELETE
+             *
+             * @return string - json array - объект Status - результат операции
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete',
+                'action' => 'deleteUserAction'
             ],
 
             /**
@@ -1165,6 +1178,21 @@ $routes = [
                 'type' => 'delete',
                 'path' => '/delete/{company_id}',
                 'action' => 'deleteCompanyAction'
+            ],
+
+            /**
+             * Восстанавливает компанию
+             *
+             * @method POST
+             *
+             * @params company_id
+             *
+             * @return string - данные компании
+             */
+            [
+                'type' => 'post',
+                'path' => '/restore',
+                'action' => 'restoreCompanyAction'
             ],
 
             /**
@@ -2483,6 +2511,107 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/service/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouriteServicesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\UserLocationAPIController'=>[
+        'prefix' => '/user/location',
+        'resources' => [
+            /**
+             * Устанавливает текущее местоположение текущего пользователя.
+             *
+             * @access private.
+             *
+             * @method POST
+             * @params latitude;
+             * @params longitude;
+             * @return string - json array результат операции.
+             */
+            [
+                'type' => 'post',
+                'path' => '/set',
+                'action' => 'setLocationAction'
+            ],
+
+            /**
+             * Ищет пользователей по поисковой строке и внутри заданных координат.
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findUsersAction'
+            ],
+
+            /**
+             * Ищет пользователей по поисковой строке и внутри заданных координат.
+             * С заданным фильтром.
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @params age_min - минимальный возраст
+             * @params age_max - максимальный возраст
+             * @params male - пол
+             * @params has_photo - фильтр, имеется ли у него фотография
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/find/with-filters',
+                'action' => 'findUsersWithFiltersAction'
+            ],
+
+            /**
+             * Возвращает данные для автокомплита поиска по пользователям.
+             *
+             * @access public
+             *
+             * @method POST
+             *
+             * @params string query
+             * @params center - [longitude => ..., latitude => ...] - центральная точка
+             * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, firstname, lastname, patronymic,status]]
+             */
+            [
+                'type' => 'post',
+                'path' => '/get/autocomplete',
+                'action' => 'getAutoCompleteForSearchAction'
+            ],
+
+            /**
+             * Возвращает данные по id пользователя аналогичные поиску, но без поиска.
+             *
+             * @access public
+             *
+             * @method GET
+             *
+             * @param int $user_id
+             * @return string - json array - массив пользователей.
+             *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
+             *          longitude, latitude, lasttime, male, birthday, pathtophoto,status]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{user_id}',
+                'action' => 'getUserByIdAction'
             ],
         ]
     ],

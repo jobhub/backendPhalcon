@@ -538,7 +538,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     public static function handleUserInfo(Userinfo $userInfo, Accounts $accountReceiver = null)
     {
         $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
-        $images = ImagesUsers::findImages('App\Models\ImagesUsers',$userInfo->getUserId());
+        $images = ImagesUsers::findImages('App\Models\ImagesUsers', $userInfo->getUserId());
 
         $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
 
@@ -548,10 +548,10 @@ class Userinfo extends \Phalcon\Mvc\Model
             'images' => $images,
         ];
 
-        if(!$account)
+        if (!$account)
             return $data;
 
-        $data = Accounts::addInformationForCabinet($account,$data,$accountReceiver);
+        $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
 
         return $data;
     }
@@ -586,7 +586,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         $whereExists = false;
 
         if ($ageMin != null && $ageMin != false) {
-            $dateMin = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'),
+            $dateMin = date('Y-m-d H:i:sO', mktime(date('H'), date('i'), date('s'),
                 date('m'), date('d'), date('Y') - $ageMin));
             if ($whereExists)
                 $sqlQuery .= " and birthday <= '" . $dateMin . '\'::date';
@@ -598,7 +598,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         }
 
         if ($ageMax != null && $ageMax != false) {
-            $dateMax = date('Y-m-d H:i:s', mktime(date('H'), date('i'), date('s'),
+            $dateMax = date('Y-m-d H:i:sO', mktime(date('H'), date('i'), date('s'),
                 date('m'), date('d'), date('Y') - $ageMax));
             if ($whereExists)
                 $sqlQuery .= " and birthday >= '" . $dateMax . '\'::date';
@@ -645,15 +645,10 @@ class Userinfo extends \Phalcon\Mvc\Model
         $params['limit'] = $page_size;
         $params['offset'] = $offset;
 
-        try {
-            $query = $db->prepare($sqlQuery);
+        $query = $db->prepare($sqlQuery);
 
-
-            $query->execute($params);
-            $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-        }catch (\Exception $e){
-            echo $e;
-        }
+        $query->execute($params);
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
 //$str = var_export($result, true);
         return $result;
     }

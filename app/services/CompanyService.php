@@ -28,8 +28,9 @@ class CompanyService extends AbstractService {
     const ERROR_UNABLE_DELETE_COMPANY = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_COMPANY = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CREATE_COMPANY = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_RESTORE_COMPANY = 5 + self::ADDED_CODE_NUMBER;
 
-    public function createCompany(array $companyData, int $creator_user_id){
+    public function createCompany(array $companyData){
         $company = new Companies();
 
         $this->fillCompany($company,$companyData);
@@ -109,6 +110,32 @@ class CompanyService extends AbstractService {
                     self::ERROR_UNABLE_DELETE_COMPANY);
             }
         }
+        }catch(\PDOException $e){
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+    }
+
+    public function getDeletedCompanyById(int $companyId){
+        $company = Companies::findFirst(['company_id = :companyId:','bind'=>['companyId'=>$companyId]],false);
+
+        if (!$company || $company == null) {
+            throw new ServiceException('Company don\'t exists', self::ERROR_COMPANY_NOT_FOUND);
+        }
+        return $company;
+    }
+
+    public function restoreCompany(Companies $company){
+        try{
+            if (!$company->restore()) {
+                $errors = SupportClass::getArrayWithErrors($company);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to restore company',
+                        self::ERROR_UNABLE_RESTORE_COMPANY, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to restore company',
+                        self::ERROR_UNABLE_RESTORE_COMPANY);
+                }
+            }
         }catch(\PDOException $e){
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }

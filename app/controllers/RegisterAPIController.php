@@ -167,7 +167,7 @@ class RegisterAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params (обязательные) firstname, lastname, male
+     * @params (обязательные) first_name, last_name, male
      * @params (Необязательные) patronymic, birthday, about (много текста о себе),
      * @return string - json array Status
      */
@@ -223,7 +223,9 @@ class RegisterAPIController extends AbstractController
      */
     public function activateLinkAction()
     {
-        $data = json_decode($this->request->getRawBody(), true);
+        $inputData = $this->request->getJsonRawBody();
+        $data['activation_code'] = $inputData->activation_code;
+        $data['login'] = $inputData->login;
 
         if (empty(trim($data['login']))) {
             $errors['login'] = 'Required login';

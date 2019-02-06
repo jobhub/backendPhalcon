@@ -32,7 +32,6 @@ class PointService extends AbstractService
     const ERROR_UNABLE_ADD_POINT_TO_SERVICE = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_POINT_FROM_SERVICE = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_POINT = 6 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_CREATE_MARKER = 7 + self::ADDED_CODE_NUMBER;
 
     public function addPointToService(int $pointId, int $serviceId)
     {
@@ -85,7 +84,7 @@ class PointService extends AbstractService
     {
         $point = new TradePoints();
 
-        $marker = $this->createMarker($data['longitude'],$data['latitude']);
+        $marker = $this->markerService->createMarker($data['longitude'],$data['latitude']);
         $data['marker_id'] = $marker->getMarkerId();
         $this->fillPoint($point, $data);
 
@@ -101,19 +100,6 @@ class PointService extends AbstractService
         }
 
         return $point;
-    }
-
-    public function createMarker($longitude, $latitude)
-    {
-        $marker = new Markers();
-        $marker->setLongitude($longitude);
-        $marker->setLatitude($latitude);
-
-        if ($marker->save() == false) {
-            SupportClass::getErrorsWithException($marker,self::ERROR_UNABLE_CREATE_MARKER,'Unable create marker');
-        }
-
-        return $marker;
     }
 
     public function changePoint(TradePoints $point, $data)

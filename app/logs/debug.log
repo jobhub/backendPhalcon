@@ -252,3 +252,11 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Mon, 04 Feb 19 16:22:08 +0300][CRITICAL] 21003 Account not subscribed to object
 [Mon, 04 Feb 19 16:23:19 +0300][CRITICAL] 21003 Account not subscribed to object
 [Mon, 04 Feb 19 16:41:31 +0300][DEBUG] user 6 send message to user 7
+[Wed, 06 Feb 19 11:51:12 +0300][CRITICAL] 13001 Company don't exists
+[Wed, 06 Feb 19 14:40:09 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:40:28 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:42:04 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 14:48:42 +0300][CRITICAL] 15001 unable to create user_location
+[Wed, 06 Feb 19 16:35:41 +0300][CRITICAL] 5003 Invalid login
+[Wed, 06 Feb 19 16:35:56 +0300][CRITICAL] 5003 Invalid login
+[Wed, 06 Feb 19 16:36:43 +0300][CRITICAL] 1002 Account for user not found
