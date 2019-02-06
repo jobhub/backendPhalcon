@@ -88,3 +88,15 @@ LINE 1: ...id" = $1 AND "rastreniya_responses"."parent_id" = '' AND "ra...
 [Thu, 24 Jan 19 13:53:36 +0300][DEBUG] Unable to set the parent 24 of a response in rastreniya id = 14
 [Sat, 26 Jan 19 13:40:45 +0300][DEBUG] Unable to set the parent 27 of a response in rastreniya id = 17
 [Sat, 26 Jan 19 14:02:14 +0300][DEBUG] Deletion of rastreniya 17  by user 7
+[Tue, 05 Feb 19 17:48:14 +0300][DEBUG] 4
+[Tue, 05 Feb 19 17:58:35 +0300][DEBUG] 1
+[Tue, 05 Feb 19 18:10:20 +0300][CRITICAL] 
+[Tue, 05 Feb 19 18:10:53 +0300][CRITICAL] 
+[Tue, 05 Feb 19 18:16:09 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:16:31 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:16:58 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:17:30 +0300][DEBUG] iciciic 0
+[Tue, 05 Feb 19 18:17:49 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:18:07 +0300][DEBUG] iciciic la1
+[Tue, 05 Feb 19 18:18:25 +0300][DEBUG] iciciic la 
+[Tue, 05 Feb 19 18:18:40 +0300][DEBUG] iciciic la 

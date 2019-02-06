@@ -73,7 +73,7 @@ class RastreniyaService extends AbstractService
         } catch (TxFailed $e) {
             throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
         }
-        return $rast->getPublicInfo();
+        return self::getRastFromId($user_id, $rast->getId());
     }
 
     public function updateRast($data)
@@ -140,6 +140,65 @@ class RastreniyaService extends AbstractService
 
 
     /**
+     * Get Rastreniya from id
+     *
+     * @param $user_id int
+     * @param $rast_id
+     * @return array
+     */
+    public function getRastFromId($user_id, $rast_id)
+    {
+        try {
+            $rast = Rastreniya::findFirst([
+                'conditions' => 'id = :id:',
+                'bind' => [
+                    "id" => $rast_id
+                ]
+            ]);
+            $account = Accounts::findFirst($rast->getAccountId());
+            if (!$account) {
+                $user = [];
+            } else {
+                $user = $account->getUserInfomations();
+            }
+            $likes = SupportClass::to_php_array($rast->getLikeUsers());
+            $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
+            $item = ['infos' => $rast->getPublicInfo()];
+            //$item['owner'] = $user;
+            $item['owner'] = $account->getUserInfomations();
+            $item['likes'] = sizeof($likes);
+            $item['dislikes'] = sizeof($dislikes);
+            $item['comments'] = self::countComments($rast->getId());
+            if (in_array($user_id, $likes)) {
+                $item['is_liked'] = true;
+            } else if (in_array($user_id, $dislikes)) {
+                $item['is_disliked'] = true;
+            }
+            if ($item['comments']['total'] > 0) {
+                // Load last comments info;
+                $last = RastreniyaResponses::findFirst([
+                    'conditions' => 'rastreniya_id = :rast_id:',
+                    'bind' => [
+                        'rast_id' => $rast->getId()
+                    ],
+                    'order' => 'create_at DESC',
+                    'columns' => RastreniyaResponses::PUBLIC_COLUMNS
+                ]);
+                if ($account->getId() == $last['account_id'])
+                    $owner = $user;
+                else
+                    $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
+                $item['comments']['last_comment'] = $last;
+                $item['comments']['user_info'] = $owner;
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $item;
+    }
+
+
+    /**
      * Get all Rastreniya
      *
      * @param $user_id int
@@ -148,10 +207,10 @@ class RastreniyaService extends AbstractService
      */
     public function getRasts($user_id, $data)
     {
-        if (isset($data["page"]) && is_integer($data["page"]))
+        $page = 0;
+        if (isset($data["page"]))
             $page = $data["page"];
-        else
-            $page = 1;
+
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * Rastreniya::DEFAULT_RESULT_PER_PAGE;
         try {
@@ -332,7 +391,7 @@ class RastreniyaService extends AbstractService
             $response->setAccountId($account_id);
             $response->setRastreniyaId($rast_id);
 
-            if (isset($data["parent_id"]) || is_integer($data["parent_id"])) {
+            if (isset($data["parent_id"]) && is_integer($data["parent_id"])) {
                 $parent_id = $data["parent_id"];
                 $parent = RastreniyaResponses::findFirst([
                     'conditions' => ' id = :id: AND rastreniya_id = :rast_id:',
@@ -364,7 +423,7 @@ class RastreniyaService extends AbstractService
         } catch (TxFailed $e) {
             throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
         }
-        return $response->getPublicInfo();
+        return self::getResponseById($response->getId());
     }
 
     /**
@@ -418,7 +477,7 @@ class RastreniyaService extends AbstractService
         } catch (TxFailed $e) {
             throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
         }
-        return true;
+        return self::getResponseById($response->getId());
     }
 
 
@@ -439,17 +498,15 @@ class RastreniyaService extends AbstractService
             $page = 1;
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * RastreniyaResponses::DEFAULT_RESULT_PER_PAGE;
-        if (is_null($content) || strlen(trim($content)) == 0) {
-            throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
-        }
         if (!isset($data["rast_id"]) || !is_integer($data["rast_id"])) {
             throw new Http400Exception(_('Missing rastreniya id'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
         try {
-            if (!Users::isUserExist($user_id)) {
+            /*if (!Users::isUserExist($user_id)) {
                 throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
-            }
+            }*/
+
             $rast = Rastreniya::findFirst([
                 'conditions' => 'id = :id:',
                 'bind' => [
@@ -466,29 +523,43 @@ class RastreniyaService extends AbstractService
                     'rast_id' => $rast->getId()
                 ],
                 'limit' => RastreniyaResponses::DEFAULT_RESULT_PER_PAGE,
-                'order' => 'create_at DESC',
+                'order' => 'create_at ASC',
                 'offset' => $offset, // offset of result
             ]);
             $toRet = [];
             foreach ($responses as $resp) {
-                $item = ['info' => $resp->getPublicInfo()];
-                $account = Accounts::findFirst($resp->getAccountId());
-
-                if (!$account) {
-                    $owner = [];
-                } else {
-                    $owner = $account->getUserInfomations();
-                }
-
-
-                $item['user_info'] = $owner;
-                $item['childs'] = self::getChildResponse($resp->getId(), $rast->getId());
+                $item =  self::getFormattedDataOfResponse($resp,$rast->getId());
                 array_push($toRet, $item);
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         } catch (TxFailed $e) {
             throw new ServiceException('Failed, reason: ' . $e->getMessage(), self::ERROR_TRANSACTION, $e);
+        }
+        return $toRet;
+    }
+
+
+
+    /**
+     * get all response of a Rastreniya
+     *
+     * @param $data
+     * @return bool
+     */
+    public function getResponseById($resp_id)
+    {
+        try {
+            // Load last comments info;
+            $resp = RastreniyaResponses::findFirst([
+                'conditions' => 'id = :resp_id:',
+                'bind' => [
+                    'resp_id' => $resp_id
+                ],
+            ]);
+            $toRet = self::getFormattedDataOfResponse($resp);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return $toRet;
     }
@@ -515,15 +586,7 @@ class RastreniyaService extends AbstractService
         ]);
         $toRet = [];
         foreach ($responses as $resp) {
-            $item = ['info' => $resp->getPublicInfo()];
-            $account = Accounts::findFirst($resp->getAccountId());
-
-            if (!$account) {
-                $owner = [];
-            } else {
-                $owner = $account->getUserInfomations();
-            }
-            $item['user_info'] = $owner;
+            $item = self::getFormattedDataOfResponse($resp);
             array_push($toRet, $item);
         }
         return $toRet;
@@ -625,5 +688,28 @@ class RastreniyaService extends AbstractService
     public function countComments($rast_id)
     {
         return $this->db->fetchOne('SELECT COUNT(*) AS total FROM rastreniya_responses WHERE deleted != TRUE AND rastreniya_id = ' . $rast_id);
+    }
+
+    // Helpfull functions
+
+    private function getFormattedDataOfResponse($resp, $rast_id = null){
+        $item = ['info' => $resp->getPublicInfo()];
+        $account = Accounts::findFirst($resp->getAccountId());
+
+        if (!$account) {
+            $owner = [];
+        } else {
+            $owner = $account->getUserInfomations();
+        }
+
+        $item['user_info'] = $owner;
+        if($rast_id != null)
+            $item['childs'] = self::getChildResponse($resp->getId(), $rast_id);
+
+        return $item;
+    }
+
+    private function getFormattedDataOfRast($rast){
+        return [];
     }
 }
