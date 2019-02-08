@@ -25,10 +25,10 @@ class RastreniyaController extends AbstractController {
         return parent::successResponse('Rastreniya successfully created', $rast);
     }
 
-    public function getAction(){
+    public function getAction($page){
         $user_id = $this->getUserid();
         $data = [];
-        $data['page'] = $this->request->getQuery('page', $data);
+        $data['page'] = $page;
         try {
            $rasts = $this->rastreniyaService->getRasts($user_id, $data);
         } catch (ServiceException $e) {

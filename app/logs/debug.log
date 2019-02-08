@@ -1,3 +1,107 @@
+<<<<<<< HEAD
+[Wed, 23 Jan 19 13:09:17 +0300][DEBUG] Cannot save Rastreniya
+[Wed, 23 Jan 19 13:10:42 +0300][DEBUG] Cannot save Rastreniya
+[Wed, 23 Jan 19 13:44:36 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:44:36 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:44:36 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:44:36 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:46:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:46:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:46:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:46:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:47:17 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:47:17 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:47:17 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:47:17 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:49:55 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:50:25 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:51:18 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:51:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:51:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:51:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:51:43 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:53:56 +0300][DEBUG] asdsd +7
+[Wed, 23 Jan 19 13:53:56 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:53:56 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:53:56 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 13:53:56 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:24:14 +0300][DEBUG] 19 and 7
+[Wed, 23 Jan 19 16:32:03 +0300][DEBUG] 13 and 7
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +7
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +7
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:32:44 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:32:56 +0300][DEBUG] 21 and 7
+[Wed, 23 Jan 19 16:33:00 +0300][DEBUG] asdsd +7
+[Wed, 23 Jan 19 16:33:00 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:00 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:00 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:00 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:10 +0300][DEBUG] 20 and 7
+[Wed, 23 Jan 19 16:33:13 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:13 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:13 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:33:13 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:44:53 +0300][CRITICAL] 22P02 SQLSTATE[22P02]: Invalid text representation: 7 ERROR:  invalid input syntax for integer: ""
+LINE 1: ...id" = $1 AND "rastreniya_responses"."parent_id" = '' AND "ra...
+                                                             ^
+[Wed, 23 Jan 19 16:46:58 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:46:58 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:46:58 +0300][DEBUG] asdsd +318
+[Wed, 23 Jan 19 16:46:58 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:12:38 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:12:38 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:12:38 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:12:38 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:41 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:41 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:41 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:41 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:50 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:50 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:50 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:50 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:51 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:51 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:51 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:13:51 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:42:17 +0300][DEBUG] Unable to set the parent56 of a response id
+[Thu, 24 Jan 19 12:44:07 +0300][DEBUG] Unable to set the parent56 of a response id
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +7
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +7
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:46:48 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +7
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +7
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 12:47:36 +0300][DEBUG] asdsd +318
+[Thu, 24 Jan 19 13:41:27 +0300][DEBUG] Deletion of rastreniya 14  by user 7
+[Thu, 24 Jan 19 13:53:36 +0300][DEBUG] Unable to set the parent 24 of a response in rastreniya id = 14
+[Sat, 26 Jan 19 13:40:45 +0300][DEBUG] Unable to set the parent 27 of a response in rastreniya id = 17
+[Sat, 26 Jan 19 14:02:14 +0300][DEBUG] Deletion of rastreniya 17  by user 7
+[Tue, 05 Feb 19 17:48:14 +0300][DEBUG] 4
+[Tue, 05 Feb 19 17:58:35 +0300][DEBUG] 1
+[Tue, 05 Feb 19 18:10:20 +0300][CRITICAL] 
+[Tue, 05 Feb 19 18:10:53 +0300][CRITICAL] 
+[Tue, 05 Feb 19 18:16:09 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:16:31 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:16:58 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:17:30 +0300][DEBUG] iciciic 0
+[Tue, 05 Feb 19 18:17:49 +0300][DEBUG] iciciic 1
+[Tue, 05 Feb 19 18:18:07 +0300][DEBUG] iciciic la1
+[Tue, 05 Feb 19 18:18:25 +0300][DEBUG] iciciic la 
+[Tue, 05 Feb 19 18:18:40 +0300][DEBUG] iciciic la 
+=======
 s
 [Sat, 29 Dec 18 13:23:01 +0300][CRITICAL] user id = 6
 [Sat, 29 Dec 18 13:23:21 +0300][CRITICAL] user id = 6
@@ -260,3 +364,6 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Wed, 06 Feb 19 16:35:41 +0300][CRITICAL] 5003 Invalid login
 [Wed, 06 Feb 19 16:35:56 +0300][CRITICAL] 5003 Invalid login
 [Wed, 06 Feb 19 16:36:43 +0300][CRITICAL] 1002 Account for user not found
+>>>>>>> changing_to_micro
+[Fri, 08 Feb 19 00:13:21 +0300][DEBUG] user id = 
+[Fri, 08 Feb 19 19:26:17 +0300][DEBUG] user id = 
