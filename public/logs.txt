@@ -7963,3 +7963,2220 @@
 Дата: 2019-02-06 16:55:38 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMTMgMTU6NTc6MDcifQ==.TWaQSmjSWRBeqiO5h2aL/fMXIFU1C+vcBV0N3XSsUBIZZwXG0tNqiWCgi4jRL8WZqxFB/4MR64+r0aqc0as0gZXKseUV0V7/EK3Tsj1iWlFUPT9JjRIgDMIsna0qkuSh+DXK4ZbmtNRrwHbrMG6s/uPx5CrhnJTE3Rn/XhocoXS6GUvmcfyimfeIDNA+OW/3dl640AyENWjjjXbSeDpGT4yclKexB+blHm7HNWKpbo/qmPh3RMqiN0Dj/0mus5MWc7LAX2QeyAl3zMEYJ3qzlv7pUB1U5bhQzj9AgXDU6DgonoZxV86NMJdRJgT90+nh1NM2T1hOOrKoPiTIlBTiHQ==
 Дата: 2019-02-06 16:55:38 - Сессия есть, роль Moderator
 >>>>>>> changing_to_micro
+Дата: 2019-02-06 17:08:52 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:08:52 - token is aaa
+Дата: 2019-02-06 17:08:52 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:08:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:10:11 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'f40c2c93-4d09-495b-bec7-19eb70218a93',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:10:11 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:10:11 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:10:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:11:34 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:11:34 - token is aaa
+Дата: 2019-02-06 17:11:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:11:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:12:53 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:12:53 - token is aaa
+Дата: 2019-02-06 17:12:53 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:12:53 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:13:10 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '66',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:13:10 - token is aaa
+Дата: 2019-02-06 17:13:10 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:13:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:13:25 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '62',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:13:25 - token is aaa
+Дата: 2019-02-06 17:13:25 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:13:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:13:43 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:13:43 - token is aaa
+Дата: 2019-02-06 17:13:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:13:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:13:59 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '80',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:13:59 - token is aaa
+Дата: 2019-02-06 17:13:59 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:13:59 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:14:05 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:14:05 - token is aaa
+Дата: 2019-02-06 17:14:05 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:14:05 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:17:06 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '24cb1ee2-e6d5-47a1-b720-8ec31d58a884',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:17:06 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:17:06 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:17:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:17:30 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:17:30 - token is aaa
+Дата: 2019-02-06 17:17:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:17:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:18:52 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.1.47:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-06 17:18:52 - token is aaa
+Дата: 2019-02-06 17:18:52 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-06 17:18:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:26:52 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '517cd443-ef20-4ee0-b58e-62956087b2da',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:26:52 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:26:52 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:26:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:27:27 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '4676f2d0-737e-424c-b04b-c268b67184fa',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:27:27 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:27:27 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:27:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:27:36 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'e95e298d-0e51-4434-823f-b122d0051d0f',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:27:36 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:27:36 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:27:36 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:28:23 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'ecbb7153-c133-454f-bb57-e2402425de84',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:28:23 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:28:23 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:28:23 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:28:31 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'a8d8ae6a-6b13-4929-948c-c32f2071b6b1',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:28:31 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:28:31 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:28:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:28:34 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '016ef587-b242-4e40-8483-cdaf566a8822',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:28:34 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:28:34 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:28:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:29:55 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'fb1c2f15-e558-4289-a974-c9487c8224e4',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:29:55 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:29:55 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:29:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:30:08 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '2188f528-baca-45d3-8921-ea42da40898a',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:30:08 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:30:08 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:30:08 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:30:13 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '3ed281e7-935a-4cb7-8f34-17812dcf1e42',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:30:13 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:30:13 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:30:13 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-06 17:30:16 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'c58353a4-4627-4fe1-b2eb-c329d8bccc9c',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-06 17:30:16 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-06 17:30:16 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-06 17:30:16 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:00:19 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:00:20 - token is aaa
+Дата: 2019-02-07 18:00:20 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:00:20 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:01:43 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:01:43 - token is aaa
+Дата: 2019-02-07 18:01:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:01:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:12:53 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:12:53 - token is aaa
+Дата: 2019-02-07 18:12:53 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:12:53 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:07 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:07 - token is aaa
+Дата: 2019-02-07 18:52:07 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:07 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:20 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:20 - token is aaa
+Дата: 2019-02-07 18:52:20 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:20 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:25 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '75',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:25 - token is aaa
+Дата: 2019-02-07 18:52:25 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:31 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:31 - token is aaa
+Дата: 2019-02-07 18:52:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:39 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:39 - token is aaa
+Дата: 2019-02-07 18:52:39 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:39 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:52:50 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '87',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:52:50 - token is aaa
+Дата: 2019-02-07 18:52:50 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:52:50 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 18:53:06 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '65',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 18:53:06 - token is aaa
+Дата: 2019-02-07 18:53:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 18:53:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 20:00:56 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 20:00:56 - token is aaa
+Дата: 2019-02-07 20:00:56 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 20:00:56 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 20:37:28 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 20:37:28 - token is aaa
+Дата: 2019-02-07 20:37:28 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 20:37:28 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:05:30 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:05:30 - token is aaa
+Дата: 2019-02-07 21:05:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:05:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:06:32 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:06:32 - token is aaa
+Дата: 2019-02-07 21:06:32 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:06:32 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:07:35 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:07:35 - token is aaa
+Дата: 2019-02-07 21:07:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:07:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:07:40 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:07:40 - token is aaa
+Дата: 2019-02-07 21:07:40 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:07:40 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:08:10 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:08:10 - token is aaa
+Дата: 2019-02-07 21:08:10 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:08:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:09:34 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:09:34 - token is aaa
+Дата: 2019-02-07 21:09:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:09:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:10:18 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:10:18 - token is aaa
+Дата: 2019-02-07 21:10:18 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:10:18 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:12:58 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:12:58 - token is aaa
+Дата: 2019-02-07 21:12:58 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:12:58 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:18:43 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:18:43 - token is aaa
+Дата: 2019-02-07 21:18:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:18:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:19:18 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:19:18 - token is aaa
+Дата: 2019-02-07 21:19:18 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:19:18 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:19:55 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:19:55 - token is aaa
+Дата: 2019-02-07 21:19:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:19:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:21:48 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:21:48 - token is aaa
+Дата: 2019-02-07 21:21:48 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:21:48 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:22:06 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:22:06 - token is aaa
+Дата: 2019-02-07 21:22:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:22:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:22:12 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:22:12 - token is aaa
+Дата: 2019-02-07 21:22:12 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:22:12 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:23:26 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:23:26 - token is aaa
+Дата: 2019-02-07 21:23:26 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:23:26 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:23:52 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:23:52 - token is aaa
+Дата: 2019-02-07 21:23:52 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:23:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:25:45 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:25:45 - token is aaa
+Дата: 2019-02-07 21:25:45 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:25:45 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:26:43 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:26:43 - token is aaa
+Дата: 2019-02-07 21:26:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:26:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:26:47 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:26:47 - token is aaa
+Дата: 2019-02-07 21:26:47 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:26:47 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:27:34 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:27:34 - token is aaa
+Дата: 2019-02-07 21:27:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:27:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:27:41 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:27:41 - token is aaa
+Дата: 2019-02-07 21:27:41 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:27:41 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:28:30 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:28:30 - token is aaa
+Дата: 2019-02-07 21:28:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:28:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:28:36 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:28:36 - token is aaa
+Дата: 2019-02-07 21:28:36 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:28:36 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:29:36 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:29:36 - token is aaa
+Дата: 2019-02-07 21:29:36 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:29:36 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:29:42 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:29:42 - token is aaa
+Дата: 2019-02-07 21:29:42 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:29:42 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:30:32 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:30:32 - token is aaa
+Дата: 2019-02-07 21:30:32 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:30:32 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:30:37 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:30:37 - token is aaa
+Дата: 2019-02-07 21:30:37 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:30:37 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:31:31 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:31:31 - token is aaa
+Дата: 2019-02-07 21:31:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:31:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:31:59 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:31:59 - token is aaa
+Дата: 2019-02-07 21:31:59 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:31:59 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:32:02 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:32:02 - token is aaa
+Дата: 2019-02-07 21:32:02 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:32:02 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:33:45 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:33:45 - token is aaa
+Дата: 2019-02-07 21:33:45 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:33:45 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:34:11 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:34:11 - token is aaa
+Дата: 2019-02-07 21:34:11 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:34:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:36:09 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:36:09 - token is aaa
+Дата: 2019-02-07 21:36:09 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:36:09 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:36:14 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:36:14 - token is aaa
+Дата: 2019-02-07 21:36:14 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:36:14 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:02 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:02 - token is aaa
+Дата: 2019-02-07 21:37:02 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:02 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:08 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:08 - token is aaa
+Дата: 2019-02-07 21:37:08 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:08 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:22 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:22 - token is aaa
+Дата: 2019-02-07 21:37:22 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:22 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:27 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:27 - token is aaa
+Дата: 2019-02-07 21:37:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:41 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:41 - token is aaa
+Дата: 2019-02-07 21:37:41 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:41 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:37:44 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:37:44 - token is aaa
+Дата: 2019-02-07 21:37:44 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:37:44 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:39:50 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:39:50 - token is aaa
+Дата: 2019-02-07 21:39:50 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:39:50 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:40:02 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:40:02 - token is aaa
+Дата: 2019-02-07 21:40:02 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:40:02 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:41:42 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:41:42 - token is aaa
+Дата: 2019-02-07 21:41:42 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:41:42 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:42:10 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:42:10 - token is aaa
+Дата: 2019-02-07 21:42:10 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:42:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:42:23 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:42:23 - token is aaa
+Дата: 2019-02-07 21:42:23 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:42:23 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:42:45 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:42:45 - token is aaa
+Дата: 2019-02-07 21:42:45 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:42:45 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:42:49 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:42:49 - token is aaa
+Дата: 2019-02-07 21:42:49 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:42:49 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:43:00 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:43:00 - token is aaa
+Дата: 2019-02-07 21:43:00 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:43:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:43:39 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:43:39 - token is aaa
+Дата: 2019-02-07 21:43:39 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:43:39 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:43:44 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:43:44 - token is aaa
+Дата: 2019-02-07 21:43:44 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:43:44 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:43:46 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:43:46 - token is aaa
+Дата: 2019-02-07 21:43:46 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:43:46 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:44:06 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:44:06 - token is aaa
+Дата: 2019-02-07 21:44:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:44:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:48:55 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:48:55 - token is aaa
+Дата: 2019-02-07 21:48:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:48:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:49:00 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:49:00 - token is aaa
+Дата: 2019-02-07 21:49:00 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:49:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:49:06 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '74',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:49:06 - token is aaa
+Дата: 2019-02-07 21:49:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:49:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:51:25 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:51:25 - token is aaa
+Дата: 2019-02-07 21:51:25 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:51:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:51:30 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:51:30 - token is aaa
+Дата: 2019-02-07 21:51:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:51:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:51:34 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '75',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:51:34 - token is aaa
+Дата: 2019-02-07 21:51:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:51:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:53:55 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:53:55 - token is aaa
+Дата: 2019-02-07 21:53:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:53:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:00 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:00 - token is aaa
+Дата: 2019-02-07 21:54:00 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:00 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:22 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:22 - token is aaa
+Дата: 2019-02-07 21:54:22 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:22 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:27 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '77',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:27 - token is aaa
+Дата: 2019-02-07 21:54:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:42 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:42 - token is aaa
+Дата: 2019-02-07 21:54:42 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:42 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:45 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:45 - token is aaa
+Дата: 2019-02-07 21:54:45 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:45 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:49 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '72',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:49 - token is aaa
+Дата: 2019-02-07 21:54:49 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:49 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 21:54:55 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 21:54:55 - token is aaa
+Дата: 2019-02-07 21:54:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 21:54:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:42:09 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:42:09 - token is aaa
+Дата: 2019-02-07 22:42:09 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:42:09 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:42:48 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:42:48 - token is aaa
+Дата: 2019-02-07 22:42:48 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:42:48 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:42:54 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '69',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:42:54 - token is aaa
+Дата: 2019-02-07 22:42:54 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:42:54 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:48:55 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:48:55 - token is aaa
+Дата: 2019-02-07 22:48:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:48:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:48:59 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '70',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:48:59 - token is aaa
+Дата: 2019-02-07 22:48:59 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:48:59 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:49:56 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:49:56 - token is aaa
+Дата: 2019-02-07 22:49:56 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:49:56 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:50:59 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:50:59 - token is aaa
+Дата: 2019-02-07 22:50:59 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:50:59 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:51:15 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '85',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:51:15 - token is aaa
+Дата: 2019-02-07 22:51:15 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:51:15 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:53:09 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:53:09 - token is aaa
+Дата: 2019-02-07 22:53:09 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:53:09 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:53:20 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '81',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:53:20 - token is aaa
+Дата: 2019-02-07 22:53:20 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:53:20 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:54:17 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '88',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:54:17 - token is aaa
+Дата: 2019-02-07 22:54:17 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:54:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:55:05 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:55:05 - token is aaa
+Дата: 2019-02-07 22:55:05 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:55:05 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:55:12 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:55:12 - token is aaa
+Дата: 2019-02-07 22:55:12 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:55:12 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:55:17 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '78',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:55:17 - token is aaa
+Дата: 2019-02-07 22:55:17 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:55:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:55:34 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:55:34 - token is aaa
+Дата: 2019-02-07 22:55:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:55:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:56:50 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:56:50 - token is aaa
+Дата: 2019-02-07 22:56:50 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:56:50 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:56:54 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:56:54 - token is aaa
+Дата: 2019-02-07 22:56:54 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:56:54 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:56:58 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '67',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:56:58 - token is aaa
+Дата: 2019-02-07 22:56:58 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:56:58 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:57:43 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:57:43 - token is aaa
+Дата: 2019-02-07 22:57:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:57:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 22:58:39 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 22:58:39 - token is aaa
+Дата: 2019-02-07 22:58:39 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 22:58:39 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:03:55 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:03:55 - token is aaa
+Дата: 2019-02-07 23:03:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:03:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:25:11 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:25:11 - token is aaa
+Дата: 2019-02-07 23:25:11 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:25:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:25:18 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:25:18 - token is aaa
+Дата: 2019-02-07 23:25:18 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:25:18 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:25:24 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '87',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:25:24 - token is aaa
+Дата: 2019-02-07 23:25:24 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:25:24 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:25:37 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:25:37 - token is aaa
+Дата: 2019-02-07 23:25:37 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:25:37 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:25:57 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '89',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:25:57 - token is aaa
+Дата: 2019-02-07 23:25:57 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:25:57 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:26:31 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:26:31 - token is aaa
+Дата: 2019-02-07 23:26:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:26:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:26:43 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '92',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:26:43 - token is aaa
+Дата: 2019-02-07 23:26:43 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:26:43 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:26:50 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:26:50 - token is aaa
+Дата: 2019-02-07 23:26:50 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:26:50 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:26:55 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '80',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:26:55 - token is aaa
+Дата: 2019-02-07 23:26:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:26:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:27:22 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '81',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:27:22 - token is aaa
+Дата: 2019-02-07 23:27:22 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:27:22 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:27:25 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:27:25 - token is aaa
+Дата: 2019-02-07 23:27:25 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:27:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:27:29 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:27:29 - token is aaa
+Дата: 2019-02-07 23:27:29 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:27:29 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:27:55 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:27:55 - token is aaa
+Дата: 2019-02-07 23:27:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:27:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:30:10 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:30:10 - token is aaa
+Дата: 2019-02-07 23:30:10 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:30:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:30:46 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '119',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:30:46 - token is aaa
+Дата: 2019-02-07 23:30:46 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:30:46 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:30:50 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:30:50 - token is aaa
+Дата: 2019-02-07 23:30:50 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:30:50 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:30:56 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:30:56 - token is aaa
+Дата: 2019-02-07 23:30:56 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:30:56 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:30:58 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:30:58 - token is aaa
+Дата: 2019-02-07 23:30:58 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:30:58 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:31:13 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:31:13 - token is aaa
+Дата: 2019-02-07 23:31:13 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:31:13 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:31:17 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:31:17 - token is aaa
+Дата: 2019-02-07 23:31:17 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:31:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:31:25 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '88',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:31:25 - token is aaa
+Дата: 2019-02-07 23:31:25 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:31:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:31:30 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:31:30 - token is aaa
+Дата: 2019-02-07 23:31:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:31:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:31:35 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:31:35 - token is aaa
+Дата: 2019-02-07 23:31:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:31:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:32:05 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '170',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:32:05 - token is aaa
+Дата: 2019-02-07 23:32:05 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:32:05 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:32:17 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:32:17 - token is aaa
+Дата: 2019-02-07 23:32:17 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:32:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:43:16 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:43:16 - token is aaa
+Дата: 2019-02-07 23:43:16 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:43:16 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:43:21 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:43:21 - token is aaa
+Дата: 2019-02-07 23:43:21 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:43:21 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:43:27 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '77',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:43:27 - token is aaa
+Дата: 2019-02-07 23:43:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:43:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:43:37 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:43:37 - token is aaa
+Дата: 2019-02-07 23:43:37 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:43:37 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:44:41 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:44:41 - token is aaa
+Дата: 2019-02-07 23:44:41 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:44:41 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:44:49 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:44:49 - token is aaa
+Дата: 2019-02-07 23:44:49 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:44:49 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:45:01 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '82',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:45:01 - token is aaa
+Дата: 2019-02-07 23:45:01 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:45:01 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:45:07 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:45:07 - token is aaa
+Дата: 2019-02-07 23:45:07 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:45:07 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:45:11 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:45:11 - token is aaa
+Дата: 2019-02-07 23:45:11 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:45:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:45:31 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '94',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:45:31 - token is aaa
+Дата: 2019-02-07 23:45:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:45:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:45:37 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:45:37 - token is aaa
+Дата: 2019-02-07 23:45:37 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:45:37 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:46:25 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'da0cccab-b2a0-42ed-849c-66d775de8698',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:46:25 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-07 23:46:25 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:46:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:46:28 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '54e5aa55-12aa-4bf0-80a9-da966b2bd3ec',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:46:28 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxOCwibG9naW4iOiJrZW5mYWNram9zbGluKzN0ZXN0QGdtYWlsLmNvbSIsInJvbGUiOiJHdWVzdHMiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTI6MDQ6MDIifQ==.Zb8BMKlTuDwgVVViOzO9b351gHlowPW0z9cqNIJvBJoF3jIF3MJSH44X0/lH0edly6eDq/Za9U/Rp1KGrt2OV6c4qQPXjNz5K12/ABhYBZWjyhOYur5KxM4qTcIvN4wI/2Y8x51StMbST82qSdcAxbyTsNwdDXIvGYifuAVbn/qVZsS4RNd7yTmjOEdainrxenhIOB7tWYw+toHee5hVJ/e78R2Zal/YTIfH1/177iCqbjN+pxUSLBp/t/5freKPudwhFxJAEWbpG8WevSNbQeK0rqFAa7MSP7s1q64HVuAndZ2T3UONqyiJWYC9ncK320CIZd0WV3s2eryRupPUtg==
+Дата: 2019-02-07 23:46:28 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:46:28 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:46:41 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'eef8453b-1cf6-477a-a908-7a2e932be4d2',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:46:41 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==
+Дата: 2019-02-07 23:46:41 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:46:41 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:47:08 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'c470346f-9649-4155-8dba-84e890a705fe',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:47:08 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==
+Дата: 2019-02-07 23:47:08 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:47:08 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:47:25 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'a99da632-8545-428d-97ca-a1409a38d478',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '259',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:47:25 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==
+Дата: 2019-02-07 23:47:25 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:47:25 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:47:31 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:47:31 - token is aaa
+Дата: 2019-02-07 23:47:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:47:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:47:35 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:47:35 - token is aaa
+Дата: 2019-02-07 23:47:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:47:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:47:40 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '78',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:47:40 - token is aaa
+Дата: 2019-02-07 23:47:40 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:47:40 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:48:02 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '7238ffd1-a533-4fcc-8456-68453934f393',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-07 23:48:02 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMjkgMTg6MjI6NTcifQ==.AcDYcYOl5xPQTXIZmZTHFHw9m5zehBHuw8KjrEA5KWHqACSqvmxSStMSC/Q2MXFIgSGGZ5+1YvamIi1LqEeO5qGGjpc4r/bb7e32WHja2GcBATm+lSipSsGl7YOfBIPcunAU/KC1xVIQB0mH8vlgHPWHOdDHuZKszB+CFPL5S19Dy1QstxZkSBKMTIN7qosDZVAfs3X+PK31kEv4PXpVCHmNEHngS1Ew2sf8KZwQPbWMVBjYJo5za6SGilU/IVW2Pu0rIq+M+FwXnvurTwZVnsoC1WoKdtdcw/JbKlbk8JOHPcWheIlupLlE+bGP1ZCAqHBpZRTt1oWlVUihR7m8+w==
+Дата: 2019-02-07 23:48:02 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-07 23:48:02 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:51:32 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:51:32 - token is aaa
+Дата: 2019-02-07 23:51:32 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:51:32 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:51:38 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '75',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:51:38 - token is aaa
+Дата: 2019-02-07 23:51:38 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:51:38 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:56:46 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:56:46 - token is aaa
+Дата: 2019-02-07 23:56:46 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:56:46 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:57:31 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:57:31 - token is aaa
+Дата: 2019-02-07 23:57:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:57:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-07 23:57:48 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-07 23:57:48 - token is aaa
+Дата: 2019-02-07 23:57:48 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-07 23:57:48 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 00:08:21 - Headers array (
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '0af290cf-8174-469a-a77c-ea475a4b1b82',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '51',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 00:08:21 - token is aaa
+Дата: 2019-02-08 00:08:21 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 00:08:21 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 00:08:23 - email пользователя mara@mail.ru
+Дата: 2019-02-08 00:08:23 - Юзер найден в бд
+Дата: 2019-02-08 00:08:23 - mara@mail.ru
+Дата: 2019-02-08 00:08:23 - ID юзера при этом - 7
+Дата: 2019-02-08 00:09:10 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '6ea7cc4c-dad5-48c0-8068-11a179505b0e',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 00:09:10 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==
+Дата: 2019-02-08 00:09:10 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-08 00:09:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 00:12:31 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '824793c0-94f6-44ca-86a7-1db3ce08b6ca',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 00:12:31 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==
+Дата: 2019-02-08 00:12:31 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-08 00:12:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 00:13:21 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '14c986d3-87e6-4b2f-969c-1f1d52d9137e',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 00:13:21 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==
+Дата: 2019-02-08 00:13:21 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-08 00:13:21 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:18:47 - Headers array (
+  'accept' => 'application/json',
+  'content-type' => 'application/json',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-08 19:18:47 - token is aaa
+Дата: 2019-02-08 19:18:47 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:18:47 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:18:57 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-08 19:18:57 - token is aaa
+Дата: 2019-02-08 19:18:57 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:18:57 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:19:11 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '79',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-08 19:19:11 - token is aaa
+Дата: 2019-02-08 19:19:11 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:19:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:19:17 - Headers array (
+  'accept' => 'application/json',
+  'Content-Type' => 'application/json; charset=utf-8',
+  'Content-Length' => '47',
+  'Host' => '192.168.43.94:8000',
+  'Connection' => 'Keep-Alive',
+  'Accept-Encoding' => 'gzip',
+  'User-Agent' => 'okhttp/3.6.0',
+)
+Дата: 2019-02-08 19:19:17 - token is aaa
+Дата: 2019-02-08 19:19:17 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:19:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:26:17 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '01c717eb-38f1-4183-b738-f75e24f00d70',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '43',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 19:26:17 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDEtMzAgMTM6NTI6MjMifQ==.rJYpEGjIKCmqaYf5fNNNB6QdSRkk4i+d7ZgwoGcKsVnr2uCNrvQsp+lNBYauX6hGlOrYKePg+kQU6V9s5JFhamZldaNwfIuuZw/JnLkAkTalRxt4+ToYdVhbE+Of2p4EPM2WA3+QHdVeVIWl8e3Zk7wKX4CVkIfyFhaOdxy99gX4yn5dw8T2cGCWbw48Ev2Hz2Bj/1CbvtjCIM/pWHeVs5EQ7QQMtrvdoqiCuvGxSiuZLSO1JiPyzJ4ZtA0CdvrraydMHS88Pt6Q88Pg9+eKYUhh8Du58ESh5PNO+Yi+g3rSdZJ+3fJztfOIXcCeT39Z1eBKJHueLpQqKwzneXLZcg==
+Дата: 2019-02-08 19:26:17 - Время действия токена закончилось, разрушил сессию
+Дата: 2019-02-08 19:26:17 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:26:28 - Headers array (
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '630d1830-b589-4f8a-9195-0285447d32dd',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '51',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 19:26:28 - token is aaa
+Дата: 2019-02-08 19:26:28 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:26:28 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:26:28 - email пользователя mara@mail.ru
+Дата: 2019-02-08 19:26:28 - Юзер найден в бд
+Дата: 2019-02-08 19:26:28 - mara@mail.ru
+Дата: 2019-02-08 19:26:28 - ID юзера при этом - 7
+Дата: 2019-02-08 19:26:51 - Headers array (
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '90c25d72-d467-45cb-aefb-a627f36feae7',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '51',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 19:26:51 - token is aaa
+Дата: 2019-02-08 19:26:51 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:26:51 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:26:51 - email пользователя mara@mail.ru
+Дата: 2019-02-08 19:26:51 - Юзер найден в бд
+Дата: 2019-02-08 19:26:51 - mara@mail.ru
+Дата: 2019-02-08 19:26:51 - ID юзера при этом - 7
+Дата: 2019-02-08 19:26:58 - Headers array (
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '1bc09095-ee54-4e7f-9d75-cb09e27bf821',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '72',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 19:26:58 - token is aaa
+Дата: 2019-02-08 19:26:58 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:26:58 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:27:06 - Headers array (
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '10769ba9-d910-4e79-b826-69cb520a96f7',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '72',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-08 19:27:06 - token is aaa
+Дата: 2019-02-08 19:27:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-08 19:27:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-08 19:27:06 - Проверил юзера
+Дата: 2019-02-08 19:27:06 - Дошел до создания сессии
+Дата: 2019-02-08 19:27:06 - kenfackjoslin+5test@gmail.com
+Дата: 2019-02-08 19:27:06 - ID юзера при этом - 332
+Дата: 2019-02-08 19:27:06 - Дошел до отправки кода активации

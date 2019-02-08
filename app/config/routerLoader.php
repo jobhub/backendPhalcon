@@ -80,7 +80,7 @@ $routes = [
                 'action' => 'sendMessageAction'
             ],
             ['type' => 'get',
-                'path' => '{params}', //get Rastreniya
+                'path' => '/page/{page}', //get Rastreniya
                 'action' => 'getAction'
             ],
             ['type' => 'put',

@@ -365,3 +365,5 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Wed, 06 Feb 19 16:35:56 +0300][CRITICAL] 5003 Invalid login
 [Wed, 06 Feb 19 16:36:43 +0300][CRITICAL] 1002 Account for user not found
 >>>>>>> changing_to_micro
+[Fri, 08 Feb 19 00:13:21 +0300][DEBUG] user id = 
+[Fri, 08 Feb 19 19:26:17 +0300][DEBUG] user id = 
