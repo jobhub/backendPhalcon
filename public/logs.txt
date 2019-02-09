@@ -9892,3 +9892,23 @@
 )
 Дата: 2019-02-09 12:05:58 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMTMgMTU6NTc6MDcifQ==.TWaQSmjSWRBeqiO5h2aL/fMXIFU1C+vcBV0N3XSsUBIZZwXG0tNqiWCgi4jRL8WZqxFB/4MR64+r0aqc0as0gZXKseUV0V7/EK3Tsj1iWlFUPT9JjRIgDMIsna0qkuSh+DXK4ZbmtNRrwHbrMG6s/uPx5CrhnJTE3Rn/XhocoXS6GUvmcfyimfeIDNA+OW/3dl640AyENWjjjXbSeDpGT4yclKexB+blHm7HNWKpbo/qmPh3RMqiN0Dj/0mus5MWc7LAX2QeyAl3zMEYJ3qzlv7pUB1U5bhQzj9AgXDU6DgonoZxV86NMJdRJgT90+nh1NM2T1hOOrKoPiTIlBTiHQ==
 Дата: 2019-02-09 12:05:58 - Сессия есть, роль Moderator
+Дата: 2019-02-09 13:38:37 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '42',
+  'Postman-Token' => '88820187-3822-0746-0f57-cb2d3715aefe',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-09 13:38:37 - token is aaa
+Дата: 2019-02-09 13:38:37 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-09 13:38:37 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-09 13:38:42 - email пользователя mara@mail.ru
+Дата: 2019-02-09 13:38:42 - Юзер найден в бд
+Дата: 2019-02-09 13:38:42 - mara@mail.ru
+Дата: 2019-02-09 13:38:42 - ID юзера при этом - 7
