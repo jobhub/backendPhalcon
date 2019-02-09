@@ -236,7 +236,7 @@ class RastreniyaService extends AbstractService
                 $item = array();
                 $item['infos'] =  $rast->getPublicInfo();
                 //$item['owner'] = $user;
-                $item['owner'] = $account->getUserInfomations();
+                $item['owner'] = $user;
                 $item['likes'] = sizeof($likes);
                 $item['dislikes'] = sizeof($dislikes);
                 $item['comments'] = self::countComments($rast->getId());
