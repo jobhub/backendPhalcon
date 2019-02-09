@@ -58,7 +58,7 @@ class RastreniyaController extends AbstractController {
 
     public function noticeAction(){
         $data = json_decode($this->request->getRawBody(), true);
-        $data["user_id"] = $this->getUserid();;
+        $data["user_id"] = $this->getUserid();
         $action = $data['action'];
         try {
             if(in_array($action, ["likeRast","dislikeRast"]) && method_exists($this->rastreniyaService, $action))

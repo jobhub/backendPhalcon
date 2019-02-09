@@ -74,7 +74,7 @@ class LikeDislikeModel extends NotDeletedModel
         $likes = SupportClass::to_php_array($this->like_users);
         $action = false;
         if (in_array($user_id, $dislikes)) {
-            // If user like the rast deleted like
+            // If user dislike the rast deleted like
             SupportClass::deleteElement($user_id, $dislikes);
         } else {
             if (in_array($user_id, $likes)) {
