@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use App\Controllers\HttpExceptions\Http400Exception;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Micro;
 use Phalcon\DI\FactoryDefault as DI;
@@ -17,6 +18,8 @@ use App\Libs\SupportClass;
  */
 class JWTMiddleware implements MiddlewareInterface
 {
+
+    const ERROR_TOKEN_EXPIRED = 100;
     /**
      * Before anything happens
      *
@@ -37,8 +40,11 @@ class JWTMiddleware implements MiddlewareInterface
             SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
 
         } else {
-            if (strtotime($info['lifetime']) <= time()) {
+            if (strtotime($info['lifetime']) <= time() or true) {
+
                 SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
+                throw new Http400Exception("Token expired",self::ERROR_TOKEN_EXPIRED);
+
             } else {
                 $di->getAuthService()->_registerSessionByData($info,$application);
             }
