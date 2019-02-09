@@ -491,7 +491,8 @@ class ServicesAPIController extends AbstractController
      */
     public function addServiceAction()
     {
-        $inputData = $this->request->getJsonRawBody();
+        //$inputData = $this->request->getJsonRawBody();
+        $inputData = json_decode(json_encode($this->request->getPost()));
         $data['account_id'] = $inputData->account_id;
         $data['description'] = $inputData->description;
         $data['name'] = $inputData->name;
