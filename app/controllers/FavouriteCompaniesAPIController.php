@@ -28,6 +28,8 @@ use App\Services\ServiceExtendedException;
 /**
  * Контроллер для работы с подписками на компании
  * Реализует методы для подписки пользователя на компании, отписки и получения подписок.
+ *
+ * Не используется в данный момент
  */
 class FavouriteCompaniesAPIController extends AbstractController
 {

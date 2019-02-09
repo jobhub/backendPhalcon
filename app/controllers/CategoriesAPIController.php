@@ -25,7 +25,7 @@ use App\Services\CategoryService;
  * пользователей на категории.
  *
  */
-class CategoriesAPIController extends \App\Controllers\AbstractController
+class CategoriesAPIController extends AbstractController
 {
     /**
      * Возвращает категории
@@ -47,109 +47,6 @@ class CategoriesAPIController extends \App\Controllers\AbstractController
     public function getCategoriesForSiteAction()
     {
         return Categories::findCategoriesForSite();
-    }
-
-    /**
-     * Подписывает текущего пользователя на указанную категорию.
-     * @access private
-     * @method POST
-     * @params category_id, radius
-     * @return string - json array Status
-     */
-    public function setFavouriteAction()
-    {
-        $data = json_decode($this->request->getRawBody(), true);
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        try{
-            $this->categoryService->setFavourite($userId,$data['category_id'],$data['radius']);
-        }catch(ServiceExtendedException $e) {
-            switch ($e->getCode()) {
-                case CategoryService::ERROR_UNABlE_SUBSCRIBE:
-                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        } catch (ServiceException $e) {
-            switch ($e->getCode()) {
-                case CategoryService::ERROR_ALREADY_SIGNED:
-                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        }
-        return self::successResponse('User was successfully subscribed');
-    }
-
-    /**
-     * Меняет радиус на получение уведомлений для подписки на категорию
-     * @method PUT
-     * @params radius, categoryId
-     * @return string - json array Status
-     */
-    public function editRadiusInFavouriteAction()
-    {
-        $data = json_decode($this->request->getRawBody(), true);
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        try{
-            $this->categoryService->editRadius($userId,$data['category_id'],$data['radius']);
-        }catch(ServiceExtendedException $e) {
-            switch ($e->getCode()) {
-                case CategoryService::ERROR_UNABlE_CHANGE_RADIUS:
-                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        } catch (ServiceException $e) {
-            switch ($e->getCode()) {
-                case CategoryService::ERROR_DON_NOT_SIGNED:
-                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        }
-
-        return self::successResponse('Radius successfully changed');
-    }
-
-    /**
-     * Отписывает текущего пользователя от категории
-     * @method DELETE
-     * @param $category_id
-     * @return string - json array Status
-     */
-    public function deleteFavouriteAction($category_id)
-    {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        try{
-            $this->categoryService->deleteFavourite($userId,$category_id);
-        }catch(ServiceExtendedException $e) {
-            switch ($e->getCode()) {
-                case CategoryService::ERROR_UNABlE_UNSUBSCRIBE:
-                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        }
-
-        return self::successResponse('User was successfully unsubscribed');
-    }
-
-    /**
-     * Возвращает все подписки пользователя на категории
-     * @GET
-     * @return string - json array - подписки пользователя
-     */
-    public function getFavouritesAction()
-    {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
-        return FavoriteCategories::findForUser($userId)->toArray();
     }
 
     //Now not uses moderator actions

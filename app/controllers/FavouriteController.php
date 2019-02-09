@@ -8,6 +8,7 @@ use App\Models\Accounts;
 use App\Models\FavouriteServices;
 use App\Models\Services;
 use App\Services\FavouriteService;
+use App\Models\FavoriteCategories;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -16,6 +17,7 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use Phalcon\Mvc\Dispatcher;
 
 use App\Services\AccountService;
+use App\Services\CategoryService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
@@ -240,5 +242,83 @@ class FavouriteController extends AbstractController
         self::setAccountId($account_id);
 
         return FavouriteServices::findFavourites($account_id,$page,$page_size);
+    }
+
+    /**
+     * Меняет радиус на получение уведомлений для подписки на категорию
+     *
+     * @method PUT
+     *
+     * @params radius
+     * @params category_id
+     * @params account_id
+     * @return string - json array Status
+     */
+    public function editRadiusInFavouriteAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['radius'] = $inputData->radius;
+        $data['category_id'] = $inputData->category_id;
+        $data['account_id'] = $inputData->account_id;
+
+        $userId = self::getUserId();
+
+        if($data['account_id']!=null && SupportClass::checkInteger($data['account_id'])){
+            if(!Accounts::checkUserHavePermission($userId,$data['account_id'],'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+        try{
+            $this->categoryService->editRadius($data['account_id'],$data['category_id'],$data['radius']);
+        }catch(ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CategoryService::ERROR_UNABlE_CHANGE_RADIUS:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CategoryService::ERROR_DON_NOT_SIGNED:
+                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Radius successfully changed');
+    }
+
+    /**
+     * Возвращает все подписки пользователя на категории
+     *
+     * @access private
+     *
+     * @GET
+     *
+     * @param $account_id
+     * @param $page
+     * @param $page_size
+     *
+     * @return string - json array - подписки пользователя
+     */
+    public function getFavouritesCategoriesAction($account_id = null,$page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if($account_id!=null && SupportClass::checkInteger($account_id)){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+                throw new Http403Exception('Permission error');
+            }
+        } else{
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        return FavoriteCategories::findForUser($account_id,$page,$page_size)->toArray();
     }
 }

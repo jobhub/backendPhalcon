@@ -373,11 +373,11 @@ $routes = [
              * @params category_id, radius
              * @return string - json array Status
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/subscribe',
                 'action' => 'setFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
@@ -385,33 +385,33 @@ $routes = [
              * @params radius, category_id
              * @return string - json array Status
              */
-            [
+            /*[
                 'type' => 'put',
                 'path' => '/edit/radius',
                 'action' => 'editRadiusInFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Отписывает текущего пользователя от категории
              * @method DELETE
              * @param $category_id
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/unsubscribe/{category_id}',
                 'action' => 'deleteFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Возвращает все подписки пользователя на категории
              * @GET
              * @return string - json array - подписки пользователя
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/favourites',
                 'action' => 'getFavouritesAction'
-            ],
+            ],*/
         ]
     ],
 
@@ -1721,11 +1721,11 @@ $routes = [
              *
              * @return Response с json ответом в формате Status
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/subscribe-to/company',
                 'action' => 'setFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Отменяет подписку на компанию
@@ -1736,22 +1736,22 @@ $routes = [
              *
              * @return Response с json ответом в формате Status
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/unsubscribe-from/company/{company_id}',
                 'action' => 'deleteFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Возвращает подписки пользователя на компании
              *
              * @return string - json array с подписками (просто id-шники)
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/favourite/companies',
                 'action' => 'getFavouritesAction'
-            ],
+            ],*/
         ]
     ],
 
@@ -1764,11 +1764,11 @@ $routes = [
              * @params user_id
              * @return string - json array Status
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/subscribe-to/user',
                 'action' => 'setFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Отменяет подписку на пользователя
@@ -1776,22 +1776,22 @@ $routes = [
              * @param $user_id
              * @return string - json array Status
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/unsubscribe-from/user/{user_id}',
                 'action' => 'deleteFavouriteAction'
-            ],
+            ],*/
 
             /**
              * Возвращает подписки текущего пользователя
              * @method GET
              * @return string - json array подписок
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/favourite/users',
                 'action' => 'getFavouritesAction'
-            ],
+            ],*/
         ]
     ],
 
@@ -2366,6 +2366,7 @@ $routes = [
          *      'user';
          *      'service';
          *      'company';
+         *      'category';
          */
 
         'resources' => [
@@ -2512,6 +2513,52 @@ $routes = [
                 'path' => '/get/service/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouriteServicesAction'
             ],
+
+            /**
+             * Меняет радиус на получение уведомлений для подписки на категорию
+             * @method PUT
+             * @params radius, category_id
+             * @return string - json array Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit/radius',
+                'action' => 'editRadiusInFavouriteAction'
+            ],
+
+            /**
+             * Возвращает все подписки пользователя на категории
+             *
+             * @access private
+             *
+             * @GET
+             *
+             * @param $account_id
+             * @param $page
+             * @param $page_size
+             *
+             * @return string - json array - подписки пользователя
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/category',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/category/{account_id}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/category/{account_id}/{page}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/category/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
         ]
     ],
 
@@ -2552,6 +2599,16 @@ $routes = [
                 'path' => '/find',
                 'action' => 'findUsersAction'
             ],
+            [
+                'type' => 'post',
+                'path' => '/find/{page}',
+                'action' => 'findUsersAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/find/{page}/{page_size}',
+                'action' => 'findUsersAction'
+            ],
 
             /**
              * Ищет пользователей по поисковой строке и внутри заданных координат.
@@ -2576,6 +2633,16 @@ $routes = [
                 'path' => '/find/with-filters',
                 'action' => 'findUsersWithFiltersAction'
             ],
+            [
+                'type' => 'post',
+                'path' => '/find/with-filters/{page}',
+                'action' => 'findUsersWithFiltersAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/find/with-filters/{page}/{page_size}',
+                'action' => 'findUsersWithFiltersAction'
+            ],
 
             /**
              * Возвращает данные для автокомплита поиска по пользователям.
@@ -2593,6 +2660,16 @@ $routes = [
             [
                 'type' => 'post',
                 'path' => '/get/autocomplete',
+                'action' => 'getAutoCompleteForSearchAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/get/autocomplete/{page}',
+                'action' => 'getAutoCompleteForSearchAction'
+            ],
+            [
+                'type' => 'post',
+                'path' => '/get/autocomplete/{page}/{page_size}',
                 'action' => 'getAutoCompleteForSearchAction'
             ],
 

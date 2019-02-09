@@ -15,7 +15,7 @@ class ServiceException extends \RuntimeException
     public function __construct(string $message = '', $code = 0,\Throwable $e = null) {
         $di = DI::getDefault();
         $di->getLogger()->critical(
-        $code. ' '. $message
+            $code. ' '. $message
                  );
         return parent::__construct($message, $code,$e);
     }

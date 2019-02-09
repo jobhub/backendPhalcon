@@ -33,7 +33,7 @@ class UserLocationService extends AbstractService
 
         $userLocation->setUserId($userId);
 
-        $marker = $this->markerService->createMarker($locationData['longitude'],$locationData['latitude']);
+        $marker = $this->markerService->createMarker($locationData['longitude'], $locationData['latitude']);
         $locationData['marker_id'] = $marker->getMarkerId();
 
         $this->fillUserLocation($userLocation, $locationData);
@@ -77,7 +77,7 @@ class UserLocationService extends AbstractService
 
     public function changeUserLocation(UserLocation $userLocation, array $data)
     {
-        $this->markerService->changeMarker($userLocation->getMarkerId(),$data['longitude'],$data['latitude']);
+        $this->markerService->changeMarker($userLocation->getMarkerId(), $data['longitude'], $data['latitude']);
         $this->fillUserLocation($userLocation, $data);
 
         if ($userLocation->update() == false) {
@@ -94,7 +94,8 @@ class UserLocationService extends AbstractService
         return $userLocation;
     }
 
-    public function findUsers($data){
+    public function findUsers($data)
+    {
         $longitudeHR = $data['diagonal']['longitude'];
         $latitudeHR = $data['diagonal']['latitude'];
 
@@ -104,14 +105,29 @@ class UserLocationService extends AbstractService
         $diffLat = $data['diagonal']['latitude'] - $data['center']['latitude'];
         $latitudeLB = $data['center']['latitude'] - $diffLat;
 
+        if (isset($data['age_min']))
+            $data['age_min'] = intval($data['age_min']);
+        if (isset($data['age_max']))
+            $data['age_max'] = intval($data['age_max']);
+        if (isset($data['male']))
+            $data['male'] = intval($data['male']);
+
+        if (isset($data['has_photo'])) {
+            if (is_string($data['has_photo']) && $data['has_photo'] == "false")
+                $data['has_photo'] = false;
+            else
+                $data['has_photo'] = boolval($data['has_photo']);
+        }
+
         $results = UserLocation::findUsersByQueryWithFilters($data['query'],
             $longitudeHR, $latitudeHR, $longitudeLB, $latitudeLB, $data['age_min'],
-            $data['age_max'],$data['male'],$data['has_photo']);
+            $data['age_max'], $data['male'], $data['has_photo'],$data['page'],$data['page_size']);
 
         return $results;
     }
 
-    public function getAutocomplete($data){
+    public function getAutocomplete($data)
+    {
         $longitudeHR = $data['diagonal']['longitude'];
         $latitudeHR = $data['diagonal']['latitude'];
 
@@ -122,7 +138,8 @@ class UserLocationService extends AbstractService
         $latitudeLB = $data['center']['latitude'] - $diffLat;
 
         $results = UserLocation::getAutoComplete($data['query'],
-            $longitudeHR, $latitudeHR, $longitudeLB, $latitudeLB);
+            $longitudeHR, $latitudeHR, $longitudeLB, $latitudeLB,
+            $data['page'],$data['page_size']);
 
         return $results;
     }
