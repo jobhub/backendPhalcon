@@ -53,6 +53,7 @@ class LikeDislikeModel extends NotDeletedModel
     public function like($user_id){
         $dislikes = SupportClass::to_php_array($this->dislike_users);
         $likes = SupportClass::to_php_array($this->like_users);
+        $action = false;
         if (in_array($user_id, $likes)) {
             SupportClass::deleteElement($user_id, $likes);
         }else {
@@ -61,17 +62,19 @@ class LikeDislikeModel extends NotDeletedModel
                 $this->setDislikeUsers(SupportClass::to_pg_array($dislikes));
             }
             array_push($likes, $user_id);
+            $action = true;
         }
         $this->setLikeUsers(SupportClass::to_pg_array($likes));
         $this->update();
+        return $action;
     }
     
     public function dislike($user_id){
         $dislikes = SupportClass::to_php_array($this->dislike_users);
         $likes = SupportClass::to_php_array($this->like_users);
-
+        $action = false;
         if (in_array($user_id, $dislikes)) {
-            // If user like the rast deleted like
+            // If user dislike the rast deleted like
             SupportClass::deleteElement($user_id, $dislikes);
         } else {
             if (in_array($user_id, $likes)) {
@@ -79,9 +82,11 @@ class LikeDislikeModel extends NotDeletedModel
                 $this->setLikeUsers(SupportClass::to_pg_array($likes));
             }
             array_push($dislikes, $user_id);
+            $action = true;
         }
         $this->setDislikeUsers(SupportClass::to_pg_array($dislikes));
         $this->update();
+        return $action;
     }
 
 }

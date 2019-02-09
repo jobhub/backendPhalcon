@@ -537,21 +537,25 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     public static function handleUserInfo(Userinfo $userInfo, Accounts $accountReceiver = null)
     {
-        $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
-        $images = ImagesUsers::findImages('App\Models\ImagesUsers', $userInfo->getUserId());
+        try {
+            $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
+            $images = ImagesUsers::findImages('App\Models\ImagesUsers', $userInfo->getUserId());
 
-        $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
+            $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
 
-        $data = [
-            'user_info' => $userInfo,
-            'phones' => $phones,
-            'images' => $images,
-        ];
+            $data = [
+                'user_info' => $userInfo,
+                'phones' => $phones,
+                'images' => $images,
+            ];
 
-        if (!$account)
-            return $data;
+            if (!$account)
+                return $data;
 
-        $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
+            $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
+        } catch (\PDOException $e){
+            echo $e;
+        }
 
         return $data;
     }

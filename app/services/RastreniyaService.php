@@ -233,16 +233,17 @@ class RastreniyaService extends AbstractService
                 }
                 $likes = SupportClass::to_php_array($rast->getLikeUsers());
                 $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
-                $item = ['infos' => $rast->getPublicInfo()];
+                $item = array();
+                $item['infos'] =  $rast->getPublicInfo();
                 //$item['owner'] = $user;
-                $item['owner'] = $account->getUserInfomations();
+                $item['owner'] = $user;
                 $item['likes'] = sizeof($likes);
                 $item['dislikes'] = sizeof($dislikes);
                 $item['comments'] = self::countComments($rast->getId());
-                if (in_array($user_id, $likes)) {
-                    $item['is_liked'] = true;
+               if (in_array($user_id, $likes)) {
+                    $item['infos']['is_liked'] = true;
                 } else if (in_array($user_id, $dislikes)) {
-                    $item['is_disliked'] = true;
+                    $item['infos']['is_disliked'] = true;
                 }
                 if ($item['comments']['total'] > 0) {
                     // Load last comments info;
@@ -284,6 +285,7 @@ class RastreniyaService extends AbstractService
             }
             $rast_id = $data["rast_id"];
             $user_id = $data["user_id"];
+            $this->log(''.$user_id);
             if (!Users::isUserExist($user_id)) {
                 throw new Http400Exception(_('User not found'), AbstractHttpException::BAD_REQUEST_CONTENT);
             }
@@ -296,12 +298,12 @@ class RastreniyaService extends AbstractService
             if (!$rast)
                 throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
 
-            $rast->like($user_id);
+           $action = $rast->like($user_id);
 
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
-        return true;
+        return ["is_liked" => $action];
     }
 
     /**
@@ -330,12 +332,12 @@ class RastreniyaService extends AbstractService
             if (!$rast)
                 throw new Http400Exception(_('Unable to access to the rastreniya'), AbstractHttpException::BAD_REQUEST_CONTENT);
 
-            $rast->dislike($user_id);
+            $action = $rast->dislike($user_id);
 
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
-        return true;
+        return ["is_disliked" => $action];
     }
 
 
