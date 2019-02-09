@@ -53,6 +53,12 @@ class Rastreniya extends LikeDislikeModel
     protected $has_attached_files;
 
     /**
+     * @var integer
+     */
+    protected $city_id;
+
+
+    /**
      * Method to set the value of field id
      *
      * @param integer $id
@@ -158,6 +164,22 @@ class Rastreniya extends LikeDislikeModel
     }
 
     /**
+     * @return int
+     */
+    public function getCityId(): int
+    {
+        return $this->city_id;
+    }
+
+    /**
+     * @param int $city_id
+     */
+    public function setCityId(int $city_id)
+    {
+        $this->city_id = $city_id;
+    }
+
+    /**
      * Returns the value of field has_attached_files
      *
      * @return string
@@ -177,6 +199,7 @@ class Rastreniya extends LikeDislikeModel
         $this->hasMany('id', 'App\Models\RastreniyaResponses', 'rastreniya_id', ['alias' => 'RastreniyaResponses']);
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'User']);
         $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'Account']);
+        $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
     }
 
     /**

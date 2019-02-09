@@ -15,7 +15,7 @@ class Userinfo extends \Phalcon\Mvc\Model
      *
      * @var integer
      * @Primary
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $user_id;
 
@@ -85,22 +85,46 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     protected $last_time;
 
+    /**
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $city_id;
+
     protected $email;
 
-    protected $phones;
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
-        'birthday', 'male', 'address', 'about', 'status', 'rating_executor', 'rating_client',
+        'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
         'path_to_photo', 'last_time'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
-        birthday, male, address, about, status, rating_executor, rating_client, path_to_photo, last_time';
+        birthday, male, city_id, about, status, rating_executor, rating_client, path_to_photo, last_time';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 
     const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return int
+     */
+    public function getCityId(): int
+    {
+        return $this->city_id;
+    }
+
+    /**
+     * @param int $city_id
+     */
+    public function setCityId(int $city_id)
+    {
+        $this->city_id = $city_id;
+    }
+
+
 
     /**
      * Method to set the value of field userId
@@ -126,22 +150,6 @@ class Userinfo extends \Phalcon\Mvc\Model
         $this->first_name = $first_name;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPhones()
-    {
-        return $this->phones;
-    }
-
-    /**
-     * @param mixed $phones
-     */
-    public function setPhones($phones)
-    {
-        $this->phones = $phones;
     }
 
 
@@ -490,6 +498,7 @@ class Userinfo extends \Phalcon\Mvc\Model
         //$this->setSchema("service_services");
         $this->setSource("userinfo");
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
     }
 
     /**
@@ -537,25 +546,25 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     public static function handleUserInfo(Userinfo $userInfo, Accounts $accountReceiver = null)
     {
-        try {
-            $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
-            $images = ImagesUsers::findImages('App\Models\ImagesUsers', $userInfo->getUserId());
+        $phones = PhonesUsers::getUserPhones($userInfo->getUserId());
+        $images = ImagesUsers::findImages('App\Models\ImagesUsers', $userInfo->getUserId());
 
-            $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
+        $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
 
-            $data = [
-                'user_info' => $userInfo,
-                'phones' => $phones,
-                'images' => $images,
-            ];
+        $handledUserInfo = $userInfo->toArray();
+        unset($handledUserInfo['city_id']);
+        $handledUserInfo['city'] = ['city' => $userInfo->cities->getCity(), 'city_id' => $userInfo->getCityId()];
 
-            if (!$account)
-                return $data;
+        $data = [
+            'user_info' => $handledUserInfo,
+            'phones' => $phones,
+            'images' => $images,
+        ];
 
-            $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
-        } catch (\PDOException $e){
-            echo $e;
-        }
+        if (!$account)
+            return $data;
+
+        $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
 
         return $data;
     }

@@ -38,20 +38,24 @@ class UserInfoService extends AbstractService {
     const ERROR_USER_NOT_SUBSCRIBED_TO_USER = 10 + self::ADDED_CODE_NUMBER;
 
     public function createUserInfo(array $userInfoData){
-        $userInfo = new Userinfo();
-        $userInfo->setUserId($userInfoData['userId']);
+        try {
+            $userInfo = new Userinfo();
+            $userInfo->setUserId($userInfoData['userId']);
 
-        $this->fillUserInfo($userInfo,$userInfoData);
+            $this->fillUserInfo($userInfo, $userInfoData);
 
-        if ($userInfo->save() == false) {
-            $errors = SupportClass::getArrayWithErrors($userInfo);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable create info for user',
-                    self::ERROR_UNABLE_CREATE_USER_INFO,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable create info for user',
-                    self::ERROR_UNABLE_CREATE_USER_INFO);
+            if ($userInfo->save() == false) {
+                $errors = SupportClass::getArrayWithErrors($userInfo);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable create info for user',
+                        self::ERROR_UNABLE_CREATE_USER_INFO, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable create info for user',
+                        self::ERROR_UNABLE_CREATE_USER_INFO);
+                }
             }
+        }catch (\PDOException $e){
+            throw new ServiceException($e->getMessage(),$e->getCode(),$e);
         }
         return $userInfo;
     }
@@ -80,8 +84,8 @@ class UserInfoService extends AbstractService {
             $userInfo->setPatronymic($data['patronymic']);
         if(isset($data['male']))
             $userInfo->setMale($data['male']);
-        if(isset($data['address']))
-            $userInfo->setAddress($data['address']);
+        if(isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
+            $userInfo->setCityId($data['city_id']);
         if(!empty(trim($data['birthday'])))
             $userInfo->setBirthday(date('Y-m-d H:i:sO', strtotime($data['birthday'])));
         if(isset($data['about']))

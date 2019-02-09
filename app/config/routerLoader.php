@@ -2607,6 +2607,24 @@ $routes = [
         ]
     ],
 
+    '\App\Controllers\CityController'=>[
+        'prefix' => '/city',
+        'resources' => [
+
+            /**
+             * Возвращает города
+             *
+             * @method GET
+             *
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getCitiesAction'
+            ],
+        ]
+    ],
+
     '\App\Controllers\TestController'=>[
         'prefix' => '/moderator/test',
         'resources' => [
