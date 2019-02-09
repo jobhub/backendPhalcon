@@ -40,7 +40,7 @@ class JWTMiddleware implements MiddlewareInterface
             SupportClass::writeMessageInLogFile('Не нашел токена в базе, разрушил сессию');
 
         } else {
-            if (strtotime($info['lifetime']) <= time() or true) {
+            if (strtotime($info['lifetime']) <= time()) {
 
                 SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
                 throw new Http400Exception("Token expired",self::ERROR_TOKEN_EXPIRED);

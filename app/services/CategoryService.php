@@ -27,7 +27,7 @@ class CategoryService extends AbstractService
     const ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY = 7 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABlE_LINK_CATEGORY_WITH_USER = 8 + self::ADDED_CODE_NUMBER;
 
-    public function setFavourite(int $userId, int $categoryId, $radius)
+    /*public function setFavourite(int $userId, int $categoryId, $radius)
     {
         $fav = FavoriteCategories::findByIds($userId, $categoryId);
         if ($fav) {
@@ -52,14 +52,14 @@ class CategoryService extends AbstractService
         }
 
         return $fav;
-    }
+    }*/
 
-    public function editRadius(int $userId, int $categoryId, $radius)
+    public function editRadius(int $accountId, int $categoryId, $radius)
     {
-        $fav = FavoriteCategories::findByIds($userId, $categoryId);
+        $fav = FavoriteCategories::findByIds('App\Models\FavoriteCategories',$accountId, $categoryId);
 
         if (!$fav) {
-            throw new ServiceException('User don\'t signed on this category',
+            throw new ServiceException('Account don\'t signed on this category',
                 self::ERROR_DON_NOT_SIGNED);
         }
 
@@ -77,7 +77,7 @@ class CategoryService extends AbstractService
         }
     }
 
-    public function deleteFavourite(int $userId, int $categoryId)
+    /*public function deleteFavourite(int $userId, int $categoryId)
     {
         $fav = FavoriteCategories::findByIds($userId, $categoryId);
 
@@ -97,7 +97,7 @@ class CategoryService extends AbstractService
         }
 
         return true;
-    }
+    }*/
 
     public function linkCompanyWithCategory($categoryId, $companyId){
         $category = $this->getCategoryById($categoryId);

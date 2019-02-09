@@ -82,6 +82,9 @@ class UserLocationAPIController extends AbstractController
      *
      * @method POST
      *
+     * @param $page
+     * @param $page_size
+     *
      * @params string query
      * @params center - [longitude => ..., latitude => ...] - центральная точка
      * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
@@ -89,12 +92,15 @@ class UserLocationAPIController extends AbstractController
      *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
      *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
      */
-    public function findUsersAction()
+    public function findUsersAction($page = 1, $page_size = UserLocation::DEFAULT_RESULT_PER_PAGE)
     {
         $inputData = json_decode($this->request->getRawBody(),true);
         $data['center'] = $inputData['center'];
         $data['diagonal'] = $inputData['diagonal'];
         $data['query'] = $inputData['query'];
+
+        $data['page'] = $page;
+        $data['page_size'] = $page_size;
 
         return $this->userLocationService->findUsers($data);
     }
@@ -107,6 +113,9 @@ class UserLocationAPIController extends AbstractController
      *
      * @method POST
      *
+     * @param $page
+     * @param $page_size
+     *
      * @params string query
      * @params center - [longitude => ..., latitude => ...] - центральная точка
      * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
@@ -118,16 +127,19 @@ class UserLocationAPIController extends AbstractController
      *          [status, users=>[userid, email, phone, firstname, lastname, patronymic,
      *          longitude, latitude, lasttime,male, birthday,pathtophoto]]
      */
-    public function findUsersWithFiltersAction()
+    public function findUsersWithFiltersAction($page = 1, $page_size = UserLocation::DEFAULT_RESULT_PER_PAGE)
     {
-        $inputData = $this->request->getJsonRawBody();
-        $data['center'] = $inputData->center;
-        $data['diagonal'] = $inputData->diagonal;
-        $data['query'] = $inputData->query;
-        $data['age_min'] = $inputData->age_min;
-        $data['age_max'] = $inputData->age_max;
-        $data['male'] = $inputData->male;
-        $data['has_photo'] = $inputData->has_photo;
+        $inputData = json_decode($this->request->getRawBody(),true);
+        $data['center'] = $inputData['center'];
+        $data['diagonal'] = $inputData['diagonal'];
+        $data['query'] = $inputData['query'];
+        $data['age_min'] = $inputData['age_min'];
+        $data['age_max'] = $inputData['age_max'];
+        $data['male'] = $inputData['male'];
+        $data['has_photo'] = $inputData['has_photo'];
+
+        $data['page'] = $page;
+        $data['page_size'] = $page_size;
 
         return $this->userLocationService->findUsers($data);
     }
@@ -139,18 +151,24 @@ class UserLocationAPIController extends AbstractController
      *
      * @method POST
      *
+     * @param $page
+     * @param $page_size
+     *
      * @params string query
      * @params center - [longitude => ..., latitude => ...] - центральная точка
      * @params diagonal - [longitude => ..., latitude => ...] - диагональная точка (обязательно правая верхняя)
      * @return string - json array - массив пользователей.
      *          [status, users=>[userid, firstname, lastname, patronymic,status]]
      */
-    public function getAutoCompleteForSearchAction()
+    public function getAutoCompleteForSearchAction($page = 1, $page_size = UserLocation::DEFAULT_RESULT_PER_PAGE)
     {
-        $inputData = $this->request->getJsonRawBody();
+        $inputData = json_decode($this->request->getRawBody(),true);
         $data['center'] = $inputData->center;
         $data['diagonal'] = $inputData->diagonal;
         $data['query'] = $inputData->query;
+
+        $data['page'] = $page;
+        $data['page_size'] = $page_size;
 
         return $this->userLocationService->getAutocomplete($data);
     }

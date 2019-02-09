@@ -21,6 +21,8 @@ use App\Services\ServiceExtendedException;
 /**
  * Контроллер для работы с подписками на пользователей
  * Реализует методы для подписки пользователя на другого пользователя, отписки и получения подписок.
+ *
+ * Не используется в данный момент
  */
 class FavouriteUsersAPIController extends AbstractController
 {

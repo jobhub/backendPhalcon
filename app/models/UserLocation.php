@@ -6,11 +6,14 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
+use App\Libs\SupportClass;
+
 use Phalcon\DI\FactoryDefault as DI;
 
 class UserLocation extends \Phalcon\Mvc\Model
 {
 
+    const DEFAULT_RESULT_PER_PAGE = 10;
     /**
      *
      * @var integer
@@ -222,8 +225,13 @@ class UserLocation extends \Phalcon\Mvc\Model
 
     public static function findUsersByQueryWithFilters($query, $longitudeRH, $latitudeRH,
                                                        $longitudeLB, $latitudeLB, $ageMin = null, $ageMax = null,
-                                                       $male = null, $hasPhoto = null)
+                                                       $male = null, $hasPhoto = null,
+                                                       $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
+
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
         $db = DI::getDefault()->getDb();
 
         $query = str_replace('!', '', $query);
@@ -253,7 +261,7 @@ class UserLocation extends \Phalcon\Mvc\Model
             'last_time' => date('Y-m-d H:i:sO', time() + -3600),
         ];
 
-        $whereExists = false;
+        $whereExists = true;
 
         if ($ageMin != null && $ageMin != false) {
             $dateMin = date('Y-m-d H:i:sO', mktime(date('H'), date('i'), date('s'),
@@ -307,12 +315,19 @@ class UserLocation extends \Phalcon\Mvc\Model
             }
         }
 
+        $sqlQuery .= " ORDER BY last_time desc
+                    LIMIT :limit 
+                    OFFSET :offset";
+
+        $params['limit'] = $page_size;
+        $params['offset'] = $offset;
+
         $query = $db->prepare($sqlQuery);
 
         $query->execute($params);
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $result;
+        return self::handleUsersSearch($result);
     }
 
 
@@ -327,10 +342,14 @@ class UserLocation extends \Phalcon\Mvc\Model
     }
 
     public static function getAutoComplete($query, $longitudeRH, $latitudeRH,
-                                           $longitudeLB, $latitudeLB)
+                                           $longitudeLB, $latitudeLB,
+                                           $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
 
-        $db = Phalcon\DI::getDefault()->getDb();
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        $db = DI::getDefault()->getDb();
 
         $query = str_replace('!', '', $query);
         $query = str_replace('|', '', $query);
@@ -344,11 +363,13 @@ class UserLocation extends \Phalcon\Mvc\Model
 
         $str = implode(' ', $res2);
 
-        $query = $db->prepare("select userid, firstname, lastname, patronymic,pathtophoto from 
-            get_users_for_search_like(:str,:longituderh,
+        $query = $db->prepare("select user_id, first_name, last_name, patronymic,path_to_photo from 
+            get_users_for_search_like_2(:str,:longituderh,
             :latituderh, :longitudelb, :latitudelb) 
-            where lasttime > :lasttime
-            LIMIT 50");
+            where last_time > (:last_time)::date
+            ORDER BY last_time desc
+                    LIMIT :limit 
+                    OFFSET :offset");
 
         $query->execute([
             'str' => $str,
@@ -356,40 +377,40 @@ class UserLocation extends \Phalcon\Mvc\Model
             'latituderh' => $latitudeRH,
             'longitudelb' => $longitudeLB,
             'latitudelb' => $latitudeLB,
-            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
+            'last_time' => date('Y-m-d H:i:sO', time() + -3600),
+            'limit'=>$page_size,
+            'offset'=>$offset
         ]);
+
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
-        $str = var_export($result, true);
 
-        SupportClass::writeMessageInLogFile('Результат поиска по юзерам для автокомплита:');
-        SupportClass::writeMessageInLogFile($str);
-
-        /* return $query->fetchAll(\PDO::FETCH_ASSOC);*/
         return $result;
     }
 
-    public static function getUserinfo($userid)
+    public static function getUserinfo($user_id)
     {
+        $db = DI::getDefault()->getDb();
 
-        $db = Phalcon\DI::getDefault()->getDb();
-
-        $query = $db->prepare("select users.userid, users.email, phones.phone,
-    firstname,lastname, patronymic, longitude, latitude, lasttime,
-    male, birthday,pathtophoto,status
+        $query = $db->prepare("select users.user_id, users.email, array(SELECT phones.phone FROM public.phones as phones INNER JOIN 
+                                  public.phones_users phus ON (phus.phone_id = phones.phone_id) 
+                                           WHERE userinfo.user_id = phus.user_id) as phone,
+    first_name,last_name, patronymic, longitude, latitude, user_location.last_time,
+    male, birthday,path_to_photo,status
             from 
             users 
-    INNER JOIN userinfo USING(userid)
-    INNER JOIN user_location USING(userid)
-    LEFT JOIN phones USING (phoneid)
-    where userid =:userid
-            and lasttime > :lasttime");
+    INNER JOIN userinfo USING(user_id)
+    INNER JOIN user_location USING(user_id)
+    INNER JOIN markers USING(marker_id)
+    LEFT JOIN phones USING (phone_id)
+    where user_id =:user_id
+            and user_location.last_time > :last_time");
 
         $query->execute([
-            'userid' => $userid,
-            'lasttime' => date('Y-m-d H:i:s', time() + -3600),
+            'user_id' => $user_id,
+            'last_time' => date('Y-m-d H:i:sO', time() + -3600),
         ]);
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return self::handleUsersSearch($query->fetchAll(\PDO::FETCH_ASSOC));
     }
 
     public static function handleUserLocations(array $locations)
@@ -410,6 +431,37 @@ class UserLocation extends \Phalcon\Mvc\Model
             'last_time' => $location['last_time'],
             'longitude' => $marker->getLongitude(),
             'latitude' => $marker->getLatitude()
+        ];
+
+        return $handledLocation;
+    }
+
+    public static function handleUsersSearch(array $search_result)
+    {
+        $handledLocations = [];
+        foreach ($search_result as $location) {
+            $handledLocations[] = self::handleSearchResult($location);
+        }
+
+        return $handledLocations;
+    }
+
+    public static function handleSearchResult(array $search_result)
+    {
+        $handledLocation = [
+            'user_id' => $search_result['user_id'],
+            'last_time' => $search_result['last_time'],
+            'email' => $search_result['email'],
+            'phones' => SupportClass::translateInPhpArrFromPostgreArr($search_result['phone']),
+            'first_name' => $search_result['first_name'],
+            'last_name' => $search_result['last_name'],
+            'patronymic' => $search_result['patronymic'],
+            'longitude' => $search_result['longitude'],
+            'latitude' => $search_result['latitude'],
+            'male' => $search_result['male'],
+            'birthday' => $search_result['birthday'],
+            'path_to_photo' => $search_result['path_to_photo'],
+            'status' => $search_result['status'],
         ];
 
         return $handledLocation;

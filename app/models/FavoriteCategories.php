@@ -5,56 +5,14 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class FavoriteCategories extends \Phalcon\Mvc\Model
+class FavoriteCategories extends FavouriteModel
 {
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $category_id;
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $user_id;
-
     /**
      *
      * @var string
      * @Column(type="string", length=53, nullable=true)
      */
     protected $radius;
-
-    /**
-     * Method to set the value of field categoryid
-     *
-     * @param integer $category_id
-     * @return $this
-     */
-    public function setCategoryId($category_id)
-    {
-        $this->category_id = $category_id;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field userid
-     *
-     * @param integer $user_id
-     * @return $this
-     */
-    public function setUserId($user_id)
-    {
-        $this->user_id = $user_id;
-
-        return $this;
-    }
 
     /**
      * Method to set the value of field radius
@@ -67,26 +25,6 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
         $this->radius = $radius;
 
         return $this;
-    }
-
-    /**
-     * Returns the value of field categoryid
-     *
-     * @return integer
-     */
-    public function getCategoryId()
-    {
-        return $this->category_id;
-    }
-
-    /**
-     * Returns the value of field userid
-     *
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
     }
 
     /**
@@ -106,39 +44,8 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function validation()
     {
-        $validator = new Validation();
 
-        $validator->add(
-            'user_id',
-            new Callback(
-                [
-                    "message" => "Пользователь подписчик не существует",
-                    "callback" => function($favCompany) {
-                        $user = Users::findFirstByUserId($favCompany->getUserId());
-                        if($user)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
-
-        $validator->add(
-            'category_id',
-            new Callback(
-                [
-                    "message" => "Такая категория не существует",
-                    "callback" => function($favCategory) {
-                        //$company = Categories::findFirstByCompanyId($favCompany->getCompanyId());
-                        if($favCategory->categories!=null)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
-
-        return $this->validate($validator);
+        return parent::validation();
     }
 
     /**
@@ -147,9 +54,9 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
     public function initialize()
     {
         //$this->setSchema("public");
-        $this->setSource("favoriteCategories");
+        $this->setSource("favorite_categories");
         $this->belongsTo('category_id', 'App\Models\Categories', 'category_id', ['alias' => 'Categories']);
-        $this->belongsTo('user_id', '\Users', 'user_id', ['alias' => 'Users']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -159,7 +66,7 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'favoriteCategories';
+        return 'favorite_categories';
     }
 
     /**
@@ -184,18 +91,8 @@ class FavoriteCategories extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($userId, $categoryId)
+    public static function findForUser($accountId,$page = 1,$page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        return FavoriteCategories::findFirst(["user_id = :userId: AND category_id = :categoryId:",
-            "bind" => [
-                "userId" => $userId,
-                "categoryId" => $categoryId,
-            ]
-        ]);
-    }
-
-    public static function findForUser($userId)
-    {
-        return FavoriteCategories::findByUserId($userId);
+        return FavoriteCategories::findFavourites($accountId,$page,$page_size);
     }
 }
