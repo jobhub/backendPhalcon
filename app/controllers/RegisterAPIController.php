@@ -166,14 +166,28 @@ class RegisterAPIController extends AbstractController
      * @access defective
      *
      * @method POST
-     *
-     * @params (обязательные) first_name, last_name, male
-     * @params (Необязательные) patronymic, birthday, about (много текста о себе),
+     *  (обязательные поля)
+     * @params first_name
+     * @params last_name
+     * @params male
+     * @params city_id
+     * (Необязательные поля)
+     * @params patronymic
+     * @params birthday
+     * @params about (много текста о себе),
      * @return string - json array Status
      */
     public function confirmAction()
     {
-        $data = json_decode($this->request->getRawBody(), true);
+        $inputData = $this->request->getJsonRawBody();
+        $data['first_name'] = $inputData->first_name;
+        $data['last_name'] = $inputData->last_name;
+        $data['male'] = $inputData->male;
+        $data['city_id'] = $inputData->city_id;
+        $data['patronymic'] = $inputData->patronymic;
+        $data['birthday'] = $inputData->birthday;
+        $data['about'] = $inputData->about;
+
         $userId = self::getUserId();
 
         $user = $this->userService->getUserById($userId);

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Accounts;
 use App\Models\ActivationCodes;
 
 use Phalcon\DI\FactoryDefault as DI;
+
 //Models
 use App\Models\Users;
 use App\Models\Phones;
@@ -225,7 +227,8 @@ class AuthService extends AbstractService
             [
                 'user_id'=>$user->getUserId(),
                 'token' => $token,
-                'life_time' => $lifetime
+                'life_time' => $lifetime,
+                'account_id'=>Accounts::findForUserDefaultAccount($user->getUserId())->getId()
             ];
     }
 

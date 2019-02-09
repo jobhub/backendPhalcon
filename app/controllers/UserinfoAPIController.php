@@ -289,6 +289,7 @@ class UserinfoAPIController extends AbstractController
      * @params status
      * @params about
      * @params address
+     * @params city_id
      *
      * @return string - json array - результат операции
      */

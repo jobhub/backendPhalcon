@@ -53,12 +53,15 @@ class RastreniyaService extends AbstractService
             $manager = new TxManager();
             $transaction = $manager->get();
 
+            $userinfo = Userinfo::findFirstByUserId($user_id);
+
             $rast = new Rastreniya();
             $rast->setTransaction($transaction);
             $rast->setUserId($user_id);
             $rast->setContent($content);
             $rast->setIsIncognito($is_incognito);
             $rast->setAccountId($data["account_id"]);
+            $rast->setCityId($userinfo->getCityId());
 
             if ($rast->save() === false) {
                 $transaction->rollback(
@@ -214,11 +217,14 @@ class RastreniyaService extends AbstractService
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * Rastreniya::DEFAULT_RESULT_PER_PAGE;
         try {
+
+            $userinfo = Userinfo::findFirstByUserId($user_id);
+
             $rasts = Rastreniya::find([
-                /*'conditions' => 'user_id = :user_id:',
+                'conditions' => 'city_id = :city_id:',
                 'bind' => [
-                    "user_id" => $user_id
-                ],*/
+                    "city_id" => $userinfo->getCityId()
+                ],
                 'limit' => Rastreniya::DEFAULT_RESULT_PER_PAGE,
                 'order' => 'create_at DESC',
                 'offset' => $offset, // offset of result
