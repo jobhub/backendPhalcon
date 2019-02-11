@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Userinfo;
 use App\Services\AbstractService;
 use App\Services\ResetPasswordService;
 use Dmkit\Phalcon\Auth\Auth;
@@ -94,7 +95,6 @@ class RegisterAPIController extends AbstractController
             $this->authService->sendActivationCode($resultUser);
             SupportClass::writeMessageInLogFile("Отправил код активации");
 
-            $tokens['role'] = $resultUser->getRole();
             $this->db->commit();
         } /*catch(ServiceExtendedException $e){
             switch ($e->getCode()) {
@@ -171,6 +171,7 @@ class RegisterAPIController extends AbstractController
      * @params last_name
      * @params male
      * @params city_id
+     * @params nickname
      * (Необязательные поля)
      * @params patronymic
      * @params birthday
@@ -187,18 +188,28 @@ class RegisterAPIController extends AbstractController
         $data['patronymic'] = $inputData->patronymic;
         $data['birthday'] = $inputData->birthday;
         $data['about'] = $inputData->about;
-
-        $userId = self::getUserId();
-
-        $user = $this->userService->getUserById($userId);
+        $data['nickname'] = $inputData->nickname;
 
         $this->db->begin();
         try {
-            $data['userId'] = $user->getUserId();
+
+            $userId = self::getUserId();
+
+            $user = $this->userService->getUserById($userId);
+
+            $userinfo = Userinfo::findFirstByUserId($userId);
+
+            if ($userinfo) {
+                throw new Http400Exception('User already confirmed');
+            }
+
+            $data['user_id'] = $user->getUserId();
             $this->userInfoService->createUserInfo($data);
 
             $this->userInfoService->createSettings($user->getUserId());
             $this->userService->setNewRoleForUser($user, ROLE_USER);
+
+            $tokens = $this->authService->createSession($user);
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
@@ -221,7 +232,7 @@ class RegisterAPIController extends AbstractController
         }
         $this->db->commit();
 
-        return self::chatResponce('User was successfully confirmed');
+        return self::chatResponce('User was successfully confirmed', $tokens);
     }
 
     /**
@@ -269,16 +280,14 @@ class RegisterAPIController extends AbstractController
         try {
             if ($checking == UserService::RIGHT_ACTIVATION_CODE) {
                 $this->userService->deleteActivationCode($user->getUserId());
-                $this->userService->changeUser($user, ['role'=>ROLE_USER_DEFECTIVE,'activated'=>true]);
+                $this->userService->changeUser($user, ['role' => ROLE_USER_DEFECTIVE, 'activated' => true]);
             } elseif ($checking == UserService::RIGHT_DEACTIVATION_CODE) {
                 $this->userService->deleteUser($user->getUserId());
             } else {
                 throw new ServiceException(_('Internal Server Error'));
             }
 
-            if ($this->session->get('auth') != null) {
-                $res = $this->authService->createSession($user);
-            }
+            $res = $this->authService->createSession($user);
 
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
@@ -408,27 +417,27 @@ class RegisterAPIController extends AbstractController
         try {
             $user = $this->userService->getUserByLogin($data['login']);
 
-            $checking = $this->resetPasswordService->checkResetPasswordCode($user,$data['reset_code']);
+            $checking = $this->resetPasswordService->checkResetPasswordCode($user, $data['reset_code']);
 
-            if($checking == ResetPasswordService::RIGHT_DEACTIVATE_PASSWORD_RESET_CODE){
+            if ($checking == ResetPasswordService::RIGHT_DEACTIVATE_PASSWORD_RESET_CODE) {
                 $this->resetPasswordService->deletePasswordResetCode($user->getUserId());
                 return self::successResponse('Request to change password successfully canceled');
             }
 
-            if($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE){
+            if ($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE) {
                 $exception = new Http400Exception(_('Invalid some parameters'));
                 $errors['errors'] = true;
                 $errors['reset_code'] = 'Invalid reset code';
                 throw $exception->addErrorDetails($errors);
             }
 
-            if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
+            if ($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE) {
                 return self::successResponse('Code is valid');
             }
 
             throw new Http500Exception(_('Internal Server Error'));
 
-        } catch(ServiceExtendedException $e){
+        } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case ResetPasswordService::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -436,7 +445,7 @@ class RegisterAPIController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        } catch(ServiceException $e){
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -465,23 +474,23 @@ class RegisterAPIController extends AbstractController
         try {
             $user = $this->userService->getUserByLogin($data['login']);
 
-            $checking = $this->resetPasswordService->checkResetPasswordCode($user,$data['reset_code']);
+            $checking = $this->resetPasswordService->checkResetPasswordCode($user, $data['reset_code']);
 
-            if($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE){
+            if ($checking == ResetPasswordService::WRONG_PASSWORD_RESET_CODE) {
                 $exception = new Http400Exception(_('Invalid some parameters'));
                 $errors['errors'] = true;
                 $errors['reset_code'] = 'Invalid reset code';
                 throw $exception->addErrorDetails($errors);
             }
 
-            if($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE){
-                $this->userService->setPasswordForUser($user,$data['password']);
+            if ($checking == ResetPasswordService::RIGHT_PASSWORD_RESET_CODE) {
+                $this->userService->setPasswordForUser($user, $data['password']);
                 $this->resetPasswordService->deletePasswordResetCode($user->getUserId());
                 return self::successResponse('Password was changed successfully');
             }
 
             throw new Http500Exception(_('Internal Server Error'));
-        } catch(ServiceExtendedException $e){
+        } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                 case ResetPasswordService::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE:
@@ -490,7 +499,7 @@ class RegisterAPIController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        } catch(ServiceException $e){
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -498,6 +507,36 @@ class RegisterAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
+    }
+
+    /**
+     * Проверяет, существует ли уже никнейм
+     * @access public
+     *
+     * @method POST
+     *
+     * @params nickname
+     *
+     * @return array (bool nickname_exists)
+     */
+    public function checkNicknameAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['nickname'] = $inputData->nickname;
+
+        if (!isset($data['nickname'])) {
+            $errors['nickname'] = 'Missing required parameter "nickname"';
+        }
+
+        if ($errors != null) {
+            $exception = new Http400Exception(_('Invalid some parameters'));
+            $errors['errors'] = true;
+            throw $exception->addErrorDetails($errors);
+        }
+
+        $exists = $this->userInfoService->checkNicknameExists($data['nickname']);
+
+        return self::successResponse('', ['nickname_exists' => $exists]);
     }
 }
 

@@ -15,12 +15,12 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
     /**
      * Invalid parameters anywhere
      */
-    const ERROR_INVALID_PARAMETERS = 10001;
+    const ERROR_INVALID_PARAMETERS = 100001;
 
     /**
      * Record already exists
      */
-    const ERROR_ALREADY_EXISTS = 10002;
+    const ERROR_ALREADY_EXISTS = 100002;
 
     const ERROR_UNABLE_SEND_TO_MAIL = 100003;
 

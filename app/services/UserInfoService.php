@@ -20,7 +20,8 @@ use App\Models\Settings;
  *
  * Class UsersService
  */
-class UserInfoService extends AbstractService {
+class UserInfoService extends AbstractService
+{
 
     const ADDED_CODE_NUMBER = 4000;
 
@@ -37,10 +38,11 @@ class UserInfoService extends AbstractService {
     const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_USER = 9 + self::ADDED_CODE_NUMBER;
     const ERROR_USER_NOT_SUBSCRIBED_TO_USER = 10 + self::ADDED_CODE_NUMBER;
 
-    public function createUserInfo(array $userInfoData){
+    public function createUserInfo(array $userInfoData)
+    {
         try {
             $userInfo = new Userinfo();
-            $userInfo->setUserId($userInfoData['userId']);
+            $userInfo->setUserId($userInfoData['user_id']);
 
             $this->fillUserInfo($userInfo, $userInfoData);
 
@@ -54,106 +56,150 @@ class UserInfoService extends AbstractService {
                         self::ERROR_UNABLE_CREATE_USER_INFO);
                 }
             }
-        }catch (\PDOException $e){
-            throw new ServiceException($e->getMessage(),$e->getCode(),$e);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return $userInfo;
     }
 
-    public function changeUserInfo(Userinfo $userInfo, array $userInfoData){
-        $this->fillUserInfo($userInfo,$userInfoData);
-        if ($userInfo->update() == false) {
-            $errors = SupportClass::getArrayWithErrors($userInfo);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable change info for user',
-                    self::ERROR_UNABLE_CHANGE_USER_INFO,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable change info for user',
-                    self::ERROR_UNABLE_CHANGE_USER_INFO);
+    public function changeUserInfo(Userinfo $userInfo, array $userInfoData)
+    {
+        try {
+            $this->fillUserInfo($userInfo, $userInfoData);
+            if ($userInfo->update() == false) {
+                $errors = SupportClass::getArrayWithErrors($userInfo);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable change info for user',
+                        self::ERROR_UNABLE_CHANGE_USER_INFO, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable change info for user',
+                        self::ERROR_UNABLE_CHANGE_USER_INFO);
+                }
             }
+
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return $userInfo;
     }
 
-    private function fillUserInfo(Userinfo $userInfo, array $data){
-        if(!empty(trim($data['first_name'])))
+    private function fillUserInfo(Userinfo $userInfo, array $data)
+    {
+        if (!empty(trim($data['first_name'])))
             $userInfo->setFirstName($data['first_name']);
-        if(!empty(trim($data['last_name'])))
+        if (!empty(trim($data['last_name'])))
             $userInfo->setLastName($data['last_name']);
-        if(isset($data['patronymic']))
+        if (isset($data['patronymic']))
             $userInfo->setPatronymic($data['patronymic']);
-        if(isset($data['male']))
+        if (isset($data['male']))
             $userInfo->setMale($data['male']);
-        if(isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
+        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
             $userInfo->setCityId($data['city_id']);
-        if(!empty(trim($data['birthday'])))
+        if (!empty(trim($data['birthday'])))
             $userInfo->setBirthday(date('Y-m-d H:i:sO', strtotime($data['birthday'])));
-        if(isset($data['about']))
+        if (isset($data['about']))
             $userInfo->setAbout($data['about']);
-        if(isset($data['status']))
+        if (isset($data['status']))
             $userInfo->setStatus($data['status']);
-        if(isset($data['email']))
+        if (isset($data['email']))
             $userInfo->setEmail($data['email']);
-        if(isset($data['path_to_photo']))
+        if (isset($data['path_to_photo']))
             $userInfo->setPathToPhoto($data['path_to_photo']);
+        if (isset($data['nickname']))
+            $userInfo->setNickname($data['nickname']);
     }
 
-    public function CreateSettings(int $userId){
-        $setting = new Settings();
-        $setting->setUserId($userId);
+    public function CreateSettings(int $userId)
+    {
+        try {
+            $setting = new Settings();
+            $setting->setUserId($userId);
 
-        if ($setting->create() == false) {
-            $errors = SupportClass::getArrayWithErrors($setting);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable create settings',
-                    self::ERROR_UNABLE_CREATE_SETTINGS,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable create settings',
-                    self::ERROR_UNABLE_CREATE_SETTINGS);
+            if ($setting->create() == false) {
+                $errors = SupportClass::getArrayWithErrors($setting);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable create settings',
+                        self::ERROR_UNABLE_CREATE_SETTINGS, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable create settings',
+                        self::ERROR_UNABLE_CREATE_SETTINGS);
+                }
             }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $setting;
     }
 
-    public function getUserInfoById(int $userId){
-        $user = Userinfo::findFirstByUserId($userId);
+    public function getUserInfoById(int $userId)
+    {
+        try {
+            $user = Userinfo::findFirstByUserId($userId);
 
-        if (!$user || $user == null) {
-            throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
+            if (!$user || $user == null) {
+                throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
         return $user;
     }
 
-    public function getHandledUserInfoById(int $userId, Accounts $accountReceiver = null){
-        $userInfo = Userinfo::findUserInfoById($userId);
+    public function getHandledUserInfoById(int $userId, Accounts $accountReceiver = null)
+    {
+        try {
+            $userInfo = Userinfo::findUserInfoById($userId);
 
-        if (!$userInfo || $userInfo == null) {
-            throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
-        }
-
-        return Userinfo::handleUserInfo($userInfo,$accountReceiver);
-    }
-
-    public function subscribeToCompany(int $userId, int $companyId){
-        $fav = new FavoriteCompanies();
-        $fav->setSubjectId($userId);
-        $fav->setObjectId($companyId);
-
-        if(!$fav->create()){
-            $errors = SupportClass::getArrayWithErrors($fav);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable subscribe user to company',
-                    self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable subscribe user to company',
-                    self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY);
+            if (!$userInfo || $userInfo == null) {
+                throw new ServiceException('User don\'t exists', self::ERROR_USER_INFO_NOT_FOUND);
             }
+
+            return Userinfo::handleUserInfo($userInfo, $accountReceiver);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function getSigningToCompany(int $userId, int $companyId){
-        $fav = FavoriteCompanies::findByIds('App\Models\FavoriteCompanies',$userId,$companyId);
+    /**
+     * @param string $nickname
+     * @return bool - true if exists
+     */
+    public function checkNicknameExists(string $nickname)
+    {
+        try {
+            $user = Userinfo::findFirstByNickname($nickname);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $user?true:false;
+    }
+
+    /*public function subscribeToCompany(int $userId, int $companyId)
+    {
+        try {
+            $fav = new FavoriteCompanies();
+            $fav->setSubjectId($userId);
+            $fav->setObjectId($companyId);
+
+            if (!$fav->create()) {
+                $errors = SupportClass::getArrayWithErrors($fav);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable subscribe user to company',
+                        self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable subscribe user to company',
+                        self::ERROR_UNABLE_SUBSCRIBE_USER_TO_COMPANY);
+                }
+            }
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function getSigningToCompany(int $userId, int $companyId)
+    {
+        $fav = FavoriteCompanies::findByIds('App\Models\FavoriteCompanies', $userId, $companyId);
 
         if (!$fav) {
             throw new ServiceException('User don\'t subscribe to company', self::ERROR_USER_NOT_SUBSCRIBED_TO_COMPANY);
@@ -161,31 +207,34 @@ class UserInfoService extends AbstractService {
         return $fav;
     }
 
-    public function unsubscribeFromCompany(FavoriteCompanies $favComp){
-        if(!$favComp->delete()){
+    public function unsubscribeFromCompany(FavoriteCompanies $favComp)
+    {
+        if (!$favComp->delete()) {
             $errors = SupportClass::getArrayWithErrors($favComp);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable unsubscribe user from company',
-                    self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable unsubscribe user from company',
                     self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_COMPANY);
             }
         }
-    }
+    }*/
 
-    public function subscribeToUser(int $userId, int $userIdObject){
+    /*public function subscribeToUser(int $userId, int $userIdObject)
+    {
         $fav = new FavoriteUsers();
         $fav->setSubjectId($userId);
         $fav->setObjectId($userIdObject);
 
-        if(!$fav->create()){
-            SupportClass::getErrorsWithException($fav,self::ERROR_UNABLE_SUBSCRIBE_USER_TO_USER,'Unable subscribe user to user');
+        if (!$fav->create()) {
+            SupportClass::getErrorsWithException($fav, self::ERROR_UNABLE_SUBSCRIBE_USER_TO_USER, 'Unable subscribe user to user');
         }
     }
 
-    public function getSigningToUser(int $userId, int $userIdObject){
-        $fav = FavoriteUsers::findByIds('App\Models\FavoriteUsers',$userIdObject,$userId);
+    public function getSigningToUser(int $userId, int $userIdObject)
+    {
+        $fav = FavoriteUsers::findByIds('App\Models\FavoriteUsers', $userIdObject, $userId);
 
         if (!$fav) {
             throw new ServiceException('User don\'t subscribed to user', self::ERROR_USER_NOT_SUBSCRIBED_TO_USER);
@@ -193,10 +242,11 @@ class UserInfoService extends AbstractService {
         return $fav;
     }
 
-    public function unsubscribeFromUser(FavoriteUsers $favUser){
-        if(!$favUser->delete()){
+    public function unsubscribeFromUser(FavoriteUsers $favUser)
+    {
+        if (!$favUser->delete()) {
             SupportClass::getErrorsWithException($favUser,
-                self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_USER,'Unable unsubscribe user from user');
+                self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_USER, 'Unable unsubscribe user from user');
         }
-    }
+    }*/
 }

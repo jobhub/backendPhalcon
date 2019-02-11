@@ -285,6 +285,22 @@ $routes = [
                 'path' => '/change/password',
                 'action' => 'changePasswordAction'
             ],
+
+            /**
+             * Проверяет, существует ли уже никнейм
+             * @access public
+             *
+             * @method POST
+             *
+             * @params nickname
+             *
+             * @return array (bool nickname_exists)
+             */
+            [
+                'type' => 'post',
+                'path' => '/check/nickname',
+                'action' => 'checkNicknameAction'
+            ],
         ]
     ],
 
@@ -2430,14 +2446,18 @@ $routes = [
 
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
+             *
              * @method PUT
-             * @params radius, category_id
+             *
+             * @params radius
+             * @params category_id
+             * @params account_id
              * @return string - json array Status
              */
             [
                 'type' => 'put',
-                'path' => '/edit/radius',
-                'action' => 'editRadiusInFavouriteAction'
+                'path' => 'edit/category/radius',
+                'action' => 'editRadiusInFavouriteCategoryAction'
             ],
 
             /**

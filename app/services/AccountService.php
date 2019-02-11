@@ -22,28 +22,33 @@ class AccountService extends AbstractService {
     const ERROR_UNABLE_CREATE_ACCOUNT = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_ACCOUNT_NOT_FOUND = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_ACCOUNT = 3 + self::ADDED_CODE_NUMBER;
+
     /**
      * create account
      *
-     * @param array $accountData [userId, companyId = null, company_role_id = null]
+     * @param array $accountData [user_id, company_id = null, company_role_id = null]
      * @return int. Return id of account.
      */
     public function createAccount(array $accountData) {
-        $account = new Accounts();
-        $account
-            ->setUserId($accountData['user_id'])
-            ->setCompanyId($accountData['company_id'])
-            ->setCompanyRoleId($accountData['company_role_id']);
+        try {
+            $account = new Accounts();
+            $account
+                ->setUserId($accountData['user_id'])
+                ->setCompanyId($accountData['company_id'])
+                ->setCompanyRoleId($accountData['company_role_id']);
 
-        if ($account->save() == false) {
-            $errors = SupportClass::getArrayWithErrors($account);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable to create account',
-                    self::ERROR_UNABLE_CREATE_ACCOUNT,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable to create account',
-                    self::ERROR_UNABLE_CREATE_ACCOUNT);
+            if ($account->save() == false) {
+                $errors = SupportClass::getArrayWithErrors($account);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to create account',
+                        self::ERROR_UNABLE_CREATE_ACCOUNT, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to create account',
+                        self::ERROR_UNABLE_CREATE_ACCOUNT);
+                }
             }
+        }catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $account->getId();

@@ -41,6 +41,9 @@ class FavouriteController extends AbstractController
      * @params account_id = null
      * @params object_id = null
      *
+     * (category)
+     * @params radius
+     *
      * @return string - json array Status
      */
     public function setFavouriteAction($type)
@@ -48,6 +51,7 @@ class FavouriteController extends AbstractController
         $inputData = $this->request->getJsonRawBody();
         $data['account_id'] = $inputData->account_id;
         $data['object_id'] = $inputData->object_id;
+        $data['radius'] = $inputData->radius;
 
         try {
             $userId = self::getUserId();
@@ -70,7 +74,7 @@ class FavouriteController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $this->favouriteService->subscribeTo($type,$data['account_id'], $data['object_id']);
+            $this->favouriteService->subscribeTo($type,$data['account_id'], $data['object_id'],$data);
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -254,7 +258,7 @@ class FavouriteController extends AbstractController
      * @params account_id
      * @return string - json array Status
      */
-    public function editRadiusInFavouriteAction()
+    public function editRadiusInFavouriteCategoryAction()
     {
         $inputData = $this->request->getJsonRawBody();
         $data['radius'] = $inputData->radius;
@@ -319,6 +323,6 @@ class FavouriteController extends AbstractController
 
         self::setAccountId($account_id);
 
-        return FavoriteCategories::findForUser($account_id,$page,$page_size)->toArray();
+        return FavoriteCategories::findForUser($account_id,$page,$page_size);
     }
 }

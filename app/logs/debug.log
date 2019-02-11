@@ -513,3 +513,17 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Sat, 09 Feb 19 11:42:19 +0300][DEBUG] 7
 [Sat, 09 Feb 19 11:42:32 +0300][DEBUG] 7
 [Sat, 09 Feb 19 11:42:42 +0300][DEBUG] 7
+[Sat, 09 Feb 19 16:34:09 +0300][CRITICAL] 21003 Account not subscribed to object
+[Mon, 11 Feb 19 10:01:52 +0300][CRITICAL] 5003 User don't exists
+[Mon, 11 Feb 19 10:14:29 +0300][CRITICAL] 4003 User don't exists
+[Mon, 11 Feb 19 10:15:23 +0300][CRITICAL] 4003 User don't exists
+[Mon, 11 Feb 19 10:15:43 +0300][CRITICAL] 4003 User don't exists
+[Mon, 11 Feb 19 10:21:35 +0300][CRITICAL] 5003 User don't exists
+[Mon, 11 Feb 19 10:22:27 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 10:22:51 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 11:12:00 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 11:14:30 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 11:14:50 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 11:21:52 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 11:23:11 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 11 Feb 19 12:49:44 +0300][CRITICAL] 21001 Unable subscribe account to object

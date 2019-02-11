@@ -138,10 +138,6 @@ class SessionAPIController extends AbstractController
             SupportClass::writeMessageInLogFile('Юзер найден в бд');
             $this->authService->checkPassword($user, $data['password']);
             $result = $this->authService->createSession($user);
-
-            $userInfo = $this->userInfoService->getHandledUserInfoById($user->getUserId());
-
-            $result['info'] = $userInfo;
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
@@ -151,8 +147,6 @@ class SessionAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
-        $result['role'] = $user->getRole();
         return self::successResponse('Successfully login', $result);
     }
 
