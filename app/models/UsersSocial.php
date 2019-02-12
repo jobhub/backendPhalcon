@@ -1,10 +1,12 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 
-class Userssocial extends \Phalcon\Mvc\Model
+class UsersSocial extends \Phalcon\Mvc\Model
 {
     /**
      *
@@ -33,14 +35,14 @@ class Userssocial extends \Phalcon\Mvc\Model
      * @Primary
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $usersocialid;
+    protected $user_social_id;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=32, nullable=false)
      */
-    protected $userid;
+    protected $user_id;
 
     /**
      * Method to set the value of field network
@@ -84,12 +86,12 @@ class Userssocial extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field usersocialid
      *
-     * @param integer $usersocialid
+     * @param integer $user_social_id
      * @return $this
      */
-    public function setUserSocialId($usersocialid)
+    public function setUserSocialId($user_social_id)
     {
-        $this->usersocialid = $usersocialid;
+        $this->user_social_id = $user_social_id;
 
         return $this;
     }
@@ -97,12 +99,12 @@ class Userssocial extends \Phalcon\Mvc\Model
     /**
      * Method to set the value of field userid
      *
-     * @param integer $userid
+     * @param integer $user_id
      * @return $this
      */
-    public function setUserId($userid)
+    public function setUserId($user_id)
     {
-        $this->userid = $userid;
+        $this->user_id = $user_id;
 
         return $this;
     }
@@ -144,7 +146,7 @@ class Userssocial extends \Phalcon\Mvc\Model
      */
     public function getUserSocialId()
     {
-        return $this->usersocialid;
+        return $this->user_social_id;
     }
 
     /**
@@ -154,7 +156,7 @@ class Userssocial extends \Phalcon\Mvc\Model
      */
     public function getUserId()
     {
-        return $this->userid;
+        return $this->user_id;
     }
 
     /**
@@ -167,12 +169,12 @@ class Userssocial extends \Phalcon\Mvc\Model
         $validator = new Validation();
 
         $validator->add(
-            'userid',
+            'user_id',
             new Callback(
                 [
                     "message" => "Пользователь не был создан",
                     "callback" => function($usersocial) {
-                        $user = Users::findFirstByUserid($usersocial->getUserId());
+                        $user = Users::findFirstByUserId($usersocial->getUserId());
                         if($user)
                             return true;
                         return false;
@@ -208,8 +210,8 @@ class Userssocial extends \Phalcon\Mvc\Model
     public function initialize()
     {
         //$this->setSchema("public");
-        $this->setSource("userssocial");
-        $this->belongsTo('userid', '\Users', 'userid', ['alias' => 'Users']);
+        $this->setSource("users_social");
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -219,14 +221,14 @@ class Userssocial extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'userssocial';
+        return 'users_social';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Userssocial[]|Userssocial|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return UsersSocial[]|UsersSocial|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -237,7 +239,7 @@ class Userssocial extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return Userssocial|\Phalcon\Mvc\Model\ResultInterface
+     * @return UsersSocial|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
