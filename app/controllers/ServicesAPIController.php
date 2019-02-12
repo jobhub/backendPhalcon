@@ -504,8 +504,8 @@ class ServicesAPIController extends AbstractController
             //$account = $this->accountService->getAccountById($data['account_id']);
 
             $pointByDefault = TradePoints::findFirstByAccountId($data['account_id']);
-
-            $this->pointService->addPointToService($pointByDefault->getPointId(), $service->getServiceId());
+            if($pointByDefault)
+                $this->pointService->addPointToService($pointByDefault->getPointId(), $service->getServiceId());
 
             $account = $this->accountService->getAccountById($data['account_id']);
 
@@ -669,78 +669,6 @@ class ServicesAPIController extends AbstractController
 
         return self::successResponse('Image was successfully deleted');
     }
-
-    /**
-     * Удаляет картинку из списка картинок услуги
-     *
-     * @method DELETE
-     *
-     * @param $serviceId - id услуги
-     * @param $imageName - название изображения с расширением
-     *
-     * @return string - json array в формате Status - результат операции
-     */
-    /*public function deleteImageByNameAction($serviceId, $imageName)
-    {
-        if ($this->request->isDelete() && $this->session->get('auth')) {
-
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-
-            $service = Services::findFirstByServiceid($serviceId);
-
-            if (!$service || !SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(),
-                    $service->getSubjectType(), 'editService')) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['permission error'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
-            }
-
-            $image = ImagesServices::findFirstByImagepath(
-                ImageLoader::formFullImagePathFromImageName('services', $serviceId, $imageName));
-
-            if (!$image) {
-                $response->setJsonContent(
-                    [
-                        "errors" => ['Неверное название изображения'],
-                        "status" => STATUS_WRONG
-                    ]
-                );
-                return $response;
-            }
-
-            if (!$image->delete()) {
-                $errors = [];
-                foreach ($image->getMessages() as $message) {
-                    $errors[] = $message->getMessage();
-                }
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => $errors
-                    ]
-                );
-                return $response;
-            }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
-    }*/
 
     /**
      * Связывает услугу с точкой оказания услуг

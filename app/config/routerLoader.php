@@ -855,10 +855,7 @@ $routes = [
              * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
              *        Иначе компании, в которой он должен быть хотя бы менеджером.
              *
-             * @return string -  массив услуг в виде:
-             *      [{serviceid, description, datepublication, pricemin, pricemax,
-             *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
-             *      {Userinfo или Company} }].
+             * @return string -  массив услуг
              */
             [
                 'type' => 'get',
