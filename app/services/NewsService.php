@@ -21,7 +21,6 @@ class NewsService extends AbstractService
     const ERROR_UNABLE_DELETE_NEWS = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_NEWS = 4 + self::ADDED_CODE_NUMBER;
 
-
     /**
      * Creating a new news
      *

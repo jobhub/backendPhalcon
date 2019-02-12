@@ -17,19 +17,13 @@ use App\Libs\SupportClass;
  */
 class UserService extends AbstractService
 {
-
-    const WRONG_ACTIVATION_CODE = 1;
-    const RIGHT_ACTIVATION_CODE = 0;
-    const RIGHT_DEACTIVATION_CODE = 2;
-
-    const ADDED_CODE_NUMBER = 5000;
+    const ADDED_CODE_NUMBER = 26000;
 
     /** Unable to create user */
     const ERROR_UNABLE_CREATE_USER = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_USER = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_USER_NOT_FOUND = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_USER = 4 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_DELETE_ACTIVATION_CODE = 5 + self::ADDED_CODE_NUMBER;
 
     /**
      * Creating a new user
@@ -209,57 +203,6 @@ class UserService extends AbstractService
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
-
-    /**
-     * Deleting activation code of user
-     * @param int $userId
-     * @return bool
-     */
-    public function deleteActivationCode(int $userId)
-    {
-        try {
-            $code = ActivationCodes::findFirstByUserId($userId);
-
-            if (!$code) {
-                return true;
-            }
-
-            if (!$code->delete()) {
-                $errors = SupportClass::getArrayWithErrors($code);
-                if (count($errors) > 0)
-                    throw new ServiceExtendedException('Unable to delete activation code',
-                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE, null, null, $errors);
-                else {
-                    throw new ServiceExtendedException('Unable to delete activation code',
-                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE);
-                }
-            }
-
-            return true;
-        } catch (\PDOException $e) {
-            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
-    public function checkActivationCode(string $code, int $userId)
-    {
-        $activationCode = ActivationCodes::findFirstByUserId($userId);
-
-        if (!$activationCode || ((time() - strtotime($activationCode->getTime())) > ActivationCodes::TIME_LIFE)) {
-            return self::WRONG_ACTIVATION_CODE;
-        }
-
-        if ($activationCode->getActivation() != $code) {
-            if ($activationCode->getDeactivation() != $code) {
-                return self::WRONG_ACTIVATION_CODE;
-            } else {
-                return self::RIGHT_DEACTIVATION_CODE;
-            }
-        } else {
-            return self::RIGHT_ACTIVATION_CODE;
         }
     }
 

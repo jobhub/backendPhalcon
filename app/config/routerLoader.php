@@ -196,9 +196,16 @@ $routes = [
              * @access defective
              *
              * @method POST
-             *
-             * @params (обязательные) first_name, last_name, male
-             * @params (Необязательные) patronymic, birthday, about (много текста о себе),
+             *  (обязательные поля)
+             * @params first_name
+             * @params last_name
+             * @params male
+             * @params city_id
+             * @params nickname
+             * (Необязательные поля)
+             * @params patronymic
+             * @params birthday
+             * @params about (много текста о себе),
              * @return string - json array Status
              */
             [

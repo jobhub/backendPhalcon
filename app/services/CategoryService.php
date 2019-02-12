@@ -18,14 +18,10 @@ class CategoryService extends AbstractService
 {
     const ADDED_CODE_NUMBER = 6000;
 
-    const ERROR_ALREADY_SIGNED = 1 + self::ADDED_CODE_NUMBER;
-    const ERROR_DON_NOT_SIGNED = 3 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABlE_SUBSCRIBE = 2 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABlE_CHANGE_RADIUS = 4 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABlE_UNSUBSCRIBE = 5 + self::ADDED_CODE_NUMBER;
-    const ERROR_CATEGORY_NOT_FOUND = 6 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY = 7 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABlE_LINK_CATEGORY_WITH_USER = 8 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_CHANGE_RADIUS = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_CATEGORY_NOT_FOUND = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABlE_LINK_CATEGORY_WITH_USER = 4 + self::ADDED_CODE_NUMBER;
 
     /*public function setFavourite(int $userId, int $categoryId, $radius)
     {
@@ -56,12 +52,7 @@ class CategoryService extends AbstractService
 
     public function editRadius(int $accountId, int $categoryId, $radius)
     {
-        $fav = FavoriteCategories::findByIds('App\Models\FavoriteCategories',$accountId, $categoryId);
-
-        if (!$fav) {
-            throw new ServiceException('Account don\'t signed on this category',
-                self::ERROR_DON_NOT_SIGNED);
-        }
+        $fav = $this->favouriteService->getSigningTo(FavouriteService::TYPE_CATEGORY,$accountId,$categoryId);
 
         $fav->setRadius($radius);
 

@@ -29,7 +29,7 @@ class CommentService extends AbstractService {
     const TYPE_NEWS = 'news';
     const TYPE_SERVICES = 'service';
 
-    const ADDED_CODE_NUMBER = 13000;
+    const ADDED_CODE_NUMBER = 14000;
 
     /** Unable to create user */
     const ERROR_COMMENT_NOT_FOUND = 1 + self::ADDED_CODE_NUMBER;

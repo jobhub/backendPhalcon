@@ -286,7 +286,7 @@ class FavouriteController extends AbstractController
             }
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
-                case CategoryService::ERROR_DON_NOT_SIGNED:
+                case CategoryService::ERROR_DO_NOT_SIGNED:
                     throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);

@@ -527,3 +527,4 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Mon, 11 Feb 19 11:21:52 +0300][CRITICAL] 4001 Unable create info for user
 [Mon, 11 Feb 19 11:23:11 +0300][CRITICAL] 4001 Unable create info for user
 [Mon, 11 Feb 19 12:49:44 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Mon, 11 Feb 19 15:39:50 +0300][CRITICAL] 2007 Incorrect password or login

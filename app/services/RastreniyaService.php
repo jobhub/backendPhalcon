@@ -20,9 +20,11 @@ use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 class RastreniyaService extends AbstractService
 {
-    const ERROR_TRANSACTION = 16001;
+    const ADDED_CODE_NUMBER = 25000;
 
-    const ERROR_UNABLE_TO_ACCESS_GROUP = 16005;
+    const ERROR_TRANSACTION = 1 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_UNABLE_TO_ACCESS_GROUP = 5 + self::ADDED_CODE_NUMBER;
 
     public function create($user_id, $data)
     {

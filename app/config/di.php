@@ -51,12 +51,6 @@ $di->set(
 
 $di->setShared('logger', new FileAdapter(BASE_PATH.'/app/logs/debug.log'));
 
-/** Service to perform operations */
-$di->setShared('userService', '\App\Services\UserService');
-$di->setShared('messageService', '\App\Services\MessageService');
-$di->setShared('privateChatService', '\App\Services\PrivateChatService');
-$di->setShared('chatHistoryService', '\App\Services\ChatHistoryService');
-
 //
 $di->setShared(
     "PhonesAPI",
@@ -67,33 +61,38 @@ $di->setShared(
     }
 );
 
-$di->setShared('authService', '\App\Services\AuthService');
-$di->setShared('phoneService', '\App\Services\PhoneService');
-$di->setShared('accountService', '\App\Services\AccountService');
-$di->setShared('userInfoService', '\App\Services\UserInfoService');
-$di->setShared('resetPasswordService', '\App\Services\ResetPasswordService');
-$di->setShared('categoryService', '\App\Services\CategoryService');
-$di->setShared('imageService', '\App\Services\ImageService');
-$di->setShared('newsService', '\App\Services\NewsService');
-$di->setShared('serviceService', '\App\Services\ServiceService');
-$di->setShared('tagService', '\App\Services\TagService');
-$di->setShared('pointService', '\App\Services\PointService');
-$di->setShared('companyService', '\App\Services\CompanyService');
-$di->setShared('commentService', '\App\Services\CommentService');
-$di->setShared('likeService', '\App\Services\LikeService');
-$di->setShared('userLocationService', '\App\Services\UserLocationService');
-$di->setShared('requestService', '\App\Services\RequestService');
-$di->setShared('taskService', '\App\Services\TaskService');
-$di->setShared('offerService', '\App\Services\OfferService');
-$di->setShared('reviewService', '\App\Services\ReviewService');
-$di->setShared('forwardService', '\App\Services\ForwardService');
-$di->setShared('favouriteService', '\App\Services\FavouriteService');
-$di->setShared('markerService', '\App\Services\MarkerService');
+$di->setShared('accountService', '\App\Services\AccountService'); //1
+$di->setShared('authService', '\App\Services\AuthService'); //2
+$di->setShared('resetPasswordService', '\App\Services\ResetPasswordService'); //3
+$di->setShared('userInfoService', '\App\Services\UserInfoService'); //4
+$di->setShared('likeService', '\App\Services\LikeService');  //5
+$di->setShared('categoryService', '\App\Services\CategoryService'); //6
+$di->setShared('imageService', '\App\Services\ImageService'); //7
+$di->setShared('newsService', '\App\Services\NewsService'); //8
+$di->setShared('serviceService', '\App\Services\ServiceService'); //9
+$di->setShared('tagService', '\App\Services\TagService'); //10
+$di->setShared('pointService', '\App\Services\PointService'); //11
+$di->setShared('phoneService', '\App\Services\PhoneService'); //12
+$di->setShared('companyService', '\App\Services\CompanyService'); //13
+$di->setShared('commentService', '\App\Services\CommentService'); //14
+$di->setShared('userLocationService', '\App\Services\UserLocationService'); //15
+$di->setShared('requestService', '\App\Services\RequestService'); //16
+$di->setShared('taskService', '\App\Services\TaskService'); //17
+$di->setShared('offerService', '\App\Services\OfferService'); //18
+$di->setShared('reviewService', '\App\Services\ReviewService'); //19
+$di->setShared('forwardService', '\App\Services\ForwardService'); //20
+$di->setShared('favouriteService', '\App\Services\FavouriteService'); //21
+$di->setShared('markerService', '\App\Services\MarkerService'); //22
 
-$di->setShared('channelService', '\App\Services\ChannelService');
-$di->setShared('groupService', '\App\Services\GroupService');
-$di->setShared('rastreniyaService', '\App\Services\RastreniyaService');
+$di->setShared('channelService', '\App\Services\ChannelService'); //23
+$di->setShared('groupService', '\App\Services\GroupService'); //24
+$di->setShared('rastreniyaService', '\App\Services\RastreniyaService'); //25
 
+/** Service to perform operations */
+$di->setShared('userService', '\App\Services\UserService'); //26
+$di->setShared('messageService', '\App\Services\MessageService'); //27
+$di->setShared('privateChatService', '\App\Services\PrivateChatService'); //28
+$di->setShared('chatHistoryService', '\App\Services\ChatHistoryService'); //29
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];

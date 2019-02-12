@@ -35,7 +35,7 @@ class LikeService extends AbstractService
     const TYPE_SERVICE = 'service';
     const TYPE_USER_IMAGE = 'image-user';
 
-    const ADDED_CODE_NUMBER = 14000;
+    const ADDED_CODE_NUMBER = 5000;
 
     /** Unable to create user */
     const ERROR_UNABLE_DELETE_LIKE = 1 + self::ADDED_CODE_NUMBER;

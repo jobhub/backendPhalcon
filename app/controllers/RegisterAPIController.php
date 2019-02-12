@@ -266,8 +266,8 @@ class RegisterAPIController extends AbstractController
             $errors['login'] = 'User already activate';
         }
 
-        $checking = $this->userService->checkActivationCode($data['activation_code'], $user->getUserId());
-        if ($checking == UserService::WRONG_ACTIVATION_CODE)
+        $checking = $this->authService->checkActivationCode($data['activation_code'], $user->getUserId());
+        if ($checking == AuthService::WRONG_ACTIVATION_CODE)
             $errors['activation_code'] = 'Wrong activation code';
 
         if (!is_null($errors)) {
@@ -278,10 +278,10 @@ class RegisterAPIController extends AbstractController
 
         $this->db->begin();
         try {
-            if ($checking == UserService::RIGHT_ACTIVATION_CODE) {
-                $this->userService->deleteActivationCode($user->getUserId());
+            if ($checking == AuthService::RIGHT_ACTIVATION_CODE) {
+                $this->authService->deleteActivationCode($user->getUserId());
                 $this->userService->changeUser($user, ['role' => ROLE_USER_DEFECTIVE, 'activated' => true]);
-            } elseif ($checking == UserService::RIGHT_DEACTIVATION_CODE) {
+            } elseif ($checking == AuthService::RIGHT_DEACTIVATION_CODE) {
                 $this->userService->deleteUser($user->getUserId());
             } else {
                 throw new ServiceException(_('Internal Server Error'));
@@ -292,7 +292,7 @@ class RegisterAPIController extends AbstractController
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
-                case UserService::ERROR_UNABLE_DELETE_ACTIVATION_CODE:
+                case AuthService::ERROR_UNABLE_DELETE_ACTIVATION_CODE:
                 case UserService::ERROR_UNABLE_DELETE_USER:
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);

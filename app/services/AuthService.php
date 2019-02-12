@@ -25,16 +25,20 @@ class AuthService extends AbstractService
     const LOGIN_DO_NOT_EXISTS = 0;
     const LOGIN_INCORRECT = 2;
 
+
+    const WRONG_ACTIVATION_CODE = 1;
+    const RIGHT_ACTIVATION_CODE = 0;
+    const RIGHT_DEACTIVATION_CODE = 2;
+
     const ADDED_CODE_NUMBER = 2000;
 
     const ERROR_USER_ALREADY_ACTIVATED = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_TO_CREATE_ACTIVATION_CODE = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_ACTIVATION_CODE = 3 + self::ADDED_CODE_NUMBER;
 
     /*Time to resend did't come. Return time to resend*/
-    const ERROR_NO_TIME_TO_RESEND = 3 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 4 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 5 + self::ADDED_CODE_NUMBER;
-    const ERROR_INCORRECT_PASSWORD = 6 + self::ADDED_CODE_NUMBER;
+    const ERROR_NO_TIME_TO_RESEND = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_INCORRECT_PASSWORD = 7 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -142,6 +146,56 @@ class AuthService extends AbstractService
         }
 
         return $activationCode;
+    }
+
+    /**
+     * Deleting activation code of user
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteActivationCode(int $userId)
+    {
+        try {
+            $code = ActivationCodes::findFirstByUserId($userId);
+
+            if (!$code) {
+                return true;
+            }
+
+            if (!$code->delete()) {
+                $errors = SupportClass::getArrayWithErrors($code);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE);
+                }
+            }
+
+            return true;
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function checkActivationCode(string $code, int $userId)
+    {
+        $activationCode = ActivationCodes::findFirstByUserId($userId);
+
+        if (!$activationCode || ((time() - strtotime($activationCode->getTime())) > ActivationCodes::TIME_LIFE)) {
+            return self::WRONG_ACTIVATION_CODE;
+        }
+
+        if ($activationCode->getActivation() != $code) {
+            if ($activationCode->getDeactivation() != $code) {
+                return self::WRONG_ACTIVATION_CODE;
+            } else {
+                return self::RIGHT_DEACTIVATION_CODE;
+            }
+        } else {
+            return self::RIGHT_ACTIVATION_CODE;
+        }
     }
 
     /**
