@@ -23,6 +23,7 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
     const ERROR_ALREADY_EXISTS = 100002;
 
     const ERROR_UNABLE_SEND_TO_MAIL = 100003;
+    const ERROR_UNABLE_SEND_TO_SMS = 100004;
 
     public function sendMail($action, $view, $data, $title)
     {
@@ -37,6 +38,17 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
             return ['status' => STATUS_OK];
         } else {
             throw new ServiceExtendedException('Unable to send email', self::ERROR_UNABLE_SEND_TO_MAIL, null, null, ['sending_error' => $res]);
+        }
+    }
+
+    public function sendSms($phone, $message){
+        try {
+            $sms = $this->di->get('SMS');
+            $response = $sms->call('SmsAero')->setRecipient('NUMBER')->send('MESSAGE');
+
+            return $response;
+        }catch(\Exception $e){
+            throw new ServiceException($e->getMessage(),self::ERROR_UNABLE_SEND_TO_SMS,$e);
         }
     }
 

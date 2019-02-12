@@ -129,4 +129,8 @@ $di->setShared('view', function () {
     return $view;
 });
 
+$di->setShared('SMS', function () use ($di) {
+    return new SMSFactory\Sender($di);
+});
+
 return $di;

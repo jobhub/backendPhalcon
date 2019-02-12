@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "add98fbabe08160d4f28676a098781fe",
+    "content-hash": "7adce77ec853cb27ea46bf5807927a87",
     "packages": [
         {
             "name": "cilex/cilex",
@@ -466,16 +466,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.2",
+            "version": "8.10.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "a71f260c2efce10ded8af030a20fa13edfb0e9be"
+                "reference": "667a1fe292561b7c64c4fc457a9f1ecc41d67185"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/a71f260c2efce10ded8af030a20fa13edfb0e9be",
-                "reference": "a71f260c2efce10ded8af030a20fa13edfb0e9be",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/667a1fe292561b7c64c4fc457a9f1ecc41d67185",
+                "reference": "667a1fe292561b7c64c4fc457a9f1ecc41d67185",
                 "shasum": ""
             },
             "require": {
@@ -530,7 +530,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-12-06T10:42:08+00:00"
+            "time": "2019-02-08T08:31:08+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1107,6 +1107,54 @@
             "time": "2015-09-19T14:15:08+00:00"
         },
         {
+            "name": "phalcon/incubator",
+            "version": "v1.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phalcon/incubator.git",
+                "reference": "9a8d0e4edb00d07db757bc89b0fcfb0e6877635d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phalcon/incubator/zipball/9a8d0e4edb00d07db757bc89b0fcfb0e6877635d",
+                "reference": "9a8d0e4edb00d07db757bc89b0fcfb0e6877635d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-phalcon": ">=1.2.4",
+                "php": ">=5.3.6",
+                "swiftmailer/swiftmailer": "~5.2"
+            },
+            "require-dev": {
+                "codeception/codeception": "*",
+                "phpunit/phpunit": "3.7.*",
+                "squizlabs/php_codesniffer": "1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Phalcon": "Library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3"
+            ],
+            "authors": [
+                {
+                    "name": "Phalcon Team",
+                    "email": "team@phalconphp.com"
+                }
+            ],
+            "description": "Adapters, prototypes or functionality that can be potentially incorporated to the C-framework.",
+            "homepage": "http://phalconphp.com",
+            "keywords": [
+                "framework",
+                "phalcon"
+            ],
+            "time": "2014-12-23T02:18:50+00:00"
+        },
+        {
             "name": "phpcollection/phpcollection",
             "version": "0.5.0",
             "source": {
@@ -1432,16 +1480,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.0.6",
+            "version": "v6.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "8190d73eb5def11a43cfb020b7f36db65330698c"
+                "reference": "0c41a36d4508d470e376498c1c0c527aa36a2d59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/8190d73eb5def11a43cfb020b7f36db65330698c",
-                "reference": "8190d73eb5def11a43cfb020b7f36db65330698c",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/0c41a36d4508d470e376498c1c0c527aa36a2d59",
+                "reference": "0c41a36d4508d470e376498c1c0c527aa36a2d59",
                 "shasum": ""
             },
             "require": {
@@ -1494,7 +1542,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2018-11-16T00:41:32+00:00"
+            "time": "2019-02-01T15:04:28+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -1832,6 +1880,68 @@
             "time": "2018-01-24T12:46:19+00:00"
         },
         {
+            "name": "stanislav-web/phalcon-sms-factory",
+            "version": "1.2.3-stable",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stanislav-web/phalcon-sms-factory.git",
+                "reference": "890ff8bdbc472db646ca72fb22d6abc4abbb2c4c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stanislav-web/phalcon-sms-factory/zipball/890ff8bdbc472db646ca72fb22d6abc4abbb2c4c",
+                "reference": "890ff8bdbc472db646ca72fb22d6abc4abbb2c4c",
+                "shasum": ""
+            },
+            "require": {
+                "phalcon/incubator": "1.3.4",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.6.*"
+            },
+            "suggest": {
+                "stanislav-web/phalcon-searcher": "Phalcon Database Searcher. This is the search service is designed to search multiple SQL tables. Convenient to use autocomplete, search documents, search the whole site.",
+                "stanislav-web/phalcon-translate": "Phalcon Translate Service. Simple way to translate your costom part of templates :-)",
+                "stanislav-web/phalcon-ulogin": "Phalcon ULogin. The authorization form uLogin through social networks",
+                "stanislav-web/phalcon-uploader": "Phalcon files uploader. Handling and downloading files for Phalcon projects. Allowed multiple files download, filters etc..."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.*-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SMSFactory\\": "src/SMSFactory",
+                    "Test\\SMSFactory\\": "phpunit/src/SMSFactory"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stanislav WEB",
+                    "email": "stanisov@gmail.com",
+                    "homepage": "http://reds.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Multiple gateway SMS Sender factory. Provide any SMS services inside your Phalcon's projects",
+            "homepage": "https://github.com/stanislav-web/phalcon-sms-factory",
+            "keywords": [
+                "phalcon",
+                "phalcon send sms",
+                "phalcon sms",
+                "phalcon sms providers",
+                "phalcon sms service"
+            ],
+            "time": "2015-04-15T15:16:05+00:00"
+        },
+        {
             "name": "stanislav-web/phalcon-ulogin",
             "version": "dev-master",
             "source": {
@@ -1880,6 +1990,60 @@
                 "ulogin"
             ],
             "time": "2015-01-27T23:35:55+00:00"
+        },
+        {
+            "name": "swiftmailer/swiftmailer",
+            "version": "v5.4.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swiftmailer/swiftmailer.git",
+                "reference": "181b89f18a90f8925ef805f950d47a7190e9b950"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/181b89f18a90f8925ef805f950d47a7190e9b950",
+                "reference": "181b89f18a90f8925ef805f950d47a7190e9b950",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.1",
+                "symfony/phpunit-bridge": "~3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.4-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "lib/swift_required.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Corbyn"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Swiftmailer, free feature-rich PHP mailer",
+            "homepage": "https://swiftmailer.symfony.com",
+            "keywords": [
+                "email",
+                "mail",
+                "mailer"
+            ],
+            "time": "2018-07-31T09:26:32+00:00"
         },
         {
             "name": "symfony/config",
@@ -2569,20 +2733,20 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.36.0",
+            "version": "v1.37.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "730c9c4471b5152d23061feb02b03382264c8a15"
+                "reference": "66be9366c76cbf23e82e7171d47cbfa54a057a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/730c9c4471b5152d23061feb02b03382264c8a15",
-                "reference": "730c9c4471b5152d23061feb02b03382264c8a15",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/66be9366c76cbf23e82e7171d47cbfa54a057a62",
+                "reference": "66be9366c76cbf23e82e7171d47cbfa54a057a62",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.4.0",
                 "symfony/polyfill-ctype": "^1.8"
             },
             "require-dev": {
@@ -2593,7 +2757,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.36-dev"
+                    "dev-master": "1.37-dev"
                 }
             },
             "autoload": {
@@ -2631,7 +2795,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2018-12-16T10:34:11+00:00"
+            "time": "2019-01-14T14:59:29+00:00"
         },
         {
             "name": "zendframework/zend-cache",
@@ -3355,7 +3519,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "stanislav-web/phalcon-ulogin": 20
+        "stanislav-web/phalcon-ulogin": 20,
+        "stanislav-web/phalcon-sms-factory": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

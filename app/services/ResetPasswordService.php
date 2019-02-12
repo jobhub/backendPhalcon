@@ -25,6 +25,7 @@ class ResetPasswordService extends AbstractService
     const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_NO_TIME_TO_RESEND = 3 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_SEND_RESET_PASSWORD_CODE = 4 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -82,6 +83,8 @@ class ResetPasswordService extends AbstractService
                         self::ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE);
                 }
             }
+
+            return true;
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
@@ -97,10 +100,16 @@ class ResetPasswordService extends AbstractService
                     'deactivate' => $resetCode->getDeactivateCode(),
                     'email' => $user->getEmail()],'Подтвердите сброс пароля');
         } else {
-            //Тут типа отправляем
-            $res = true;
-            //Отправили
+            $this->sendSms($user->phones->getPhone(),$this->getMessageForSmsForPasswordResetCode($resetCode));
         }
+    }
+
+    public function getMessageForSmsForPasswordResetCode(PasswordResetCodes $passwordResetCode){
+        if($passwordResetCode==null){
+            throw new ServiceException('Код для сброса пароля не должен быть null',self::ERROR_UNABLE_SEND_RESET_PASSWORD_CODE);
+        }
+
+        return 'Код '.$passwordResetCode->getResetCodePhone();
     }
 
     /**

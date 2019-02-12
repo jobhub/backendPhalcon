@@ -40,11 +40,14 @@ class AuthService extends AbstractService
     const ERROR_NO_TIME_TO_RESEND = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_INCORRECT_PASSWORD = 7 + self::ADDED_CODE_NUMBER;
 
+    const ERROR_UNABLE_SEND_ACTIVATION_CODE = 8 + self::ADDED_CODE_NUMBER;
+
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
     const WRONG_PASSWORD_RESET_CODE = 1;
     const RIGHT_DEACTIVATE_PASSWORD_RESET_CODE = 2;
 
+    const MESSAGE_FOR_SMS_FOR_ACTIVATION_CODE = 'Код: ';
     /**
      * Check login.
      *
@@ -98,16 +101,18 @@ class AuthService extends AbstractService
             throw new ServiceException('User already active', self::ERROR_USER_ALREADY_ACTIVATED);
         }
 
-        if ($user->getEmail() != null) {
+        $result = $this->createActivationCode($user);
 
-            $result = $this->createActivationCode($user);
-
+        if($user->getPhoneId()!=null){
+            //Отправляем SMS
+            $this->sendSms($user->phones->getPhone(),$this->getMessageForSmsForActivationCode($result));
+        } elseif ($user->getEmail() != null) {
             //Отправляем письмо.
             $this->sendMailForActivation($result, $user->getEmail());
             return true;
         }
 
-        throw new ServiceException('Активация через sms пока не предусмотрена', 0);
+        throw new ServiceException('У пользователя должен быть email или номер телефона для подтверждения', self::ERROR_UNABLE_SEND_ACTIVATION_CODE);
     }
 
     /**
@@ -330,6 +335,16 @@ class AuthService extends AbstractService
             return base64_decode($data[1]);
         else
             return false;
+    }
+
+    public function getMessageForSmsForActivationCode(ActivationCodes  $activationCode){
+
+        if($activationCode==null){
+            throw new ServiceException('Активационный код не должен быть null',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE);
+        }
+
+        return 'Код '.$activationCode->getActivation();
     }
 
 
