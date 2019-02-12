@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Controllers\HttpExceptions\Http403Exception;
 use App\Models\Accounts;
+use App\Models\CompanyRole;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use App\Libs\SupportClass;
@@ -94,6 +96,21 @@ class AccountService extends AbstractService {
 
         if(!$account)
             throw new ServiceException('Account not found',self::ERROR_ACCOUNT_NOT_FOUND);
+        return $account;
+    }
+
+    public function checkPermissionOrGetDefaultAccount($userId, $accountId){
+        if ($accountId != null && SupportClass::checkInteger($accountId)) {
+            if (!Accounts::checkUserHavePermission($userId, $accountId, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($accountId);
+
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
         return $account;
     }
 }

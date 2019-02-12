@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Accounts;
 use App\Models\Services;
 use App\Models\Users;
 use App\Models\Group;
@@ -37,6 +38,14 @@ class ServiceService extends AbstractService {
         $service = new Services();
 
         $this->fillService($service,$serviceData);
+
+        $account = Accounts::findFirst($service->getAccountId());
+
+        if($account->getCompanyId()==null){
+            throw new ServiceExtendedException('Unable create service',
+                self::ERROR_UNABLE_CREATE_SERVICE,null,null,['account_id'=>
+                'Услуги могут создавать только компании']);
+        }
 
         if ($service->save() == false) {
             $errors = SupportClass::getArrayWithErrors($service);

@@ -5,11 +5,13 @@ namespace App\Controllers;
 use App\Controllers\HttpExceptions\Http403Exception;
 use App\Models\Accounts;
 use App\Models\FavouriteServices;
+use App\Models\TradePoints;
 use App\Services\AccountService;
 use App\Services\CategoryService;
 use App\Services\PhoneService;
 use App\Services\PointService;
 use App\Services\ServiceService;
+use Phalcon\Http\Client\Exception;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
@@ -43,6 +45,7 @@ class ServicesAPIController extends AbstractController
     /**
      * Возвращает все услуги заданной компании
      *
+     * @access public
      * @method GET
      *
      * @param $id
@@ -57,17 +60,13 @@ class ServicesAPIController extends AbstractController
      */
     public function getServicesForSubjectAction($id, $is_company = false, $account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
-        $userId = self::getUserId();
+        if(self::isAuthorized()) {
+            $userId = self::getUserId();
 
-        if($account_id!=null && is_integer(intval($account_id))){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getServices')){
-                throw new Http403Exception('Permission error');
-            }
-        } else{
-            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+            $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+            self::setAccountId($account->getId());
         }
-
-        self::setAccountId($account_id);
 
         if ($is_company && strtolower($is_company) != "false") {
             $services = Services::findServicesByCompanyId($id,$page,$page_size);
@@ -414,76 +413,20 @@ class ServicesAPIController extends AbstractController
     }
 
     /**
-     *
-     */
-    /*public function editImageServiceAction()
-    {
-        if ($this->request->isPost() && $this->session->get('auth')) {
-            $response = new Response();
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-
-            $service = Services::findFirstByServiceid($this->request->getPost("serviceId"));
-
-            if (!$service) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['Такая услуга не существует']
-                    ]
-                );
-                return $response;
-            }
-
-            if (!SubjectsWithNotDeletedWithCascade::checkUserHavePermission($userId, $service->getSubjectId(), $service->getSubjectType(), 'editService')) {
-                $response->setJsonContent(
-                    [
-                        "status" => STATUS_WRONG,
-                        "errors" => ['permission error']
-                    ]
-                );
-                return $response;
-            }
-
-            $result = $this->addImageHandler($service->getServiceId());
-
-            $result = json_decode($result->getContent());
-
-            if($result->status != STATUS_OK){
-                $response->setJsonContent(
-                    [
-                        "status" => $result->status,
-                        "errors" => $result->errors
-                    ]
-                );
-                return $response;
-            }
-
-            $response->setJsonContent(
-                [
-                    "status" => STATUS_OK
-                ]
-            );
-            return $response;
-
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-            throw $exception;
-        }
-    }*/
-
-    /**
      * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
+     * Добавлять услуги можно только компании.
+     *
+     * Услуга привязывается к той точке (считается, что она единственная для компании),
+     * которая была создана при создании бизнес-аккаунта.
      *
      * @method POST
      *
-     * @params (необязательные) массив old_points - массив id tradePoint-ов,
-     * (необязательные) массив new_points - массив объектов TradePoints
+     * //@params (необязательные) массив old_points - массив id tradePoint-ов,
+     * //@params (необязательные) массив new_points - массив объектов TradePoints
+     *
      * @params (необязательные) account_id, description, name, price_min, price_max (или же вместо них просто price)
-     *           (обязательно) region_id,
-     *           (необязательно) longitude, latitude
-     *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
+     *           (необязательно) region_id,
+     *           (необязательно) categories array of int - массив id категорий.
      * @params массив строк tags с тегами.
      * @params прикрепленные изображения. Именование роли не играет.
      *
@@ -503,6 +446,7 @@ class ServicesAPIController extends AbstractController
         $data['tags'] = $inputData->tags;
         $data['old_points'] = $inputData->old_points;
         $data['new_points'] = $inputData->new_points;
+        $data['categories'] = $inputData->categories;
         $this->db->begin();
         try {
             //validation
@@ -516,8 +460,7 @@ class ServicesAPIController extends AbstractController
                 throw $exception->addErrorDetails($errors);
             }*/
 
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
+            $userId = self::getUserId();
 
             if (empty(trim($data['account_id']))) {
                 $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
@@ -541,7 +484,7 @@ class ServicesAPIController extends AbstractController
                 $this->tagService->addTagToService($tag, $service->getServiceId());
             }
 
-            if($data['old_points']!=null)
+            /*if($data['old_points']!=null)
             foreach ($data['old_points'] as $old_point_id) {
                 $point = $this->pointService->getPointById($old_point_id);
                 $this->pointService->addPointToService($point->getPointId(), $service->getServiceId());
@@ -556,7 +499,13 @@ class ServicesAPIController extends AbstractController
                 foreach ($new_point_info['new_phones'] as $phone) {
                     $this->phoneService->addPhoneToPoint($phone, $point->getPointId());
                 }
-            }
+            }*/
+
+            //$account = $this->accountService->getAccountById($data['account_id']);
+
+            $pointByDefault = TradePoints::findFirstByAccountId($data['account_id']);
+
+            $this->pointService->addPointToService($pointByDefault->getPointId(), $service->getServiceId());
 
             $account = $this->accountService->getAccountById($data['account_id']);
 
@@ -568,13 +517,13 @@ class ServicesAPIController extends AbstractController
             } else {
                 if($data['categories']!=null)
                 foreach ($data['categories'] as $categoryId) {
-                    $this->categoryService->linkCompanyWithCategory($categoryId, $account->getCompanyId());
+                    $this->categoryService->linkCompanyWithCategory($categoryId, $account->getCompanyId(),false);
                 }
             }
 
             if (count($this->request->getUploadedFiles()) > 0) {
-                $ids = $this->imageService->createImagesToNews($this->request->getUploadedFiles(), $service);
-                $this->imageService->saveImagesToNews($this->request->getUploadedFiles(), $service, $ids);
+                $ids = $this->imageService->createImagesToService($this->request->getUploadedFiles(), $service);
+                $this->imageService->saveImagesToService($this->request->getUploadedFiles(), $service, $ids);
             }
 
         } catch (ServiceExtendedException $e) {
@@ -1437,90 +1386,37 @@ class ServicesAPIController extends AbstractController
 
     /**
      * Возвращает публичную информацию об услуге.
-     * Публичный доступ.
+     * @access public.
      *
      * @method GET
      *
      * @param $service_id
+     * @param $account_id
      *
      * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
      */
-    public function getServiceInfoAction($service_id)
+    public function getServiceInfoAction($service_id, $account_id = null)
     {
-        $service = Services::findServiceById($service_id);
+        try {
+            $service = Services::findServiceById($service_id, Services::publicColumns);
 
-        if (!$service) {
-            throw new Http400Exception('Service not found', ServiceService::ERROR_SERVICE_NOT_FOUND);
+            if(self::isAuthorized()) {
+                $userId = self::getUserId();
+
+                $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+                self::setAccountId($account->getId());
+            }
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
 
         return Services::handleServiceFromArray([$service->toArray()]);
-        //$reviews = Reviews::getReviewsForService2($service_id, 2);
-
-        //$reviews = Reviews::getReviewsForService2($serviceId);
-
-        $reviews2_ar = [];
-        foreach ($reviews as $review) {
-            $reviews2['review'] = json_decode($review['review'], true);
-
-            unset($reviews2['review']['deleted']);
-            unset($reviews2['review']['deletedcascade']);
-            unset($reviews2['review']['fake']);
-            unset($reviews2['review']['subjectid']);
-            unset($reviews2['review']['subjecttype']);
-            unset($reviews2['review']['objectid']);
-            unset($reviews2['review']['objecttype']);
-
-            unset($reviews2['review']['userid']);
-            $subject = json_decode($review['subject'], true);
-            if (isset($subject['reviewid'])) {
-                $userinfo = new Userinfo();
-                $userinfo->setFirstname($reviews2['review']['fakename']);
-                //$reviews2['userinfo'] = $userinfo;
-                $reviews2['userinfo']['firstname'] = $userinfo->getFirstname();
-                $reviews2['userinfo']['lastname'] = $userinfo->getLastname();
-                $reviews2['userinfo']['pathtophoto'] = $userinfo->getPathToPhoto();
-                $reviews2['userinfo']['userid'] = $userinfo->getUserId();
-            } else if (isset($subject['companyid'])) {
-                //$reviews2['company'] = $subject;
-                /*unset($reviews2['company']['deleted']);
-                unset($reviews2['company']['deletedcascade']);
-                unset($reviews2['company']['ismaster']);
-                unset($reviews2['company']['yandexMapPages']);*/
-
-                $reviews2['company']['name'] = $subject['name'];
-                $reviews2['company']['fullname'] = $subject['fullname'];
-                $reviews2['company']['logotype'] = $subject['logotype'];
-                $reviews2['company']['companyid'] = $subject['companyid'];
-            } else {
-                //$reviews2['userinfo'] = $subject;
-                $reviews2['userinfo']['firstname'] = $subject['firstname'];
-                $reviews2['userinfo']['lastname'] = $subject['lastname'];
-                $reviews2['userinfo']['pathtophoto'] = $subject['pathtophoto'];
-                $reviews2['userinfo']['userid'] = $subject['userid'];
-            }
-            unset($reviews2['review']['fakename']);
-
-            $reviews2_ar[] = $reviews2;
-        }
-
-        if ($service['subjecttype'] == 1) {
-            $str = 'company';
-            $binder = Companies::findFirstByCompanyid($service['subjectid']);
-        } else {
-            $str = 'user';
-            $binder = Userinfo::findFirstByUserid($service['subjectid']);
-        }
-
-        $response->setJsonContent([
-            'status' => STATUS_OK,
-            'service' => $service,
-            'points' => $points2,
-            'images' => $images,
-            'reviews' => $reviews2_ar,
-            $str => $binder
-        ]);
-
-        return $response;
     }
 
     /**

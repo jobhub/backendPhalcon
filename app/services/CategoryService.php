@@ -90,14 +90,15 @@ class CategoryService extends AbstractService
         return true;
     }*/
 
-    public function linkCompanyWithCategory($categoryId, $companyId){
+    public function linkCompanyWithCategory($categoryId, $companyId, $exceptionIfExists = true){
         $category = $this->getCategoryById($categoryId);
 
         $companyCategory = new CompaniesCategories();
         $companyCategory->setCompanyId($companyId);
         $companyCategory->setCategoryId($category->getCategoryId());
 
-        if (!$companyCategory->create()) {
+
+        if ($exceptionIfExists?(!$companyCategory->create()):(!$companyCategory->save())) {
             $errors = SupportClass::getArrayWithErrors($companyCategory);
             if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable to link company with category',

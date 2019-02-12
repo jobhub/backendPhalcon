@@ -384,7 +384,7 @@ class Services extends AccountWithNotDeletedWithCascade
             )
         );
 
-        $validator->add(
+        /*$validator->add(
             'region_id',
             new Callback(
                 [
@@ -397,7 +397,7 @@ class Services extends AccountWithNotDeletedWithCascade
                     }
                 ]
             )
-        );
+        );*/
 
         $validator->add(
             "date_publication",
@@ -408,7 +408,7 @@ class Services extends AccountWithNotDeletedWithCascade
             )
         );
 
-        if ($this->getLongitude() != null) {
+       /* if ($this->getLongitude() != null) {
             $validator->add(
                 'latitude',
                 new Callback(
@@ -438,7 +438,7 @@ class Services extends AccountWithNotDeletedWithCascade
                     ]
                 )
             );
-        }
+        }*/
 
         return $this->validate($validator) && parent::validation();
     }
@@ -1468,7 +1468,8 @@ class Services extends AccountWithNotDeletedWithCascade
         }
 
         $cur_account = Accounts::findFirstById($accountId);
-        $relatedAccounts = $cur_account->getRelatedAccounts();
+        if($cur_account)
+            $relatedAccounts = $cur_account->getRelatedAccounts();
 
         foreach ($services as $service) {
             $serviceAll = $service;
@@ -1521,6 +1522,8 @@ class Services extends AccountWithNotDeletedWithCascade
             $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $relatedAccounts);
 
             unset($serviceAll['likes']);
+
+            $serviceAll['reviews'] = Reviews::findReviewsForService($service['service_id']);
 
 
             $servicesAll[] = $serviceAll;
@@ -1603,9 +1606,14 @@ class Services extends AccountWithNotDeletedWithCascade
         return $servicesAll;
     }
 
-    public static function findServiceById($serviceId)
+    public static function findServiceById($serviceId, $columns = null)
     {
-        return self::findFirst(['columns' => self::publicColumns, 'conditions' => 'service_id = :serviceId:',
-            'bind' => ['serviceId' => $serviceId]]);
+        if ($columns == null)
+            return self::findFirst(['conditions' => 'service_id = :serviceId:',
+                'bind' => ['serviceId' => $serviceId]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'conditions' => 'service_id = :serviceId:',
+                'bind' => ['serviceId' => $serviceId]]);
+        }
     }
 }

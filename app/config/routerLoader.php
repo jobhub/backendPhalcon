@@ -806,6 +806,7 @@ $routes = [
             /**
              * Возвращает все услуги заданной компании
              *
+             * @access public
              * @method GET
              *
              * @param $id
@@ -846,6 +847,8 @@ $routes = [
 
             /**
              * Возвращает все услуги данного юзера (или его компании).
+             *
+             * @access private
              *
              * @method GET
              *
@@ -974,15 +977,19 @@ $routes = [
 
             /**
              * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
+             * Добавлять услуги можно только компании.
+             *
+             * Услуга привязывается к той точке (считается, что она единственная для компании),
+             * которая была создана при создании бизнес-аккаунта.
              *
              * @method POST
              *
-             * @params (необязательные) массив old_points - массив id tradePoint-ов,
-             * (необязательные) массив new_points - массив объектов TradePoints
+             * //@params (необязательные) массив old_points - массив id tradePoint-ов,
+             * //@params (необязательные) массив new_points - массив объектов TradePoints
+             *
              * @params (необязательные) account_id, description, name, price_min, price_max (или же вместо них просто price)
-             *           (обязательно) region_id,
-             *           (необязательно) longitude, latitude
-             *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
+             *           (необязательно) region_id,
+             *           (необязательно) categories array of int - массив id категорий.
              * @params массив строк tags с тегами.
              * @params прикрепленные изображения. Именование роли не играет.
              *
@@ -1074,12 +1081,18 @@ $routes = [
              * @method GET
              *
              * @param $service_id
+             * @param $account_id
              *
              * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
              */
             [
                 'type' => 'get',
                 'path' => '/get/info/{service_id}',
+                'action' => 'getServiceInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/info/{service_id}/{account_id}',
                 'action' => 'getServiceInfoAction'
             ],
 
