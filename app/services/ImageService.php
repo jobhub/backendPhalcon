@@ -243,7 +243,6 @@ class ImageService extends AbstractService
 
     public function createImagesToObject($files, $some_object, $type, $data = null)
     {
-
         switch ($type) {
             case self::TYPE_USER:
                 $path = 'users';
@@ -263,6 +262,10 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_TEMP:
                 $path = 'accounts/temp';
+                $id = $some_object->getId();
+                break;
+            case self::TYPE_RASTRENIYA:
+                $path = 'rastreniya';
                 $id = $some_object->getId();
                 break;
             default:
@@ -363,6 +366,10 @@ class ImageService extends AbstractService
                 case self::TYPE_COMPANY:
                     $result = ImageLoader::loadCompanyLogotype($file->getTempName(), $file->getName(),
                         $some_object->getCompanyId(), $imagesIds[$i]['file_name']);
+                    break;
+                case self::TYPE_TEMP:
+                    $result = ImageLoader::loadTempImage($file->getTempName(), $file->getName(),
+                        $some_object->getId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_RASTRENIYA:
                     $result = ImageLoader::loadRastImage($file->getTempName(), $file->getName(),

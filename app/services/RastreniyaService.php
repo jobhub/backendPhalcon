@@ -38,7 +38,8 @@ class RastreniyaService extends AbstractService
         }
 
         if (is_null($is_incognito) || !is_bool($is_incognito)) {
-            throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
+            $is_incognito = false;
+            //throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
         /*if (!Users::isUserExist($user_id)) {

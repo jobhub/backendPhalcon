@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\AbstractController;
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
+use App\Controllers\HttpExceptions\Http404Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 use App\Models\Accounts;
 use App\Services\AbstractService;
@@ -19,6 +20,7 @@ class RastreniyaController extends AbstractController {
     public function newAction(){
         $user_id = $this->getUserid();
         $data = json_decode($this->request->getRawBody(), true);
+        //$data = json_decode(json_encode($this->request->getPost()), true);
         try {
             $file = $this->request->getUploadedFiles()[0];
             $rast = $this->rastreniyaService->create($user_id, $data,$file);
