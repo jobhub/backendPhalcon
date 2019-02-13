@@ -9,6 +9,7 @@ use App\Controllers\HttpExceptions\Http403Exception;
 use App\Libs\SupportClass;
 use App\Models\Accounts;
 use App\Models\Groups;
+use App\Models\ImagesRastreniya;
 use App\Models\Rastreniya;
 use App\Models\RastreniyaResponses;
 use App\Models\UserChatGroups;
@@ -174,7 +175,7 @@ class RastreniyaService extends AbstractService
                     "id" => $rast_id
                 ]
             ]);
-            $account = Accounts::findFirst($rast->getAccountId());
+            /*$account = Accounts::findFirst($rast->getAccountId());
             if (!$account) {
                 $user = [];
             } else {
@@ -209,11 +210,11 @@ class RastreniyaService extends AbstractService
                     $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
                 $item['comments']['last_comment'] = $last;
                 $item['comments']['user_info'] = $owner;
-            }
+            }*/
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
-        return $item;
+        return $this->handleRast($rast,$user_id);
     }
 
 
@@ -247,44 +248,8 @@ class RastreniyaService extends AbstractService
             ]);
             $toRet = [];
             foreach ($rasts as $rast) {
-                $account = Accounts::findFirst($rast->getAccountId());
-                if (!$account) {
-                    $user = [];
-                } else {
-                    $user = $account->getUserInfomations();
-                }
-                $likes = SupportClass::to_php_array($rast->getLikeUsers());
-                $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
-                $item = array();
-                $item['infos'] =  $rast->getPublicInfo();
-                //$item['owner'] = $user;
-                $item['owner'] = $user;
-                $item['likes'] = sizeof($likes);
-                $item['dislikes'] = sizeof($dislikes);
-                $item['comments'] = self::countComments($rast->getId());
-               if (in_array($user_id, $likes)) {
-                    $item['infos']['is_liked'] = true;
-                } else if (in_array($user_id, $dislikes)) {
-                    $item['infos']['is_disliked'] = true;
-                }
-                if ($item['comments']['total'] > 0) {
-                    // Load last comments info;
-                    $last = RastreniyaResponses::findFirst([
-                        'conditions' => 'rastreniya_id = :rast_id:',
-                        'bind' => [
-                            'rast_id' => $rast->getId()
-                        ],
-                        'order' => 'create_at DESC',
-                        'columns' => RastreniyaResponses::PUBLIC_COLUMNS
-                    ]);
-                    if ($account->getId() == $last['account_id'])
-                        $owner = $user;
-                    else
-                        $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
-                    $item['comments']['last_comment'] = $last;
-                    $item['comments']['user_info'] = $owner;
-                }
-                array_push($toRet, $item);
+
+                array_push($toRet, $this->handleRast($rast,$user_id));
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
@@ -292,7 +257,49 @@ class RastreniyaService extends AbstractService
         return $toRet;
     }
 
+    private function handleRast(Rastreniya $rast, $user_id){
+        $account = Accounts::findFirst($rast->getAccountId());
+        if (!$account) {
+            $user = [];
+        } else {
+            $user = $account->getUserInfomations();
+        }
+        $likes = SupportClass::to_php_array($rast->getLikeUsers());
+        $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
+        $item = array();
+        $item['infos'] =  $rast->getPublicInfo();
+        //$item['owner'] = $user;
+        $item['owner'] = $user;
+        $item['likes'] = sizeof($likes);
+        $item['dislikes'] = sizeof($dislikes);
+        $item['comments'] = self::countComments($rast->getId());
 
+        if($rast->getHasAttachedFiles())
+            $item['image'] = ImagesRastreniya::findFirstByObjectId($rast->getId())->getImagePath();
+        if (in_array($user_id, $likes)) {
+            $item['infos']['is_liked'] = true;
+        } else if (in_array($user_id, $dislikes)) {
+            $item['infos']['is_disliked'] = true;
+        }
+        if ($item['comments']['total'] > 0) {
+            // Load last comments info;
+            $last = RastreniyaResponses::findFirst([
+                'conditions' => 'rastreniya_id = :rast_id:',
+                'bind' => [
+                    'rast_id' => $rast->getId()
+                ],
+                'order' => 'create_at DESC',
+                'columns' => RastreniyaResponses::PUBLIC_COLUMNS
+            ]);
+            if ($account->getId() == $last['account_id'])
+                $owner = $user;
+            else
+                $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
+            $item['comments']['last_comment'] = $last;
+            $item['comments']['user_info'] = $owner;
+        }
+        return $item;
+    }
     /**
      * likeRast
      *
