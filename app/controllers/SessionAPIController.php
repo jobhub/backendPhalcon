@@ -2,7 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Libs\SimpleULogin;
 use App\Models\Accounts;
+use App\Models\UsersSocial;
+use Phalcon\Http\Client\Exception;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 
@@ -93,9 +96,9 @@ class SessionAPIController extends AbstractController
             $accounts = Accounts::findAccountsByUser($userId);
 
             $accountsRes = [];
-            foreach ($accounts as $account){
-                $accountsRes[] = ['account'=> $account->toArray(),
-                    'info'=>$account->getUserInfomations()->toArray()];
+            foreach ($accounts as $account) {
+                $accountsRes[] = ['account' => $account->toArray(),
+                    'info' => $account->getUserInfomations()->toArray()];
             }
 
         } catch (ServiceException $e) {
@@ -155,183 +158,91 @@ class SessionAPIController extends AbstractController
      * Должен автоматически вызываться компонентом uLogin.
      *
      * @method GET
-     * @return string - json array в формате Status
+     * @return array - json array в формате Status
      */
     public function authWithSocialAction()
     {
         if ($this->request->isGet()) {
-            $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex',
-                'url' => '/sessionAPI/authWithSocial',
-                'optional' => 'pdate,photo_big,city,country',
+            $ulogin = new SimpleULogin(array(
+                'fields' => 'first_name,last_name,email,phone,sex,city',
+                'url' => '/authorization/social',
+                'optional' => 'pdate,photo_big,country',
                 'type' => 'panel',
             ));
-            return $ulogin->getForm();
+            return ['form'=>$ulogin->getForm()];
         } else if ($this->request->isPost()) {
             $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex',
-                'url' => '/sessionAPI/authWithSocial',
-                'optional' => 'pdate,photo_big,city,country',
+                'fields' => 'first_name,last_name,email,phone,sex,city',
+                'url' => '/authorization/social',
+                'optional' => 'pdate,photo_big,country',
                 'type' => 'panel',
             ));
-            if ($ulogin->isAuthorised()) {
-                $response = new Response();
-                $ulogin->logout();
-                $userSocial = Userssocial::findByIdentity($ulogin->getUser()['network'], $ulogin->getUser()['identity']);
 
-                if (!$userSocial) {
+            if (!$ulogin->isAuthorised()) {
+                throw new ServiceException('Не удалось авторизоваться через uLogin');
+            }
 
-                    //Регистрируем
-                    $phone = $ulogin->getUser()['phone'];
-                    $email = $ulogin->getUser()['email'];
+            $ulogin->logout();
+            
+            $userFromULogin = $ulogin->getUser();
+            
+            $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
 
-                    $phoneObj = Phones::findFirstByPhone(Phones::formatPhone($phone));
+            $this->db->begin();
 
-                    $user = Users::findFirst(
-                        [
-                            "(email = :email: OR phoneid = :phoneId:)",
-                            "bind" => [
-                                "email" => $email,
-                                "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
-                            ]
-                        ]
-                    );
+            if (!$userSocial) {
+                //Регистрируем
+                $phone = $userFromULogin['phone'];
+                $email = $userFromULogin['email'];
 
-                    if ($user != false) {
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_ALREADY_EXISTS,
-                                'errors' => ['Пользователь с таким телефоном/email-ом уже зарегистрирован']
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $this->db->begin();
-
-                    $user = new Users();
-
-                    if ($phone != null) {
-                        //Добавление телефона, если есть
-                        $phoneObject = new Phones();
-                        $phoneObject->setPhone($phone);
-
-                        if ($phoneObject->save()) {
-                            $user->setPhoneId($phoneObject->getPhoneId());
-                        }
-                    }
-
-                    $user->setEmail($email);
-                    $user->setIsSocial(true);
-                    $user->setRole("User");
-
-                    if ($user->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($user->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $userInfo = new Userinfo();
-                    $userInfo->setUserId($user->getUserId());
-                    $userInfo->setFirstname($ulogin->getUser()['first_name']);
-                    $userInfo->setLastname($ulogin->getUser()['last_name']);
-                    $userInfo->setMale(($ulogin->getUser()['sex'] - 1) >= 0 ? $ulogin->getUser()['sex'] - 1 : 1);
-                    if (isset($ulogin->getUser()['country']) && isset($ulogin->getUser()['city']))
-                        $userInfo->setAddress($ulogin->getUser()['country'] . ' ' . $ulogin->getUser()['city']);
-
-                    if ($userInfo->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($userInfo->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $setting = new Settings();
-                    $setting->setUserId($user->getUserId());
-
-                    if ($setting->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($setting->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $userSocial = new Userssocial();
-                    $userSocial->setUserId($user->getUserId());
-                    $userSocial->setNetwork($ulogin->getUser()['network']);
-                    $userSocial->setIdentity($ulogin->getUser()['identity']);
-                    $userSocial->setProfile($ulogin->getUser()['profile']);
-
-                    if ($userSocial->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($userSocial->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $this->db->commit();
-
-                    $this->SessionAPI->_registerSession($user);
-
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_OK
-                        ]
-                    );
-                    return $response;
+                if (isset($userFromULogin['phone'])) {
+                    $data['login'] = $userFromULogin['phone'];
+                } elseif ($userFromULogin['email']) {
+                    $data['login'] = $userFromULogin['email'];
+                } else {
+                    throw new ServiceException('Нужен email или телефон');
                 }
 
-                //Авторизуем
-                $this->SessionAPI->_registerSession($userSocial->users);
+                $resultUser = $this->userService->createUser($data);
 
-                $response->setJsonContent([
-                    'status' => STATUS_OK
-                ]);
-                return $response;
-            } else {
-                $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
+                $result = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
 
-                throw $exception;
+                $data_userinfo['user_id'] = $resultUser->getUserId();
+                $data_userinfo['first_name'] = $userFromULogin['first_name'];
+                $data_userinfo['last_name'] = $userFromULogin['last_name'];
+                $data_userinfo['male'] = ($userFromULogin['sex'] - 1) >= 0 ? $userFromULogin['sex'] - 1 : 1;
+
+                if (isset($userFromULogin['country']) && isset($userFromULogin['city']))
+                    $data_userinfo['address'] = ($userFromULogin['country'] . ' ' . $userFromULogin['city']);
+
+                $data_userinfo['city'] = $userFromULogin['city'];
+
+                $this->userInfoService->createUserInfo($data);
+
+                $this->userInfoService->createSettings($resultUser->getUserId());
+                $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
+
+                $userSocial = new Userssocial();
+                $userSocial->setUserId($resultUser->getUserId());
+                $userSocial->setNetwork($userFromULogin['network']);
+                $userSocial->setIdentity($userFromULogin['identity']);
+                $userSocial->setProfile($userFromULogin['profile']);
+
+                if ($userSocial->save() == false) {
+                    $this->db->rollback();
+                    SupportClass::getErrorsWithException($userSocial, 0, 'Не удалось создать user social object');
+                }
+
+                $this->db->commit();
+
+                $tokens = $this->authService->createSession($resultUser);
+                return self::chatResponce('User was successfully registered', $tokens);
             }
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
-            throw $exception;
+            //Авторизуем
+            $tokens = $this->authService->createSession($userSocial->users);
+
+            return self::chatResponce('User was successfully authorized', $tokens);
         }
     }
 }

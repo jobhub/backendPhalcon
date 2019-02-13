@@ -13296,3 +13296,15 @@
 )
 Дата: 2019-02-12 15:38:40 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMTkgMTQ6MTQ6MDYifQ==.pEUzkEYXzOk9q1rhlrP+UX2bKRwv3GaPfrFZ0+0DaH6NiH0H8bNom0E3QbxVgHTE98pk23VBY2j11iDPm6+ilYf/tItLNdwUpAZrtTepODFvO8wIaTsgaiXkCx8Uxugy9X9it6y4ttz9U5Lp1/L5B/UjIgW/Z7RmyYb4DpHXADF0mhoHqod/M/HIPrRPImqe87LD1GhWSbYmGMb0f1xXkspvi4+nBXmd+Cr6dkPcibOftwd3d+GsAocEcyigMAe5s2w0UWseR0RfkKSSFEsum3zC5Oci7Iipxs97WUrGugmFSH5gXSl4FJ1F3+M4FUH0bpuKfUcD7ddEwiVyUQ/OzQ==
 Дата: 2019-02-12 15:38:40 - Сессия есть, роль Moderator
+Дата: 2019-02-12 16:48:53 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 YaBrowser/19.1.1.909 Yowser/2.5 Safari/537.36',
+  'Accept' => 'image/webp,image/apng,image/*,*/*;q=0.8',
+  'Referer' => 'http://job/webtools.php',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en;q=0.9',
+)
+Дата: 2019-02-12 16:48:53 - token is aaa
+Дата: 2019-02-12 16:48:53 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-12 16:48:53 - Сессии нет или же переменной в сессии нет. Роль гостя

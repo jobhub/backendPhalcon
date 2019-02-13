@@ -83,6 +83,14 @@ class ImageLoader
             $filename,$userId,null);
     }
 
+    public static function loadRastImage($tempname, $name,$rastId, $imageId)
+    {
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$imageId);
+        return ImageLoader::load('rastreniya',$tempname,
+            $filename, $rastId,null);
+    }
+
     public static function loadEventImage($tempname, $name, $eventId,$imageId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);

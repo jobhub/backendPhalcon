@@ -17,7 +17,7 @@ class UserssocialMigration_100 extends Migration
      */
     public function morph()
     {
-        $this->morphTable('userssocial', [
+        $this->morphTable('UsersSocial', [
                 'columns' => [
                     new Column(
                         'network',

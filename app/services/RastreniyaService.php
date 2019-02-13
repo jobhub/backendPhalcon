@@ -26,7 +26,7 @@ class RastreniyaService extends AbstractService
 
     const ERROR_UNABLE_TO_ACCESS_GROUP = 5 + self::ADDED_CODE_NUMBER;
 
-    public function create($user_id, $data)
+    public function create($user_id, $data, $file = null)
     {
         $content = $data["content"];
         $is_incognito = $data["is_incognito"];
@@ -52,26 +52,39 @@ class RastreniyaService extends AbstractService
          * End validation block
          */
         try {
-            $manager = new TxManager();
-            $transaction = $manager->get();
+            $this->db->begin();
+            /*$manager = new TxManager();
+            $transaction = $manager->get();*/
 
             $userinfo = Userinfo::findFirstByUserId($user_id);
 
             $rast = new Rastreniya();
-            $rast->setTransaction($transaction);
+            //$rast->setTransaction($transaction);
             $rast->setUserId($user_id);
             $rast->setContent($content);
             $rast->setIsIncognito($is_incognito);
             $rast->setAccountId($data["account_id"]);
             $rast->setCityId($userinfo->getCityId());
 
+            if($file != null)
+                $rast->setHasAttachedFiles(true);
+
             if ($rast->save() === false) {
-                $transaction->rollback(
+                /*$transaction->rollback(
                     'Cannot save Rast'
-                );
+                );*/
+                $this->db->rollback();
+                throw new TxFailed('Cannot save Rast');
             }
 
-            $transaction->commit();
+            $ids = $this->imageService->createImagesToObject($this->request->getUploadedFiles(), $rast,
+                ImageService::TYPE_RASTRENIYA);
+
+            $this->imageService->saveImagesToObject($this->request->getUploadedFiles(), $rast,
+                $ids, ImageService::TYPE_RASTRENIYA);
+
+            //$transaction->commit();
+            $this->db->commit();
 
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);

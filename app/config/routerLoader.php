@@ -352,6 +352,19 @@ $routes = [
                 'path' => '/get/accounts',
                 'action' => 'getAccountsAction'
             ],
+
+            /**
+             * Авторизация через соц. сеть
+             * Должен автоматически вызываться компонентом uLogin.
+             *
+             * @method GET
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'get',
+                'path' => '/social',
+                'action' => 'authWithSocialAction'
+            ],
         ]
     ],
 
