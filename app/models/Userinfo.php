@@ -9,6 +9,7 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Validation\Validator\Alpha as AlphaValidator;
 
 class Userinfo extends \Phalcon\Mvc\Model
 {
@@ -529,6 +530,15 @@ class Userinfo extends \Phalcon\Mvc\Model
                             return true;
                         return false;
                     }
+                ]
+            )
+        );
+
+        $validator->add(
+            "nickname",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
                 ]
             )
         );
