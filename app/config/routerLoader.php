@@ -1309,6 +1309,49 @@ $routes = [
                 'path' => '/get/info/{company_id}',
                 'action' => 'getCompanyInfoAction'
             ],
+
+            /**
+             * Отдает код для подтверждения создания бизнес-аккаунта
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             */
+            [
+                'type' => 'post',
+                'path' => '/get/confirm-code/create-company',
+                'action' => 'getConfirmCodeForCreateCompany'
+            ],
+
+            /**
+             * Создает бизнес аккаунт для указанного пользователя.
+             * А именно, компанию и точку оказания услуг к ней.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params confirm_code
+             * Для компании
+             * @params category_id int - категория, в которой компания будет оказывать услуги
+             * @params company_name string - название компании
+             *
+             * Для точки оказания услуг
+             * @params time string режим работы точки оказания услуг
+             * @params latitude double
+             * @params longitude double
+             *
+             * Спорно
+             * @params website string
+             * @params phones array [string] - массив номеров телефонов
+             *
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/business',
+                'action' => 'createBusinessAccount'
+            ],
         ]
     ],
 

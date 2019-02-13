@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Libs\SimpleULogin;
 use App\Models\Accounts;
 use App\Models\UsersSocial;
+use App\Services\AccountService;
+use App\Services\SocialNetService;
+use App\Services\UserInfoService;
 use Phalcon\Http\Client\Exception;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
@@ -21,7 +24,7 @@ use App\Services\AuthService;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
 use App\Controllers\HttpExceptions\Http400Exception;
-use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http404Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 
@@ -162,87 +165,74 @@ class SessionAPIController extends AbstractController
      */
     public function authWithSocialAction()
     {
-        if ($this->request->isGet()) {
-            $ulogin = new SimpleULogin(array(
-                'fields' => 'first_name,last_name,email,phone,sex,city',
-                'url' => '/authorization/social',
-                'optional' => 'pdate,photo_big,country',
-                'type' => 'panel',
-            ));
-            return ['form'=>$ulogin->getForm()];
-        } else if ($this->request->isPost()) {
-            $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex,city',
-                'url' => '/authorization/social',
-                'optional' => 'pdate,photo_big,country',
-                'type' => 'panel',
-            ));
+        try {
+            if ($this->request->isGet()) {
+                $ulogin = new SimpleULogin(array(
+                    'fields' => 'first_name,last_name,email,phone,sex,city',
+                    'url' => '/authorization/social',
+                    'optional' => 'pdate,photo_big,country',
+                    'type' => 'panel',
+                ));
+                return ['form' => $ulogin->getForm()];
+            } else if ($this->request->isPost()) {
+                $ulogin = new Auth(array(
+                    'fields' => 'first_name,last_name,email,phone,sex,city',
+                    'url' => '/authorization/social',
+                    'optional' => 'pdate,photo_big,country',
+                    'type' => 'panel',
+                ));
 
-            if (!$ulogin->isAuthorised()) {
-                throw new ServiceException('Не удалось авторизоваться через uLogin');
-            }
-
-            $ulogin->logout();
-            
-            $userFromULogin = $ulogin->getUser();
-            
-            $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
-
-            $this->db->begin();
-
-            if (!$userSocial) {
-                //Регистрируем
-                $phone = $userFromULogin['phone'];
-                $email = $userFromULogin['email'];
-
-                if (isset($userFromULogin['phone'])) {
-                    $data['login'] = $userFromULogin['phone'];
-                } elseif ($userFromULogin['email']) {
-                    $data['login'] = $userFromULogin['email'];
-                } else {
-                    throw new ServiceException('Нужен email или телефон');
+                if (!$ulogin->isAuthorised()) {
+                    throw new ServiceException('Не удалось авторизоваться через uLogin');
                 }
 
-                $resultUser = $this->userService->createUser($data);
+                $ulogin->logout();
 
-                $result = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
+                $userFromULogin = $ulogin->getUser();
 
-                $data_userinfo['user_id'] = $resultUser->getUserId();
-                $data_userinfo['first_name'] = $userFromULogin['first_name'];
-                $data_userinfo['last_name'] = $userFromULogin['last_name'];
-                $data_userinfo['male'] = ($userFromULogin['sex'] - 1) >= 0 ? $userFromULogin['sex'] - 1 : 1;
+                $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
 
-                if (isset($userFromULogin['country']) && isset($userFromULogin['city']))
-                    $data_userinfo['address'] = ($userFromULogin['country'] . ' ' . $userFromULogin['city']);
+                if (!$userSocial) {
 
-                $data_userinfo['city'] = $userFromULogin['city'];
+                    $user = $this->socialNetService->registerUserByNet($userFromULogin);
 
-                $this->userInfoService->createUserInfo($data);
-
-                $this->userInfoService->createSettings($resultUser->getUserId());
-                $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
-
-                $userSocial = new Userssocial();
-                $userSocial->setUserId($resultUser->getUserId());
-                $userSocial->setNetwork($userFromULogin['network']);
-                $userSocial->setIdentity($userFromULogin['identity']);
-                $userSocial->setProfile($userFromULogin['profile']);
-
-                if ($userSocial->save() == false) {
-                    $this->db->rollback();
-                    SupportClass::getErrorsWithException($userSocial, 0, 'Не удалось создать user social object');
+                    $tokens = $this->authService->createSession($user);
+                    return self::chatResponce('User was successfully registered', $tokens);
                 }
 
-                $this->db->commit();
-
-                $tokens = $this->authService->createSession($resultUser);
-                return self::chatResponce('User was successfully registered', $tokens);
+                //Авторизуем
+                $tokens = $this->authService->createSession($userSocial->users);
+                return self::chatResponce('User was successfully authorized', $tokens);
             }
 
-            //Авторизуем
-            $tokens = $this->authService->createSession($userSocial->users);
+            $exception = new Http404Exception(
+                _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
+                new \Exception('URI not found: ' .
+                    $this->request->getMethod() . ' ' . $this->request->getURI())
+            );
+            throw $exception;
 
-            return self::chatResponce('User was successfully authorized', $tokens);
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_UNABLE_CREATE_USER:
+                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
+                case UserInfoService::ERROR_UNABLE_CREATE_USER_INFO:
+                case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
+                case UserService::ERROR_UNABLE_CHANGE_USER:
+                case SocialNetService::ERROR_UNABLE_CREATE_USER_SOCIAL:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                case AuthService::ERROR_INCORRECT_PASSWORD:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 }

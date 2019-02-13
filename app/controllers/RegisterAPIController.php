@@ -203,6 +203,10 @@ class RegisterAPIController extends AbstractController
                 throw new Http400Exception('User already confirmed');
             }
 
+            if(!$user->getActivated()){
+                throw new Http400Exception('User not activated');
+            }
+
             $data['user_id'] = $user->getUserId();
             $this->userInfoService->createUserInfo($data);
 

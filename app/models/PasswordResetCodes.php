@@ -45,7 +45,7 @@ class PasswordResetCodes extends \Phalcon\Mvc\Model
 
     /**
      * Минимальное время, которое должно пройти перед повторной отправкой.
-     * В asszсекундах.
+     * В секундах.
      */
     const RESEND_TIME = 300;
 

@@ -94,6 +94,9 @@ $di->setShared('messageService', '\App\Services\MessageService'); //27
 $di->setShared('privateChatService', '\App\Services\PrivateChatService'); //28
 $di->setShared('chatHistoryService', '\App\Services\ChatHistoryService'); //29
 
+$di->setShared('socialNetService', '\App\Services\SocialNetService'); //30
+$di->setShared('confirmService', '\App\Services\ConfirmService'); //31
+
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];
     $mailer = new \Phalcon\Mailer\Manager($config);

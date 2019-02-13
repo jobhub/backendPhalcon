@@ -5,8 +5,10 @@ namespace App\Controllers;
 use App\Libs\SupportClass;
 use App\Models\CompanyRole;
 use App\Services\CategoryService;
+use App\Services\ConfirmService;
 use App\Services\PhoneService;
 use App\Services\PointService;
+use App\Services\UserService;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -20,6 +22,7 @@ use App\Models\Accounts;
 use App\Services\CompanyService;
 use App\Services\AccountService;
 use App\Services\ImageService;
+use App\Services\AbstractService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
@@ -122,6 +125,7 @@ class CompaniesAPIController extends AbstractController
      *
      * @method POST
      *
+     * @params confirm_code
      * Для компании
      * @params category_id int - категория, в которой компания будет оказывать услуги
      * @params company_name string - название компании
@@ -147,11 +151,30 @@ class CompaniesAPIController extends AbstractController
         $data['latitude'] = $inputData->latitude;
         $data['longitude'] = $inputData->longitude;
 
+        $data['confirm_code'] = $inputData->confirm_code;
+
         $this->db->begin();
         try {
             $userId = self::getUserId();
 
-            $company_data = [];
+            $user = $this->userService->getUserById($userId);
+
+            $checking = $this->confirmService->checkConfirmCode($user,$data['confirm_code'],ConfirmService::TYPE_CREATE_COMPANY);
+
+            if ($checking == ConfirmService::RIGHT_DEACTIVATE_CODE) {
+                $this->confirmService->deleteConfirmCode($user->getUserId());
+                return self::successResponse('Request to create company successfully canceled');
+            }
+
+            if ($checking == ConfirmService::WRONG_CONFIRM_CODE) {
+                $exception = new Http400Exception(_('Invalid some parameters'));
+                $errors['errors'] = true;
+                $errors['confirm_code'] = 'Invalid code';
+                throw $exception->addErrorDetails($errors);
+            }
+
+            $company_data['name'] = $data['company_name'];
+            $company_data['website'] = $data['website'];
 
             $company = $this->companyService->createCompany($company_data);
 
@@ -161,7 +184,13 @@ class CompaniesAPIController extends AbstractController
                 'company_role_id' => CompanyRole::ROLE_OWNER_ID
             ]);
 
-            $point_data = ['account_id'=>$account_id];
+            $point_data['account_id'] = $account_id;
+            $point_data['time'] = $data['time'];
+            $point_data['name'] = $data['company_name'];
+            $point_data['website'] = $data['website'];
+            $point_data['longitude'] = $data['longitude'];
+            $point_data['latitude'] = $data['latitude'];
+
             $tradePoint = $this->pointService->createPoint($point_data);
 
             if(isset($data['category_id']) && SupportClass::checkInteger($data['category_id']))
@@ -202,6 +231,42 @@ class CompaniesAPIController extends AbstractController
                 'company_id' => $company->getCompanyId(),
                 'account_id' => $account_id
             ]);
+    }
+
+    /**
+     * Отдает код для подтверждения создания бизнес-аккаунта
+     *
+     * @access private
+     *
+     * @method POST
+     *
+     */
+    public function getConfirmCodeForCreateCompany(){
+        //Пока, если код существует, то просто перезаписывается
+        try {
+            $userId = self::getUserId();
+            $user = $this->userService->getUserById($userId);
+            $this->resetPasswordService->sendPasswordResetCode($user, ConfirmService::TYPE_CREATE_COMPANY);
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
+                case ConfirmService::ERROR_UNABLE_TO_CREATE_CONFIRM_CODE:
+                case ConfirmService::ERROR_NO_TIME_TO_RESEND:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Code for reset password successfully sent');
     }
 
     /**

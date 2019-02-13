@@ -18,7 +18,7 @@ use App\Models\UsersSocial;
  */
 class SocialNetService extends AbstractService
 {
-    const ADDED_CODE_NUMBER = 26000;
+    const ADDED_CODE_NUMBER = 30000;
 
     const ERROR_UNABLE_CREATE_USER_SOCIAL = 1 + self::ADDED_CODE_NUMBER;
 
@@ -33,7 +33,8 @@ class SocialNetService extends AbstractService
      */
     public function registerUserByNet(array $userData)
     {
-        if (isset($userFromULogin['phone'])) {
+        $this->db->begin();
+        if (isset($userData['phone'])) {
             $data['login'] = $userData['phone'];
         } elseif ($userData['email']) {
             $data['login'] = $userData['email'];
@@ -44,6 +45,31 @@ class SocialNetService extends AbstractService
         $resultUser = $this->userService->createUser($data);
 
         $account = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
+
+        $data_userinfo['user_id'] = $resultUser->getUserId();
+        $data_userinfo['first_name'] = $userData['first_name'];
+        $data_userinfo['last_name'] = $userData['last_name'];
+        $data_userinfo['male'] = ($userData['sex'] - 1) >= 0 ? $userData['sex'] - 1 : 1;
+
+        if (isset($userData['country']) && isset($userData['city']))
+            $data_userinfo['address'] = ($userData['country'] . ' ' . $userData['city']);
+
+        $data_userinfo['city'] = $userData['city'];
+
+        $this->userInfoService->createUserInfo($data_userinfo);
+
+        $this->userInfoService->createSettings($resultUser->getUserId());
+        $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
+
+        $userSocialData['network'] = $userData['network'];
+        $userSocialData['profile'] = $userData['profile'];
+        $userSocialData['identity'] = $userData['identity'];
+
+        $this->createUserSocial($userSocialData,$resultUser->getUserId());
+
+        $this->db->commit();
+
+        return $resultUser;
     }
 
     public function createUserSocial(array $userSocialData, $userId){
