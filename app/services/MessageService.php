@@ -19,14 +19,16 @@ use App\Models\ChatHistory;
 class MessageService extends AbstractService
 {
 
+    const ADDED_CODE_NUMBER = 27000;
+
     /** Unable to get message */
-    const ERROR_UNABLE_GET_DATA = 11001;
+    const ERROR_UNABLE_GET_DATA = 1 + self::ADDED_CODE_NUMBER;
 
     /** Unable to send message */
-    const ERROR_UNABLE_SEND_MSG = 11002;
+    const ERROR_UNABLE_SEND_MSG = 2 + self::ADDED_CODE_NUMBER;
 
 
-    const ERROR_NOT_ALLOWED = 11003;
+    const ERROR_NOT_ALLOWED = 3 + self::ADDED_CODE_NUMBER;
 
     /**
      * Send message

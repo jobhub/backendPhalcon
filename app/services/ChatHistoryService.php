@@ -12,9 +12,10 @@ use App\Models\Groups;
  */
 class ChatHistoryService extends AbstractService
 {
+    const ADDED_CODE_NUMBER = 29000;
 
     /** Unable to create user */
-    const ERROR_UNABLE_TO_FIND_CHAT = 11001;
+    const ERROR_UNABLE_TO_FIND_CHAT = 1 + self::ADDED_CODE_NUMBER;
 
     /**
      * Returns users chat history

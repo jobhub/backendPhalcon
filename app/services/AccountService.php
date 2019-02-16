@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Controllers\HttpExceptions\Http403Exception;
 use App\Models\Accounts;
+use App\Models\CompanyRole;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use App\Libs\SupportClass;
@@ -22,28 +24,33 @@ class AccountService extends AbstractService {
     const ERROR_UNABLE_CREATE_ACCOUNT = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_ACCOUNT_NOT_FOUND = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_ACCOUNT = 3 + self::ADDED_CODE_NUMBER;
+
     /**
      * create account
      *
-     * @param array $accountData [userId, companyId = null, company_role_id = null]
+     * @param array $accountData [user_id, company_id = null, company_role_id = null]
      * @return int. Return id of account.
      */
     public function createAccount(array $accountData) {
-        $account = new Accounts();
-        $account
-            ->setUserId($accountData['user_id'])
-            ->setCompanyId($accountData['company_id'])
-            ->setCompanyRoleId($accountData['company_role_id']);
+        try {
+            $account = new Accounts();
+            $account
+                ->setUserId($accountData['user_id'])
+                ->setCompanyId($accountData['company_id'])
+                ->setCompanyRoleId($accountData['company_role_id']);
 
-        if ($account->save() == false) {
-            $errors = SupportClass::getArrayWithErrors($account);
-            if(count($errors)>0)
-                throw new ServiceExtendedException('Unable to create account',
-                    self::ERROR_UNABLE_CREATE_ACCOUNT,null,null,$errors);
-            else{
-                throw new ServiceExtendedException('Unable to create account',
-                    self::ERROR_UNABLE_CREATE_ACCOUNT);
+            if ($account->save() == false) {
+                $errors = SupportClass::getArrayWithErrors($account);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to create account',
+                        self::ERROR_UNABLE_CREATE_ACCOUNT, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to create account',
+                        self::ERROR_UNABLE_CREATE_ACCOUNT);
+                }
             }
+        }catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         return $account->getId();
@@ -89,6 +96,21 @@ class AccountService extends AbstractService {
 
         if(!$account)
             throw new ServiceException('Account not found',self::ERROR_ACCOUNT_NOT_FOUND);
+        return $account;
+    }
+
+    public function checkPermissionOrGetDefaultAccount($userId, $accountId){
+        if ($accountId != null && SupportClass::checkInteger($accountId)) {
+            if (!Accounts::checkUserHavePermission($userId, $accountId, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($accountId);
+
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
         return $account;
     }
 }

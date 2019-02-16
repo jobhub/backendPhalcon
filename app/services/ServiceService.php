@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Accounts;
 use App\Models\Services;
 use App\Models\Users;
 use App\Models\Group;
@@ -29,14 +30,22 @@ class ServiceService extends AbstractService {
     const ERROR_UNABLE_CHANGE_SERVICE = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CREATE_SERVICE = 4 + self::ADDED_CODE_NUMBER;
 
-    const ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE = 5 + self::ADDED_CODE_NUMBER;
+    /*const ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE = 5 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE = 6 + self::ADDED_CODE_NUMBER;
-    const ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE = 7 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_NOT_SUBSCRIBED_TO_SERVICE = 7 + self::ADDED_CODE_NUMBER;*/
 
     public function createService(array $serviceData){
         $service = new Services();
 
         $this->fillService($service,$serviceData);
+
+        $account = Accounts::findFirst($service->getAccountId());
+
+        if($account->getCompanyId()==null){
+            throw new ServiceExtendedException('Unable create service',
+                self::ERROR_UNABLE_CREATE_SERVICE,null,null,['account_id'=>
+                'Услуги могут создавать только компании']);
+        }
 
         if ($service->save() == false) {
             $errors = SupportClass::getArrayWithErrors($service);
@@ -114,7 +123,7 @@ class ServiceService extends AbstractService {
         }
     }
 
-    public function subscribeToService(int $accountId, int $serviceId){
+    /*public function subscribeToService(int $accountId, int $serviceId){
         $fav = new FavouriteServices();
         $fav->setSubjectId($accountId);
         $fav->setServiceId($serviceId);
@@ -122,9 +131,9 @@ class ServiceService extends AbstractService {
         if(!$fav->create()){
             SupportClass::getErrorsWithException($fav,self::ERROR_UNABLE_SUBSCRIBE_USER_TO_SERVICE,'Unable subscribe user to service');
         }
-    }
+    }*/
 
-    public function getSigningToService(int $accountId, int $serviceId){
+    /*public function getSigningToService(int $accountId, int $serviceId){
         $fav = FavouriteServices::findFavouriteByIds($accountId,$serviceId);
 
         if (!$fav) {
@@ -138,5 +147,5 @@ class ServiceService extends AbstractService {
             SupportClass::getErrorsWithException($favService,
                 self::ERROR_UNABLE_UNSUBSCRIBE_USER_FROM_SERVICE,'Unable unsubscribe user from service');
         }
-    }
+    }*/
 }

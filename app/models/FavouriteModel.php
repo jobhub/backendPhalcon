@@ -365,14 +365,15 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 inner join users on (users.user_id = userinfo.user_id)
                 where fav_comp.object_id = :companyId and users.deleted = false
                 and ( 
-                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                      OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email
+                    || \' \'|| nickname) 
                      ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     ))
     UNION ALL
     (select fav_comp.* from favorite_companies as fav_comp
@@ -380,7 +381,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 inner join companies on (companies.company_id = a.company_id)
                 where fav_comp.object_id = :companyId and companies.deleted = false
     			and (
-                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    ((name || \' \'|| full_name) ilike \'%\'||:query||\'%\')
                     or ((name) ilike \'%\'||:query||\'%\')
                     )      
     )
@@ -414,14 +415,15 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 inner join users on (users.user_id = userinfo.user_id)
                 where fav_user.object_id = :userId and users.deleted = false
                 and ( 
-                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                      OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email
+                    || \' \'|| nickname) 
                      ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     ))
     UNION ALL
     (select fav_user.* from favorite_users as fav_user
@@ -429,7 +431,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 inner join companies on (companies.company_id = a.company_id)
                 where fav_user.object_id = 7 and companies.deleted = false
     			and (
-                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    ((name || \' \'|| full_name) ilike \'%\'||:query||\'%\')
                     or ((name) ilike \'%\'||:query||\'%\')
                     )      
     )
@@ -495,14 +497,15 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 inner join users on (users.user_id = userinfo.user_id)
                 where fav_user.subject_id = ANY(:ids) and users.deleted = false
                 and ( 
-                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| userinfo.email || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                      OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email) 
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| userinfo.email
+                    || \' \'|| nickname) 
                      ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     OR
-                    ((first_name || \' \'|| last_name || \' \'|| patronymic) ilike \'%\'||:query||\'%\')
+                    ((first_name || \' \'|| last_name || \' \'|| patronymic || \' \'|| nickname) ilike \'%\'||:query||\'%\')
                     )
     )
     UNION ALL

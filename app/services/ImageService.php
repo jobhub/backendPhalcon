@@ -11,10 +11,12 @@ use App\Models\Accounts;
 use App\Models\Companies;
 use App\Models\ImagesModel;
 use App\Models\ImagesNews;
+use App\Models\ImagesRastreniya;
 use App\Models\ImagesTemp;
 use App\Models\ImagesUsers;
 use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
+use App\Models\Rastreniya;
 use App\Models\Users;
 use App\Models\News;
 use App\Models\Services;
@@ -39,6 +41,7 @@ class ImageService extends AbstractService
     const TYPE_SERVICE = 'service';
     const TYPE_COMPANY = 'company';
     const TYPE_TEMP = 'temp';
+    const TYPE_RASTRENIYA = 'rastreniya';
 
     const ADDED_CODE_NUMBER = 7000;
 
@@ -72,6 +75,9 @@ class ImageService extends AbstractService
                     break;
                 case self::TYPE_TEMP:
                     $image = ImagesTemp::findImageById($id);
+                    break;
+                case self::TYPE_RASTRENIYA:
+                    $image = ImagesRastreniya::findImageById($id);
                     break;
                 default:
                     throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
@@ -108,6 +114,9 @@ class ImageService extends AbstractService
                 //$images = ImagesModel::findImages('App\Models\ImagesTemp',$objectId,$page,$page_size);
                 $model = 'App\Models\ImagesTemp';
                 break;
+            case self::TYPE_RASTRENIYA:
+                $model = 'App\Models\ImagesRastreniya';
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -133,6 +142,9 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_TEMP:
                 $model = 'App\Models\ImagesTemp';
+                break;
+            case self::TYPE_RASTRENIYA:
+                $model = 'App\Models\ImagesRastreniya';
                 break;
             default:
                 $model = 'App\Models\ImagesModel';
@@ -195,6 +207,13 @@ class ImageService extends AbstractService
                     return false;
                 $result = Accounts::checkUserHavePermission($userId, $object->getId(), $right);
                 break;
+            case self::TYPE_RASTRENIYA:
+                $object = Rastreniya::findFirstById($objectId);
+                if (!$object)
+                    return false;
+
+                $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -224,7 +243,6 @@ class ImageService extends AbstractService
 
     public function createImagesToObject($files, $some_object, $type, $data = null)
     {
-
         switch ($type) {
             case self::TYPE_USER:
                 $path = 'users';
@@ -244,6 +262,10 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_TEMP:
                 $path = 'accounts/temp';
+                $id = $some_object->getId();
+                break;
+            case self::TYPE_RASTRENIYA:
+                $path = 'rastreniya';
                 $id = $some_object->getId();
                 break;
             default:
@@ -330,7 +352,6 @@ class ImageService extends AbstractService
                         $some_object->getUserId(), $imagesIds[$i]['file_name']);
                     break;
                 case self::TYPE_NEWS:
-
                     $result = ImageLoader::loadNewsImage($file->getTempName(), $file->getName(),
                         $some_object->getNewsId(), $imagesIds[$i]['file_name']);
                     break;
@@ -348,6 +369,10 @@ class ImageService extends AbstractService
                     break;
                 case self::TYPE_TEMP:
                     $result = ImageLoader::loadTempImage($file->getTempName(), $file->getName(),
+                        $some_object->getId(), $imagesIds[$i]['file_name']);
+                    break;
+                case self::TYPE_RASTRENIYA:
+                    $result = ImageLoader::loadRastImage($file->getTempName(), $file->getName(),
                         $some_object->getId(), $imagesIds[$i]['file_name']);
                     break;
                 default:
@@ -390,6 +415,9 @@ class ImageService extends AbstractService
             case self::TYPE_TEMP:
                 $image = new ImagesTemp();
                 $image->setFurtherPath($data['further_path'] == null ? 'magic' : $data['further_path']);
+                break;
+            case self::TYPE_RASTRENIYA:
+                $image = new ImagesRastreniya();
                 break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);

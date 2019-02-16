@@ -2,7 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Libs\SimpleULogin;
 use App\Models\Accounts;
+use App\Models\UsersSocial;
+use App\Services\AccountService;
+use App\Services\SocialNetService;
+use App\Services\UserInfoService;
+use Phalcon\Http\Client\Exception;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 
@@ -18,7 +24,7 @@ use App\Services\AuthService;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
 use App\Controllers\HttpExceptions\Http400Exception;
-use App\Controllers\HttpExceptions\Http403Exception;
+use App\Controllers\HttpExceptions\Http404Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
 use App\Controllers\HttpExceptions\Http500Exception;
 
@@ -93,9 +99,9 @@ class SessionAPIController extends AbstractController
             $accounts = Accounts::findAccountsByUser($userId);
 
             $accountsRes = [];
-            foreach ($accounts as $account){
-                $accountsRes[] = ['account'=> $account->toArray(),
-                    'info'=>$account->getUserInfomations()->toArray()];
+            foreach ($accounts as $account) {
+                $accountsRes[] = ['account' => $account->toArray(),
+                    'info' => $account->getUserInfomations()->toArray()];
             }
 
         } catch (ServiceException $e) {
@@ -138,10 +144,6 @@ class SessionAPIController extends AbstractController
             SupportClass::writeMessageInLogFile('Юзер найден в бд');
             $this->authService->checkPassword($user, $data['password']);
             $result = $this->authService->createSession($user);
-
-            $userInfo = $this->userInfoService->getHandledUserInfoById($user->getUserId());
-
-            $result['info'] = $userInfo;
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
@@ -151,8 +153,6 @@ class SessionAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
-        $result['role'] = $user->getRole();
         return self::successResponse('Successfully login', $result);
     }
 
@@ -161,183 +161,78 @@ class SessionAPIController extends AbstractController
      * Должен автоматически вызываться компонентом uLogin.
      *
      * @method GET
-     * @return string - json array в формате Status
+     * @return array - json array в формате Status
      */
     public function authWithSocialAction()
     {
-        if ($this->request->isGet()) {
-            $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex',
-                'url' => '/sessionAPI/authWithSocial',
-                'optional' => 'pdate,photo_big,city,country',
-                'type' => 'panel',
-            ));
-            return $ulogin->getForm();
-        } else if ($this->request->isPost()) {
-            $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex',
-                'url' => '/sessionAPI/authWithSocial',
-                'optional' => 'pdate,photo_big,city,country',
-                'type' => 'panel',
-            ));
-            if ($ulogin->isAuthorised()) {
-                $response = new Response();
+        try {
+            if ($this->request->isGet()) {
+                $ulogin = new SimpleULogin(array(
+                    'fields' => 'first_name,last_name,email,phone,sex,city',
+                    'url' => '/authorization/social',
+                    'optional' => 'pdate,photo_big,country',
+                    'type' => 'panel',
+                ));
+                return ['form' => $ulogin->getForm()];
+            } else if ($this->request->isPost()) {
+                $ulogin = new Auth(array(
+                    'fields' => 'first_name,last_name,email,phone,sex,city',
+                    'url' => '/authorization/social',
+                    'optional' => 'pdate,photo_big,country',
+                    'type' => 'panel',
+                ));
+
+                if (!$ulogin->isAuthorised()) {
+                    throw new ServiceException('Не удалось авторизоваться через uLogin');
+                }
+
                 $ulogin->logout();
-                $userSocial = Userssocial::findByIdentity($ulogin->getUser()['network'], $ulogin->getUser()['identity']);
+
+                $userFromULogin = $ulogin->getUser();
+
+                $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
 
                 if (!$userSocial) {
 
-                    //Регистрируем
-                    $phone = $ulogin->getUser()['phone'];
-                    $email = $ulogin->getUser()['email'];
+                    $user = $this->socialNetService->registerUserByNet($userFromULogin);
 
-                    $phoneObj = Phones::findFirstByPhone(Phones::formatPhone($phone));
-
-                    $user = Users::findFirst(
-                        [
-                            "(email = :email: OR phoneid = :phoneId:)",
-                            "bind" => [
-                                "email" => $email,
-                                "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null
-                            ]
-                        ]
-                    );
-
-                    if ($user != false) {
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_ALREADY_EXISTS,
-                                'errors' => ['Пользователь с таким телефоном/email-ом уже зарегистрирован']
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $this->db->begin();
-
-                    $user = new Users();
-
-                    if ($phone != null) {
-                        //Добавление телефона, если есть
-                        $phoneObject = new Phones();
-                        $phoneObject->setPhone($phone);
-
-                        if ($phoneObject->save()) {
-                            $user->setPhoneId($phoneObject->getPhoneId());
-                        }
-                    }
-
-                    $user->setEmail($email);
-                    $user->setIsSocial(true);
-                    $user->setRole("User");
-
-                    if ($user->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($user->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $userInfo = new Userinfo();
-                    $userInfo->setUserId($user->getUserId());
-                    $userInfo->setFirstname($ulogin->getUser()['first_name']);
-                    $userInfo->setLastname($ulogin->getUser()['last_name']);
-                    $userInfo->setMale(($ulogin->getUser()['sex'] - 1) >= 0 ? $ulogin->getUser()['sex'] - 1 : 1);
-                    if (isset($ulogin->getUser()['country']) && isset($ulogin->getUser()['city']))
-                        $userInfo->setAddress($ulogin->getUser()['country'] . ' ' . $ulogin->getUser()['city']);
-
-                    if ($userInfo->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($userInfo->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-                        return $response;
-                    }
-
-                    $setting = new Settings();
-                    $setting->setUserId($user->getUserId());
-
-                    if ($setting->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($setting->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $userSocial = new Userssocial();
-                    $userSocial->setUserId($user->getUserId());
-                    $userSocial->setNetwork($ulogin->getUser()['network']);
-                    $userSocial->setIdentity($ulogin->getUser()['identity']);
-                    $userSocial->setProfile($ulogin->getUser()['profile']);
-
-                    if ($userSocial->save() == false) {
-                        $this->db->rollback();
-                        $errors = [];
-                        foreach ($userSocial->getMessages() as $message) {
-                            $errors[] = $message->getMessage();
-                        }
-                        $response->setJsonContent(
-                            [
-                                "status" => STATUS_WRONG,
-                                "errors" => $errors
-                            ]
-                        );
-
-                        return $response;
-                    }
-
-                    $this->db->commit();
-
-                    $this->SessionAPI->_registerSession($user);
-
-                    $response->setJsonContent(
-                        [
-                            "status" => STATUS_OK
-                        ]
-                    );
-                    return $response;
+                    $tokens = $this->authService->createSession($user);
+                    return self::chatResponce('User was successfully registered', $tokens);
                 }
 
                 //Авторизуем
-                $this->SessionAPI->_registerSession($userSocial->users);
-
-                $response->setJsonContent([
-                    'status' => STATUS_OK
-                ]);
-                return $response;
-            } else {
-                $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
-
-                throw $exception;
+                $tokens = $this->authService->createSession($userSocial->users);
+                return self::chatResponce('User was successfully authorized', $tokens);
             }
-        } else {
-            $exception = new DispatcherException("Ничего не найдено", Dispatcher::EXCEPTION_HANDLER_NOT_FOUND);
 
+            $exception = new Http404Exception(
+                _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
+                new \Exception('URI not found: ' .
+                    $this->request->getMethod() . ' ' . $this->request->getURI())
+            );
             throw $exception;
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_UNABLE_CREATE_USER:
+                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
+                case UserInfoService::ERROR_UNABLE_CREATE_USER_INFO:
+                case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
+                case UserService::ERROR_UNABLE_CHANGE_USER:
+                case SocialNetService::ERROR_UNABLE_CREATE_USER_SOCIAL:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                case AuthService::ERROR_INCORRECT_PASSWORD:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
     }
 }

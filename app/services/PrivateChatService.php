@@ -15,11 +15,13 @@ use App\Models\Userinfo;
  */
 class PrivateChatService extends AbstractService {
 
+    const ADDED_CODE_NUMBER = 28000;
+
     /** Unable to find user */
-    const ERROR_UNABLE_TO_FIND_CHAT = 12001;
+    const ERROR_UNABLE_TO_FIND_CHAT = 1 + self::ADDED_CODE_NUMBER;
 
     /** Unable to get chat history  */
-    const ERROR_GET_CHAT_HIS = 12002;
+    const ERROR_GET_CHAT_HIS = 2 + self::ADDED_CODE_NUMBER;
 
     /**
      * Returns users chat history (private chanel)

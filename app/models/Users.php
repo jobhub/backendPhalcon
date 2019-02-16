@@ -228,7 +228,7 @@ class Users extends NotDeletedModelWithCascade
         $phoneObj = Phones::findFirstByPhone($formatPhone);
         $user = Users::findFirst(
             [
-                "(email = :email: OR phone_id = :phoneId:)",
+                "(email = :email: OR phone_id = :phoneId:) and is_social = false",
                 "bind" => [
                     "email" => $email,
                     "phoneId" => $phoneObj ? $phoneObj->getPhoneId() : null

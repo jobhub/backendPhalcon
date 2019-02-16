@@ -4,6 +4,11 @@ namespace App\Controllers;
 
 use App\Libs\SupportClass;
 use App\Models\CompanyRole;
+use App\Services\CategoryService;
+use App\Services\ConfirmService;
+use App\Services\PhoneService;
+use App\Services\PointService;
+use App\Services\UserService;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -17,6 +22,7 @@ use App\Models\Accounts;
 use App\Services\CompanyService;
 use App\Services\AccountService;
 use App\Services\ImageService;
+use App\Services\AbstractService;
 
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Controllers\HttpExceptions\Http422Exception;
@@ -109,6 +115,158 @@ class CompaniesAPIController extends AbstractController
                 'company_id' => $company->getCompanyId(),
                 'account_id' => $account_id
             ]);
+    }
+
+    /**
+     * Создает бизнес аккаунт для указанного пользователя.
+     * А именно, компанию и точку оказания услуг к ней.
+     *
+     * @access private
+     *
+     * @method POST
+     *
+     * @params confirm_code
+     * Для компании
+     * @params category_id int - категория, в которой компания будет оказывать услуги
+     * @params company_name string - название компании
+     *
+     * Для точки оказания услуг
+     * @params time string режим работы точки оказания услуг
+     * @params latitude double
+     * @params longitude double
+     *
+     * Спорно
+     * @params website string
+     * @params phones array [string] - массив номеров телефонов
+     *
+     */
+    public function createBusinessAccount(){
+        $inputData = $this->request->getJsonRawBody();
+        $data['category_id'] = $inputData->category_id;
+        $data['company_name'] = $inputData->company_name;
+        $data['time'] = $inputData->time;
+        $data['website'] = $inputData->website;
+        $data['phones'] = $inputData->phones;
+
+        $data['latitude'] = $inputData->latitude;
+        $data['longitude'] = $inputData->longitude;
+
+        $data['confirm_code'] = $inputData->confirm_code;
+
+        $this->db->begin();
+        try {
+            $userId = self::getUserId();
+
+            $user = $this->userService->getUserById($userId);
+
+            $checking = $this->confirmService->checkConfirmCode($user,$data['confirm_code'],ConfirmService::TYPE_CREATE_COMPANY);
+
+            if ($checking == ConfirmService::RIGHT_DEACTIVATE_CODE) {
+                $this->confirmService->deleteConfirmCode($user->getUserId());
+                return self::successResponse('Request to create company successfully canceled');
+            }
+
+            if ($checking == ConfirmService::WRONG_CONFIRM_CODE) {
+                $exception = new Http400Exception(_('Invalid some parameters'));
+                $errors['errors'] = true;
+                $errors['confirm_code'] = 'Invalid code';
+                throw $exception->addErrorDetails($errors);
+            }
+
+            $company_data['name'] = $data['company_name'];
+            $company_data['website'] = $data['website'];
+
+            $company = $this->companyService->createCompany($company_data);
+
+            $account_id = $this->accountService->createAccount([
+                'user_id' => $userId,
+                'company_id' => $company->getCompanyId(),
+                'company_role_id' => CompanyRole::ROLE_OWNER_ID
+            ]);
+
+            $point_data['account_id'] = $account_id;
+            $point_data['time'] = $data['time'];
+            $point_data['name'] = $data['company_name'];
+            $point_data['website'] = $data['website'];
+            $point_data['longitude'] = $data['longitude'];
+            $point_data['latitude'] = $data['latitude'];
+
+            $tradePoint = $this->pointService->createPoint($point_data);
+
+            if(isset($data['category_id']) && SupportClass::checkInteger($data['category_id']))
+                $this->categoryService->linkCompanyWithCategory($data['category_id'], $company->getCompanyId());
+
+            foreach ($data['phones'] as $phone){
+                //Скорее всего, к компании
+                $this->phoneService->addPhoneToCompany($phone,$company->getCompanyId());
+            }
+
+        } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_CREATE_COMPANY:
+                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
+                case CategoryService::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY:
+                case PointService::ERROR_UNABLE_CREATE_POINT:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
+                case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_COMPANY:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch(ServiceException $e){
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case CategoryService::ERROR_CATEGORY_NOT_FOUND:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+        $this->db->commit();
+
+        return self::successResponse('Company was successfully created',
+            [
+                'company_id' => $company->getCompanyId(),
+                'account_id' => $account_id
+            ]);
+    }
+
+    /**
+     * Отдает код для подтверждения создания бизнес-аккаунта
+     *
+     * @access private
+     *
+     * @method POST
+     *
+     */
+    public function getConfirmCodeForCreateCompany(){
+        //Пока, если код существует, то просто перезаписывается
+        try {
+            $userId = self::getUserId();
+            $user = $this->userService->getUserById($userId);
+            $this->resetPasswordService->sendPasswordResetCode($user, ConfirmService::TYPE_CREATE_COMPANY);
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
+                case ConfirmService::ERROR_UNABLE_TO_CREATE_CONFIRM_CODE:
+                case ConfirmService::ERROR_NO_TIME_TO_RESEND:
+                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Code for reset password successfully sent');
     }
 
     /**
@@ -285,7 +443,8 @@ class CompaniesAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params user_id, company_id
+     * @params user_id
+     * @params company_id
      *
      * @return int account_id
      */
@@ -321,7 +480,6 @@ class CompaniesAPIController extends AbstractController
             }
 
             $data['company_role_id'] = CompanyRole::ROLE_MANAGER_ID;
-
             $account_id = $this->accountService->createAccount($data);
 
         } catch (ServiceExtendedException $e) {
@@ -344,6 +502,12 @@ class CompaniesAPIController extends AbstractController
         return self::successResponse('Manager wa successfully added', ['account_id' => $account_id]);
     }
 
+    /**
+     * Регистрирует регистрирует нового менеджера в системе
+     */
+    public function registerManagerAction(){
+
+    }
     /**
      * Удаляет пользователя из менеджеров компании
      *

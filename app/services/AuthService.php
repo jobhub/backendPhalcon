@@ -25,23 +25,29 @@ class AuthService extends AbstractService
     const LOGIN_DO_NOT_EXISTS = 0;
     const LOGIN_INCORRECT = 2;
 
+
+    const WRONG_ACTIVATION_CODE = 1;
+    const RIGHT_ACTIVATION_CODE = 0;
+    const RIGHT_DEACTIVATION_CODE = 2;
+
     const ADDED_CODE_NUMBER = 2000;
 
-    const ERROR_USER_DO_NOT_EXISTS = 1 + self::ADDED_CODE_NUMBER;
-    const ERROR_USER_ALREADY_ACTIVATED = 2 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_TO_CREATE_ACTIVATION_CODE = 3 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_SEND_TO_MAIL = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_USER_ALREADY_ACTIVATED = 1 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_TO_CREATE_ACTIVATION_CODE = 2 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_DELETE_ACTIVATION_CODE = 3 + self::ADDED_CODE_NUMBER;
+
     /*Time to resend did't come. Return time to resend*/
-    const ERROR_NO_TIME_TO_RESEND = 5 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_TO_CREATE_RESET_PASSWORD_CODE = 6 + self::ADDED_CODE_NUMBER;
-    const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 7 + self::ADDED_CODE_NUMBER;
-    const ERROR_INCORRECT_PASSWORD = 8 + self::ADDED_CODE_NUMBER;
+    const ERROR_NO_TIME_TO_RESEND = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_INCORRECT_PASSWORD = 7 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_UNABLE_SEND_ACTIVATION_CODE = 8 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
     const WRONG_PASSWORD_RESET_CODE = 1;
     const RIGHT_DEACTIVATE_PASSWORD_RESET_CODE = 2;
 
+    const MESSAGE_FOR_SMS_FOR_ACTIVATION_CODE = 'Код: ';
     /**
      * Check login.
      *
@@ -91,24 +97,22 @@ class AuthService extends AbstractService
      */
     public function sendActivationCode(Users $user)
     {
-        if (!$user || $user == null) {
-            throw new ServiceException('User don\'t exists', self::ERROR_USER_DO_NOT_EXISTS);
-        }
-
         if ($user->getActivated()) {
             throw new ServiceException('User already active', self::ERROR_USER_ALREADY_ACTIVATED);
         }
 
-        if ($user->getEmail() != null) {
+        $result = $this->createActivationCode($user);
 
-            $result = $this->createActivationCode($user);
-
+        if($user->getPhoneId()!=null){
+            //Отправляем SMS
+            $this->sendSms($user->phones->getPhone(),$this->getMessageForSmsForActivationCode($result));
+        } elseif ($user->getEmail() != null) {
             //Отправляем письмо.
             $this->sendMailForActivation($result, $user->getEmail());
             return true;
         }
 
-        throw new ServiceException('Активация через sms пока не предусмотрена', 0);
+        throw new ServiceException('У пользователя должен быть email или номер телефона для подтверждения', self::ERROR_UNABLE_SEND_ACTIVATION_CODE);
     }
 
     /**
@@ -147,6 +151,56 @@ class AuthService extends AbstractService
         }
 
         return $activationCode;
+    }
+
+    /**
+     * Deleting activation code of user
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteActivationCode(int $userId)
+    {
+        try {
+            $code = ActivationCodes::findFirstByUserId($userId);
+
+            if (!$code) {
+                return true;
+            }
+
+            if (!$code->delete()) {
+                $errors = SupportClass::getArrayWithErrors($code);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete activation code',
+                        self::ERROR_UNABLE_DELETE_ACTIVATION_CODE);
+                }
+            }
+
+            return true;
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function checkActivationCode(string $code, int $userId)
+    {
+        $activationCode = ActivationCodes::findFirstByUserId($userId);
+
+        if (!$activationCode || ((time() - strtotime($activationCode->getTime())) > ActivationCodes::TIME_LIFE)) {
+            return self::WRONG_ACTIVATION_CODE;
+        }
+
+        if ($activationCode->getActivation() != $code) {
+            if ($activationCode->getDeactivation() != $code) {
+                return self::WRONG_ACTIVATION_CODE;
+            } else {
+                return self::RIGHT_DEACTIVATION_CODE;
+            }
+        } else {
+            return self::RIGHT_ACTIVATION_CODE;
+        }
     }
 
     /**
@@ -223,13 +277,20 @@ class AuthService extends AbstractService
 
         $this->_registerSession($user);
 
-        return
-            [
-                'user_id'=>$user->getUserId(),
-                'token' => $token,
-                'life_time' => $lifetime,
-                'account_id'=>Accounts::findForUserDefaultAccount($user->getUserId())->getId()
-            ];
+        $data = [
+            'user_id'=>$user->getUserId(),
+            'token' => $token,
+            'life_time' => $lifetime,
+            'account_id'=>Accounts::findForUserDefaultAccount($user->getUserId())->getId(),
+            'role' => $user->getRole()
+        ];
+
+        if($user->getRole()!= ROLE_GUEST && $user->getRole()!= ROLE_USER_DEFECTIVE){
+            $userInfo = $this->userInfoService->getHandledUserInfoById($user->getUserId());
+            $data['info'] = $userInfo;
+        }
+
+        return $data;
     }
 
     public function GenerateToken($userId, $login, $role, $lifetime)
@@ -274,6 +335,16 @@ class AuthService extends AbstractService
             return base64_decode($data[1]);
         else
             return false;
+    }
+
+    public function getMessageForSmsForActivationCode(ActivationCodes  $activationCode){
+
+        if($activationCode==null){
+            throw new ServiceException('Активационный код не должен быть null',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE);
+        }
+
+        return 'Код '.$activationCode->getActivation();
     }
 
 

@@ -24,17 +24,19 @@ use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 class ChannelService extends AbstractService
 {
 
-    const ERROR_UNABLE_TO_CREATE_CHANNEL = 13001;
+    const ADDED_CODE_NUMBER = 23000;
 
-    const ERROR_UNABLE_TO_GET_CHANNEL = 13002;
+    const ERROR_UNABLE_TO_CREATE_CHANNEL = 1 + self::ADDED_CODE_NUMBER;
 
-    const ERROR_UNABLE_TO_SUBSCRIBE_CHANNEL = 13003;
+    const ERROR_UNABLE_TO_GET_CHANNEL = 2 + self::ADDED_CODE_NUMBER;
 
-    const ERROR_UNABLE_TO_SEND_MESSAGE_TO_CHANNEL = 13004;
+    const ERROR_UNABLE_TO_SUBSCRIBE_CHANNEL = 3 + self::ADDED_CODE_NUMBER;
 
-    const ERROR_UNABLE_TO_ACCESS_CHANNEL = 13005;
+    const ERROR_UNABLE_TO_SEND_MESSAGE_TO_CHANNEL = 4 + self::ADDED_CODE_NUMBER;
 
-    const ERROR_TRANSACTION = 13005;
+    const ERROR_UNABLE_TO_ACCESS_CHANNEL = 5 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_TRANSACTION = 6 + self::ADDED_CODE_NUMBER;
 
     /**
      * @param $user_id

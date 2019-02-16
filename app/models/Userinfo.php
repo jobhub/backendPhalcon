@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Validation\Validator\Alpha as AlphaValidator;
 
 class Userinfo extends \Phalcon\Mvc\Model
 {
@@ -94,6 +96,13 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     protected $email;
 
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=300, nullable=true)
+     */
+    protected $nickname;
+
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
@@ -109,9 +118,25 @@ class Userinfo extends \Phalcon\Mvc\Model
     const DEFAULT_RESULT_PER_PAGE = 10;
 
     /**
+     * @return string
+     */
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * @param string $nickname
+     */
+    public function setNickname($nickname)
+    {
+        $this->nickname = $nickname;
+    }
+
+    /**
      * @return int
      */
-    public function getCityId(): int
+    public function getCityId()
     {
         return $this->city_id;
     }
@@ -119,7 +144,7 @@ class Userinfo extends \Phalcon\Mvc\Model
     /**
      * @param int $city_id
      */
-    public function setCityId(int $city_id)
+    public function setCityId($city_id)
     {
         $this->city_id = $city_id;
     }
@@ -487,6 +512,37 @@ class Userinfo extends \Phalcon\Mvc\Model
                 )
             );
 
+        $validator->add(
+            'nickname',
+            new Callback(
+                [
+                    "message" => "Такой nickname уже используется",
+                    "callback" => function ($user) {
+                        $userinfos = Userinfo::findByNickname($user->getNickname());
+
+                        if(count($userinfos)>1)
+                            return false;
+
+                        if(count($userinfos) == 0)
+                            return true;
+
+                        if($userinfos[0]->getUserId() == $user->getUserId())
+                            return true;
+                        return false;
+                    }
+                ]
+            )
+        );
+
+        $validator->add(
+            "nickname",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
+                ]
+            )
+        );
+
         return $this->validate($validator);
     }
 
@@ -551,7 +607,7 @@ class Userinfo extends \Phalcon\Mvc\Model
 
         $account = Accounts::findForUserDefaultAccount($userInfo->getUserId());
 
-        $handledUserInfo = $userInfo->toArray();
+        $handledUserInfo = SupportClass::getCertainColumnsFromArray($userInfo->toArray(),self::publicColumns);
         unset($handledUserInfo['city_id']);
         $handledUserInfo['city'] = ['city' => $userInfo->cities->getCity(), 'city_id' => $userInfo->getCityId()];
 

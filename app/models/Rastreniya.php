@@ -5,7 +5,7 @@ namespace App\Models;
 class Rastreniya extends LikeDislikeModel
 {
 
-    const PUBLIC_INFO = ['id', 'create_at', 'is_incognito', 'content', 'has_attached_files'];
+    const PUBLIC_INFO = ['id', 'create_at', 'is_incognito', 'content', 'has_attached_files', 'account_id'];
 
     const DEFAULT_RESULT_PER_PAGE = 12;
     /**

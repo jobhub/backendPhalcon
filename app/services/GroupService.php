@@ -14,9 +14,11 @@ use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
 class GroupService extends AbstractService
 {
-    const ERROR_TRANSACTION = 15001;
+    const ADDED_CODE_NUMBER = 24000;
 
-    const ERROR_UNABLE_TO_ACCESS_GROUP = 15005;
+    const ERROR_TRANSACTION = 1 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_UNABLE_TO_ACCESS_GROUP = 5 + self::ADDED_CODE_NUMBER;
 
     public function create($user_id, $data)
     {

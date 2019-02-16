@@ -196,9 +196,16 @@ $routes = [
              * @access defective
              *
              * @method POST
-             *
-             * @params (обязательные) first_name, last_name, male
-             * @params (Необязательные) patronymic, birthday, about (много текста о себе),
+             *  (обязательные поля)
+             * @params first_name
+             * @params last_name
+             * @params male
+             * @params city_id
+             * @params nickname
+             * (Необязательные поля)
+             * @params patronymic
+             * @params birthday
+             * @params about (много текста о себе),
              * @return string - json array Status
              */
             [
@@ -285,6 +292,22 @@ $routes = [
                 'path' => '/change/password',
                 'action' => 'changePasswordAction'
             ],
+
+            /**
+             * Проверяет, существует ли уже никнейм
+             * @access public
+             *
+             * @method POST
+             *
+             * @params nickname
+             *
+             * @return array (bool nickname_exists)
+             */
+            [
+                'type' => 'post',
+                'path' => '/check/nickname',
+                'action' => 'checkNicknameAction'
+            ],
         ]
     ],
 
@@ -328,6 +351,19 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/accounts',
                 'action' => 'getAccountsAction'
+            ],
+
+            /**
+             * Авторизация через соц. сеть
+             * Должен автоматически вызываться компонентом uLogin.
+             *
+             * @method GET
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'get',
+                'path' => '/social',
+                'action' => 'authWithSocialAction'
             ],
         ]
     ],
@@ -783,6 +819,7 @@ $routes = [
             /**
              * Возвращает все услуги заданной компании
              *
+             * @access public
              * @method GET
              *
              * @param $id
@@ -824,15 +861,14 @@ $routes = [
             /**
              * Возвращает все услуги данного юзера (или его компании).
              *
+             * @access private
+             *
              * @method GET
              *
              * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
              *        Иначе компании, в которой он должен быть хотя бы менеджером.
              *
-             * @return string -  массив услуг в виде:
-             *      [{serviceid, description, datepublication, pricemin, pricemax,
-             *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
-             *      {Userinfo или Company} }].
+             * @return string -  массив услуг
              */
             [
                 'type' => 'get',
@@ -951,15 +987,19 @@ $routes = [
 
             /**
              * Добавляет новую услугу к субъекту. Если не указана компания, можно добавить категории.
+             * Добавлять услуги можно только компании.
+             *
+             * Услуга привязывается к той точке (считается, что она единственная для компании),
+             * которая была создана при создании бизнес-аккаунта.
              *
              * @method POST
              *
-             * @params (необязательные) массив old_points - массив id tradePoint-ов,
-             * (необязательные) массив new_points - массив объектов TradePoints
+             * //@params (необязательные) массив old_points - массив id tradePoint-ов,
+             * //@params (необязательные) массив new_points - массив объектов TradePoints
+             *
              * @params (необязательные) account_id, description, name, price_min, price_max (или же вместо них просто price)
-             *           (обязательно) region_id,
-             *           (необязательно) longitude, latitude
-             *           (необязательно) если не указана компания, можно указать id категорий в массиве categories.
+             *           (необязательно) region_id,
+             *           (необязательно) categories array of int - массив id категорий.
              * @params массив строк tags с тегами.
              * @params прикрепленные изображения. Именование роли не играет.
              *
@@ -1051,12 +1091,18 @@ $routes = [
              * @method GET
              *
              * @param $service_id
+             * @param $account_id
              *
              * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
              */
             [
                 'type' => 'get',
                 'path' => '/get/info/{service_id}',
+                'action' => 'getServiceInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/info/{service_id}/{account_id}',
                 'action' => 'getServiceInfoAction'
             ],
 
@@ -1262,6 +1308,49 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/info/{company_id}',
                 'action' => 'getCompanyInfoAction'
+            ],
+
+            /**
+             * Отдает код для подтверждения создания бизнес-аккаунта
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             */
+            [
+                'type' => 'post',
+                'path' => '/get/confirm-code/create-company',
+                'action' => 'getConfirmCodeForCreateCompany'
+            ],
+
+            /**
+             * Создает бизнес аккаунт для указанного пользователя.
+             * А именно, компанию и точку оказания услуг к ней.
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params confirm_code
+             * Для компании
+             * @params category_id int - категория, в которой компания будет оказывать услуги
+             * @params company_name string - название компании
+             *
+             * Для точки оказания услуг
+             * @params time string режим работы точки оказания услуг
+             * @params latitude double
+             * @params longitude double
+             *
+             * Спорно
+             * @params website string
+             * @params phones array [string] - массив номеров телефонов
+             *
+             */
+            [
+                'type' => 'post',
+                'path' => '/add/business',
+                'action' => 'createBusinessAccount'
             ],
         ]
     ],
@@ -2430,14 +2519,18 @@ $routes = [
 
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
+             *
              * @method PUT
-             * @params radius, category_id
+             *
+             * @params radius
+             * @params category_id
+             * @params account_id
              * @return string - json array Status
              */
             [
                 'type' => 'put',
-                'path' => '/edit/radius',
-                'action' => 'editRadiusInFavouriteAction'
+                'path' => 'edit/category/radius',
+                'action' => 'editRadiusInFavouriteCategoryAction'
             ],
 
             /**

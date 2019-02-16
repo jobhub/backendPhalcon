@@ -31,6 +31,7 @@ class PhoneService extends AbstractService {
     const ERROR_PHONE_USER_NOT_FOUND = 10 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_ADD_PHONE_TO_USER = 11 + + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_DELETE_PHONE_FROM_USER = 12 + + self::ADDED_CODE_NUMBER;
+
     /**
      * Create phone if it don't exists.
      *
