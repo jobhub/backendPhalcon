@@ -28,6 +28,8 @@ use App\Controllers\HttpExceptions\Http500Exception;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use ULogin\Auth;
+use App\Libs\SocialAuther\Adapter\Vk;
+use App\Libs\SocialAuther\SocialAuther;
 
 /**
  * Class SessionAPIController
@@ -162,30 +164,49 @@ class SessionAPIController extends AbstractController
      */
     public function authWithSocialAction()
     {
-        if ($this->request->isGet()) {
-            $ulogin = new SimpleULogin(array(
-                'fields' => 'first_name,last_name,email,phone,sex,city',
-                'url' => '/authorization/social',
-                'optional' => 'pdate,photo_big,country',
-                'type' => 'panel',
-            ));
-            return ['form'=>$ulogin->getForm()];
-        } else if ($this->request->isPost()) {
-            $ulogin = new Auth(array(
-                'fields' => 'first_name,last_name,email,phone,sex,city',
-                'url' => '/authorization/social',
-                'optional' => 'pdate,photo_big,country',
-                'type' => 'panel',
-            ));
+        try {
+            if ($this->request->isGet()) {
+                if (!isset($_GET['code'])) {
+                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapter = new Vk($vkAdapterConfig);
+                    $auther = new SocialAuther($vkAdapter);
 
-            if (!$ulogin->isAuthorised()) {
-                throw new ServiceException('Не удалось авторизоваться через uLogin');
+                    return ['url' => $vkAdapter->getAuthUrl()];
+                } else {
+                    return ['code' => $_GET['code']];
+                }
             }
 
+            $data = json_decode($this->request->getRawBody(), true);
+
+            switch ($data['provider']) {
+                case 'vk': {
+                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapter = new Vk($vkAdapterConfig);
+                    $auther = new SocialAuther($vkAdapter);
+                    break;
+                }
+                default:
+                    return null;
+            }
+
+            SupportClass::writeMessageInLogFile("Перед пыткой вызвать authenticate");
+            $result = $auther->authenticate($data['code']);
+            SupportClass::writeMessageInLogFile("result = " . $result);
+
+            SupportClass::writeMessageInLogFile("Перед пыткой вызвать var_dump на auther");
+            //var_dump($auther);
+            SupportClass::writeMessageInLogFile("Все норм, вызвал, вернул");
+            return self::successResponse('All or or not', ['result'=>$result]);
+
+            /*if (!$ulogin->isAuthorised()) {
+                throw new ServiceException('Не удалось авторизоваться через uLogin');
+            }*/
+
             $ulogin->logout();
-            
+
             $userFromULogin = $ulogin->getUser();
-            
+
             $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
 
             $this->db->begin();
@@ -241,8 +262,10 @@ class SessionAPIController extends AbstractController
 
             //Авторизуем
             $tokens = $this->authService->createSession($userSocial->users);
-
-            return self::chatResponce('User was successfully authorized', $tokens);
+        } catch (\Exception $e) {
+            echo 'Exception message: '. $e;
         }
+
+        return self::chatResponce('User was successfully authorized', $tokens);
     }
 }
