@@ -14017,3 +14017,417 @@
 Дата: 2019-02-18 10:11:22 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDItMjUgMTA6MTA6MzQifQ==.I9q3VBWzsb1BA6BVp0GlCZ6unR5XGnrqVm+mCrRrKdODK9CSNivBCtgo85sMQaZ55ONt8B4f88OuobRAX/iJwf/SoAxagR46SU3yXrBgfv4ofuoyOF0L82w8x+niA6XKzbdBY6XW1SHquaSpU/X8cqmoHeJpDs2Pamyis5ifvJ/bJmk/+WJ/vEBM3afnBTcD134KoCzVCdJ+si1VVbwwdrBWR/z1dqM5e0aSqp9mOOsw0uq43vSfmAhgP+LAAurdUGg4DwUf4tkqKvgGz1rsAZ14ITNfOtzxFuR1PnCFXxnpqpQroDlIgLlJeweukjjZD4c97KJpGQXPYgNlFWCBWw==
 Дата: 2019-02-18 10:11:22 - Сессия есть, роль User
 Дата: 2019-02-18 10:11:22 - При получении инфы о пользователе
+Дата: 2019-02-18 10:56:06 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '42',
+  'Postman-Token' => '1867d12c-af52-9e37-2e0a-5df063cb4b94',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 10:56:06 - token is aaa
+Дата: 2019-02-18 12:49:10 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'f393da2e-bfc4-58c2-20b7-a1e50e2ea040',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 12:49:10 - token is aaa
+Дата: 2019-02-18 12:49:10 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 12:49:10 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 12:50:31 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '75aa8631-9876-8206-d8aa-62e75a6f4f4a',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 12:50:31 - token is aaa
+Дата: 2019-02-18 12:50:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 12:50:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 12:52:07 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'e8c7ebcb-5bbd-ba66-7589-da5223aa8d7a',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 12:52:07 - token is aaa
+Дата: 2019-02-18 12:52:07 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 12:52:07 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 12:54:29 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'e705d1b6-8e4e-4848-3bca-6c3013993533',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 12:54:29 - token is aaa
+Дата: 2019-02-18 12:54:29 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 12:54:29 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 12:55:09 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'eace5a48-092f-72b1-17ac-4d2bf926fee7',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 12:55:09 - token is aaa
+Дата: 2019-02-18 12:55:09 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 12:55:09 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:35:34 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '8533787c-0e70-30e6-311a-53f4822f3d2c',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:35:34 - token is aaa
+Дата: 2019-02-18 13:35:34 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:35:34 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:37:15 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '1e92c38d-0a7d-df8b-ca19-b94baaf08ab9',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:37:15 - token is aaa
+Дата: 2019-02-18 13:37:15 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:37:15 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:38:40 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '73278918-abeb-4f6f-e2df-9cd97d8e6bea',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:38:40 - token is aaa
+Дата: 2019-02-18 13:38:40 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:38:40 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:42:11 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'ba7608f4-927a-0131-d93b-60e5861695b7',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:42:11 - token is aaa
+Дата: 2019-02-18 13:42:11 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:42:11 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:42:27 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '5f3bef99-cead-6713-35c8-c6ff24d6eda5',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:42:27 - token is aaa
+Дата: 2019-02-18 13:42:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:42:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:42:35 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'e26cd8e2-fb51-5d97-cd25-93ac09fd89f6',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:42:35 - token is aaa
+Дата: 2019-02-18 13:42:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:42:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:43:35 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '217d0a22-4429-a845-e24c-99836a22b5b0',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:43:35 - token is aaa
+Дата: 2019-02-18 13:43:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:43:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:43:57 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'b40b2d45-56b3-24e8-7718-12b1388d1d91',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:43:57 - token is aaa
+Дата: 2019-02-18 13:43:57 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:43:57 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 13:45:06 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'e59e94e8-25ea-7141-2991-7d861dacae57',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 13:45:06 - token is aaa
+Дата: 2019-02-18 13:45:06 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 13:45:06 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:40:41 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => '40c5da32-110a-1aff-c902-220c1150fe7c',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 14:40:41 - token is aaa
+Дата: 2019-02-18 14:40:41 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 14:40:41 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:40:41 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 14:40:41 - Вызвал authenticate
+Дата: 2019-02-18 14:40:41 - Перед получением токена
+Дата: 2019-02-18 14:40:41 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 14:40:41 - result = 
+Дата: 2019-02-18 14:40:41 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 14:40:41 - Все норм, вызвал, вернул
+Дата: 2019-02-18 14:40:52 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => '71b54bd4-1c26-0e91-fd7c-00587f422013',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 14:40:52 - token is aaa
+Дата: 2019-02-18 14:40:52 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 14:40:52 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:40:52 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 14:40:54 - Вызвал authenticate
+Дата: 2019-02-18 14:40:56 - Перед получением токена
+Дата: 2019-02-18 14:40:59 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 14:41:11 - result = 
+Дата: 2019-02-18 14:41:12 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 14:41:12 - Все норм, вызвал, вернул
+Дата: 2019-02-18 14:41:57 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => 'd6a472c1-1677-f91e-96a1-f70fb946ad91',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 14:41:57 - token is aaa
+Дата: 2019-02-18 14:41:57 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 14:41:57 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:41:57 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 14:41:59 - Вызвал authenticate
+Дата: 2019-02-18 14:41:59 - Перед получением токена
+Дата: 2019-02-18 14:41:59 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 14:41:59 - result = 
+Дата: 2019-02-18 14:41:59 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 14:41:59 - Все норм, вызвал, вернул
+Дата: 2019-02-18 14:43:30 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'e2cc2fca-51df-fb01-5b03-729e178490bb',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 14:43:30 - token is aaa
+Дата: 2019-02-18 14:43:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 14:43:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:44:56 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => 'dd324266-227f-4dbc-97ca-92799d4a63e2',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 14:44:56 - token is aaa
+Дата: 2019-02-18 14:44:56 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 14:44:56 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 14:44:56 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 14:44:56 - Вызвал authenticate
+Дата: 2019-02-18 14:44:56 - Перед получением токена
+Дата: 2019-02-18 14:44:57 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 14:44:57 - result = 
+Дата: 2019-02-18 14:44:57 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 14:44:57 - Все норм, вызвал, вернул
+Дата: 2019-02-18 15:17:51 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => '7ccf0e25-dde7-b145-3478-02a48ac7e14b',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 15:17:51 - token is aaa
+Дата: 2019-02-18 15:17:51 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 15:17:51 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 15:17:51 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 15:17:51 - Вызвал authenticate
+Дата: 2019-02-18 15:17:51 - Перед получением токена
+Дата: 2019-02-18 15:17:51 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 15:17:51 - result = 
+Дата: 2019-02-18 15:17:51 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 15:17:51 - Все норм, вызвал, вернул
+Дата: 2019-02-18 15:18:09 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => '9c337d41-bd82-e752-ab48-ec8b862d8fb5',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 15:18:09 - token is aaa
+Дата: 2019-02-18 15:18:09 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 15:18:09 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 15:18:09 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 15:18:09 - Вызвал authenticate
+Дата: 2019-02-18 15:18:09 - Перед получением токена
+Дата: 2019-02-18 15:18:09 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'redirect_uri is invalid, please pass same redirect_uri, you used in authorize method.',
+)
+Дата: 2019-02-18 15:18:09 - result = 
+Дата: 2019-02-18 15:18:09 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 15:18:09 - Все норм, вызвал, вернул
+Дата: 2019-02-18 15:19:18 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => 'b18f7148-2629-bae6-5039-6d520005965b',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 15:19:18 - token is aaa
+Дата: 2019-02-18 15:19:18 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 15:19:18 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 15:19:18 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 15:19:18 - Вызвал authenticate
+Дата: 2019-02-18 15:19:21 - Перед получением токена
+Дата: 2019-02-18 15:19:31 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'Code is invalid or expired.',
+)
+Дата: 2019-02-18 15:19:31 - result = 
+Дата: 2019-02-18 15:19:31 - Перед пыткой вызвать var_dump на auther
+Дата: 2019-02-18 15:19:31 - Все норм, вызвал, вернул
+Дата: 2019-02-18 15:19:49 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '51',
+  'Postman-Token' => '13d968af-d492-3996-9186-ffec040d1fbf',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 15:19:49 - token is aaa
+Дата: 2019-02-18 15:19:49 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 15:19:49 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 15:19:49 - Перед пыткой вызвать authenticate
+Дата: 2019-02-18 15:19:49 - Вызвал authenticate
+Дата: 2019-02-18 15:19:52 - Перед получением токена
+Дата: 2019-02-18 15:19:54 - Получил токен. tokenInfo - array (
+  'error' => 'invalid_grant',
+  'error_description' => 'redirect_uri is invalid, please pass same redirect_uri, you used in authorize method.',
+)
