@@ -106,10 +106,11 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
-        'path_to_photo', 'last_time'];
+        'path_to_photo', 'last_time', 'nickname'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
-        birthday, male, city_id, about, status, rating_executor, rating_client, path_to_photo, last_time';
+        birthday, male, city_id, about, status, rating_executor, rating_client, 
+        path_to_photo, last_time, nickname';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 

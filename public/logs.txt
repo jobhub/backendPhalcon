@@ -13983,3 +13983,37 @@
  Активационный код = 
  Код для смены пароля = 99c0
  Код подтверждения = 
+Дата: 2019-02-18 10:10:31 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '42',
+  'Postman-Token' => '43d943e1-e5ea-b386-8f0c-23d051a60c3a',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 10:10:31 - token is aaa
+Дата: 2019-02-18 10:10:31 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-18 10:10:31 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-18 10:10:34 - email пользователя mara@mail.ru
+Дата: 2019-02-18 10:10:34 - Юзер найден в бд
+Дата: 2019-02-18 10:10:34 - mara@mail.ru
+Дата: 2019-02-18 10:10:34 - ID юзера при этом - 7
+Дата: 2019-02-18 10:11:22 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDItMjUgMTA6MTA6MzQifQ==.I9q3VBWzsb1BA6BVp0GlCZ6unR5XGnrqVm+mCrRrKdODK9CSNivBCtgo85sMQaZ55ONt8B4f88OuobRAX/iJwf/SoAxagR46SU3yXrBgfv4ofuoyOF0L82w8x+niA6XKzbdBY6XW1SHquaSpU/X8cqmoHeJpDs2Pamyis5ifvJ/bJmk/+WJ/vEBM3afnBTcD134KoCzVCdJ+si1VVbwwdrBWR/z1dqM5e0aSqp9mOOsw0uq43vSfmAhgP+LAAurdUGg4DwUf4tkqKvgGz1rsAZ14ITNfOtzxFuR1PnCFXxnpqpQroDlIgLlJeweukjjZD4c97KJpGQXPYgNlFWCBWw==',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'fc1bcaab-bb92-7a68-70b4-c8376594a5dd',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-18 10:11:22 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDItMjUgMTA6MTA6MzQifQ==.I9q3VBWzsb1BA6BVp0GlCZ6unR5XGnrqVm+mCrRrKdODK9CSNivBCtgo85sMQaZ55ONt8B4f88OuobRAX/iJwf/SoAxagR46SU3yXrBgfv4ofuoyOF0L82w8x+niA6XKzbdBY6XW1SHquaSpU/X8cqmoHeJpDs2Pamyis5ifvJ/bJmk/+WJ/vEBM3afnBTcD134KoCzVCdJ+si1VVbwwdrBWR/z1dqM5e0aSqp9mOOsw0uq43vSfmAhgP+LAAurdUGg4DwUf4tkqKvgGz1rsAZ14ITNfOtzxFuR1PnCFXxnpqpQroDlIgLlJeweukjjZD4c97KJpGQXPYgNlFWCBWw==
+Дата: 2019-02-18 10:11:22 - Сессия есть, роль User
+Дата: 2019-02-18 10:11:22 - При получении инфы о пользователе

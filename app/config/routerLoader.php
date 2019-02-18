@@ -509,7 +509,7 @@ $routes = [
 
             /**
              * Меняет данные текущего пользоваателя.
-             * @access private.
+             * Приватный метод.
              *
              * @method PUT
              *
@@ -521,6 +521,8 @@ $routes = [
              * @params status
              * @params about
              * @params address
+             * @params nickname
+             * @params city_id
              *
              * @return string - json array - результат операции
              */
