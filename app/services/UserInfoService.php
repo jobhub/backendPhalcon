@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Libs\ImageLoader;
 use App\Models\Accounts;
 use App\Models\FavoriteUsers;
 use App\Models\Users;
@@ -14,6 +15,9 @@ use App\Libs\SupportClass;
 use App\Models\Userinfo;
 use App\Models\FavoriteCompanies;
 use App\Models\Settings;
+use Phalcon\Http\Client\Exception;
+
+use Phalcon\Http\Request\File as PhalconFile;
 
 /**
  * business logic for users
@@ -167,6 +171,48 @@ class UserInfoService extends AbstractService
         return $user?true:false;
     }
 
+
+    public function savePhotoForUserByURL(Users $user, Userinfo $userInfo, $url, $photo_name){
+        SupportClass::writeMessageInLogFile('Полученный URL '.$url .', название - '.$photo_name);
+
+        $imagePath = ImageLoader::formFullImagePathFromImageName('temp',$user->getUserId(),$photo_name);
+
+        $imagePath = BASE_PATH.'/public/'.$imagePath;
+
+        $imagePath = str_replace('\\','/',$imagePath);
+
+        SupportClass::writeMessageInLogFile('Сформированное новое название '.$imagePath);
+
+        if(!is_dir(IMAGE_PATH . '/temp/' . $user->getUserId())) {
+            $result = mkdir(IMAGE_PATH . '/temp/' . $user->getUserId());
+            if(!$result)
+                throw new ServiceException('Unable create directory for temp image',ImageService::ERROR_UNABLE_CREATE_IMAGE);
+        }
+
+        $file = SupportClass::downloadFile($url,$imagePath);
+
+        $strFile = var_export($file,true);
+
+        SupportClass::writeMessageInLogFile('Файл '.$strFile);
+
+        $phalcon_file = new PhalconFile([
+            'name'=>$photo_name,
+            'tmp_name'=>$imagePath,
+            'size'=>filesize($imagePath)
+        ]);
+
+        $ids = $this->imageService->createImagesToUser(array($phalcon_file), $user);
+
+        $strIds = var_export($ids,true);
+
+        SupportClass::writeMessageInLogFile('Созданные Id изображений '.$strIds);
+
+        $this->imageService->saveImagesToUser(array($phalcon_file), $user, $ids);
+
+        $image = $this->imageService->getImageById($ids[0]['image_id'],ImageService::TYPE_USER);
+
+        $this->changeUserInfo($userInfo,['path_to_photo' => $image->getImagePath()]);
+    }
     /*public function subscribeToCompany(int $userId, int $companyId)
     {
         try {

@@ -11,7 +11,7 @@ $routes = [
             ['type' => 'get', // post; options, get, 
                 'path' => '/find/{email}',
                 'action' => 'getUserByAction'
-            ], 
+            ],
             ['type' => 'get', // post; options, get, 
                 'path' => '/messaging', //get all user discussions
                 'action' => 'getUserPrivateChatAction'
@@ -376,6 +376,13 @@ $routes = [
                 'path' => '/social',
                 'action' => 'authWithSocialAction'
             ],
+
+
+            [
+                'type' => 'post',
+                'path' => '/test/social/change-photo',
+                'action' => 'testingSavingImageToUserProfileAction'
+            ],
         ]
     ],
 
@@ -462,7 +469,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\UserinfoAPIController'=>[
+    '\App\Controllers\UserinfoAPIController' => [
         'prefix' => '/user/info',
         'resources' => [
             /**
@@ -606,7 +613,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\NewsAPIController'=>[
+    '\App\Controllers\NewsAPIController' => [
         'prefix' => '/news',
         'resources' => [
             /**
@@ -826,7 +833,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\ServicesAPIController'=>[
+    '\App\Controllers\ServicesAPIController' => [
         'prefix' => '/service',
         'resources' => [
             /**
@@ -1190,13 +1197,13 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\CompaniesAPIController'=>[
+    '\App\Controllers\CompaniesAPIController' => [
         'prefix' => '/company',
         'resources' => [
             /**
              * Возвращает компании текущего пользователя
              *
-             * @param $with_points
+             * @param $with_points = false - если true, возвращает список точек оказания услуг, связанных с данной компанией
              *
              * @method GET
              * @return array - json array компаний
@@ -1368,7 +1375,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\TradePointsAPIController'=>[
+    '\App\Controllers\TradePointsAPIController' => [
         'prefix' => '/trade-point',
         'resources' => [
             /**
@@ -1479,7 +1486,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\CommentsAPIController'=>[
+    '\App\Controllers\CommentsAPIController' => [
         'prefix' => '/comment',
         /**
          * Возможные значения для $type:
@@ -1698,7 +1705,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\PhonesAPIController'=>[
+    '\App\Controllers\PhonesAPIController' => [
         'prefix' => '',
         'resources' => [
             /**
@@ -1811,7 +1818,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\RequestsAPIController'=>[
+    '\App\Controllers\RequestsAPIController' => [
         'prefix' => '/request',
         'resources' => [
             /**
@@ -1878,7 +1885,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\TasksAPIController'=>[
+    '\App\Controllers\TasksAPIController' => [
         'prefix' => '/task',
         'resources' => [
             /**
@@ -1983,7 +1990,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\OffersAPIController'=>[
+    '\App\Controllers\OffersAPIController' => [
         'prefix' => '/offer',
         'resources' => [
             /**
@@ -2067,7 +2074,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\ReviewsAPIController'=>[
+    '\App\Controllers\ReviewsAPIController' => [
         'prefix' => '/review',
         'resources' => [
             /**
@@ -2194,7 +2201,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\ImageController'=>[
+    '\App\Controllers\ImageController' => [
         'prefix' => '/image',
         'resources' => [
             /**
@@ -2247,7 +2254,7 @@ $routes = [
              *
              * @method POST
              *
-             * @param $type;
+             * @param $type ;
              *
              * @params object_id
              *
@@ -2282,7 +2289,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\LikeController'=>[
+    '\App\Controllers\LikeController' => [
 
         /**
          * Возможные значения $type
@@ -2318,7 +2325,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\ForwardsController'=>[
+    '\App\Controllers\ForwardsController' => [
         'prefix' => '/forward',
 
         /**
@@ -2374,7 +2381,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\FavouriteController'=>[
+    '\App\Controllers\FavouriteController' => [
         'prefix' => '/favourite',
 
         /**
@@ -2582,7 +2589,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\UserLocationAPIController'=>[
+    '\App\Controllers\UserLocationAPIController' => [
         'prefix' => '/user/location',
         'resources' => [
             /**
@@ -2713,7 +2720,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\CityController'=>[
+    '\App\Controllers\CityController' => [
         'prefix' => '/city',
         'resources' => [
 
@@ -2731,7 +2738,7 @@ $routes = [
         ]
     ],
 
-    '\App\Controllers\TestController'=>[
+    '\App\Controllers\TestController' => [
         'prefix' => '/moderator/test',
         'resources' => [
             [

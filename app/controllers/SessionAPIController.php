@@ -7,6 +7,7 @@ use App\Models\Accounts;
 use App\Models\UsersSocial;
 use App\Services\AbstractService;
 use App\Services\AccountService;
+use App\Services\ImageService;
 use App\Services\SocialNetService;
 use App\Services\UserInfoService;
 use Phalcon\Http\Client\Exception;
@@ -240,10 +241,13 @@ class SessionAPIController extends AbstractController
                 case UserService::ERROR_UNABLE_CREATE_USER:
                 case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
                 case UserInfoService::ERROR_UNABLE_CREATE_USER_INFO:
+                case UserInfoService::ERROR_UNABLE_CHANGE_USER_INFO:
                 case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                 case SocialNetService::ERROR_UNABLE_CREATE_USER_SOCIAL:
                 case SocialNetService::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -258,5 +262,54 @@ class SessionAPIController extends AbstractController
                     throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         }
+    }
+
+    public function testingSavingImageToUserProfileAction()
+    {
+        $data = json_decode($this->request->getRawBody(), true);
+
+        if (empty($data['uri_to_photo'])) {
+            $errors['uri_to_photo'] = 'Missing required parameter \'uri_to_photo\'';
+        }
+
+        if (!is_null($errors)) {
+            $errors['errors'] = true;
+            $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+            throw $exception->addErrorDetails($errors);
+        }
+
+        try {
+
+            $resultName = '';
+
+            $nameStart = false;
+            for($i = strlen($data['uri_to_photo'])-1;$i>0; $i--){
+                if($nameStart){
+                    if($data['uri_to_photo'][$i]!='/'){
+                        $resultName =$data['uri_to_photo'][$i] . $resultName;
+                    } else
+                        break;
+                } elseif($data['uri_to_photo'][$i]=='?'){
+                    $nameStart = true;
+                }
+            }
+
+            $userId = self::getUserId();
+
+            $user = $this->userService->getUserById($userId);
+            $userInfo = $this->userInfoService->getUserInfoById($userId);
+
+            $this->userInfoService->savePhotoForUserByURL($user,$userInfo,$data['uri_to_photo'],$resultName);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        return self::successResponse('Photo successfully changed');
     }
 }

@@ -543,3 +543,9 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Wed, 13 Feb 19 16:49:52 +0300][CRITICAL] 26003 User don't exists
 [Wed, 13 Feb 19 16:52:29 +0300][CRITICAL] 4001 Unable create info for user
 [Mon, 18 Feb 19 17:20:24 +0300][CRITICAL] 4003 User don't exists
+[Tue, 19 Feb 19 11:29:46 +0300][CRITICAL] 12005 Unable add phone to company
+[Tue, 19 Feb 19 13:29:15 +0300][CRITICAL] 7002 Image not found
+[Tue, 19 Feb 19 13:49:47 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :0image_id
+[Tue, 19 Feb 19 13:50:20 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :0image_id
+[Tue, 19 Feb 19 13:51:28 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :0image_id
+[Tue, 19 Feb 19 13:53:10 +0300][CRITICAL] 4004 Unable change info for user

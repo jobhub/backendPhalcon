@@ -30,7 +30,7 @@ class SocialNetService extends AbstractService
      *  Регистрирует пользователя через соц сеть (по полученной информации)
      *
      * @param array $userData [phone, email, first_name, last_name, male, country, city,
-     *                         network, identity, profile]
+     *                         network, identity, profile, status, about, uri_to_photo, photo_name]
      * @return Users. If all ok, return Users object
      */
     public function registerUserByNet(array $userData)
@@ -53,6 +53,9 @@ class SocialNetService extends AbstractService
         $data_userinfo['first_name'] = $userData['first_name'];
         $data_userinfo['last_name'] = $userData['last_name'];
         $data_userinfo['male'] = ($userData['sex'] - 1) >= 0 ? $userData['sex'] - 1 : 1;
+        $data_userinfo['birthday'] = $userData['birthday'];
+        $data_userinfo['status'] = $userData['status'];
+        $data_userinfo['about'] = $userData['about'];
 
         if (isset($userData['country']) && isset($userData['city']))
             $data_userinfo['address'] = ($userData['country'] . ' ' . $userData['city']);
@@ -60,10 +63,14 @@ class SocialNetService extends AbstractService
         $data_userinfo['city_id'] = $userData['city_id'];
         $data_userinfo['nickname'] = 'nickname_'.$resultUser->getUserId();
 
-        $this->userInfoService->createUserInfo($data_userinfo);
+        $userInfo = $this->userInfoService->createUserInfo($data_userinfo);
+
+        $userInfo = $this->userInfoService->getUserInfobyId($userInfo->getUserId());
 
         $this->userInfoService->createSettings($resultUser->getUserId());
         $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
+
+        $this->userInfoService->savePhotoForUserByURL($resultUser,$userInfo,$userData['uri_to_photo'], $userData['photo_name']);
 
         $userSocialData['network'] = $userData['network'];
         $userSocialData['profile'] = $userData['profile'];

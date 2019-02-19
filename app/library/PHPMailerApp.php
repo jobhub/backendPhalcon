@@ -35,9 +35,13 @@ class PHPMailerApp
         $view->partial($path, $params);
         $this->currMessage = ob_get_clean();
 
-        $this->currMessage .= "\n\r Активационный код = ".$params['activation'];
+        foreach ($params as $param_name=>$param_value){
+            $this->currMessage = str_replace('<$'.$param_name.'>',$param_value,$this->currMessage);
+        }
+
+        /*$this->currMessage .= "\n\r Активационный код = ".$params['activation'];
         $this->currMessage .= "\n\r Код для смены пароля = ".$params['resetcode'];
-        $this->currMessage .= "\n\r Код подтверждения = ".$params['code'];
+        $this->currMessage .= "\n\r Код подтверждения = ".$params['code'];*/
         SupportClass::writeMessageInLogFile('Текст письма:');
         SupportClass::writeMessageInLogFile($this->currMessage);
 

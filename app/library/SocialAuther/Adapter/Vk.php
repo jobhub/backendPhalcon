@@ -13,7 +13,7 @@ class Vk extends AbstractAdapter
         $this->socialFieldsMap = array(
             'socialId'   => 'id',
             'email'      => 'email',
-            'avatar'     => 'photo_big',
+            'avatar'     => 'photo_max_orig',
             'birthday'   => 'bdate'
         );
 
@@ -123,6 +123,51 @@ class Vk extends AbstractAdapter
         return $result;
     }
 
+    public function getAbout()
+    {
+        $result = null;
+        if (isset($this->userInfo['about'])) {
+            $result = $this->userInfo['about'];
+        }
+
+        return $result;
+    }
+
+    public function getStatus()
+    {
+        $result = null;
+        if (isset($this->userInfo['status'])) {
+            $result = $this->userInfo['status'];
+        }
+
+        return $result;
+    }
+
+    public function getPhotoName()
+    {
+        $avatar_uri = $this->getAvatar();
+
+        if($avatar_uri!=null){
+            $resultName = '';
+
+            $nameStart = false;
+            for($i = strlen($avatar_uri)-1;$i>0; $i--){
+                if($nameStart){
+                    if($avatar_uri[$i]!='/'){
+                        $resultName =$avatar_uri[$i] . $resultName;
+                    } else
+                        break;
+                } elseif($avatar_uri[$i]=='?'){
+                    $nameStart = true;
+                }
+            }
+
+            return $resultName;
+        }
+
+        return null;
+    }
+
     /**
      * Authenticate and return bool result of authentication
      *
@@ -138,7 +183,7 @@ class Vk extends AbstractAdapter
                 'client_secret' => $this->clientSecret,
                 'code' => $code,
                 'redirect_uri' => $this->redirectUri,
-                'scope'=>'email',
+                'scope'=>'4195328',
                 'v' => 5.92
             );
 
@@ -151,9 +196,9 @@ class Vk extends AbstractAdapter
             if (isset($tokenInfo['access_token'])) {
                 $params = array(
                     'uids'         => $tokenInfo['user_id'],
-                    'fields'       => 'uid,first_name,last_name,screen_name,sex,bdate,photo_big,email,city,country',
+                    'fields'       => 'uid,first_name,last_name,screen_name,sex,bdate,photo_max_orig,email,city,country,status,about',
                     'access_token' => $tokenInfo['access_token'],
-                    'scope'=>'email',
+                    'scope'=>'4195328',
                     'v' => 5.92
                 );
 
@@ -209,7 +254,12 @@ class Vk extends AbstractAdapter
             'city'=>$this->getCity(),
             'profile'=>$this->getSocialPage(),
             'email'=>$this->getEmail(),
-            'city_id'=>$this->getCityId()
+            'city_id'=>$this->getCityId(),
+            'status'=>$this->getStatus(),
+            'about'=>$this->getAbout(),
+            'birthday'=>$this->getBirthday(),
+            'uri_to_photo'=>$this->getAvatar(),
+            'photo_name'=>$this->getPhotoName()
         ];
     }
 }

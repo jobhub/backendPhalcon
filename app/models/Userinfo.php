@@ -516,7 +516,7 @@ class Userinfo extends \Phalcon\Mvc\Model
                 )
             );
 
-        /*$validator->add(
+        $validator->add(
             'nickname',
             new Callback(
                 [
@@ -536,7 +536,7 @@ class Userinfo extends \Phalcon\Mvc\Model
                     }
                 ]
             )
-        );*/
+        );
 
         /*$validator->add(
             "nickname",
@@ -552,17 +552,7 @@ class Userinfo extends \Phalcon\Mvc\Model
             new Regex(
                 [
                     "pattern" => "/^[a-zA-Z0-9](?:_?[a-zA-Z0-9])*$/",
-                    "message" => "Введите корректный ИНН",
-                ]
-            )
-        );
-
-        $validator->add(
-            "nickname",
-            new UniquenessValidator(
-                [
-                    "model"   => new Userinfo(),
-                    "message" => ":field must be unique",
+                    "message" => "nickname must contain only a-z, A-Z, _, 0-9",
                 ]
             )
         );
