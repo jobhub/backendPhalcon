@@ -42,6 +42,7 @@ class AuthService extends AbstractService
     const ERROR_INCORRECT_PASSWORD = 7 + self::ADDED_CODE_NUMBER;
 
     const ERROR_UNABLE_SEND_ACTIVATION_CODE = 8 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL = 9 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -98,6 +99,11 @@ class AuthService extends AbstractService
      */
     public function sendActivationCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to send activation code to social user',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL);
+        }
+
         if ($user->getActivated()) {
             throw new ServiceException('User already active', self::ERROR_USER_ALREADY_ACTIVATED);
         }
@@ -123,6 +129,11 @@ class AuthService extends AbstractService
      */
     public function createActivationCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to create activation code to social user',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL);
+        }
+
         $activationCode = ActivationCodes::findFirstByUserId($user->getUserId());
 
         if (!$activationCode) {

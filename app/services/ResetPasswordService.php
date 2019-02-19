@@ -26,6 +26,7 @@ class ResetPasswordService extends AbstractService
     const ERROR_UNABLE_DELETE_RESET_PASSWORD_CODE = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_NO_TIME_TO_RESEND = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_SEND_RESET_PASSWORD_CODE = 4 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_SEND_RESET_PASSWORD_CODE_TO_SOCIAL = 5 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -92,6 +93,11 @@ class ResetPasswordService extends AbstractService
 
     public function sendPasswordResetCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to send password reset code to social user',
+                self::ERROR_UNABLE_SEND_RESET_PASSWORD_CODE_TO_SOCIAL);
+        }
+
         $resetCode = $this->createPasswordResetCode($user);
 
         if($user->getPhoneId()==null){
@@ -119,6 +125,11 @@ class ResetPasswordService extends AbstractService
      */
     public function createPasswordResetCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to create password reset code to social user',
+                self::ERROR_UNABLE_SEND_RESET_PASSWORD_CODE_TO_SOCIAL);
+        }
+
         $resetCode = PasswordResetCodes::findFirstByUserId($user->getUserId());
         if (!$resetCode) {
             $resetCode = new PasswordResetCodes();
