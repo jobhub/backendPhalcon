@@ -542,3 +542,4 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Wed, 13 Feb 19 10:31:04 +0300][CRITICAL] 7001 Invalid type of image
 [Wed, 13 Feb 19 16:49:52 +0300][CRITICAL] 26003 User don't exists
 [Wed, 13 Feb 19 16:52:29 +0300][CRITICAL] 4001 Unable create info for user
+[Mon, 18 Feb 19 17:20:24 +0300][CRITICAL] 4003 User don't exists

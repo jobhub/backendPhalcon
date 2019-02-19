@@ -10,6 +10,9 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Alpha as AlphaValidator;
+use Phalcon\Validation\Validator\Alnum as AlnumValidator;
+use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Validation\Validator\Regex;
 
 class Userinfo extends \Phalcon\Mvc\Model
 {
@@ -513,7 +516,7 @@ class Userinfo extends \Phalcon\Mvc\Model
                 )
             );
 
-        $validator->add(
+        /*$validator->add(
             'nickname',
             new Callback(
                 [
@@ -533,13 +536,33 @@ class Userinfo extends \Phalcon\Mvc\Model
                     }
                 ]
             )
+        );*/
+
+        /*$validator->add(
+            "nickname",
+            new AlnumValidator(
+                [
+                    "message" => ":field must contain only letters or numeric",
+                ]
+            )
+        );*/
+
+        $validator->add(
+            'nickname',
+            new Regex(
+                [
+                    "pattern" => "/^[a-zA-Z0-9](?:_?[a-zA-Z0-9])*$/",
+                    "message" => "Введите корректный ИНН",
+                ]
+            )
         );
 
         $validator->add(
             "nickname",
-            new AlphaValidator(
+            new UniquenessValidator(
                 [
-                    "message" => ":field must contain only letters",
+                    "model"   => new Userinfo(),
+                    "message" => ":field must be unique",
                 ]
             )
         );

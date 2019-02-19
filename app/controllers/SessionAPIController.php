@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Libs\SimpleULogin;
 use App\Models\Accounts;
 use App\Models\UsersSocial;
+use App\Services\AbstractService;
 use App\Services\AccountService;
 use App\Services\SocialNetService;
 use App\Services\UserInfoService;
@@ -195,43 +196,45 @@ class SessionAPIController extends AbstractController
 
             SupportClass::writeMessageInLogFile("Перед пыткой вызвать authenticate");
             $result = $auther->authenticate($data['code']);
-            SupportClass::writeMessageInLogFile("result = " . $result);
+            $strRes = var_export($result,true);
+            SupportClass::writeMessageInLogFile("result = " . $strRes);
 
-            SupportClass::writeMessageInLogFile("Перед пыткой вызвать var_dump на auther");
-            //var_dump($auther);
-            SupportClass::writeMessageInLogFile("Все норм, вызвал, вернул");
-            return self::successResponse('All or or not', ['result'=>$result]);
-
-            /*if (!$ulogin->isAuthorised()) {
-                throw new ServiceException('Не удалось авторизоваться через uLogin');
-            }*/
-
-                $ulogin->logout();
-
-                $userFromULogin = $ulogin->getUser();
-
-                $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
-
-                if (!$userSocial) {
-
-                    $user = $this->socialNetService->registerUserByNet($userFromULogin);
-
-                    $tokens = $this->authService->createSession($user);
-                    return self::chatResponce('User was successfully registered', $tokens);
-                }
-
-                //Авторизуем
-                $tokens = $this->authService->createSession($userSocial->users);
-                return self::chatResponce('User was successfully authorized', $tokens);
+            if(!$result){
+                throw new Http400Exception('Unable authenticate in social net',SocialNetService::ERROR_UNABLE_AUTHENTICATE_IN_NET);
             }
 
-            $exception = new Http404Exception(
-                _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
-                new \Exception('URI not found: ' .
-                    $this->request->getMethod() . ' ' . $this->request->getURI())
-            );
-            throw $exception;
+            $userFromSocialNet = $auther->getUser();
 
+            $strUser = var_export($userFromSocialNet,true);
+
+            SupportClass::writeMessageInLogFile("Полученные данные о юзере - ".$strUser);
+
+            $userSocial = UsersSocial::findByIdentity($userFromSocialNet['network'], $userFromSocialNet['identity']);
+
+            if (!$userSocial) {
+                $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
+                $tokens = $this->authService->createSession($user);
+                return self::chatResponce('User was successfully registered', $tokens);
+            }
+
+            //Авторизуем
+            /*$strUserSocial = var_export($userSocial,true);
+            SupportClass::writeMessageInLogFile("Пользователь уже существует - ".$strUserSocial);*/
+
+
+            /*$strUser = var_export($userSocial->users,true);*/
+            SupportClass::writeMessageInLogFile("user_id в userSocial - ".$userSocial->getUserId());
+
+
+            $user = Users::findFirstByUserId($userSocial->getUserId());
+
+            if(!$user)
+                SupportClass::writeMessageInLogFile("user по id не найден");
+
+            $user = $this->userService->getUserById($userSocial->getUserId());
+
+            $tokens = $this->authService->createSession($user);
+            return self::chatResponce('User was successfully authorized', $tokens);
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case UserService::ERROR_UNABLE_CREATE_USER:
@@ -240,10 +243,11 @@ class SessionAPIController extends AbstractController
                 case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                 case SocialNetService::ERROR_UNABLE_CREATE_USER_SOCIAL:
+                case SocialNetService::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
@@ -251,15 +255,8 @@ class SessionAPIController extends AbstractController
                 case AuthService::ERROR_INCORRECT_PASSWORD:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         }
-            //Авторизуем
-            $tokens = $this->authService->createSession($userSocial->users);
-        } catch (\Exception $e) {
-            echo 'Exception message: '. $e;
-        }
-
-        return self::chatResponce('User was successfully authorized', $tokens);
     }
 }

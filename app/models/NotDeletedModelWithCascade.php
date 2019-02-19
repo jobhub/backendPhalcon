@@ -102,12 +102,12 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
             else
                 $conditions = "";
             if ($conditions!= null && trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
+                $conditions .= ' AND (deleted = false OR deleted is null)';
             }else{
                 if($conditions!= null)
-                    $conditions .= 'deleted != true';
+                    $conditions .= 'deleted = false OR deleted is null';
                 else
-                    $conditions = 'deleted != true';
+                    $conditions = 'deleted = false OR deleted is null';
             }
 
             if(isset($parameters['conditions']))
@@ -138,12 +138,12 @@ class NotDeletedModelWithCascade extends \Phalcon\Mvc\Model
             else
                 $conditions = "";
             if ($conditions!= null && trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
+                $conditions .= ' AND (deleted = false OR deleted is null)';
             }else{
                 if($conditions!= null)
-                    $conditions .= 'deleted != true';
+                    $conditions .= 'deleted = false OR deleted is null';
                 else
-                    $conditions = 'deleted != true';
+                    $conditions = 'deleted = false OR deleted is null';
 
             }
             if(isset($parameters['conditions']))

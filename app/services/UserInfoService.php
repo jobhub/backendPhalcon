@@ -69,7 +69,6 @@ class UserInfoService extends AbstractService
                         self::ERROR_UNABLE_CHANGE_USER_INFO);
                 }
             }
-
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }

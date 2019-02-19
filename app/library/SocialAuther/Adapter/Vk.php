@@ -11,7 +11,7 @@ class Vk extends AbstractAdapter
         parent::__construct($config);
 
         $this->socialFieldsMap = array(
-            'socialId'   => 'uid',
+            'socialId'   => 'id',
             'email'      => 'email',
             'avatar'     => 'photo_big',
             'birthday'   => 'bdate'
@@ -87,7 +87,37 @@ class Vk extends AbstractAdapter
     {
         $result = null;
         if (isset($this->userInfo['sex'])) {
-            $result = $this->userInfo['sex'] == 1 ? 'female' : 'male';
+            $result = $this->userInfo['sex'] == 1 ? 0 : 1;
+        }
+
+        return $result;
+    }
+
+    public function getCountry()
+    {
+        $result = null;
+        if (isset($this->userInfo['country'])) {
+            $result = $this->userInfo['country']['title'];
+        }
+
+        return $result;
+    }
+
+    public function getCity()
+    {
+        $result = null;
+        if (isset($this->userInfo['city'])) {
+            $result = $this->userInfo['city']['title'];
+        }
+
+        return $result;
+    }
+
+    public function getCityId()
+    {
+        $result = null;
+        if (isset($this->userInfo['city'])) {
+            $result = $this->userInfo['city']['id'];
         }
 
         return $result;
@@ -100,7 +130,6 @@ class Vk extends AbstractAdapter
      */
     public function authenticate($code)
     {
-        $result = false;
         SupportClass::writeMessageInLogFile("Вызвал authenticate");
 
         if (!empty($code)) {
@@ -135,14 +164,20 @@ class Vk extends AbstractAdapter
                 $strUserInfo = var_export($userInfo,true);
                 SupportClass::writeMessageInLogFile("Инфа о юзере - ".$strUserInfo);
 
-                if (isset($userInfo['response'][0]['uid'])) {
+                $strUserInfo = var_export($userInfo['response'],true);
+                SupportClass::writeMessageInLogFile("response - ".$strUserInfo);
+
+                if (isset($userInfo['response'])) {
                     $this->userInfo = $userInfo['response'][0];
-                    $result = true;
+                    $this->userInfo['email'] = $tokenInfo['email'];
+                    SupportClass::writeMessageInLogFile("Успешно получил данные");
+                    return true;
                 }
             }
         }
 
-        return $result;
+        SupportClass::writeMessageInLogFile("Возвращаемое значение - false");
+        return false;
     }
 
     /**
@@ -165,7 +200,16 @@ class Vk extends AbstractAdapter
 
     public function getUser(){
         return [
-            's'
-        ]
+            'network'=>$this->getProvider(),
+            'identity'=>$this->getSocialId(),
+            'first_name'=>$this->getFirstName(),
+            'last_name'=>$this->getLastName(),
+            'male'=>$this->getSex(),
+            'country'=>$this->getCountry(),
+            'city'=>$this->getCity(),
+            'profile'=>$this->getSocialPage(),
+            'email'=>$this->getEmail(),
+            'city_id'=>$this->getCityId()
+        ];
     }
 }

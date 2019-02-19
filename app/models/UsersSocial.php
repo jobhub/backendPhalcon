@@ -168,7 +168,7 @@ class UsersSocial extends \Phalcon\Mvc\Model
     {
         $validator = new Validation();
 
-        $validator->add(
+        /*$validator->add(
             'user_id',
             new Callback(
                 [
@@ -181,7 +181,7 @@ class UsersSocial extends \Phalcon\Mvc\Model
                     }
                 ]
             )
-        );
+        );*/
 
         $validator->add(
             'network',
@@ -209,7 +209,7 @@ class UsersSocial extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        //$this->setSchema("public");
+        $this->setSchema("public");
         $this->setSource("users_social");
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
@@ -222,6 +222,11 @@ class UsersSocial extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'users_social';
+    }
+
+    public function getSequenceName()
+    {
+        return "userssocial_usersocialid_seq";
     }
 
     /**

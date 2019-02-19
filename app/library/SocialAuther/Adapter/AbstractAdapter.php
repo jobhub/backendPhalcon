@@ -182,7 +182,7 @@ abstract class AbstractAdapter implements AdapterInterface
         $result = null;
 
         if (isset($this->userInfo[$this->socialFieldsMap['birthday']])) {
-            $result = date('d.m.Y', strtotime($this->userInfo[$this->socialFieldsMap['birthday']]));
+            $result = date('Y-m-d', strtotime($this->userInfo[$this->socialFieldsMap['birthday']]));
         }
 
         return $result;

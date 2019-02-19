@@ -24,6 +24,8 @@ class SocialNetService extends AbstractService
 
     const ERROR_INFORMATION_FROM_NET_NOT_ENOUGH = 2 + self::ADDED_CODE_NUMBER;
 
+    const ERROR_UNABLE_AUTHENTICATE_IN_NET = 3 + self::ADDED_CODE_NUMBER;
+
     /**
      *  Регистрирует пользователя через соц сеть (по полученной информации)
      *
@@ -42,6 +44,7 @@ class SocialNetService extends AbstractService
             throw new ServiceException('Нужен email или телефон', self::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH);
         }
 
+        $data['is_social'] = true;
         $resultUser = $this->userService->createUser($data);
 
         $account = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
@@ -54,7 +57,8 @@ class SocialNetService extends AbstractService
         if (isset($userData['country']) && isset($userData['city']))
             $data_userinfo['address'] = ($userData['country'] . ' ' . $userData['city']);
 
-        $data_userinfo['city'] = $userData['city'];
+        $data_userinfo['city_id'] = $userData['city_id'];
+        $data_userinfo['nickname'] = 'nickname_'.$resultUser->getUserId();
 
         $this->userInfoService->createUserInfo($data_userinfo);
 

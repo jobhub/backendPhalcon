@@ -75,7 +75,7 @@ class UserService extends AbstractService
             $user->setPassword($userData['password']);
             $user->setRole(ROLE_GUEST);
             $user->setIsSocial(isset($userData['is_social'])?$userData['is_social']:false);
-            $user->setActivated(false);
+            $user->setActivated(isset($userData['is_social'])?true:false);
 
             if ($user->save() == false) {
                 $errors = SupportClass::getArrayWithErrors($user);
@@ -227,6 +227,7 @@ class UserService extends AbstractService
         }
         return $user;
     }
+
     /**
      * Updating an existing user
      *

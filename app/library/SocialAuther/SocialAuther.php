@@ -47,6 +47,11 @@ class SocialAuther
         return $this->adapter->authenticate($code);
     }
 
+    public function getUser()
+    {
+        return $this->adapter->getUser();
+    }
+
     /**
      * Call method of this class or methods of adapter class
      *
