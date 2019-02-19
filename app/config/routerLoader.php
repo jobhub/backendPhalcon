@@ -2124,6 +2124,40 @@ $routes = [
             ],
 
             /**
+             * Возвращает отзывы на текущего пользователя.
+             *
+             * @access private
+             *
+             * @method GET
+             *
+             * @param $account_id
+             * @param $page
+             * @param $page_size
+             *
+             * @return string - json array [status,[reviews]]
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/for-current',
+                'action' => 'getReviewsOnCurrentAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-current/{account_id}',
+                'action' => 'getReviewsOnCurrentAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-current/{account_id}/{page}',
+                'action' => 'getReviewsOnCurrentAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/for-current/{account_id}/{page}/{page_size}',
+                'action' => 'getReviewsOnCurrentAction'
+            ],
+
+            /**
              * Возвращает отзывы об указанном субъекте, будь то пользователь или компания.
              *
              * @method GET

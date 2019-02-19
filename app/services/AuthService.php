@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Accounts;
 use App\Models\ActivationCodes;
 
+use App\Models\UsersSocial;
 use Phalcon\DI\FactoryDefault as DI;
 
 //Models
@@ -267,11 +268,19 @@ class AuthService extends AbstractService
 
     public function createSession(Users $user)
     {
-        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
+        if($user->getEmail() != null || $user->getPhoneId() != null)
+            SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
 
         $lifetime = date('Y-m-d H:i:s', time() + 604800);
-        $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
-            $user->getRole(), $lifetime);
+        if($user->getIsSocial()){
+
+            $social = UsersSocial::findFirstByUserId($user->getUserId());
+            $token = self::GenerateToken($user->getUserId(), $social->getIdentity(),
+                $user->getRole(), $lifetime);
+        } else {
+            $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
+                $user->getRole(), $lifetime);
+        }
 
         SupportClass::writeMessageInLogFile('ID юзера при этом - ' . $user->getUserId());
 

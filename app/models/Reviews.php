@@ -522,9 +522,12 @@ class Reviews extends NotDeletedModelWithCascade
 
         $columns = '';
         foreach (self::publicColumns as $publicColumn) {
-            $columns .= 'reviews.' . $publicColumn . ',';
+            if($columns == ''){
+                $columns .= 'reviews.' . $publicColumn;
+            } else
+                $columns .= ', reviews.' . $publicColumn;
         }
-        $columns[strlen($columns) - 1] = '';
+        //$columns[strlen($columns) - 1] = '';
 
         $str = "Select * FROM (
               --Отзывы оставленные на заказы данного субъекта

@@ -183,7 +183,9 @@ class SessionAPIController extends AbstractController
             }
 
             $data = json_decode($this->request->getRawBody(), true);
+
             $this->db->begin();
+
             switch ($data['provider']) {
                 case 'vk': {
                     $vkAdapterConfig = $this->config['social']['vk'];
@@ -214,8 +216,15 @@ class SessionAPIController extends AbstractController
 
             if (!$userSocial) {
                 $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
+
+                $strUser = var_export($user->getUserId(),true);
+                SupportClass::writeMessageInLogFile("user from register by net - ".$strUser);
+
                 $tokens = $this->authService->createSession($user);
+
+                SupportClass::writeMessageInLogFile("got token token");
                 $this->db->commit();
+                SupportClass::writeMessageInLogFile("call db->commit");
                 return self::chatResponce('User was successfully registered', $tokens);
             }
 
@@ -237,6 +246,7 @@ class SessionAPIController extends AbstractController
 
             $tokens = $this->authService->createSession($user);
             $this->db->commit();
+
             return self::chatResponce('User was successfully authorized', $tokens);
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();

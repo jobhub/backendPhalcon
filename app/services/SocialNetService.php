@@ -86,7 +86,7 @@ class SocialNetService extends AbstractService
 
         $this->createUserSocial($userSocialData,$resultUser->getUserId());
 
-        $strUser = var_export($resultUser,true);
+        $strUser = var_export($resultUser->getUserId(),true);
 
         SupportClass::writeMessageInLogFile('вовращает зареганного юзера '.$strUser);
         return $resultUser;
