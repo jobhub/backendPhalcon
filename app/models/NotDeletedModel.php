@@ -69,12 +69,12 @@ class NotDeletedModel extends \Phalcon\Mvc\Model
             else
                 $conditions = "";
             if ($conditions!= null && trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
+                $conditions .= ' AND (deleted = false OR deleted is null)';
             }else{
                 if($conditions!= null)
-                    $conditions .= 'deleted != true';
+                    $conditions .= 'deleted = false OR deleted is null';
                 else
-                    $conditions = 'deleted != true';
+                    $conditions = 'deleted = false OR deleted is null';
             }
 
             if(isset($parameters['conditions']))
@@ -96,6 +96,7 @@ class NotDeletedModel extends \Phalcon\Mvc\Model
      */
     public static function findFirst($parameters = null, $addParamNotDeleted = true)
     {
+
         if ($addParamNotDeleted) {
             if(isset($parameters['conditions']))
                 $conditions = $parameters['conditions'];
@@ -104,12 +105,12 @@ class NotDeletedModel extends \Phalcon\Mvc\Model
             else
                 $conditions = "";
             if ($conditions!= null && trim($conditions) != "") {
-                $conditions .= ' AND deleted != true';
+                $conditions .= ' AND (deleted = false OR deleted is null)';
             }else{
                 if($conditions!= null)
-                    $conditions .= 'deleted != true';
+                    $conditions .= 'deleted = false OR deleted is null';
                 else
-                    $conditions = 'deleted != true';
+                    $conditions = 'deleted = false OR deleted is null';
 
             }
             if(isset($parameters['conditions']))

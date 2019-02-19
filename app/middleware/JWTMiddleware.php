@@ -41,10 +41,8 @@ class JWTMiddleware implements MiddlewareInterface
 
         } else {
             if (strtotime($info['lifetime']) <= time()) {
-
                 SupportClass::writeMessageInLogFile('Время действия токена закончилось, разрушил сессию');
                 throw new Http400Exception("Token expired",self::ERROR_TOKEN_EXPIRED);
-
             } else {
                 $di->getAuthService()->_registerSessionByData($info,$application);
             }
@@ -57,7 +55,6 @@ class JWTMiddleware implements MiddlewareInterface
             SupportClass::writeMessageInLogFile('Сессия есть, роль ' . $di->getSession()->get('auth')['role']);
             $role = $di->getSession()->get('auth')['role'];
         }
-
     }
 
     private function convertRequestBody()

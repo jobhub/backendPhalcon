@@ -281,14 +281,15 @@ class UserinfoAPIController extends AbstractController
      *
      * @method PUT
      *
-     * @params firstname
-     * @params lastname
+     * @params first_name
+     * @params last_name
      * @params patronymic
      * @params birthday
      * @params male
      * @params status
      * @params about
      * @params address
+     * @params nickname
      * @params city_id
      *
      * @return string - json array - результат операции

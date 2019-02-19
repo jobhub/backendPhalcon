@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Accounts;
 use App\Models\ActivationCodes;
 
+use App\Models\UsersSocial;
 use Phalcon\DI\FactoryDefault as DI;
 
 //Models
@@ -41,6 +42,7 @@ class AuthService extends AbstractService
     const ERROR_INCORRECT_PASSWORD = 7 + self::ADDED_CODE_NUMBER;
 
     const ERROR_UNABLE_SEND_ACTIVATION_CODE = 8 + self::ADDED_CODE_NUMBER;
+    const ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL = 9 + self::ADDED_CODE_NUMBER;
 
     //
     const RIGHT_PASSWORD_RESET_CODE = 0;
@@ -97,6 +99,11 @@ class AuthService extends AbstractService
      */
     public function sendActivationCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to send activation code to social user',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL);
+        }
+
         if ($user->getActivated()) {
             throw new ServiceException('User already active', self::ERROR_USER_ALREADY_ACTIVATED);
         }
@@ -122,6 +129,11 @@ class AuthService extends AbstractService
      */
     public function createActivationCode(Users $user)
     {
+        if($user->getIsSocial()){
+            throw new ServiceException('Impossible to create activation code to social user',
+                self::ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL);
+        }
+
         $activationCode = ActivationCodes::findFirstByUserId($user->getUserId());
 
         if (!$activationCode) {
@@ -267,11 +279,19 @@ class AuthService extends AbstractService
 
     public function createSession(Users $user)
     {
-        SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
+        if($user->getEmail() != null || $user->getPhoneId() != null)
+            SupportClass::writeMessageInLogFile('Начало создания сессии для юзера ' . $user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone());
 
         $lifetime = date('Y-m-d H:i:s', time() + 604800);
-        $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
-            $user->getRole(), $lifetime);
+        if($user->getIsSocial()){
+
+            $social = UsersSocial::findFirstByUserId($user->getUserId());
+            $token = self::GenerateToken($user->getUserId(), $social->getIdentity(),
+                $user->getRole(), $lifetime);
+        } else {
+            $token = self::GenerateToken($user->getUserId(), ($user->getEmail() != null ? $user->getEmail() : $user->phones->getPhone()),
+                $user->getRole(), $lifetime);
+        }
 
         SupportClass::writeMessageInLogFile('ID юзера при этом - ' . $user->getUserId());
 

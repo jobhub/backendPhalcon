@@ -1481,21 +1481,21 @@ class Services extends AccountWithNotDeletedWithCascade
                     $categories = CompaniesCategories::getCategoriesByCompany($account->getCompanyId());
                     $publisher = Companies::findFirst(
                         ['conditions' => 'company_id = :companyId:',
-                            'columns' => Companies::publicColumnsInStr,
+                            'columns' => Companies::shortColumns,
                             'bind' => ['companyId' => $account->getCompanyId()]])->toArray();
 
 
-                    $phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
-                    $publisher['phones'] = $phones;
+                    /*$phones = PhonesCompanies::getCompanyPhones($account->getCompanyId());
+                    $publisher['phones'] = $phones;*/
                     $serviceAll['publisher_company'] = $publisher;
                 } else {
                     $categories = UsersCategories::getCategoriesByUser($account->getUserId());
                     $publisher = Userinfo::findFirst(
                         ['conditions' => 'user_id = :userId:',
-                            'columns' => Userinfo::publicColumnsInStr,
+                            'columns' => Userinfo::shortColumns,
                             'bind' => ['userId' => $account->getUserId()]])->toArray();
-                    $phones = PhonesUsers::getUserPhones($account->getUserId());
-                    $publisher['phones'] = $phones;
+                    /*$phones = PhonesUsers::getUserPhones($account->getUserId());
+                    $publisher['phones'] = $phones;*/
                     $serviceAll['publisher_user'] = $publisher;
                 }
 

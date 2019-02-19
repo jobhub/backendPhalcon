@@ -5,7 +5,9 @@ namespace App\Controllers;
 use App\Libs\SimpleULogin;
 use App\Models\Accounts;
 use App\Models\UsersSocial;
+use App\Services\AbstractService;
 use App\Services\AccountService;
+use App\Services\ImageService;
 use App\Services\SocialNetService;
 use App\Services\UserInfoService;
 use Phalcon\Http\Client\Exception;
@@ -31,6 +33,8 @@ use App\Controllers\HttpExceptions\Http500Exception;
 use Phalcon\Dispatcher;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherException;
 use ULogin\Auth;
+use App\Libs\SocialAuther\Adapter\Vk;
+use App\Libs\SocialAuther\SocialAuther;
 
 /**
  * Class SessionAPIController
@@ -167,72 +171,159 @@ class SessionAPIController extends AbstractController
     {
         try {
             if ($this->request->isGet()) {
-                $ulogin = new SimpleULogin(array(
-                    'fields' => 'first_name,last_name,email,phone,sex,city',
-                    'url' => '/authorization/social',
-                    'optional' => 'pdate,photo_big,country',
-                    'type' => 'panel',
-                ));
-                return ['form' => $ulogin->getForm()];
-            } else if ($this->request->isPost()) {
-                $ulogin = new Auth(array(
-                    'fields' => 'first_name,last_name,email,phone,sex,city',
-                    'url' => '/authorization/social',
-                    'optional' => 'pdate,photo_big,country',
-                    'type' => 'panel',
-                ));
+                if (!isset($_GET['code'])) {
+                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapter = new Vk($vkAdapterConfig);
+                    $auther = new SocialAuther($vkAdapter);
 
-                if (!$ulogin->isAuthorised()) {
-                    throw new ServiceException('Не удалось авторизоваться через uLogin');
+                    return ['url' => $vkAdapter->getAuthUrl()];
+                } else {
+                    return ['code' => $_GET['code']];
                 }
-
-                $ulogin->logout();
-
-                $userFromULogin = $ulogin->getUser();
-
-                $userSocial = UsersSocial::findByIdentity($userFromULogin['network'], $userFromULogin['identity']);
-
-                if (!$userSocial) {
-
-                    $user = $this->socialNetService->registerUserByNet($userFromULogin);
-
-                    $tokens = $this->authService->createSession($user);
-                    return self::chatResponce('User was successfully registered', $tokens);
-                }
-
-                //Авторизуем
-                $tokens = $this->authService->createSession($userSocial->users);
-                return self::chatResponce('User was successfully authorized', $tokens);
             }
 
-            $exception = new Http404Exception(
-                _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
-                new \Exception('URI not found: ' .
-                    $this->request->getMethod() . ' ' . $this->request->getURI())
-            );
-            throw $exception;
+            $data = json_decode($this->request->getRawBody(), true);
 
+            $this->db->begin();
+
+            switch ($data['provider']) {
+                case 'vk': {
+                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapter = new Vk($vkAdapterConfig);
+                    $auther = new SocialAuther($vkAdapter);
+                    break;
+                }
+                default:
+                    return null;
+            }
+
+            SupportClass::writeMessageInLogFile("Перед пыткой вызвать authenticate");
+            $result = $auther->authenticate($data['code']);
+            $strRes = var_export($result,true);
+            SupportClass::writeMessageInLogFile("result = " . $strRes);
+
+            if(!$result){
+                throw new Http400Exception('Unable authenticate in social net',SocialNetService::ERROR_UNABLE_AUTHENTICATE_IN_NET);
+            }
+
+            $userFromSocialNet = $auther->getUser();
+
+            $strUser = var_export($userFromSocialNet,true);
+
+            SupportClass::writeMessageInLogFile("Полученные данные о юзере - ".$strUser);
+
+            $userSocial = UsersSocial::findByIdentity($userFromSocialNet['network'], $userFromSocialNet['identity']);
+
+            if (!$userSocial) {
+                $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
+
+                $strUser = var_export($user->getUserId(),true);
+                SupportClass::writeMessageInLogFile("user from register by net - ".$strUser);
+
+                $tokens = $this->authService->createSession($user);
+
+                SupportClass::writeMessageInLogFile("got token token");
+                $this->db->commit();
+                SupportClass::writeMessageInLogFile("call db->commit");
+                return self::chatResponce('User was successfully registered', $tokens);
+            }
+
+            //Авторизуем
+            /*$strUserSocial = var_export($userSocial,true);
+            SupportClass::writeMessageInLogFile("Пользователь уже существует - ".$strUserSocial);*/
+
+
+            /*$strUser = var_export($userSocial->users,true);*/
+            SupportClass::writeMessageInLogFile("user_id в userSocial - ".$userSocial->getUserId());
+
+
+            $user = Users::findFirstByUserId($userSocial->getUserId());
+
+            if(!$user)
+                SupportClass::writeMessageInLogFile("user по id не найден");
+
+            $user = $this->userService->getUserById($userSocial->getUserId());
+
+            $tokens = $this->authService->createSession($user);
+            $this->db->commit();
+
+            return self::chatResponce('User was successfully authorized', $tokens);
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case UserService::ERROR_UNABLE_CREATE_USER:
                 case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
                 case UserInfoService::ERROR_UNABLE_CREATE_USER_INFO:
+                case UserInfoService::ERROR_UNABLE_CHANGE_USER_INFO:
                 case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                 case SocialNetService::ERROR_UNABLE_CREATE_USER_SOCIAL:
+                case SocialNetService::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
                 case AuthService::ERROR_INCORRECT_PASSWORD:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         }
+    }
+
+    public function testingSavingImageToUserProfileAction()
+    {
+        $data = json_decode($this->request->getRawBody(), true);
+
+        if (empty($data['uri_to_photo'])) {
+            $errors['uri_to_photo'] = 'Missing required parameter \'uri_to_photo\'';
+        }
+
+        if (!is_null($errors)) {
+            $errors['errors'] = true;
+            $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+            throw $exception->addErrorDetails($errors);
+        }
+
+        try {
+
+            $resultName = '';
+
+            $nameStart = false;
+            for($i = strlen($data['uri_to_photo'])-1;$i>0; $i--){
+                if($nameStart){
+                    if($data['uri_to_photo'][$i]!='/'){
+                        $resultName =$data['uri_to_photo'][$i] . $resultName;
+                    } else
+                        break;
+                } elseif($data['uri_to_photo'][$i]=='?'){
+                    $nameStart = true;
+                }
+            }
+
+            $userId = self::getUserId();
+
+            $user = $this->userService->getUserById($userId);
+            $userInfo = $this->userInfoService->getUserInfoById($userId);
+
+            $this->userInfoService->savePhotoForUserByURL($user,$userInfo,$data['uri_to_photo'],$resultName);
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case UserService::ERROR_USER_NOT_FOUND:
+                case UserInfoService::ERROR_USER_INFO_NOT_FOUND:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        return self::successResponse('Photo successfully changed');
     }
 }

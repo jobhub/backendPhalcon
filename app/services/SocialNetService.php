@@ -24,24 +24,26 @@ class SocialNetService extends AbstractService
 
     const ERROR_INFORMATION_FROM_NET_NOT_ENOUGH = 2 + self::ADDED_CODE_NUMBER;
 
+    const ERROR_UNABLE_AUTHENTICATE_IN_NET = 3 + self::ADDED_CODE_NUMBER;
+
     /**
      *  Регистрирует пользователя через соц сеть (по полученной информации)
      *
      * @param array $userData [phone, email, first_name, last_name, male, country, city,
-     *                         network, identity, profile]
+     *                         network, identity, profile, status, about, uri_to_photo, photo_name]
      * @return Users. If all ok, return Users object
      */
     public function registerUserByNet(array $userData)
     {
-        $this->db->begin();
         if (isset($userData['phone'])) {
             $data['login'] = $userData['phone'];
         } elseif ($userData['email']) {
             $data['login'] = $userData['email'];
-        } else {
+        } /*else {
             throw new ServiceException('Нужен email или телефон', self::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH);
-        }
+        }*/
 
+        $data['is_social'] = true;
         $resultUser = $this->userService->createUser($data);
 
         $account = $this->accountService->createAccount(['user_id' => $resultUser->getUserId()]);
@@ -50,16 +52,33 @@ class SocialNetService extends AbstractService
         $data_userinfo['first_name'] = $userData['first_name'];
         $data_userinfo['last_name'] = $userData['last_name'];
         $data_userinfo['male'] = ($userData['sex'] - 1) >= 0 ? $userData['sex'] - 1 : 1;
+        $data_userinfo['birthday'] = $userData['birthday'];
+        $data_userinfo['status'] = $userData['status'];
+        $data_userinfo['about'] = $userData['about'];
 
         if (isset($userData['country']) && isset($userData['city']))
             $data_userinfo['address'] = ($userData['country'] . ' ' . $userData['city']);
 
-        $data_userinfo['city'] = $userData['city'];
+        $data_userinfo['city_id'] = $userData['city_id'];
 
-        $this->userInfoService->createUserInfo($data_userinfo);
+        $data_userinfo['nickname'] = 'nickname_'.$resultUser->getUserId();
+
+        while($this->userInfoService->checkNicknameExists($data_userinfo['nickname'])){
+            $data_userinfo['nickname'].=rand(0,9);
+        }
+
+        $userInfo = $this->userInfoService->createUserInfo($data_userinfo);
+
+        $userInfo = $this->userInfoService->getUserInfobyId($userInfo->getUserId());
 
         $this->userInfoService->createSettings($resultUser->getUserId());
         $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
+
+        SupportClass::writeMessageInLogFile('До изменения фотографии пользователя');
+
+        $this->userInfoService->savePhotoForUserByURL($resultUser,$userInfo,$userData['uri_to_photo'], $userData['photo_name']);
+
+        SupportClass::writeMessageInLogFile('Изменил фотографию пользователя');
 
         $userSocialData['network'] = $userData['network'];
         $userSocialData['profile'] = $userData['profile'];
@@ -67,8 +86,9 @@ class SocialNetService extends AbstractService
 
         $this->createUserSocial($userSocialData,$resultUser->getUserId());
 
-        $this->db->commit();
+        $strUser = var_export($resultUser->getUserId(),true);
 
+        SupportClass::writeMessageInLogFile('вовращает зареганного юзера '.$strUser);
         return $resultUser;
     }
 

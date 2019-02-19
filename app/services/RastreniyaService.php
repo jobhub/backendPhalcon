@@ -175,7 +175,42 @@ class RastreniyaService extends AbstractService
                     "id" => $rast_id
                 ]
             ]);
-            $item = self::getFormattedDataOfRast($rast, $user_id);
+            /*$account = Accounts::findFirst($rast->getAccountId());
+            if (!$account) {
+                $user = [];
+            } else {
+                $user = $account->getUserInfomations();
+            }
+            $likes = SupportClass::to_php_array($rast->getLikeUsers());
+            $dislikes = SupportClass::to_php_array($rast->getDislikeUsers());
+            $item = ['infos' => $rast->getPublicInfo()];
+            //$item['owner'] = $user;
+            $item['owner'] = $account->getUserInfomations();
+            $item['likes'] = sizeof($likes);
+            $item['dislikes'] = sizeof($dislikes);
+            $item['comments'] = self::countComments($rast->getId());
+            if (in_array($user_id, $likes)) {
+                $item['is_liked'] = true;
+            } else if (in_array($user_id, $dislikes)) {
+                $item['is_disliked'] = true;
+            }
+            if ($item['comments']['total'] > 0) {
+                // Load last comments info;
+                $last = RastreniyaResponses::findFirst([
+                    'conditions' => 'rastreniya_id = :rast_id:',
+                    'bind' => [
+                        'rast_id' => $rast->getId()
+                    ],
+                    'order' => 'create_at DESC',
+                    'columns' => RastreniyaResponses::PUBLIC_COLUMNS
+                ]);
+                if ($account->getId() == $last['account_id'])
+                    $owner = $user;
+                else
+                    $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
+                $item['comments']['last_comment'] = $last;
+                $item['comments']['user_info'] = $owner;
+            }*/
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
@@ -213,8 +248,8 @@ class RastreniyaService extends AbstractService
             ]);
             $toRet = [];
             foreach ($rasts as $rast) {
-                $item = self::getFormattedDataOfRast($rast, $user_id);
-                array_push($toRet, $item);
+
+                array_push($toRet, $this->handleRast($rast,$user_id));
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);

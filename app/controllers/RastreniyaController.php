@@ -19,8 +19,8 @@ class RastreniyaController extends AbstractController {
 
     public function newAction(){
         $user_id = $this->getUserid();
-        //$data = json_decode($this->request->getRawBody(), true);
         $data = json_decode(json_encode($this->request->getPost()), true);
+        //$data = json_decode($this->request->getRawBody(), true);
         try {
             $file = $this->request->getUploadedFiles()[0];
             $rast = $this->rastreniyaService->create($user_id, $data,$file);

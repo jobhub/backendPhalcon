@@ -290,4 +290,26 @@ class SupportClass
             $toRet[$info] = $data[$info];
         return $toRet;
     }
+
+    /**
+     * Save file by url
+     * @param $URL
+     * @param $PATH
+     *
+     * @return $file
+     */
+    public static function downloadFile ($URL, $PATH) {
+        $ReadFile = fopen ($URL, "rb");
+        if ($ReadFile) {
+            $WriteFile = fopen ($PATH, "wb");
+            if ($WriteFile){
+                while(!feof($ReadFile)) {
+                    fwrite($WriteFile, fread($ReadFile, 4096));
+                }
+            }
+            fclose($ReadFile);
+            return $WriteFile;
+        }
+        return null;
+    }
 }

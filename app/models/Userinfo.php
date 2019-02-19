@@ -10,6 +10,9 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Alpha as AlphaValidator;
+use Phalcon\Validation\Validator\Alnum as AlnumValidator;
+use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Validation\Validator\Regex;
 
 class Userinfo extends \Phalcon\Mvc\Model
 {
@@ -106,10 +109,11 @@ class Userinfo extends \Phalcon\Mvc\Model
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
-        'path_to_photo', 'last_time', 'nickname'];
+        'path_to_photo', 'last_time', 'nickname', 'email'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
-        birthday, male, city_id, about, status, rating_executor, rating_client, path_to_photo, last_time, nickname';
+        birthday, male, city_id, about, status, rating_executor, rating_client, 
+        path_to_photo, last_time, nickname, email';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 
@@ -534,11 +538,21 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
-        $validator->add(
+        /*$validator->add(
             "nickname",
-            new AlphaValidator(
+            new AlnumValidator(
                 [
-                    "message" => ":field must contain only letters",
+                    "message" => ":field must contain only letters or numeric",
+                ]
+            )
+        );*/
+
+        $validator->add(
+            'nickname',
+            new Regex(
+                [
+                    "pattern" => "/^[a-zA-Z0-9](?:_?[a-zA-Z0-9])*$/",
+                    "message" => "nickname must contain only a-z, A-Z, _, 0-9",
                 ]
             )
         );

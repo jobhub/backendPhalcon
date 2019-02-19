@@ -22,6 +22,8 @@ use App\Models\Accounts;
 use App\Models\Binders;
 use App\Models\Reviews;
 
+use App\Libs\SupportClass;
+
 use App\Services\ImageService;
 use App\Services\NewsService;
 use App\Services\AccountService;
@@ -269,6 +271,41 @@ class ReviewsAPIController extends AbstractController
             return Reviews::findReviewsByCompany($id,$page,$page_size);
         else
             return Reviews::findReviewsByUser($id,$page,$page_size);
+    }
+
+    /**
+     * Возвращает отзывы на текущего пользователя.
+     *
+     * @access private
+     *
+     * @method GET
+     *
+     * @param $account_id
+     * @param $page
+     * @param $page_size
+     *
+     * @return string - json array [status,[reviews]]
+     */
+    public function getReviewsOnCurrentAction($account_id = null, $page = 1, $page_size = Reviews::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+        } else {
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        $this->session->set('accountId', $account_id);
+        $account = $this->accountService->getAccountById($account_id);
+
+        if ($account->getCompanyId()!=null)
+            return Reviews::findReviewsByCompany($account->getCompanyId(),$page,$page_size);
+        else
+            return Reviews::findReviewsByUser($account->getUserId(),$page,$page_size);
     }
 
     /**
