@@ -15217,3 +15217,45 @@
 Дата: 2019-02-19 14:58:53 - <div>Так-с, если хотите подтвердить регистрацию введите код</div>
 <div>Код для активации eef9</div>
 Дата: 2019-02-19 14:58:54 - Отправил код активации
+Дата: 2019-02-19 15:20:43 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOTgiLCJsb2dpbiI6IlRpdG93Lkdlcm1hbkB5YW5kZXgucnUiLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNTowMzo0MCJ9.PQv43lDeky4F+ldwFN6XSeBg50PuCEh4pSJmvSfrdRNLvzA4uDSmJmShQVpX/UsNJ9F9TF7kCpwdqt5Kd0jmEFipC1uhFEj77hPLb/Dm5OkuPWNgKRJoq3wKadZ7zXxfP/LWvVM34xyGCxjbHg3zNo94whJGUgmzCfp7xZHem1ojLpA8YRIlDjPDDbNFIe8k5zbk5JUsqos1pJZhDNZ4Atvgj38I2+naHRH7sVC69VTe7UUY3aVtFi2qm/2r8JdnnTsPVkw4cto1aNCa/Ut846kRcrbMCEPTpWdei9KBq3KmRGonRUqR2CUhmAbMZ0aENX0WxDzDA1FtQRZ+0MIJNQ==',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '5ef59c0c-bb4c-c5f5-ccd8-551515fc765b',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-19 15:20:43 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzOTgiLCJsb2dpbiI6IlRpdG93Lkdlcm1hbkB5YW5kZXgucnUiLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNTowMzo0MCJ9.PQv43lDeky4F+ldwFN6XSeBg50PuCEh4pSJmvSfrdRNLvzA4uDSmJmShQVpX/UsNJ9F9TF7kCpwdqt5Kd0jmEFipC1uhFEj77hPLb/Dm5OkuPWNgKRJoq3wKadZ7zXxfP/LWvVM34xyGCxjbHg3zNo94whJGUgmzCfp7xZHem1ojLpA8YRIlDjPDDbNFIe8k5zbk5JUsqos1pJZhDNZ4Atvgj38I2+naHRH7sVC69VTe7UUY3aVtFi2qm/2r8JdnnTsPVkw4cto1aNCa/Ut846kRcrbMCEPTpWdei9KBq3KmRGonRUqR2CUhmAbMZ0aENX0WxDzDA1FtQRZ+0MIJNQ==
+Дата: 2019-02-19 15:20:43 - Сессия есть, роль User
+Дата: 2019-02-19 15:20:43 - При получении инфы о пользователе
+Дата: 2019-02-19 15:50:09 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMjYgMTA6MTM6MjAifQ==.HGSK/hl0W0h4snlDDlNREEKgqPimUs5+H3PKsu9FO5+onqaIYKszspz0acyEQ7MYMh6Z8GqAxYXD5gEaJ07iavW4fMi/xeOPYfsFheUV3VExGC6s9/Pj7YnGaG0QgCvTxIywUdVdWhE3ra3Sj4+Vb6+Q/sEW6jJJcm9jl8HKOJlsK62VKYnJBp6Qv/dI+S8w4zGwoAxVC3yh7NThOaQ49KFZOkbw+tTAeWwM0duPUbsrMdF67TBvLwifM4g8uSMbofoRezF+8Y0ZXnFAvsQnkwmWJNqvI7y/mBeXFNMVSDlArWaiSQnCGKFwHFzifWW+BqjYGWVrpGDkCYem62Rk/g==',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '00036316-3c1b-75b8-6599-51c8b2ab9294',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-19 15:50:09 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMjYgMTA6MTM6MjAifQ==.HGSK/hl0W0h4snlDDlNREEKgqPimUs5+H3PKsu9FO5+onqaIYKszspz0acyEQ7MYMh6Z8GqAxYXD5gEaJ07iavW4fMi/xeOPYfsFheUV3VExGC6s9/Pj7YnGaG0QgCvTxIywUdVdWhE3ra3Sj4+Vb6+Q/sEW6jJJcm9jl8HKOJlsK62VKYnJBp6Qv/dI+S8w4zGwoAxVC3yh7NThOaQ49KFZOkbw+tTAeWwM0duPUbsrMdF67TBvLwifM4g8uSMbofoRezF+8Y0ZXnFAvsQnkwmWJNqvI7y/mBeXFNMVSDlArWaiSQnCGKFwHFzifWW+BqjYGWVrpGDkCYem62Rk/g==
+Дата: 2019-02-19 15:50:09 - Сессия есть, роль Moderator
+Дата: 2019-02-19 15:50:09 - При получении инфы о пользователе
+Дата: 2019-02-19 15:50:43 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMjYgMTA6MTM6MjAifQ==.HGSK/hl0W0h4snlDDlNREEKgqPimUs5+H3PKsu9FO5+onqaIYKszspz0acyEQ7MYMh6Z8GqAxYXD5gEaJ07iavW4fMi/xeOPYfsFheUV3VExGC6s9/Pj7YnGaG0QgCvTxIywUdVdWhE3ra3Sj4+Vb6+Q/sEW6jJJcm9jl8HKOJlsK62VKYnJBp6Qv/dI+S8w4zGwoAxVC3yh7NThOaQ49KFZOkbw+tTAeWwM0duPUbsrMdF67TBvLwifM4g8uSMbofoRezF+8Y0ZXnFAvsQnkwmWJNqvI7y/mBeXFNMVSDlArWaiSQnCGKFwHFzifWW+BqjYGWVrpGDkCYem62Rk/g==',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'a9e5b602-a1ab-c547-8bfa-da5811ef931b',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-19 15:50:43 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDItMjYgMTA6MTM6MjAifQ==.HGSK/hl0W0h4snlDDlNREEKgqPimUs5+H3PKsu9FO5+onqaIYKszspz0acyEQ7MYMh6Z8GqAxYXD5gEaJ07iavW4fMi/xeOPYfsFheUV3VExGC6s9/Pj7YnGaG0QgCvTxIywUdVdWhE3ra3Sj4+Vb6+Q/sEW6jJJcm9jl8HKOJlsK62VKYnJBp6Qv/dI+S8w4zGwoAxVC3yh7NThOaQ49KFZOkbw+tTAeWwM0duPUbsrMdF67TBvLwifM4g8uSMbofoRezF+8Y0ZXnFAvsQnkwmWJNqvI7y/mBeXFNMVSDlArWaiSQnCGKFwHFzifWW+BqjYGWVrpGDkCYem62Rk/g==
+Дата: 2019-02-19 15:50:43 - Сессия есть, роль Moderator
+Дата: 2019-02-19 15:50:43 - При получении инфы о пользователе

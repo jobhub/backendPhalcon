@@ -35,14 +35,13 @@ class SocialNetService extends AbstractService
      */
     public function registerUserByNet(array $userData)
     {
-        $this->db->begin();
         if (isset($userData['phone'])) {
             $data['login'] = $userData['phone'];
         } elseif ($userData['email']) {
             $data['login'] = $userData['email'];
-        } else {
+        } /*else {
             throw new ServiceException('Нужен email или телефон', self::ERROR_INFORMATION_FROM_NET_NOT_ENOUGH);
-        }
+        }*/
 
         $data['is_social'] = true;
         $resultUser = $this->userService->createUser($data);
@@ -61,7 +60,12 @@ class SocialNetService extends AbstractService
             $data_userinfo['address'] = ($userData['country'] . ' ' . $userData['city']);
 
         $data_userinfo['city_id'] = $userData['city_id'];
+
         $data_userinfo['nickname'] = 'nickname_'.$resultUser->getUserId();
+
+        while($this->userInfoService->checkNicknameExists($data_userinfo['nickname'])){
+            $data_userinfo['nickname'].=rand(0,9);
+        }
 
         $userInfo = $this->userInfoService->createUserInfo($data_userinfo);
 
@@ -70,7 +74,11 @@ class SocialNetService extends AbstractService
         $this->userInfoService->createSettings($resultUser->getUserId());
         $this->userService->setNewRoleForUser($resultUser, ROLE_USER);
 
+        SupportClass::writeMessageInLogFile('До изменения фотографии пользователя');
+
         $this->userInfoService->savePhotoForUserByURL($resultUser,$userInfo,$userData['uri_to_photo'], $userData['photo_name']);
+
+        SupportClass::writeMessageInLogFile('Изменил фотографию пользователя');
 
         $userSocialData['network'] = $userData['network'];
         $userSocialData['profile'] = $userData['profile'];
@@ -78,8 +86,9 @@ class SocialNetService extends AbstractService
 
         $this->createUserSocial($userSocialData,$resultUser->getUserId());
 
-        $this->db->commit();
+        $strUser = var_export($resultUser,true);
 
+        SupportClass::writeMessageInLogFile('вовращает зареганного юзера '.$strUser);
         return $resultUser;
     }
 

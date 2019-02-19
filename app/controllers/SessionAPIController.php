@@ -183,7 +183,7 @@ class SessionAPIController extends AbstractController
             }
 
             $data = json_decode($this->request->getRawBody(), true);
-
+            $this->db->begin();
             switch ($data['provider']) {
                 case 'vk': {
                     $vkAdapterConfig = $this->config['social']['vk'];
@@ -215,6 +215,7 @@ class SessionAPIController extends AbstractController
             if (!$userSocial) {
                 $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
                 $tokens = $this->authService->createSession($user);
+                $this->db->commit();
                 return self::chatResponce('User was successfully registered', $tokens);
             }
 
@@ -235,8 +236,10 @@ class SessionAPIController extends AbstractController
             $user = $this->userService->getUserById($userSocial->getUserId());
 
             $tokens = $this->authService->createSession($user);
+            $this->db->commit();
             return self::chatResponce('User was successfully authorized', $tokens);
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case UserService::ERROR_UNABLE_CREATE_USER:
                 case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
@@ -254,6 +257,7 @@ class SessionAPIController extends AbstractController
                     throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
                 case AuthService::ERROR_INCORRECT_PASSWORD:

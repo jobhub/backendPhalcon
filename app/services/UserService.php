@@ -61,6 +61,7 @@ class UserService extends AbstractService
     public function createUser(array $userData)
     {
         try {
+            SupportClass::writeMessageInLogFile('Зашел в Users');
             $user = new Users();
 
             if (Phones::isValidPhone($userData['login'])) {
@@ -71,6 +72,8 @@ class UserService extends AbstractService
             } else {
                 $user->setEmail($userData['login']);
             }
+
+            SupportClass::writeMessageInLogFile('Установил логин в Users');
 
             $user->setPassword($userData['password']);
             $user->setRole(ROLE_GUEST);

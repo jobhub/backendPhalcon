@@ -172,7 +172,7 @@ class PhonesUsers extends \Phalcon\Mvc\Model
     {
         $db = DI::getDefault()->getDb();
 
-        $query = $db->prepare("SELECT p.phone FROM phones_users p_u INNER JOIN phones p ON 
+        $query = $db->prepare("SELECT p.phone, p.phone_id FROM phones_users p_u INNER JOIN phones p ON 
             (p_u.phone_id = p.phone_id) where p_u.user_id = :userId"
         );
 
