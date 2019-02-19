@@ -20085,3 +20085,59 @@
 Дата: 2019-02-12 15:46:24 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcsImxvZ2luIjoibWFyYUBtYWlsLnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDItMTkgMTU6MDQ6NDAifQ==.qJsHzNQY9+FTCC0JBAkAFJeD96gimRVtxPSdrTO+9kzHugd9rImEkarW8MMqsdHQd4cNwlb7+0CyggiZYxR2fS4xNEm0HRJHBKUjt9m30pmLYv8frWgkjCUPUMlUDtj7g3krDAndjw0GBLEhtPyFoxz+8hKtSbKlV26B5v9B52lfXeQTxreojU26lF3c3FeBMLXtiCovZ3Gbpl+4foVtcIoXPyCfcDgNc4/sb70HEkQWhlWuweq14XcRur3Rin5K7W8NMj5G2NWyzxNKw5rJKGd+h3By/7q0LoF2Xkrmotq7/7vxHuR/2rnTh88fZVEK27RhVrG1veh1huMd3QqRQQ==
 Дата: 2019-02-12 15:46:24 - Сессия есть, роль User
 >>>>>>> Stashed changes
+Дата: 2019-02-19 18:03:23 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==',
+  'Content-Type' => 'application/json',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '55001cc5-f132-494c-bacd-8239029e9ff4',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '48',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-19 18:03:23 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==
+Дата: 2019-02-19 18:03:23 - Сессия есть, роль User
+Дата: 2019-02-19 18:03:44 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==',
+  'Content-Type' => 'multipart/form-data; boundary=--------------------------490291377470341967175815',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => 'b3d85a46-d334-4044-9dd6-24799ea007d0',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '83745',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-19 18:03:44 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==
+Дата: 2019-02-19 18:03:44 - Сессия есть, роль User
+Дата: 2019-02-19 18:04:47 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==',
+  'Content-Type' => 'multipart/form-data; boundary=--------------------------735389588193905067309898',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '1862fd6d-72ef-489d-b1a1-45ff2fd9be4c',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '83745',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-19 18:04:47 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==
+Дата: 2019-02-19 18:04:47 - Сессия есть, роль User
+Дата: 2019-02-19 18:05:17 - Headers array (
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==',
+  'Content-Type' => 'multipart/form-data; boundary=--------------------------512521442989834827864589',
+  'cache-control' => 'no-cache',
+  'Postman-Token' => '4759c43f-4eb4-46bc-bb55-6d4b1ca4378f',
+  'User-Agent' => 'PostmanRuntime/7.6.0',
+  'Accept' => '*/*',
+  'Host' => 'localhost:8000',
+  'accept-encoding' => 'gzip, deflate',
+  'content-length' => '395',
+  'Connection' => 'keep-alive',
+)
+Дата: 2019-02-19 18:05:17 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM1OSwibG9naW4iOiJrZW5mYWNram9zbGluKzEwdGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImxpZmV0aW1lIjoiMjAxOS0wMi0yNiAxNjowNzo0OCJ9.DK1AcV/5ozH998r3Mm668CgelIY9JpmI4S5bEPlLg2Qh9UAZrR2EDo7pk+529sZ3zgKq1NasgTcm99Wu7y7Z3LDIEBK8vltzRSk2zNCc6GdChceOicFYBbzfhCsljcs9cwOJW64oJWqstohR4fUT5wnVOkYHt/kSbHrAB+UZWWV6yLt4COXiJMJK/DxUc2o4/HZwsSIjPuScssnAcTJr63dML/qAmYEgA+nlvPGOcbjgTUpP1rICt95IfQbMn6OF79fk4akbWMqCr85cpZPyZKGalYNDs6UbHbFeoAXEGhYV2FwfmwmDndDMrWf0AtF+/VBkSlvyBPm7Uqv9qg6NHg==
+Дата: 2019-02-19 18:05:17 - Сессия есть, роль User
