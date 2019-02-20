@@ -550,3 +550,5 @@ DETAIL:  Key (object_id)=(1243243) is not present in table "services".
 [Tue, 19 Feb 19 13:51:28 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :0image_id
 [Tue, 19 Feb 19 13:53:10 +0300][CRITICAL] 4004 Unable change info for user
 [Tue, 19 Feb 19 15:20:43 +0300][CRITICAL] 4003 User don't exists
+[Wed, 20 Feb 19 10:23:53 +0300][CRITICAL] 4004 Unable change info for user
+[Wed, 20 Feb 19 10:24:03 +0300][CRITICAL] 4004 Unable change info for user

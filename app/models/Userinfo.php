@@ -10,6 +10,7 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Alpha as AlphaValidator;
+use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Alnum as AlnumValidator;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
 use Phalcon\Validation\Validator\Regex;
@@ -106,20 +107,43 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $nickname;
 
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=500, nullable=true)
+     */
+    protected $website;
+
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
-        'path_to_photo', 'last_time', 'nickname', 'email'];
+        'path_to_photo', 'last_time', 'nickname', 'email', 'website'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
         birthday, male, city_id, about, status, rating_executor, rating_client, 
-        path_to_photo, last_time, nickname, email';
+        path_to_photo, last_time, nickname, email, website';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 
     const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return string
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param string $website
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+    }
 
     /**
      * @return string
@@ -556,6 +580,17 @@ class Userinfo extends \Phalcon\Mvc\Model
                 ]
             )
         );
+
+        if ($this->getWebsite() != null)
+            $validator->add(
+                'website',
+                new UrlValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный URL',
+                    ]
+                )
+            );
 
         return $this->validate($validator);
     }

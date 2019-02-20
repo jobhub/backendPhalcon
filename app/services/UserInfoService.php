@@ -103,6 +103,8 @@ class UserInfoService extends AbstractService
             $userInfo->setPathToPhoto($data['path_to_photo']);
         if (isset($data['nickname']))
             $userInfo->setNickname($data['nickname']);
+        if (isset($data['website']))
+            $userInfo->setWebsite($data['website']);
     }
 
     public function CreateSettings(int $userId)
