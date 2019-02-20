@@ -293,13 +293,15 @@ class UserinfoAPIController extends AbstractController
      * @params city_id
      * @params website
      *
+     * @params delete_photo
+     *
      * @return string - json array - результат операции
      */
     public function editUserInfoAction()
     {
         $data = json_decode($this->request->getRawBody(), true);
 
-        if (!isset($data['path_to_photo']))
+        if (isset($data['path_to_photo']))
             unset($data['path_to_photo']);
 
         try {
