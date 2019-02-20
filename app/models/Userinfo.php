@@ -10,6 +10,7 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Alpha as AlphaValidator;
+use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Alnum as AlnumValidator;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
 use Phalcon\Validation\Validator\Regex;
@@ -106,20 +107,45 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $nickname;
 
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=500, nullable=true)
+     */
+    protected $website;
+
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
-        'path_to_photo', 'last_time', 'nickname', 'email'];
+        'path_to_photo', 'last_time', 'nickname', 'email', 'website'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
         birthday, male, city_id, about, status, rating_executor, rating_client, 
-        path_to_photo, last_time, nickname, email';
+        path_to_photo, last_time, nickname, email, website';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
 
     const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    const DEFAULT_USER_IMAGE = 'images/no_image.jpg';
+
+    /**
+     * @return string
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param string $website
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+    }
 
     /**
      * @return string
@@ -557,6 +583,17 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
+        if ($this->getWebsite() != null)
+            $validator->add(
+                'website',
+                new UrlValidator(
+                    [
+                        'model' => $this,
+                        'message' => 'Введите, пожалуйста, корректный URL',
+                    ]
+                )
+            );
+
         return $this->validate($validator);
     }
 
@@ -606,12 +643,39 @@ class Userinfo extends \Phalcon\Mvc\Model
     public static function findUserInfoById(int $userId, array $columns = null)
     {
         if ($columns == null)
-            return self::findFirst(['user_id = :userId:',
-                'bind' => ['userId' => $userId]]);
+            return self::addDefaultPhotoToInfo(self::findFirst(['user_id = :userId:',
+                'bind' => ['userId' => $userId]]));
         else {
-            return self::findFirst(['columns' => $columns, 'user_id = :userId:',
-                'bind' => ['userId' => $userId]]);
+            return self::addDefaultPhotoToInfo(self::findFirst(['columns' => $columns, 'user_id = :userId:',
+                'bind' => ['userId' => $userId]]));
         }
+    }
+
+    /**
+     * Add default path to image for user photo if he haven't image
+     *
+     * @param $userInfo - Row or array
+     * @return array
+     */
+    public static function addDefaultPhotoToInfo($userInfo){
+        if(is_array($userInfo)){
+            if($userInfo['path_to_photo'] == null){
+                $userInfo['path_to_photo'] = self::DEFAULT_USER_IMAGE;
+            }
+        } elseif(is_object($userInfo) == 'Userinfo'){
+            if(method_exists($userInfo,'getPathToPhoto') &&
+                method_exists($userInfo,'setPathToPhoto') ){
+                if($userInfo->getPathToPhoto() == null){
+                    $userInfo->setPathToPhoto(self::DEFAULT_USER_IMAGE);
+                }
+            } else {
+                if ($userInfo->path_to_photo == null) {
+                    $userInfo->path_to_photo = self::DEFAULT_USER_IMAGE;
+                }
+            }
+        }
+
+        return $userInfo;
     }
 
     public static function handleUserInfo(Userinfo $userInfo, Accounts $accountReceiver = null)
@@ -624,6 +688,10 @@ class Userinfo extends \Phalcon\Mvc\Model
         $handledUserInfo = SupportClass::getCertainColumnsFromArray($userInfo->toArray(),self::publicColumns);
         unset($handledUserInfo['city_id']);
         $handledUserInfo['city'] = ['city' => $userInfo->cities->getCity(), 'city_id' => $userInfo->getCityId()];
+
+        if($handledUserInfo['path_to_photo'] == null){
+            $handledUserInfo['path_to_photo'] = self::DEFAULT_USER_IMAGE;
+        }
 
         $data = [
             'user_info' => $handledUserInfo,

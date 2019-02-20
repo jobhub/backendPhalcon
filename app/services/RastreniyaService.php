@@ -275,7 +275,7 @@ class RastreniyaService extends AbstractService
         $item['comments'] = self::countComments($rast->getId());
 
         if($rast->getHasAttachedFiles())
-            $item['image'] = ImagesRastreniya::findFirstByObjectId($rast->getId())->getImagePath();
+            $item['infos']['image'] = ImagesRastreniya::findFirstByObjectId($rast->getId())->getImagePath();
         if (in_array($user_id, $likes)) {
             $item['infos']['is_liked'] = true;
         } else if (in_array($user_id, $dislikes)) {
