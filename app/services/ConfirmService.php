@@ -30,7 +30,7 @@ class ConfirmService extends AbstractService
 
     public function checkConfirmCode(Users $user, string $code, $type){
         if ($user->getPhoneId() == null) {
-            $resetCode = ConfirmationCodes::findFirst(['user_id = :userId: and reset_code = :code: 
+            $resetCode = ConfirmationCodes::findFirst(['user_id = :userId: and confirm_code_email = :code: 
                  and type = :type:',
                 'bind' => [
                     'userId' => $user->getUserId(),
@@ -55,7 +55,7 @@ class ConfirmService extends AbstractService
                 and type = :type:',
             'bind' => [
                 'userId' => $user->getUserId(),
-                'resetCode' => $code,
+                'code' => $code,
                 'type'=>$type
             ]]);
 

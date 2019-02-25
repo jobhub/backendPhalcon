@@ -554,7 +554,6 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         $result = [];
         foreach ($points as $point) {
             $point['phones'] = PhonesPoints::findPhonesForPoint($point['point_id']);
-            $result[] = $point;
 
             if(!is_null($point['marker_id'])){
                 $marker = Markers::findFirstByMarkerId($point['marker_id']);
@@ -586,6 +585,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                     }
                 }
             }
+            $result[] = $point;
         }
 
         return $result;

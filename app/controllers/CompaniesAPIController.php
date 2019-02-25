@@ -6,6 +6,7 @@ use App\Libs\SupportClass;
 use App\Models\CompanyRole;
 use App\Services\CategoryService;
 use App\Services\ConfirmService;
+use App\Services\MarkerService;
 use App\Services\PhoneService;
 use App\Services\PointService;
 use App\Services\UserService;
@@ -159,7 +160,8 @@ class CompaniesAPIController extends AbstractController
 
             $user = $this->userService->getUserById($userId);
 
-            $checking = $this->confirmService->checkConfirmCode($user,$data['confirm_code'],ConfirmService::TYPE_CREATE_COMPANY);
+            $checking = $this->confirmService->checkConfirmCode($user,$data['confirm_code'],
+                ConfirmService::TYPE_CREATE_COMPANY);
 
             if ($checking == ConfirmService::RIGHT_DEACTIVATE_CODE) {
                 $this->confirmService->deleteConfirmCode($user->getUserId());
@@ -196,10 +198,13 @@ class CompaniesAPIController extends AbstractController
             if(isset($data['category_id']) && SupportClass::checkInteger($data['category_id']))
                 $this->categoryService->linkCompanyWithCategory($data['category_id'], $company->getCompanyId());
 
+            if(is_array($data['phones']))
             foreach ($data['phones'] as $phone){
                 //Скорее всего, к компании
                 $this->phoneService->addPhoneToCompany($phone,$company->getCompanyId());
             }
+
+            $this->confirmService->deleteConfirmCode($userId,ConfirmService::TYPE_CREATE_COMPANY);
 
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
@@ -208,6 +213,7 @@ class CompaniesAPIController extends AbstractController
                 case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
                 case CategoryService::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY:
                 case PointService::ERROR_UNABLE_CREATE_POINT:
+                case MarkerService::ERROR_UNABLE_CREATE_MARKER:
                 case PhoneService::ERROR_UNABLE_CREATE_PHONE:
                 case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_COMPANY:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -327,7 +333,6 @@ class CompaniesAPIController extends AbstractController
         $data['description'] = $inputData->description;
 
         try {
-
             //validation
             if (empty(trim($data['company_id']))) {
                 $errors['company_id'] = 'Missing required parameter "company_id"';

@@ -595,3 +595,6 @@ DETAIL:  Key (city_id)=(2) is not present in table "cities".
 [Mon, 25 Feb 19 11:41:53 +0300][CRITICAL] 310003 Time to resend did't come
 [Mon, 25 Feb 19 11:41:55 +0300][CRITICAL] 310003 Time to resend did't come
 [Mon, 25 Feb 19 11:42:06 +0300][CRITICAL] 310003 Time to resend did't come
+[Mon, 25 Feb 19 12:19:30 +0300][CRITICAL] 13004 Unable create company
+[Mon, 25 Feb 19 12:19:51 +0300][CRITICAL] 22001 Unable create marker
+[Mon, 25 Feb 19 13:13:30 +0300][CRITICAL] 22001 Unable create marker
