@@ -2,7 +2,7 @@
 
 namespace App\Libs\SocialAuther\Adapter;
 
-class Facebook extends AbstractAdapter
+class Instagram extends AbstractAdapter
 {
     public function __construct($config)
     {
@@ -13,26 +13,11 @@ class Facebook extends AbstractAdapter
             'email'      => 'email',
             'name'       => 'name',
             'socialPage' => 'link',
-            'sex'        => 'gender',
-            'birthday'   => 'birthday'
+            'avatar'     => 'picture',
+            'sex'        => 'gender'
         );
 
-        $this->provider = 'facebook';
-    }
-
-    /**
-     * Get url of user's avatar or null if it is not set
-     *
-     * @return string|null
-     */
-    public function getAvatar()
-    {
-        $result = null;
-        if (isset($this->userInfo['username'])) {
-            $result = 'http://graph.facebook.com/' . $this->userInfo['username'] . '/picture?type=large';
-        }
-
-        return $result;
+        $this->provider = 'instagram';
     }
 
     /**
@@ -42,28 +27,33 @@ class Facebook extends AbstractAdapter
      */
     public function authenticate($code)
     {
-        if (!empty($code)) {
+        $result = false;
+
+        if (empty($code)) {
             $params = array(
                 'client_id'     => $this->clientId,
-                'redirect_uri'  => $this->redirectUri,
                 'client_secret' => $this->clientSecret,
+                'redirect_uri'  => $this->redirectUri,
+                'grant_type'    => 'authorization_code',
                 'code'          => $code
             );
 
-            parse_str($this->get('https://graph.facebook.com/oauth/access_token', $params, false), $tokenInfo);
+            $tokenInfo = $this->post('https://api.instagram.com/oauth/access_token', $params);
 
-            if (count($tokenInfo) > 0 && isset($tokenInfo['access_token'])) {
-                $params = array('access_token' => $tokenInfo['access_token']);
-                $userInfo = $this->get('https://graph.facebook.com/me', $params);
+            if (isset($tokenInfo['access_token'])) {
+                //$params['access_token'] = $tokenInfo['access_token'];
 
-                if (isset($userInfo['id'])) {
+                $params = ['access_token' => $tokenInfo['access_token']];
+
+                $userInfo = $this->get('https://api.instagram.com/v1/users/self', $params);
+                if (isset($userInfo[$this->socialFieldsMap['socialId']])) {
                     $this->userInfo = $userInfo;
-                    return true;
+                    $result = true;
                 }
             }
         }
 
-        return false;
+        return $result;
     }
 
     /**
@@ -74,12 +64,12 @@ class Facebook extends AbstractAdapter
     public function prepareAuthParams()
     {
         return array(
-            'auth_url'    => 'https://www.facebook.com/dialog/oauth',
+            'auth_url'    => 'https://api.instagram.com/oauth/authorize/',
             'auth_params' => array(
-                'client_id'     => $this->clientId,
                 'redirect_uri'  => $this->redirectUri,
                 'response_type' => 'code',
-                'scope'         => 'email,public_profile'
+                'client_id'     => $this->clientId,
+                'scope'         => 'basic'
             )
         );
     }

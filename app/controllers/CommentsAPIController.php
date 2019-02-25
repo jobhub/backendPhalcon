@@ -385,6 +385,7 @@ class CommentsAPIController extends AbstractController
      *
      * @params object_id - id новости
      * @params comment_text - текст комментария
+     * @params reply_id - id of the comment to which the comment was created
      * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
      * Если не указан, то от имени текущего пользователя по умолчанию.
      *

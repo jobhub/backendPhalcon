@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Userinfo;
 use App\Services\AbstractService;
+use App\Services\CityService;
 use App\Services\ResetPasswordService;
 use Dmkit\Phalcon\Auth\Auth;
 use Phalcon\Http\Response;
@@ -229,6 +230,7 @@ class RegisterAPIController extends AbstractController
             $this->db->rollback();
             switch ($e->getCode()) {
                 case UserService::ERROR_USER_NOT_FOUND:
+                case CityService::ERROR_CITY_NOT_FOUND:
                     throw new Http422Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);

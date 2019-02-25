@@ -564,6 +564,18 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
+        $validator->add(
+            'city_id',
+            new Callback(
+                [
+                    "message" => "Такой город не существует",
+                    "callback" => function ($user) {
+                        return $user->cities?true:false;
+                    }
+                ]
+            )
+        );
+
         /*$validator->add(
             "nickname",
             new AlnumValidator(

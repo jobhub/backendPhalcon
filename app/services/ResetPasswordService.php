@@ -102,7 +102,7 @@ class ResetPasswordService extends AbstractService
 
         if($user->getPhoneId()==null){
             $this->sendMail('reset_code_letter','emails/reset_code_letter',
-                ['resetcode' => $resetCode->getResetCode(),
+                ['reset_password_code' => $resetCode->getResetCode(),
                     'deactivate' => $resetCode->getDeactivateCode(),
                     'email' => $user->getEmail()],'Подтвердите сброс пароля');
         } else {
@@ -137,7 +137,7 @@ class ResetPasswordService extends AbstractService
         } else if (strtotime($resetCode->getTime()) > strtotime(date('Y-m-d H:i:sO')) - PasswordResetCodes::RESEND_TIME) {
             throw new ServiceExtendedException('Time to resend did\'t come', self::ERROR_NO_TIME_TO_RESEND, null, null,
                 ['time_left' => strtotime($resetCode->getTime())
-                    - (strtotime(date('Y-m-d H:i:sO')) - PasswordResetCodes::RESEND_TIME)]);
+                    -(strtotime(date('Y-m-d H:i:sO')) - ActivationCodes::RESEND_TIME)]);
         }
 
         if ($user->getPhoneId() == null) {
@@ -148,7 +148,7 @@ class ResetPasswordService extends AbstractService
             $resetCode->setResetCodePhone($this->generateResetCodePhone($user->getUserId()));
         }
 
-        $resetCode->setTime(date('Y-m-d H:i:s'));
+        $resetCode->setTime(date('Y-m-d H:i:sO'));
 
         if (!$resetCode->save()) {
             $errors = SupportClass::getArrayWithErrors($resetCode);
@@ -168,18 +168,18 @@ class ResetPasswordService extends AbstractService
     {
         $hash = hash('sha256',$userId . time() . rand());
 
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     public function generateResetCode($userId)
     {
         $hash = hash('sha256',$userId . time() . rand());
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     public function generateDeactivateResetCode($userId)
     {
         $hash = hash('sha256',$userId . time() . rand(). '-no');
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 }

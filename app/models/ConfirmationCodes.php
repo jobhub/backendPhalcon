@@ -45,6 +45,13 @@ class ConfirmationCodes extends \Phalcon\Mvc\Model
     protected $time;
 
     /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $user_id;
+
+    /**
      * Минимальное время, которое должно пройти перед повторной отправкой.
      * В секундах.
      */
@@ -182,12 +189,29 @@ class ConfirmationCodes extends \Phalcon\Mvc\Model
     }
 
     /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param int $user_id
+     */
+    public function setUserId(int $user_id)
+    {
+        $this->user_id = $user_id;
+    }
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("public");
         $this->setSource("confirmation_codes");
+        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**

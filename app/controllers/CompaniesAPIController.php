@@ -241,12 +241,11 @@ class CompaniesAPIController extends AbstractController
      * @method POST
      *
      */
-    public function getConfirmCodeForCreateCompany(){
-        //Пока, если код существует, то просто перезаписывается
+    public function getConfirmCodeForCreateCompanyAction(){
         try {
             $userId = self::getUserId();
             $user = $this->userService->getUserById($userId);
-            $this->resetPasswordService->sendPasswordResetCode($user, ConfirmService::TYPE_CREATE_COMPANY);
+            $this->confirmService->sendConfirmCode($user, ConfirmService::TYPE_CREATE_COMPANY);
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
@@ -266,7 +265,7 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Code for reset password successfully sent');
+        return self::successResponse('Code for creation company successfully sent');
     }
 
     /**

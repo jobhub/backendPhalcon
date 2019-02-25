@@ -210,6 +210,28 @@ abstract class AbstractAdapter implements AdapterInterface
         return $result = $config['auth_url'] . '?' . urldecode(http_build_query($config['auth_params']));
     }
 
+    public function getFirstName()
+    {
+        $result = null;
+
+        if (isset($this->userInfo['first_name'])) {
+            $result = $this->userInfo['first_name'];
+        }
+
+        return $result;
+    }
+
+    public function getLastName()
+    {
+        $result = null;
+
+        if (isset($this->userInfo['last_name'])) {
+            $result = $this->userInfo['last_name'];
+        }
+
+        return $result;
+    }
+
     /**
      * Make post request and return result
      *

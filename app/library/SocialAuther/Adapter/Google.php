@@ -21,37 +21,21 @@ class Google extends AbstractAdapter
     }
 
     /**
-     * Get user birthday or null if it is not set
-     *
-     * @return string|null
-     */
-    public function getBirthday()
-    {
-        if (isset($this->_userInfo['birthday'])) {
-            $this->_userInfo['birthday'] = str_replace('0000', date('Y'), $this->_userInfo['birthday']);
-            $result = date('d.m.Y', strtotime($this->_userInfo['birthday']));
-        } else {
-            $result = null;
-        }
-        return $result;
-    }
-
-    /**
      * Authenticate and return bool result of authentication
      *
      * @return bool
      */
-    public function authenticate()
+    public function authenticate($code)
     {
         $result = false;
 
-        if (isset($_GET['code'])) {
+        if (empty($code)) {
             $params = array(
                 'client_id'     => $this->clientId,
                 'client_secret' => $this->clientSecret,
                 'redirect_uri'  => $this->redirectUri,
                 'grant_type'    => 'authorization_code',
-                'code'          => $_GET['code']
+                'code'          => $code
             );
 
             $tokenInfo = $this->post('https://accounts.google.com/o/oauth2/token', $params);
@@ -86,5 +70,25 @@ class Google extends AbstractAdapter
                 'scope'         => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile'
             )
         );
+    }
+
+    public function getUser(){
+        return [
+            'network'=>$this->getProvider(),
+            'identity'=>$this->getSocialId(),
+            'first_name'=>$this->getFirstName(),
+            'last_name'=>$this->getLastName(),
+            'male'=>$this->getSex(),
+            //'country'=>$this->getCountry(),
+            //'city'=>$this->getCity(),
+            'profile'=>$this->getSocialPage(),
+            'email'=>$this->getEmail(),
+            //'city_id'=>$this->getCityId(),
+            //'status'=>$this->getStatus(),
+            //'about'=>$this->getAbout(),
+            'birthday'=>$this->getBirthday(),
+            'uri_to_photo'=>$this->getAvatar(),
+            //'photo_name'=>$this->getPhotoName()
+        ];
     }
 }

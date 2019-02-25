@@ -42,6 +42,8 @@ class ImageController extends AbstractController
      *      news
      *      review
      *      service
+     *      rastreniya
+     *      temp
      *      company (пока еще не реализовано)
      *
      * @access private

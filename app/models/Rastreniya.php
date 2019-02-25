@@ -202,6 +202,45 @@ class Rastreniya extends LikeDislikeModel
         $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
     }
 
+    public function delete($delete = false, $data = null, $whiteList = null)
+    {
+        if ($delete) {
+            try {
+                // Создаем менеджера транзакций
+                $manager = new TxManager();
+                // Запрос транзакции
+                $transaction = $manager->get();
+                $this->setTransaction($transaction);
+                $images = ImagesRastreniya::findByObjectId($this->getId());
+
+                foreach ($images as $image) {
+                    $image->setTransaction($transaction);
+                    if (!$image->delete()) {
+                        $transaction->rollback(
+                            "Не удалось удалить изображение");
+                        foreach ($image->getMessages() as $message) {
+                            $this->appendMessage($message->getMessage());
+                        }
+                        return false;
+                    };
+                }
+
+                $transaction->commit();
+            } catch (TxFailed $e) {
+                $message = new Message(
+                    $e->getMessage()
+                );
+
+                $this->appendMessage($message);
+                return false;
+            }
+        }
+
+        $result = parent::delete($delete, $data, $whiteList);
+
+        return $result;
+    }
+
     /**
      * @return bool
      */
