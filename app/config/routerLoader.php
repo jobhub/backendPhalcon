@@ -1303,21 +1303,6 @@ $routes = [
             ],
 
             /**
-             * Делает указанного пользователя менеджером компании
-             *
-             * @method POST
-             *
-             * @params user_id, company_id
-             *
-             * @return int account_id
-             */
-            [
-                'type' => 'post',
-                'path' => '/add/manager',
-                'action' => 'setManagerAction'
-            ],
-
-            /**
              * Удаляет пользователя из менеджеров компании
              *
              * @method DELETE
@@ -1370,15 +1355,15 @@ $routes = [
              *
              * @method POST
              *
-             * @params confirm_code
+             * @params confirm_code (!)
              * Для компании
              * @params category_id int - категория, в которой компания будет оказывать услуги
-             * @params company_name string - название компании
+             * @params company_name (!) string - название компании
              *
              * Для точки оказания услуг
              * @params time string режим работы точки оказания услуг
-             * @params latitude double
-             * @params longitude double
+             * @params latitude (!) double
+             * @params longitude (!) double
              *
              * Спорно
              * @params website string
@@ -2788,6 +2773,44 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get',
                 'action' => 'getCitiesAction'
+            ],
+        ]
+    ],
+
+
+    '\App\Controllers\InviteController' => [
+        'prefix' => '/invite',
+        'resources' => [
+
+            /**
+             * Приглашает указанного пользователя стать менеджером в компании
+             * @access private
+             * @method POST
+             *
+             * @params user_id
+             * @params company_id
+             *
+             * @return int account_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/manager',
+                'action' => 'inviteToBeManagerAction'
+            ],
+
+            /**
+             * Пользователь соглашается быть менеджером в компании
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params company_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/accept',
+                'action' => 'agreeToBeManager'
             ],
         ]
     ],

@@ -17612,3 +17612,729 @@
 )
 Дата: 2019-02-25 13:38:41 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
 Дата: 2019-02-25 13:38:41 - Сессия есть, роль User
+Дата: 2019-02-25 13:42:36 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '0',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==',
+  'Postman-Token' => '30765520-ea74-25b2-a69c-267414a98e73',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:42:36 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==
+Дата: 2019-02-25 13:42:36 - Сессия есть, роль User
+Дата: 2019-02-25 13:42:36 - Текст письма:
+Дата: 2019-02-25 13:42:36 - <div>Так-с, если хотите подтвердить <создание компании или еще что-то>,
+введите следующий код: 6302
+</div>
+
+Дата: 2019-02-25 13:44:33 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '260',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '1e064a11-56ba-eceb-6490-c549354ebdfe',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:44:33 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:44:33 - Сессия есть, роль User
+Дата: 2019-02-25 13:45:11 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '0',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==',
+  'Postman-Token' => 'd009c4ac-51e2-b738-3f2e-a6fb00b33d63',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:45:11 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==
+Дата: 2019-02-25 13:45:11 - Сессия есть, роль User
+Дата: 2019-02-25 13:45:11 - Текст письма:
+Дата: 2019-02-25 13:45:11 - <div>Так-с, если хотите подтвердить <создание компании или еще что-то>,
+введите следующий код: 2240
+</div>
+
+Дата: 2019-02-25 13:45:30 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '256',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => 'd8393867-2d5f-40a4-be60-0f15a827c7e2',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:45:30 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:45:30 - Сессия есть, роль User
+Дата: 2019-02-25 13:45:43 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '0',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==',
+  'Postman-Token' => '5bd8703a-f7ad-7873-0f9c-396edc8cd24a',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:45:43 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==
+Дата: 2019-02-25 13:45:43 - Сессия есть, роль User
+Дата: 2019-02-25 13:45:43 - Текст письма:
+Дата: 2019-02-25 13:45:43 - <div>Так-с, если хотите подтвердить <создание компании или еще что-то>,
+введите следующий код: 4206
+</div>
+
+Дата: 2019-02-25 13:46:00 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '248',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '4551ff73-a2e7-bd18-c3cc-297fbcfbb711',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:46:00 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:46:00 - Сессия есть, роль User
+Дата: 2019-02-25 13:46:06 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '251',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '678d01a7-c47c-89dd-cdc1-769be13b1c00',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:46:06 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:46:06 - Сессия есть, роль User
+Дата: 2019-02-25 13:46:18 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '255',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '5de175a7-5b4a-2b64-7c02-841dfd438756',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:46:18 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:46:18 - Сессия есть, роль User
+Дата: 2019-02-25 13:46:22 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '258',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '618e1e0e-d08c-b2ce-9aaf-cf31878b3163',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:46:22 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:46:22 - Сессия есть, роль User
+Дата: 2019-02-25 13:48:21 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '0',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==',
+  'Postman-Token' => '7f4b0049-7ebc-06aa-be2e-89b65eaef89e',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:48:21 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==
+Дата: 2019-02-25 13:48:21 - Сессия есть, роль User
+Дата: 2019-02-25 13:48:21 - Текст письма:
+Дата: 2019-02-25 13:48:21 - <div>Так-с, если хотите подтвердить <создание компании или еще что-то>,
+введите следующий код: 6796
+</div>
+
+Дата: 2019-02-25 13:48:36 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '131',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '41d6e6b2-6919-7e44-c732-f3377c65f5e7',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:48:36 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:48:36 - Сессия есть, роль User
+Дата: 2019-02-25 13:48:55 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '7631861f-3ca2-d352-4ed7-eae397461fd8',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:48:55 - token is aaa
+Дата: 2019-02-25 13:48:55 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-25 13:48:55 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-25 13:49:02 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'b9211833-4cd1-522c-85fc-f46471fa1ce7',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:49:02 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:49:02 - Сессия есть, роль User
+Дата: 2019-02-25 13:49:16 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '0',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==',
+  'Postman-Token' => 'd1343251-140d-dc63-733e-9fb2791d3425',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:49:16 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6MzY6MTMifQ==.J5S5ICFqsUppWywTuFaLLKTOq67CPR3j6D8EU+cc1Inclhy9LDGKdIizHFOyjzD3Csg0Z+YElcnz30768jg2emXZ+fzsO3OewPrPCLPk3AG9FFqvzMjunZorpl6ODEXvn75B4NgqlUm+eb1bWVWife9zoxv0lT/6A86pFhkY2toK5ni1hbXWQWZxKYtZ6oKJ7tCKA7D1WnwPqqDQon61XyCoFBokaHlfWrnyHIx+CuwCsg8sqySuKI0g9Y1H4DybLn6+u22HNZ4zgKGkqmea2HTQQZJMnuQ+TjDjhobXGWuetwlqvHXAumO0fWH5rsDg2riRp5HAtU9iiMjyRfk2bA==
+Дата: 2019-02-25 13:49:16 - Сессия есть, роль User
+Дата: 2019-02-25 13:49:16 - Текст письма:
+Дата: 2019-02-25 13:49:16 - <div>Так-с, если хотите подтвердить <создание компании или еще что-то>,
+введите следующий код: 4058
+</div>
+
+Дата: 2019-02-25 13:49:38 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '108',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '182114cc-b3d2-d9c6-f371-b8a6a7fb74b6',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:49:38 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:49:38 - Сессия есть, роль User
+Дата: 2019-02-25 13:49:43 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '109',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '4443410f-bfe0-dda5-3109-26eae0936bfa',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:49:43 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:49:43 - Сессия есть, роль User
+Дата: 2019-02-25 13:49:48 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '71',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '1f36dc35-b2da-8c2b-d3ab-29c49e91224c',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:49:48 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:49:48 - Сессия есть, роль User
+Дата: 2019-02-25 13:50:34 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '107',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '71b0e250-21fa-9867-15ee-c781299ff9f4',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:50:34 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:50:34 - Сессия есть, роль User
+Дата: 2019-02-25 13:53:20 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '107',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => 'a6eb42f5-3c0e-d414-9467-83574338d3d8',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:53:20 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:53:20 - Сессия есть, роль User
+Дата: 2019-02-25 13:53:50 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '107',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '7915d1fa-acce-4298-0925-70fa28049e0e',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:53:50 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:53:50 - Сессия есть, роль User
+Дата: 2019-02-25 13:54:06 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '71',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '0e1500b0-08e7-d808-e543-d1cd5edb2d5f',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:54:06 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:54:06 - Сессия есть, роль User
+Дата: 2019-02-25 13:54:09 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '27',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => '0561a001-3d1b-66a0-dfaf-0a3e379fc3de',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:54:09 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:54:09 - Сессия есть, роль User
+Дата: 2019-02-25 13:54:18 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '26',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==',
+  'Postman-Token' => 'db99bb72-f0ea-a343-0f2e-c3402b3a531f',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 13:54:18 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTE6NDM6MTAifQ==.QcnNUA7IQEzIY/9AYRn9xyXClG0V30Mw1oqjYgLN1Vzh/7VwgqrkQ4e/hQGVp1+rRbB5voW4ajh+AD3gJz80EMdjMY/6sLqUVcdT8u/VjRl38b1JYhQ1nfvGw6zNYZIymV2IOmAo/ueN2vBkPSQwqmJZu4M72iN2vS+cb2YJbU5b9F1sdOfrAvfbcyPdXsAsW50UwsVU1BaZMMBgL9+SXStcHe3ReANJIMyK1xgTtEyBQoENgjqn5Y0gNHlu7OIg9O7hIlJ2SU/gc1ClxsRSRZzssVN2NzBs/x9lU+6G2paKPo5CV1fApazUBbVdkvuZNxVzMpqB6NYmwLoo7tOR/w==
+Дата: 2019-02-25 13:54:18 - Сессия есть, роль User
+Дата: 2019-02-25 14:35:13 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 YaBrowser/19.1.1.909 Yowser/2.5 Safari/537.36',
+  'Accept' => 'image/webp,image/apng,image/*,*/*;q=0.8',
+  'Referer' => 'http://job/webtools.php',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en;q=0.9',
+)
+Дата: 2019-02-25 14:35:13 - token is aaa
+Дата: 2019-02-25 14:35:13 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-25 14:35:13 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-25 15:54:56 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '35',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => '8cf1000a-d6f7-7886-dd8a-f9c96d298975',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 15:54:56 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 15:54:56 - Сессия есть, роль Moderator
+Дата: 2019-02-25 15:54:56 - Текст письма:
+Дата: 2019-02-25 15:54:56 - <div>Компания Кулинария пригласила вас быть менеджером.</div>
+<div>Живите дальше с этим как хотите.</div>
+
+Дата: 2019-02-25 15:56:36 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '35',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'c6e703ba-705b-476e-41f1-36298d7238cc',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 15:56:36 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 15:56:36 - Сессия есть, роль Moderator
+Дата: 2019-02-25 15:56:36 - Текст письма:
+Дата: 2019-02-25 15:56:36 - <div>Компания Кулинария пригласила вас быть менеджером.</div>
+<div>Живите дальше с этим как хотите.</div>
+
+Дата: 2019-02-25 15:58:23 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '55',
+  'Postman-Token' => '6c6a8080-406f-0fc5-df2f-0e347f9b071f',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 15:58:23 - token is aaa
+Дата: 2019-02-25 15:58:23 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-25 15:58:23 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-25 15:58:23 - email пользователя titow.german@yandex.ru
+Дата: 2019-02-25 15:58:23 - Юзер найден в бд
+Дата: 2019-02-25 15:58:23 - titow.german@yandex.ru
+Дата: 2019-02-25 15:58:23 - ID юзера при этом - 346
+Дата: 2019-02-25 15:58:47 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '19',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTU6NTg6MjMifQ==.ICAIGGX/ynY8wpQRZJ+uP8UoGzsQTLokexFDE+c25kgai5HtV+rheDk5uy+WXVB04N/srk+QqHPxpZH5zS8xJtKNn4ogHko7mUSsZbGExt7eS3gRjevxJUf3B8vB1FYGPAHbGb3tomegT+gvsOEa4ARNYk4tDO/MlqS6n2GXCGRFILhf3xID42MllYakSutVOJAfrjo3AF+aaTAuB6j8kkzxBuP0dn0ImDGyycImYjalmdv6JnfteR7l3miL/HhhTg667Vo7g+CQ4dPTHtJG+KRJdIPMLcJOQbKU0/m7RGO01U54EpTTIX6mSt9BB1+rsoS9O09L9i9iqY30ogFIAw==',
+  'Postman-Token' => '0f88ca5a-4421-40f2-428a-fd2d5e54f4e3',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 15:58:47 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM0NiwibG9naW4iOiJ0aXRvdy5nZXJtYW5AeWFuZGV4LnJ1Iiwicm9sZSI6IlVzZXIiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTU6NTg6MjMifQ==.ICAIGGX/ynY8wpQRZJ+uP8UoGzsQTLokexFDE+c25kgai5HtV+rheDk5uy+WXVB04N/srk+QqHPxpZH5zS8xJtKNn4ogHko7mUSsZbGExt7eS3gRjevxJUf3B8vB1FYGPAHbGb3tomegT+gvsOEa4ARNYk4tDO/MlqS6n2GXCGRFILhf3xID42MllYakSutVOJAfrjo3AF+aaTAuB6j8kkzxBuP0dn0ImDGyycImYjalmdv6JnfteR7l3miL/HhhTg667Vo7g+CQ4dPTHtJG+KRJdIPMLcJOQbKU0/m7RGO01U54EpTTIX6mSt9BB1+rsoS9O09L9i9iqY30ogFIAw==
+Дата: 2019-02-25 15:58:47 - Сессия есть, роль User
+Дата: 2019-02-25 16:20:22 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'bdc014e3-9d90-ed08-3f90-4c6ac0499398',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:20:22 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:20:22 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:20:57 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => '70ae0038-a69b-0d1a-3d16-54fa21f791fd',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:20:57 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:20:57 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:21:18 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'b4628f4b-5676-f563-723e-ede1e074ced0',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:21:18 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:21:18 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:24:34 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'c0138be1-d36c-1b57-3286-1bd91183121c',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:24:34 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:24:34 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:25:24 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => '33644c3d-9e75-a3c3-532e-f640c0535c82',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:25:24 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:25:24 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:25:30 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => '95571e44-3485-308f-9e4b-211434b976ae',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:25:30 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:25:30 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:26:39 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'd3dea6af-7ad9-6627-c6e8-6a26fc291e3f',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:26:39 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:26:39 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:27:01 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'c29e35f7-dd35-4e01-7bd4-d59c8ea29344',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:27:01 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:27:01 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:27:11 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'a6076f51-f244-e28d-4c4b-de3465c1b3e2',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:27:11 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:27:11 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:31:17 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '40',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'ed43f728-3c6e-8150-30fc-76d8709d6cab',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:31:17 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:31:17 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:31:37 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '40',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'fe8f3af1-c7ad-ba5f-4883-7f647a000a83',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:31:37 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:31:37 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:32:02 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '40',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'a399f4d7-b21b-0754-06db-585ba38ad8f1',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:32:02 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:32:02 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:32:21 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '40',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'cc122d7d-5d80-448e-b8aa-3838e0708b17',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:32:21 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:32:21 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:32:34 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '16',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'a189319a-79a4-8efd-6225-c263d66c4fc0',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:32:34 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:32:34 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:32:40 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => 'f657d512-28e5-ecaa-771c-13b2d460878c',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:32:40 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:32:40 - Сессия есть, роль Moderator
+Дата: 2019-02-25 16:32:46 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '33',
+  'Authorization' => 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==',
+  'Postman-Token' => '492dde57-520a-bd7d-efd3-f1b13dac921f',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-25 16:32:46 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
+Дата: 2019-02-25 16:32:46 - Сессия есть, роль Moderator

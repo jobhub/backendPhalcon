@@ -598,3 +598,28 @@ DETAIL:  Key (city_id)=(2) is not present in table "cities".
 [Mon, 25 Feb 19 12:19:30 +0300][CRITICAL] 13004 Unable create company
 [Mon, 25 Feb 19 12:19:51 +0300][CRITICAL] 22001 Unable create marker
 [Mon, 25 Feb 19 13:13:30 +0300][CRITICAL] 22001 Unable create marker
+[Mon, 25 Feb 19 13:46:00 +0300][CRITICAL] 13004 Unable create company
+[Mon, 25 Feb 19 13:46:06 +0300][CRITICAL] 13004 Unable create company
+[Mon, 25 Feb 19 13:46:18 +0300][CRITICAL] 13004 Unable create company
+[Mon, 25 Feb 19 13:49:38 +0300][CRITICAL] 22001 Unable create marker
+[Mon, 25 Feb 19 13:49:43 +0300][CRITICAL] 22001 Unable create marker
+[Mon, 25 Feb 19 13:49:48 +0300][CRITICAL] 13004 Unable create company
+[Mon, 25 Feb 19 15:54:56 +0300][CRITICAL] 100003 Unable to send email
+[Mon, 25 Feb 19 16:20:58 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "invites_company_manager" violates foreign key constraint "fkey_invites_company_manager_invited"
+DETAIL:  Key (invited)=(1) is not present in table "users".
+[Mon, 25 Feb 19 16:21:23 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "invites_company_manager" violates foreign key constraint "fkey_invites_company_manager_invited"
+DETAIL:  Key (invited)=(1) is not present in table "users".
+[Mon, 25 Feb 19 16:24:41 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "invites_company_manager" violates foreign key constraint "fkey_invites_company_manager_invited"
+DETAIL:  Key (invited)=(1) is not present in table "users".
+[Mon, 25 Feb 19 16:25:24 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "invites_company_manager" violates foreign key constraint "fkey_invites_company_manager_invited"
+DETAIL:  Key (invited)=(1) is not present in table "users".
+[Mon, 25 Feb 19 16:26:39 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "invites_company_manager" violates foreign key constraint "fkey_invites_company_manager_invited"
+DETAIL:  Key (invited)=(1) is not present in table "users".
+[Mon, 25 Feb 19 16:27:01 +0300][CRITICAL] 33001 Unable create invite
+[Mon, 25 Feb 19 16:27:11 +0300][CRITICAL] 33001 Unable create invite
+[Mon, 25 Feb 19 16:31:17 +0300][CRITICAL] 13001 Company don't exists
+[Mon, 25 Feb 19 16:31:40 +0300][CRITICAL] 13001 Company don't exists
+[Mon, 25 Feb 19 16:32:04 +0300][CRITICAL] 13001 Company don't exists
+[Mon, 25 Feb 19 16:32:26 +0300][CRITICAL] 13001 Company don't exists
+[Mon, 25 Feb 19 16:32:40 +0300][CRITICAL] 33001 Unable create invite
+[Mon, 25 Feb 19 16:32:46 +0300][CRITICAL] 33001 Unable create invite

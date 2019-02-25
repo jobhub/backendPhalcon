@@ -97,6 +97,8 @@ $di->setShared('chatHistoryService', '\App\Services\ChatHistoryService'); //29
 $di->setShared('socialNetService', '\App\Services\SocialNetService'); //30
 $di->setShared('confirmService', '\App\Services\ConfirmService'); //31
 $di->setShared('cityService', '\App\Services\CityService'); //32
+$di->setShared('inviteService', '\App\Services\InviteService'); //33
+$di->setShared('notificationService', '\App\Services\NotificationService'); //33
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];
