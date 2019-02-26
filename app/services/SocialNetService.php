@@ -51,7 +51,7 @@ class SocialNetService extends AbstractService
         $data_userinfo['user_id'] = $resultUser->getUserId();
         $data_userinfo['first_name'] = $userData['first_name'];
         $data_userinfo['last_name'] = $userData['last_name'];
-        $data_userinfo['male'] = ($userData['sex'] - 1) >= 0 ? $userData['sex'] - 1 : 1;
+        $data_userinfo['male'] = $userData['male'];
         $data_userinfo['birthday'] = $userData['birthday'];
         $data_userinfo['status'] = $userData['status'];
         $data_userinfo['about'] = $userData['about'];
@@ -76,8 +76,12 @@ class SocialNetService extends AbstractService
 
         SupportClass::writeMessageInLogFile('До изменения фотографии пользователя');
 
-        $this->userInfoService->savePhotoForUserByURL($resultUser,$userInfo,$userData['uri_to_photo'], $userData['photo_name']);
-
+        //try {
+            if (!empty($userData['uri_to_photo']) && !empty($userData['photo_name']))
+                $this->userInfoService->savePhotoForUserByURL($resultUser, $userInfo, $userData['uri_to_photo'], $userData['photo_name']);
+        /*} catch(ServiceExtendedException $e){
+            SupportClass::writeMessageInLogFile('Не удалось вытащить фотку со следующей ошибкой: "'.$e->getMessage().'"');
+        }*/
         SupportClass::writeMessageInLogFile('Изменил фотографию пользователя');
 
         $userSocialData['network'] = $userData['network'];

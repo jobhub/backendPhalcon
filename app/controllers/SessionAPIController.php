@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Libs\SimpleULogin;
+use App\Libs\SocialAuther\Adapter\Facebook;
+use App\Libs\SocialAuther\Adapter\Google;
 use App\Models\Accounts;
 use App\Models\UsersSocial;
 use App\Services\AbstractService;
@@ -167,18 +169,31 @@ class SessionAPIController extends AbstractController
      * @method GET
      * @return array - json array в формате Status
      */
-    public function authWithSocialAction()
+    public function authWithSocialAction($social_net = null)
     {
         try {
             if ($this->request->isGet()) {
-                if (!isset($_GET['code'])) {
-                    $vkAdapterConfig = $this->config['social']['vk'];
-                    $vkAdapter = new Vk($vkAdapterConfig);
-                    $auther = new SocialAuther($vkAdapter);
-
-                    return ['url' => $vkAdapter->getAuthUrl()];
+                if (!isset($_GET['code']) && !isset($_GET['error'])) {
+                    switch($social_net) {
+                        case 'vk': {
+                            $vkAdapterConfig = $this->config['social']['vk'];
+                            $adapter = new Vk($vkAdapterConfig);
+                            break;
+                        }
+                        case 'facebook':{
+                            $configInfoNet = $this->config['social']['facebook'];
+                            $adapter = new Facebook($configInfoNet);
+                            break;
+                        }
+                        case 'google':{
+                            $configInfoNet = $this->config['social']['google'];
+                            $adapter = new Google($configInfoNet);
+                            break;
+                        }
+                    }
+                    return ['url' => $adapter->getAuthUrl()];
                 } else {
-                    return ['code' => $_GET['code']];
+                    return $_GET;
                 }
             }
 
@@ -193,8 +208,20 @@ class SessionAPIController extends AbstractController
                     $auther = new SocialAuther($vkAdapter);
                     break;
                 }
+                case 'facebook': {
+                    $vkAdapterConfig = $this->config['social']['facebook'];
+                    $fbAdapter = new Facebook($vkAdapterConfig);
+                    $auther = new SocialAuther($fbAdapter);
+                    break;
+                }
+                case 'google': {
+                    $vkAdapterConfig = $this->config['social']['google'];
+                    $googleAdapter = new Google($vkAdapterConfig);
+                    $auther = new SocialAuther($googleAdapter);
+                    break;
+                }
                 default:
-                    return null;
+                    return ['error'=>'Invalid provider'];
             }
 
             SupportClass::writeMessageInLogFile("Перед пыткой вызвать authenticate");
@@ -215,6 +242,39 @@ class SessionAPIController extends AbstractController
             $userSocial = UsersSocial::findByIdentity($userFromSocialNet['network'], $userFromSocialNet['identity']);
 
             if (!$userSocial) {
+
+                if(empty($userFromSocialNet['first_name'])){
+                    $userFromSocialNet['first_name'] = $data['first_name'];
+                }
+
+                if(empty($userFromSocialNet['last_name'])){
+                    $userFromSocialNet['last_name'] = $data['last_name'];
+                }
+
+                if(empty($userFromSocialNet['city_id'])){
+                    $userFromSocialNet['city_id'] = $data['city_id'];
+                }
+
+                if(empty($userFromSocialNet['male'])){
+                    $userFromSocialNet['male'] = $data['male'];
+                }
+
+                if(empty($userFromSocialNet['first_name'])){
+                    $errors['first_name'] = 'Missing require field "first_name"';
+                }
+
+                if(empty($userFromSocialNet['last_name'])){
+                    $errors['last_name'] = 'Missing require field "last_name"';;
+                }
+
+                if(empty($userFromSocialNet['city_id'])){
+                    $errors['city_id'] = 'Missing require field "city_id"';;
+                }
+
+                if(empty($userFromSocialNet['male'])){
+                    $errors['male'] = 'Missing require field "male"';
+                }
+
                 $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
 
                 $strUser = var_export($user->getUserId(),true);

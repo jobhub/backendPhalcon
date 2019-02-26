@@ -89,6 +89,51 @@ class NewsAPIController extends AbstractController
     }
 
     /**
+     * Возвращает новости текущего пользователя/указанной компании пользователя.
+     *
+     * @method GET
+     *
+     * @param $page
+     * @param $page_size
+     * @param $account_id
+     *
+     * @return string - json array объектов news или Status, если ошибка
+     */
+    public function getOwnNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
+    {
+        try {
+            $userId = self::getUserId();
+
+            if ($account_id != null && SupportClass::checkInteger($account_id)) {
+                if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                    throw new Http403Exception('Permission error');
+                }
+
+            } else {
+                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+            }
+
+            $this->session->set('accountId', $account_id);
+            $account = $this->accountService->getAccountById($account_id);
+
+            if($account->getCompanyId() != null){
+                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+            } else {
+                return News::findNewsByUser($userId, $page, $page_size);
+            }
+
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+    }
+
+
+    /**
      * Создает новость компании или пользователя.
      * Если прикрепить изображения, они будут добавлены к новости.
      *
@@ -322,51 +367,6 @@ class NewsAPIController extends AbstractController
 
         return self::successResponse('News was successfully changed');
     }
-
-    /**
-     * Возвращает новости текущего пользователя/указанной компании пользователя.
-     *
-     * @method GET
-     *
-     * @param $page
-     * @param $page_size
-     * @param $account_id
-     *
-     * @return string - json array объектов news или Status, если ошибка
-     */
-    public function getOwnNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
-    {
-        try {
-            $userId = self::getUserId();
-
-            if ($account_id != null && SupportClass::checkInteger($account_id)) {
-                if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
-                    throw new Http403Exception('Permission error');
-                }
-
-            } else {
-                $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
-            }
-
-            $this->session->set('accountId', $account_id);
-            $account = $this->accountService->getAccountById($account_id);
-
-            if($account->getCompanyId() != null){
-                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
-            } else {
-                return News::findNewsByUser($userId, $page, $page_size);
-            }
-
-        }catch (ServiceException $e) {
-            switch ($e->getCode()) {
-                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
-                    throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        }
-    }
-
     /**
      * Возвращает новости указанного объекта
      *

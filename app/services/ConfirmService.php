@@ -30,7 +30,7 @@ class ConfirmService extends AbstractService
 
     public function checkConfirmCode(Users $user, string $code, $type){
         if ($user->getPhoneId() == null) {
-            $resetCode = ConfirmationCodes::findFirst(['user_id = :userId: and reset_code = :code: 
+            $resetCode = ConfirmationCodes::findFirst(['user_id = :userId: and confirm_code_email = :code: 
                  and type = :type:',
                 'bind' => [
                     'userId' => $user->getUserId(),
@@ -55,7 +55,7 @@ class ConfirmService extends AbstractService
                 and type = :type:',
             'bind' => [
                 'userId' => $user->getUserId(),
-                'resetCode' => $code,
+                'code' => $code,
                 'type'=>$type
             ]]);
 
@@ -94,7 +94,7 @@ class ConfirmService extends AbstractService
             $this->sendMail('confirm_code_letter','emails/confirm_code_letter',
                 ['code' => $code->getConfirmCodeEmail(),
                     'deactivate' => $code->getDeactivateCode(),
-                    'email' => $user->getEmail()],'Подтвердите сброс пароля');
+                    'email' => $user->getEmail()],'Подтвердите создание компании');
         } else {
             $this->sendSms($user->phones->getPhone(),$this->getMessageForSmsForConfirmCode($code));
         }
@@ -134,7 +134,8 @@ class ConfirmService extends AbstractService
             $code->setConfirmCodePhone($this->generateCodePhone($user->getUserId(), $type));
         }
 
-        $code->setTime(date('Y-m-d H:i:s'));
+        $code->setTime(date('Y-m-d H:i:sO'));
+        $code->setType($type);
 
         if (!$code->save()) {
             $errors = SupportClass::getArrayWithErrors($code);
@@ -154,18 +155,18 @@ class ConfirmService extends AbstractService
     {
         $hash = hash('sha256',$userId . time() . rand() . $type);
 
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     public function generateCodeEmail($userId, $type)
     {
         $hash = hash('sha256',$userId . time() . rand() . $type);
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     public function generateDeactivateCode($userId, $type)
     {
         $hash = hash('sha256',$userId . time() . rand(). '-no' . $type);
-        return substr($hash,5,4);
+        return /*substr($hash,5,4)*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 }

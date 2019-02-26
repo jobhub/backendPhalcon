@@ -364,6 +364,11 @@ $routes = [
                 'path' => '/social',
                 'action' => 'authWithSocialAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/social/{social_net}',
+                'action' => 'authWithSocialAction'
+            ],
 
             /**
              * Авторизация через соц. сеть
@@ -376,6 +381,7 @@ $routes = [
                 'path' => '/social',
                 'action' => 'authWithSocialAction'
             ],
+
 
 
             [
@@ -648,13 +654,50 @@ $routes = [
                 'path' => '/get/{account_id}/{page}/{page_size}',
                 'action' => 'getNewsAction'
             ],
+
             /**
-             * Возвращает все новости юзера и новости тех, на кого он подписан.
-             * Пока простая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             * Возвращает новости текущего пользователя/указанной компании пользователя.
              *
-             * @access private
              * @method GET
              *
+             * @param $page
+             * @param $page_size
+             * @param $account_id
+             *
+             * @return string - json array объектов news или Status, если ошибка
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/own/{account_id}',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{account_id}/{page}',
+                'action' => 'getOwnNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/own/{account_id}/{page}/{page_size}',
+                'action' => 'getOwnNewsAction'
+            ],
+
+            /**
+             * Возвращает все новости юзера и новости тех, на кого он подписан.
+             * Пока прростая логика с выводом только лишь новостей (без других объектов типа заказов, услуг)
+             *
+             * @access private
+             *
+             * @method GET
+             *
+             * @param $account_id
+             * @param $page
+             * @param $page_size
              * @return string - json array с новостями (или их отсутствием)
              */
             [
@@ -664,12 +707,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/all/{page}',
+                'path' => '/get/all/{account_id}',
                 'action' => 'getAllNewsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/all/{page}/{page_size}',
+                'path' => '/get/all/{account_id}/{page}',
+                'action' => 'getAllNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/all/{account_id}/{page}/{page_size}',
                 'action' => 'getAllNewsAction'
             ],
 
@@ -727,36 +775,6 @@ $routes = [
                 'type' => 'put',
                 'path' => '/edit',
                 'action' => 'editNewsAction'
-            ],
-
-            /**
-             * Возвращает новости текущего пользователя/указанной компании пользователя.
-             *
-             * @method GET
-             *
-             * @param $companyId
-             *
-             * @return string - json array объектов news или Status, если ошибка
-             */
-            [
-                'type' => 'get',
-                'path' => '/get/own/{company_id}',
-                'action' => 'getOwnNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/own',
-                'action' => 'getOwnNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}',
-                'action' => 'getOwnNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}/{page_size}',
-                'action' => 'getOwnNewsAction'
             ],
 
             /**
@@ -1285,21 +1303,6 @@ $routes = [
             ],
 
             /**
-             * Делает указанного пользователя менеджером компании
-             *
-             * @method POST
-             *
-             * @params user_id, company_id
-             *
-             * @return int account_id
-             */
-            [
-                'type' => 'post',
-                'path' => '/add/manager',
-                'action' => 'setManagerAction'
-            ],
-
-            /**
              * Удаляет пользователя из менеджеров компании
              *
              * @method DELETE
@@ -1341,7 +1344,7 @@ $routes = [
             [
                 'type' => 'post',
                 'path' => '/get/confirm-code/create-company',
-                'action' => 'getConfirmCodeForCreateCompany'
+                'action' => 'getConfirmCodeForCreateCompanyAction'
             ],
 
             /**
@@ -1352,15 +1355,15 @@ $routes = [
              *
              * @method POST
              *
-             * @params confirm_code
+             * @params confirm_code (!)
              * Для компании
              * @params category_id int - категория, в которой компания будет оказывать услуги
-             * @params company_name string - название компании
+             * @params company_name (!) string - название компании
              *
              * Для точки оказания услуг
              * @params time string режим работы точки оказания услуг
-             * @params latitude double
-             * @params longitude double
+             * @params latitude (!) double
+             * @params longitude (!) double
              *
              * Спорно
              * @params website string
@@ -1637,7 +1640,8 @@ $routes = [
              * @param $type
              *
              * @params object_id - id новости
-             * @params comment_text - текст комментария
+             * @params comment_text - текст
+             * @params reply_id - id of the comment to which the comment was created
              * @params account_id - int id аккаунта, от имени которого добавляется комментарий.
              * Если не указан, то от имени текущего пользователя по умолчанию.
              *
@@ -2245,8 +2249,9 @@ $routes = [
              *      news
              *      review
              *      service
-             *      company (пока еще не реализовано)
+             *      rastreniya
              *      temp
+             *      company (пока еще не реализовано)
              *
              * @access private
              *
@@ -2340,7 +2345,7 @@ $routes = [
 
             /**
              * Меняет лайкнутость текущим пользователем указанного объекта
-             *
+             * @access private
              * @method POST
              *
              * @param $type
@@ -2768,6 +2773,43 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get',
                 'action' => 'getCitiesAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\InviteController' => [
+        'prefix' => '/invite',
+        'resources' => [
+
+            /**
+             * Приглашает указанного пользователя стать менеджером в компании
+             * @access private
+             * @method POST
+             *
+             * @params user_id
+             * @params company_id
+             *
+             * @return int account_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/manager',
+                'action' => 'inviteToBeManagerAction'
+            ],
+
+            /**
+             * Пользователь соглашается быть менеджером в компании
+             *
+             * @access private
+             *
+             * @method POST
+             *
+             * @params company_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/accept',
+                'action' => 'agreeToBeManager'
             ],
         ]
     ],

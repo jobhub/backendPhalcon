@@ -89,8 +89,10 @@ class UserInfoService extends AbstractService
             $userInfo->setPatronymic($data['patronymic']);
         if (isset($data['male']))
             $userInfo->setMale($data['male']);
-        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
+        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id'])) {
+            $city = $this->cityService->getCityById($data['city_id']);
             $userInfo->setCityId($data['city_id']);
+        }
         if (!empty(trim($data['birthday'])))
             $userInfo->setBirthday(date('Y-m-d H:i:sO', strtotime($data['birthday'])));
         if (isset($data['about']))
@@ -201,6 +203,11 @@ class UserInfoService extends AbstractService
 
         SupportClass::writeMessageInLogFile('Файл '.$strFile);
 
+        if(empty($file)){
+            throw new ServiceExtendedException('Не удалось загрузить файл по полученной из соц. сети ссылке',
+                ImageService::ERROR_UNABLE_SAVE_IMAGE);
+        }
+
         $phalcon_file = new PhalconFile([
             'name'=>$photo_name,
             'tmp_name'=>$imagePath,
@@ -218,6 +225,8 @@ class UserInfoService extends AbstractService
         $image = $this->imageService->getImageById($ids[0]['image_id'],ImageService::TYPE_USER);
 
         $this->changeUserInfo($userInfo,['path_to_photo' => $image->getImagePath()]);
+
+        unlink($imagePath);
     }
     /*public function subscribeToCompany(int $userId, int $companyId)
     {

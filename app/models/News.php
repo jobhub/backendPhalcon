@@ -222,7 +222,7 @@ class News extends AccountWithNotDeletedWithCascade
                 // Запрос транзакции
                 $transaction = $manager->get();
                 $this->setTransaction($transaction);
-                $images = ImagesNews::findByNewsId($this->getNewsId());
+                $images = ImagesNews::findByObjectId($this->getNewsId());
 
                 foreach ($images as $image) {
                     $image->setTransaction($transaction);

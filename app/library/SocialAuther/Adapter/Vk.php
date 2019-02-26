@@ -14,7 +14,9 @@ class Vk extends AbstractAdapter
             'socialId'   => 'id',
             'email'      => 'email',
             'avatar'     => 'photo_max_orig',
-            'birthday'   => 'bdate'
+            'birthday'   => 'bdate',
+            'first_name'=>'first_name',
+            'last_name'=>'last_name'
         );
 
         $this->provider = 'vk';
@@ -34,28 +36,6 @@ class Vk extends AbstractAdapter
         } elseif (isset($this->userInfo['first_name']) && !isset($this->userInfo['last_name'])) {
             $result = $this->userInfo['first_name'];
         } elseif (!isset($this->userInfo['first_name']) && isset($this->userInfo['last_name'])) {
-            $result = $this->userInfo['last_name'];
-        }
-
-        return $result;
-    }
-
-    public function getFirstName()
-    {
-        $result = null;
-
-        if (isset($this->userInfo['first_name'])) {
-            $result = $this->userInfo['first_name'];
-        }
-
-        return $result;
-    }
-
-    public function getLastName()
-    {
-        $result = null;
-
-        if (isset($this->userInfo['last_name'])) {
             $result = $this->userInfo['last_name'];
         }
 
@@ -236,7 +216,7 @@ class Vk extends AbstractAdapter
             'auth_url'    => 'http://oauth.vk.com/authorize',
             'auth_params' => array(
                 'client_id'     => $this->clientId,
-                'scope'         => 'notify',
+                'scope'         => '4195328',
                 'redirect_uri'  => $this->redirectUri,
                 'response_type' => 'code'
             )

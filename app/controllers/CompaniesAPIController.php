@@ -6,6 +6,9 @@ use App\Libs\SupportClass;
 use App\Models\CompanyRole;
 use App\Services\CategoryService;
 use App\Services\ConfirmService;
+use App\Services\InviteService;
+use App\Services\MarkerService;
+use App\Services\NotificationService;
 use App\Services\PhoneService;
 use App\Services\PointService;
 use App\Services\UserService;
@@ -125,22 +128,23 @@ class CompaniesAPIController extends AbstractController
      *
      * @method POST
      *
-     * @params confirm_code
+     * @params confirm_code (!)
      * Для компании
      * @params category_id int - категория, в которой компания будет оказывать услуги
-     * @params company_name string - название компании
+     * @params company_name (!) string - название компании
      *
      * Для точки оказания услуг
      * @params time string режим работы точки оказания услуг
-     * @params latitude double
-     * @params longitude double
+     * @params latitude (!) double
+     * @params longitude (!) double
      *
      * Спорно
      * @params website string
      * @params phones array [string] - массив номеров телефонов
      *
      */
-    public function createBusinessAccount(){
+    public function createBusinessAccount()
+    {
         $inputData = $this->request->getJsonRawBody();
         $data['category_id'] = $inputData->category_id;
         $data['company_name'] = $inputData->company_name;
@@ -155,11 +159,31 @@ class CompaniesAPIController extends AbstractController
 
         $this->db->begin();
         try {
+
+            if (empty($data['company_name']))
+                $errors['company_name'] = 'Missing required parameter "company_name"';
+
+            if (empty($data['latitude']))
+                $errors['latitude'] = 'Missing required parameter "latitude"';
+
+            if (empty($data['longitude']))
+                $errors['longitude'] = 'Missing required parameter "longitude"';
+
+            if (empty($data['confirm_code']))
+                $errors['confirm_code'] = 'Missing required parameter "confirm_code"';
+
+            if (!is_null($errors)) {
+                $exception = new Http400Exception(_('Invalid some parameters'));
+                $errors['errors'] = true;
+                throw $exception->addErrorDetails($errors);
+            }
+
             $userId = self::getUserId();
 
             $user = $this->userService->getUserById($userId);
 
-            $checking = $this->confirmService->checkConfirmCode($user,$data['confirm_code'],ConfirmService::TYPE_CREATE_COMPANY);
+            $checking = $this->confirmService->checkConfirmCode($user, $data['confirm_code'],
+                ConfirmService::TYPE_CREATE_COMPANY);
 
             if ($checking == ConfirmService::RIGHT_DEACTIVATE_CODE) {
                 $this->confirmService->deleteConfirmCode($user->getUserId());
@@ -167,9 +191,12 @@ class CompaniesAPIController extends AbstractController
             }
 
             if ($checking == ConfirmService::WRONG_CONFIRM_CODE) {
+                $errors['confirm_code'] = 'Invalid code';
+            }
+
+            if (!is_null($errors)) {
                 $exception = new Http400Exception(_('Invalid some parameters'));
                 $errors['errors'] = true;
-                $errors['confirm_code'] = 'Invalid code';
                 throw $exception->addErrorDetails($errors);
             }
 
@@ -193,13 +220,16 @@ class CompaniesAPIController extends AbstractController
 
             $tradePoint = $this->pointService->createPoint($point_data);
 
-            if(isset($data['category_id']) && SupportClass::checkInteger($data['category_id']))
+            if (isset($data['category_id']) && SupportClass::checkInteger($data['category_id']))
                 $this->categoryService->linkCompanyWithCategory($data['category_id'], $company->getCompanyId());
 
-            foreach ($data['phones'] as $phone){
-                //Скорее всего, к компании
-                $this->phoneService->addPhoneToCompany($phone,$company->getCompanyId());
-            }
+            if (is_array($data['phones']))
+                foreach ($data['phones'] as $phone) {
+                    //Скорее всего, к компании
+                    $this->phoneService->addPhoneToCompany($phone, $company->getCompanyId());
+                }
+
+            $this->confirmService->deleteConfirmCode($userId, ConfirmService::TYPE_CREATE_COMPANY);
 
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
@@ -208,6 +238,7 @@ class CompaniesAPIController extends AbstractController
                 case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
                 case CategoryService::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY:
                 case PointService::ERROR_UNABLE_CREATE_POINT:
+                case MarkerService::ERROR_UNABLE_CREATE_MARKER:
                 case PhoneService::ERROR_UNABLE_CREATE_PHONE:
                 case PhoneService::ERROR_UNABLE_ADD_PHONE_TO_COMPANY:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -215,7 +246,7 @@ class CompaniesAPIController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        } catch(ServiceException $e){
+        } catch (ServiceException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
                 case CategoryService::ERROR_CATEGORY_NOT_FOUND:
@@ -241,12 +272,12 @@ class CompaniesAPIController extends AbstractController
      * @method POST
      *
      */
-    public function getConfirmCodeForCreateCompany(){
-        //Пока, если код существует, то просто перезаписывается
+    public function getConfirmCodeForCreateCompanyAction()
+    {
         try {
             $userId = self::getUserId();
             $user = $this->userService->getUserById($userId);
-            $this->resetPasswordService->sendPasswordResetCode($user, ConfirmService::TYPE_CREATE_COMPANY);
+            $this->confirmService->sendConfirmCode($user, ConfirmService::TYPE_CREATE_COMPANY);
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case AbstractService::ERROR_UNABLE_SEND_TO_MAIL:
@@ -266,7 +297,7 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Code for reset password successfully sent');
+        return self::successResponse('Code for creation company successfully sent');
     }
 
     /**
@@ -328,7 +359,6 @@ class CompaniesAPIController extends AbstractController
         $data['description'] = $inputData->description;
 
         try {
-
             //validation
             if (empty(trim($data['company_id']))) {
                 $errors['company_id'] = 'Missing required parameter "company_id"';
@@ -439,76 +469,6 @@ class CompaniesAPIController extends AbstractController
     }
 
     /**
-     * Делает указанного пользователя менеджером компании
-     *
-     * @method POST
-     *
-     * @params user_id
-     * @params company_id
-     *
-     * @return int account_id
-     */
-    public function setManagerAction()
-    {
-        $inputData = $this->request->getJsonRawBody();
-        $data['user_id'] = $inputData->user_id;
-        $data['company_id'] = $inputData->company_id;
-
-        //validation
-        if (empty(trim($data['user_id']))) {
-            $errors['user_id'] = 'Missing required parameter "user_id"';
-        }
-
-        if (empty(trim($data['company_id']))) {
-            $errors['company_id'] = 'Missing required parameter "company_id"';
-        }
-
-        if (!is_null($errors)) {
-            $errors['errors'] = true;
-            $exception = new Http400Exception(_('Invalid some parameters'), self::ERROR_INVALID_REQUEST);
-            throw $exception->addErrorDetails($errors);
-        }
-
-        try {
-            $auth = $this->session->get('auth');
-            $userId = $auth['id'];
-
-            $company = $this->companyService->getCompanyById($data['company_id']);
-
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company->getCompanyId(), 'addManager')) {
-                throw new Http403Exception('Permission error');
-            }
-
-            $data['company_role_id'] = CompanyRole::ROLE_MANAGER_ID;
-            $account_id = $this->accountService->createAccount($data);
-
-        } catch (ServiceExtendedException $e) {
-            switch ($e->getCode()) {
-                case AccountService::ERROR_UNABLE_CREATE_ACCOUNT:
-                    $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
-                    throw $exception->addErrorDetails($e->getData());
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        } catch (ServiceException $e) {
-            switch ($e->getCode()) {
-                case CompanyService::ERROR_COMPANY_NOT_FOUND:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-                default:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
-            }
-        }
-
-        return self::successResponse('Manager wa successfully added', ['account_id' => $account_id]);
-    }
-
-    /**
-     * Регистрирует регистрирует нового менеджера в системе
-     */
-    public function registerManagerAction(){
-
-    }
-    /**
      * Удаляет пользователя из менеджеров компании
      *
      * @method DELETE
@@ -600,7 +560,7 @@ class CompaniesAPIController extends AbstractController
         }
 
         return self::successResponse('Company was successfully restored',
-            SupportClass::getCertainColumnsFromArray($company->toArray(),Companies::publicColumns));
+            SupportClass::getCertainColumnsFromArray($company->toArray(), Companies::publicColumns));
     }
 
     /*public function deleteCompanyTestAction($companyId)

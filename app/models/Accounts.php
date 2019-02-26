@@ -300,6 +300,22 @@ class Accounts extends \Phalcon\Mvc\Model
         return false;
     }
 
+    public static function checkUserRelatesWithCompany($userId, $companyId)
+    {
+        $account = Accounts::findFirst([
+            'company_id = :companyId: and user_id = :userId:',
+            'bind' => [
+                'companyId' => $companyId,
+                'userId' => $userId
+            ]
+        ]);
+
+        if ($account)
+            return true;
+
+        return false;
+    }
+
     /**
      * Checks equal between two accounts as subjects.
      * If accounts created for one company then they are the equal.
@@ -371,35 +387,35 @@ class Accounts extends \Phalcon\Mvc\Model
     public static function cascadeDeletingByAccountIds(string $accountIds, $transaction)
     {
         //каскадное 'удаление' точек оказания услуг
-        TradePoints::cascadeDeletingByAccountIds($accountIds,$transaction);
+        TradePoints::cascadeDeletingByAccountIds($accountIds, $transaction);
 
         //каскадное 'удаление' новостей
-        News::cascadeDeletingByAccountIds($accountIds,$transaction);
+        News::cascadeDeletingByAccountIds($accountIds, $transaction);
 
-        Services::cascadeDeletingByAccountIds($accountIds,$transaction);
+        Services::cascadeDeletingByAccountIds($accountIds, $transaction);
 
-        Requests::cascadeDeletingByAccountIds($accountIds,$transaction);
+        Requests::cascadeDeletingByAccountIds($accountIds, $transaction);
 
-        Tasks::cascadeDeletingByAccountIds($accountIds,$transaction);
+        Tasks::cascadeDeletingByAccountIds($accountIds, $transaction);
 
-        Offers::cascadeDeletingByAccountIds($accountIds,$transaction);
+        Offers::cascadeDeletingByAccountIds($accountIds, $transaction);
     }
 
     public static function cascadeRestoringByAccountIds(string $accountIds, $transaction)
     {
         //каскадное 'удаление' точек оказания услуг
-        TradePoints::cascadeRestoringByAccountIds($accountIds,$transaction);
+        TradePoints::cascadeRestoringByAccountIds($accountIds, $transaction);
 
         //каскадное 'удаление' новостей
-        News::cascadeRestoringByAccountIds($accountIds,$transaction);
+        News::cascadeRestoringByAccountIds($accountIds, $transaction);
 
-        Services::cascadeRestoringByAccountIds($accountIds,$transaction);
+        Services::cascadeRestoringByAccountIds($accountIds, $transaction);
 
-        Requests::cascadeRestoringByAccountIds($accountIds,$transaction);
+        Requests::cascadeRestoringByAccountIds($accountIds, $transaction);
 
-        Tasks::cascadeRestoringByAccountIds($accountIds,$transaction);
+        Tasks::cascadeRestoringByAccountIds($accountIds, $transaction);
 
-        Offers::cascadeRestoringByAccountIds($accountIds,$transaction);
+        Offers::cascadeRestoringByAccountIds($accountIds, $transaction);
     }
 
     /**

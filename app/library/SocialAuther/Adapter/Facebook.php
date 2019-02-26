@@ -2,6 +2,8 @@
 
 namespace App\Libs\SocialAuther\Adapter;
 
+use App\Libs\SupportClass;
+
 class Facebook extends AbstractAdapter
 {
     public function __construct($config)
@@ -14,7 +16,9 @@ class Facebook extends AbstractAdapter
             'name'       => 'name',
             'socialPage' => 'link',
             'sex'        => 'gender',
-            'birthday'   => 'birthday'
+            'birthday'   => 'birthday',
+            'first_name'=>'first_name',
+            'last_name'=>'last_name'
         );
 
         $this->provider = 'facebook';
@@ -28,8 +32,18 @@ class Facebook extends AbstractAdapter
     public function getAvatar()
     {
         $result = null;
-        if (isset($this->userInfo['username'])) {
-            $result = 'http://graph.facebook.com/' . $this->userInfo['username'] . '/picture?type=large';
+        if (isset($this->userInfo['access_token'])) {
+            $result = 'https://graph.facebook.com/me/picture?type=large&access_token='.$this->userInfo['access_token'];
+        }
+
+        return $result;
+    }
+
+    public function getPhotoName()
+    {
+        $result = null;
+        if (isset($this->userInfo['access_token'])) {
+            $result = 'downloaded.jpg';
         }
 
         return $result;
@@ -40,32 +54,53 @@ class Facebook extends AbstractAdapter
      *
      * @return bool
      */
-    public function authenticate()
+    public function authenticate($code)
     {
-        $result = false;
-
-        if (isset($_GET['code'])) {
+        if (!empty($code)) {
             $params = array(
                 'client_id'     => $this->clientId,
                 'redirect_uri'  => $this->redirectUri,
                 'client_secret' => $this->clientSecret,
-                'code'          => $_GET['code']
+                'code'          => $code
             );
 
-            parse_str($this->get('https://graph.facebook.com/oauth/access_token', $params, false), $tokenInfo);
 
+            SupportClass::writeMessageInLogFile("Перед получением токена");
+
+            $tokenInfo = $this->get('https://graph.facebook.com/oauth/access_token', $params);
+
+            $strTokenInfo = var_export($tokenInfo,true);
+            SupportClass::writeMessageInLogFile("Получил токен. tokenInfo - ".$strTokenInfo);
+
+            SupportClass::writeMessageInLogFile("Перед запросом данных о юзере");
             if (count($tokenInfo) > 0 && isset($tokenInfo['access_token'])) {
-                $params = array('access_token' => $tokenInfo['access_token']);
+
+                SupportClass::writeMessageInLogFile("Прошел проверку токена. Получение прав");
+                $params = array(
+                    'access_token' => $tokenInfo['access_token'],
+                );
+                $permissions = $this->get('https://graph.facebook.com/me/permissions', $params);
+                $strPermissions = var_export($permissions,true);
+                SupportClass::writeMessageInLogFile("Права - ".$strPermissions);
+
+                SupportClass::writeMessageInLogFile("Перед получением информации о пользователе");
+                $params = array(
+                    'access_token' => $tokenInfo['access_token'],
+                    'fields'=>'id,name,first_name,last_name,picture,hometown,birthday,email'
+                );
                 $userInfo = $this->get('https://graph.facebook.com/me', $params);
 
+                $strUserInfo = var_export($userInfo,true);
+                SupportClass::writeMessageInLogFile("Инфа о юзере - ".$strUserInfo);
                 if (isset($userInfo['id'])) {
                     $this->userInfo = $userInfo;
-                    $result = true;
+                    $this->userInfo['access_token'] = $tokenInfo['access_token'];
+                    return true;
                 }
             }
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -81,8 +116,28 @@ class Facebook extends AbstractAdapter
                 'client_id'     => $this->clientId,
                 'redirect_uri'  => $this->redirectUri,
                 'response_type' => 'code',
-                'scope'         => 'email,user_birthday'
+                'scope'         => 'email,public_profile,user_birthday,user_hometown'
             )
         );
+    }
+
+    public function getUser(){
+        return [
+            'network'=>$this->getProvider(),
+            'identity'=>$this->getSocialId(),
+            'first_name'=>$this->getFirstName(),
+            'last_name'=>$this->getLastName(),
+            'male'=>$this->getSex(),
+            //'country'=>$this->getCountry(),
+            //'city'=>$this->getCity(),
+            'profile'=>$this->getSocialPage(),
+            'email'=>$this->getEmail(),
+            //'city_id'=>$this->getCityId(),
+            //'status'=>$this->getStatus(),
+            //'about'=>$this->getAbout(),
+            'birthday'=>$this->getBirthday(),
+            'uri_to_photo'=>$this->getAvatar(),
+            'photo_name'=>$this->getPhotoName()
+        ];
     }
 }

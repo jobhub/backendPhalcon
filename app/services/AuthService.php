@@ -225,7 +225,7 @@ class AuthService extends AbstractService
         $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword());
-        return /*$hash[12] . $hash[7] . $hash[9] . $hash[53]*/rand(0,9);
+        return /*$hash[12] . $hash[7] . $hash[9] . $hash[53]*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     /**
@@ -238,7 +238,7 @@ class AuthService extends AbstractService
         $hash = hash('sha256', ($user->getEmail() == null ? ' ' : $user->getEmail()) .
             time() . ($user->getPhoneId() == null ? ' ' : $user->phones->getPhone())
             . $user->getPassword() . '-no');
-        return $hash[12] . $hash[7] . $hash[9] . $hash[53];
+        return /*$hash[12] . $hash[7] . $hash[9] . $hash[53]*/rand(0,9).rand(0,9).rand(0,9).rand(0,9);
     }
 
     public function sendMailForActivation(ActivationCodes $activationCode, string $email)
