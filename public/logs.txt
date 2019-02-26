@@ -18455,3 +18455,16 @@
 Дата: 2019-02-26 11:57:51 - token is aaa
 Дата: 2019-02-26 11:57:51 - Не нашел токена в базе, разрушил сессию
 Дата: 2019-02-26 11:57:51 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 14:31:30 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '1b2d756d-d862-31f8-72f1-859fa72c0103',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 14:31:30 - token is aaa
+Дата: 2019-02-26 14:31:30 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 14:31:30 - Сессии нет или же переменной в сессии нет. Роль гостя

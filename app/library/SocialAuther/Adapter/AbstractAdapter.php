@@ -216,8 +216,8 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $result = null;
 
-        if (isset($this->userInfo['first_name'])) {
-            $result = $this->userInfo['first_name'];
+        if (isset($this->userInfo[$this->socialFieldsMap['first_name']])) {
+            $result = $this->userInfo[$this->socialFieldsMap['first_name']];
         }
 
         return $result;
@@ -227,8 +227,8 @@ abstract class AbstractAdapter implements AdapterInterface
     {
         $result = null;
 
-        if (isset($this->userInfo['last_name'])) {
-            $result = $this->userInfo['last_name'];
+        if (isset($this->userInfo[$this->socialFieldsMap['last_name']])) {
+            $result = $this->userInfo[$this->socialFieldsMap['last_name']];
         }
 
         return $result;

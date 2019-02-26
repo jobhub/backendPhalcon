@@ -14,7 +14,9 @@ class Vk extends AbstractAdapter
             'socialId'   => 'id',
             'email'      => 'email',
             'avatar'     => 'photo_max_orig',
-            'birthday'   => 'bdate'
+            'birthday'   => 'bdate',
+            'first_name'=>'first_name',
+            'last_name'=>'last_name'
         );
 
         $this->provider = 'vk';

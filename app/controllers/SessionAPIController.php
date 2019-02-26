@@ -221,7 +221,7 @@ class SessionAPIController extends AbstractController
                     break;
                 }
                 default:
-                    return null;
+                    return ['error'=>'Invalid provider'];
             }
 
             SupportClass::writeMessageInLogFile("Перед пыткой вызвать authenticate");
