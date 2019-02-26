@@ -34,7 +34,7 @@ class RastreniyaService extends AbstractService
         /*
          * start validation bloc
          */
-        if (is_null($content) || strlen(trim($content)) == 0) {
+        if ((is_null($content) || strlen(trim($content)) == 0) && $file == null) {
             throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
