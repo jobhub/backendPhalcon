@@ -203,6 +203,11 @@ class UserInfoService extends AbstractService
 
         SupportClass::writeMessageInLogFile('Файл '.$strFile);
 
+        if(empty($file)){
+            throw new ServiceExtendedException('Не удалось загрузить файл по полученной из соц. сети ссылке',
+                ImageService::ERROR_UNABLE_SAVE_IMAGE);
+        }
+
         $phalcon_file = new PhalconFile([
             'name'=>$photo_name,
             'tmp_name'=>$imagePath,
@@ -220,6 +225,8 @@ class UserInfoService extends AbstractService
         $image = $this->imageService->getImageById($ids[0]['image_id'],ImageService::TYPE_USER);
 
         $this->changeUserInfo($userInfo,['path_to_photo' => $image->getImagePath()]);
+
+        unlink($imagePath);
     }
     /*public function subscribeToCompany(int $userId, int $companyId)
     {

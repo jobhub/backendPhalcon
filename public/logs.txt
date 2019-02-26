@@ -18338,3 +18338,120 @@
 )
 Дата: 2019-02-25 16:32:46 - token is eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYsImxvZ2luIjoiYWdnZ3JAbWFpbC5ydSIsInJvbGUiOiJNb2RlcmF0b3IiLCJsaWZldGltZSI6IjIwMTktMDMtMDQgMTA6MjI6MTIifQ==.T1Hz1XTPMMrT0Gy+g76/BOyF1i4GfrmIeEOWrSZ351w9sJpZfc4iparHKB/C57/d4IEYZvevAluiCDOCvFkRnrE9BKmbvO6hvvYxkjQOdpgVMak/5SlRdgl7ZnD7tZBPXMXfpqKshiU7tSphtK9XwpXi8yIixDYc23Ms342lnpDAthsLmuHBsUHMqiC5dTny0ykqZytrDwQLm5NQcgZ6+83Cbgce8Rhkp67KfL4PaKEpYonx0Zxnq9F5k45RbOA0GNVPz+4Mzg4xwoSYzHeNIHrvcS6hPLE0kdVeMSy8z+aoFPLbdhNwjIYJoj+UkxEif4mI0nbkPH/FMSwUdTDubw==
 Дата: 2019-02-25 16:32:46 - Сессия есть, роль Moderator
+Дата: 2019-02-26 09:59:27 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'bb89b5be-0646-25a1-0b7b-2c038feb5904',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 09:59:27 - token is aaa
+Дата: 2019-02-26 09:59:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 09:59:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 10:00:27 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '1da8acf0-fc66-d1c9-5450-e7db5340d537',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 10:00:27 - token is aaa
+Дата: 2019-02-26 10:00:27 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 10:00:27 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 10:12:08 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'f7361cf3-b2ef-71ea-1ac7-92755b1f78bc',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 10:12:08 - token is aaa
+Дата: 2019-02-26 10:12:08 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 10:12:08 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 10:13:35 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '05efa5d5-1520-72dc-35fc-2c371e2016eb',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 10:13:35 - token is aaa
+Дата: 2019-02-26 10:13:35 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 10:13:35 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 11:41:59 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '25124bba-9e12-cf49-69b3-e8e6ce1078cc',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 11:41:59 - token is aaa
+Дата: 2019-02-26 11:41:59 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 11:41:59 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 11:42:12 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '89b12077-a3fa-3f79-60bc-5163d2408bd1',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 11:42:12 - token is aaa
+Дата: 2019-02-26 11:42:12 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 11:42:12 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 11:42:23 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '31f9a7c1-184d-838b-5030-37324e9a359f',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 11:42:23 - token is aaa
+Дата: 2019-02-26 11:42:23 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 11:42:23 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 11:43:04 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => 'c57f0085-06b5-388b-e374-e80a1484b047',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 11:43:04 - token is aaa
+Дата: 2019-02-26 11:43:04 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 11:43:04 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-26 11:57:51 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Cache-Control' => 'no-cache',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Postman-Token' => '9354c3ff-4373-3e7f-a5e2-030455ec4b8d',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate, sdch',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-26 11:57:51 - token is aaa
+Дата: 2019-02-26 11:57:51 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-26 11:57:51 - Сессии нет или же переменной в сессии нет. Роль гостя

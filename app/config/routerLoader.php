@@ -2777,7 +2777,6 @@ $routes = [
         ]
     ],
 
-
     '\App\Controllers\InviteController' => [
         'prefix' => '/invite',
         'resources' => [

@@ -173,7 +173,7 @@ class SessionAPIController extends AbstractController
     {
         try {
             if ($this->request->isGet()) {
-                if (!isset($_GET['code'])) {
+                if (!isset($_GET['code']) && !isset($_GET['error'])) {
                     switch($social_net) {
                         case 'vk': {
                             $vkAdapterConfig = $this->config['social']['vk'];
@@ -193,7 +193,7 @@ class SessionAPIController extends AbstractController
                     }
                     return ['url' => $adapter->getAuthUrl()];
                 } else {
-                    return ['code' => $_GET['code']];
+                    return $_GET;
                 }
             }
 
@@ -209,13 +209,13 @@ class SessionAPIController extends AbstractController
                     break;
                 }
                 case 'facebook': {
-                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapterConfig = $this->config['social']['facebook'];
                     $fbAdapter = new Facebook($vkAdapterConfig);
                     $auther = new SocialAuther($fbAdapter);
                     break;
                 }
                 case 'google': {
-                    $vkAdapterConfig = $this->config['social']['vk'];
+                    $vkAdapterConfig = $this->config['social']['google'];
                     $googleAdapter = new Google($vkAdapterConfig);
                     $auther = new SocialAuther($googleAdapter);
                     break;
@@ -242,6 +242,7 @@ class SessionAPIController extends AbstractController
             $userSocial = UsersSocial::findByIdentity($userFromSocialNet['network'], $userFromSocialNet['identity']);
 
             if (!$userSocial) {
+
                 if(empty($userFromSocialNet['first_name'])){
                     $userFromSocialNet['first_name'] = $data['first_name'];
                 }
