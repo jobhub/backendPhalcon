@@ -5,10 +5,12 @@ namespace App\Controllers;
 use App\Libs\SimpleULogin;
 use App\Libs\SocialAuther\Adapter\Facebook;
 use App\Libs\SocialAuther\Adapter\Google;
+use App\Libs\SocialAuther\Adapter\Instagram;
 use App\Models\Accounts;
 use App\Models\UsersSocial;
 use App\Services\AbstractService;
 use App\Services\AccountService;
+use App\Services\CityService;
 use App\Services\ImageService;
 use App\Services\SocialNetService;
 use App\Services\UserInfoService;
@@ -140,6 +142,7 @@ class SessionAPIController extends AbstractController
         }
 
         if (!is_null($errors)) {
+            $errors['errors'] = true;
             $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
             throw $exception->addErrorDetails($errors);
         }
@@ -164,16 +167,26 @@ class SessionAPIController extends AbstractController
 
     /**
      * Авторизация через соц. сеть
-     * Должен автоматически вызываться компонентом uLogin.
+     * @access public
+     * @method GET, POST
      *
-     * @method GET
+     * @param $social_net = null
+     *
+     * @params code
+     * @params provider
+     *
+     * @params city_id
+     * @params male
+     * @params first_name
+     * @params last_name
+     *
      * @return array - json array в формате Status
      */
     public function authWithSocialAction($social_net = null)
     {
         try {
             if ($this->request->isGet()) {
-                if (!isset($_GET['code']) && !isset($_GET['error'])) {
+                if (!isset($_GET['code']) && !isset($_GET['error']) && $social_net!=null) {
                     switch($social_net) {
                         case 'vk': {
                             $vkAdapterConfig = $this->config['social']['vk'];
@@ -190,6 +203,13 @@ class SessionAPIController extends AbstractController
                             $adapter = new Google($configInfoNet);
                             break;
                         }
+                        case 'instagram':{
+                            $configInfoNet = $this->config['social']['instagram'];
+                            $adapter = new Instagram($configInfoNet);
+                            break;
+                        }
+                        default:
+                            return [];
                     }
                     return ['url' => $adapter->getAuthUrl()];
                 } else {
@@ -218,6 +238,12 @@ class SessionAPIController extends AbstractController
                     $vkAdapterConfig = $this->config['social']['google'];
                     $googleAdapter = new Google($vkAdapterConfig);
                     $auther = new SocialAuther($googleAdapter);
+                    break;
+                }
+                case 'instagram':{
+                    $configInfoNet = $this->config['social']['instagram'];
+                    $adapter = new Instagram($configInfoNet);
+                    $auther = new SocialAuther($adapter);
                     break;
                 }
                 default:
@@ -275,6 +301,12 @@ class SessionAPIController extends AbstractController
                     $errors['male'] = 'Missing require field "male"';
                 }
 
+                if (!is_null($errors)) {
+                    $errors['errors'] = true;
+                    $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+                    throw $exception->addErrorDetails($errors);
+                }
+
                 $user = $this->socialNetService->registerUserByNet($userFromSocialNet);
 
                 $strUser = var_export($user->getUserId(),true);
@@ -324,16 +356,24 @@ class SessionAPIController extends AbstractController
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
-                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
+                    throw new Http500Exception(/*$e->getMessage()*/_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
             $this->db->rollback();
             switch ($e->getCode()) {
+                case CityService::ERROR_CITY_NOT_FOUND:
+                {
+                    $errors['errors'] = true;
+                    $errors['city_id'] = "Received city id is not presented";
+                    $exception = new Http400Exception('Invalid some parameters', self::ERROR_INVALID_REQUEST);
+                    throw $exception->addErrorDetails($errors);
+                    break;
+                }
                 case UserService::ERROR_USER_NOT_FOUND:
                 case AuthService::ERROR_INCORRECT_PASSWORD:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
-                    throw new Http500Exception($e->getMessage()/*_('Internal Server Error')*/, $e->getCode(), $e);
+                    throw new Http500Exception(/*$e->getMessage()*/_('Internal Server Error'), $e->getCode(), $e);
             }
         }
     }
