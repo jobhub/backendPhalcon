@@ -354,8 +354,9 @@ $routes = [
             ],
 
             /**
-             * Авторизация через соц. сеть
-             *
+             * Авторизация через соц. сеть. Возвращает ссылку, после перехода по которой пользователь должен получить code
+             * для дальнейшей авторизации через соц. сеть.
+             * @access public
              * @method GET
              * @return string - json array в формате Status
              */
@@ -373,7 +374,15 @@ $routes = [
             /**
              * Авторизация через соц. сеть
              *
-             * @method GET
+             * @params code
+             * @params provider
+             *
+             * @params city_id
+             * @params male
+             * @params first_name
+             * @params last_name
+             *
+             * @method POST
              * @return string - json array в формате Status
              */
             [
@@ -382,13 +391,11 @@ $routes = [
                 'action' => 'authWithSocialAction'
             ],
 
-
-
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/test/social/change-photo',
                 'action' => 'testingSavingImageToUserProfileAction'
-            ],
+            ],*/
         ]
     ],
 
@@ -530,6 +537,8 @@ $routes = [
                 'path' => '/get/{user_id}/{account_id}',
                 'action' => 'getUserInfoAction'
             ],
+
+
 
             /**
              * Меняет данные текущего пользоваателя.
@@ -722,6 +731,44 @@ $routes = [
             ],
 
             /**
+             * Возвращает новости указанного объекта
+             *
+             * @method GET
+             * @param $page
+             * @param $page_size
+             * @param $id
+             * @param $is_company (Можно не указывать, значение по умолчанию 0)
+             * @param $account_id - аккаунт от имени которого совершаются действия.
+             *
+             * @return string - json array объектов news или Status, если ошибка
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
+                'action' => 'getSubjectsNewsAction'
+            ],
+
+            /**
              * Создает новость компании или пользователя.
              * Если прикрепить изображения, они будут добавлены к новости.
              *
@@ -775,44 +822,6 @@ $routes = [
                 'type' => 'put',
                 'path' => '/edit',
                 'action' => 'editNewsAction'
-            ],
-
-            /**
-             * Возвращает новости указанного объекта
-             *
-             * @method GET
-             * @param $page
-             * @param $page_size
-             * @param $id
-             * @param $is_company (Можно не указывать, значение по умолчанию 0)
-             * @param $account_id - аккаунт от имени которого совершаются действия.
-             *
-             * @return string - json array объектов news или Status, если ошибка
-             */
-            [
-                'type' => 'get',
-                'path' => '/get/by-subject/{id}',
-                'action' => 'getSubjectsNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/by-subject/{id}/{is_company}',
-                'action' => 'getSubjectsNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/by-subject/{id}/{is_company}/{account_id}',
-                'action' => 'getSubjectsNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}',
-                'action' => 'getSubjectsNewsAction'
-            ],
-            [
-                'type' => 'get',
-                'path' => '/get/by-subject/{id}/{is_company}/{account_id}/{page}/{page_size}',
-                'action' => 'getSubjectsNewsAction'
             ],
 
             /**

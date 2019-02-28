@@ -48835,4 +48835,27 @@
 Дата: 2019-02-26 14:31:30 - token is aaa
 Дата: 2019-02-26 14:31:30 - Не нашел токена в базе, разрушил сессию
 Дата: 2019-02-26 14:31:30 - Сессии нет или же переменной в сессии нет. Роль гостя
+<<<<<<< HEAD
+>>>>>>> changing_to_micro
+=======
+Дата: 2019-02-27 12:00:32 - Headers array (
+  'Host' => 'job',
+  'Connection' => 'keep-alive',
+  'Content-Length' => '48',
+  'Postman-Token' => 'a6921d09-129e-3527-a7d8-e10e45843562',
+  'Cache-Control' => 'no-cache',
+  'Origin' => 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.75 Safari/537.36',
+  'Content-Type' => 'application/json',
+  'Accept' => '*/*',
+  'Accept-Encoding' => 'gzip, deflate',
+  'Accept-Language' => 'ru,en-US;q=0.8,en;q=0.6',
+)
+Дата: 2019-02-27 12:00:32 - token is aaa
+Дата: 2019-02-27 12:00:32 - Не нашел токена в базе, разрушил сессию
+Дата: 2019-02-27 12:00:32 - Сессии нет или же переменной в сессии нет. Роль гостя
+Дата: 2019-02-27 12:00:34 - email пользователя agggr@mail.ru
+Дата: 2019-02-27 12:00:34 - Юзер найден в бд
+Дата: 2019-02-27 12:00:34 - agggr@mail.ru
+Дата: 2019-02-27 12:00:34 - ID юзера при этом - 6
 >>>>>>> changing_to_micro
