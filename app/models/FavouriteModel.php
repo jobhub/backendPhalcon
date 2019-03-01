@@ -265,13 +265,17 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             if (!$subscriber)
                 return null;
 
+            $handledFavUser = [
+                'subscriber' => $subscriber
+            ];
 
             if ($currentAccountIds != null) {
                 $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
             and object_id = :companyId:', 'bind' => [
-                'currentAccountId' => $currentAccountIds,
-                'companyId' => $account->getCompanyId()
-            ]]);
+                    'currentAccountId' => $currentAccountIds,
+                    'companyId' => $account->getCompanyId()
+                ]]); 
+            }
         } else {
 
             $subscriber = Userinfo::findUserInfoById($account->getUserId(),
@@ -287,8 +291,6 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                     'currentAccountId' => $currentAccountIds,
                     'userId' => $account->getUserId()
                 ]]);
-
-                $handledFavUser['subscribed'] = $subscribed ? true : false;
             }
         }
         $resp = $subscriber->toArray();
@@ -325,9 +327,6 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             if (!$subscription)
                 return null;
 
-            $handledFav = [
-                'subscription' => $subscription
-            ];
         } else {
             $subscription = Userinfo::findUserInfoById($fav['object_id'],
                 Userinfo::shortColumns);
@@ -335,13 +334,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             if (!$subscription)
                 return null;
 
-           /* $handledFav = [
-                'subscription' => $subscription,
-            ];*/
         }
-        $resp = $subscription->toArray();
-        $resp['subscribed'] = false;
-        return $resp;
+        return $subscription;
     }
 
 

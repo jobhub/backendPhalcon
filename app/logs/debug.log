@@ -752,3 +752,21 @@ DETAIL:  Key (object_id)=(62653) is not present in table "users".
 [Wed, 27 Feb 19 13:07:23 +0300][CRITICAL] 21001 Unable subscribe account to object
 [Wed, 27 Feb 19 13:07:43 +0300][CRITICAL] 21001 Unable subscribe account to object
 >>>>>>> changing_to_micro
+[Fri, 01 Mar 19 13:14:52 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:14:58 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "favorite_companies" violates foreign key constraint "favouriteCompanies_companies_companyId"
+DETAIL:  Key (subject_id)=(50) is not present in table "companies".
+[Fri, 01 Mar 19 13:15:27 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:15:31 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:18:04 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:18:06 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:20:04 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:07 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:10 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:23 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:25 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:29 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:20:37 +0300][DEBUG] 346
+[Fri, 01 Mar 19 13:36:41 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:36:43 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:36:49 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 13:46:50 +0300][CRITICAL] 21001 Unable subscribe account to object
