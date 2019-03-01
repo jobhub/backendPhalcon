@@ -2460,7 +2460,7 @@ $routes = [
 
             /**
              * Отменяет подписку
-             * @method
+             * @method DELETE
              * @param $object_id
              * @param $type
              * @param $account_id = null
@@ -2491,28 +2491,67 @@ $routes = [
              */
             [
                 'type' => 'get',
-                'path' => '/get/subscribers',
+                'path' => '/get/my-subscribers',
                 'action' => 'getSubscribersAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscribers/{account_id}',
+                'path' => '/get/my-subscribers/{account_id}',
                 'action' => 'getSubscribersAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscribers/{account_id}/{query}',
+                'path' => '/get/my-subscribers/{account_id}/{query}',
                 'action' => 'getSubscribersAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscribers/{account_id}/{query}/{page}',
+                'path' => '/get/my-subscribers/{account_id}/{query}/{page}',
                 'action' => 'getSubscribersAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscribers/{account_id}/{query}/{page}/{page_size}',
+                'path' => '/get/my-subscribers/{account_id}/{query}/{page}/{page_size}',
                 'action' => 'getSubscribersAction'
+            ],
+
+            /**
+             * Возвращает всех подписчиков на текущий аккаунт (а именно, компанию или пользователя)
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $query = null
+             * @param $page = 1
+             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
+
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{id}',
+                'action' => 'getOtherSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{id}/{is_company}',
+                'action' => 'getOtherSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{id}/{is_company}/{query}',
+                'action' => 'getOtherSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{id}/{is_company}/{query}/{page}',
+                'action' => 'getOtherSubscribersAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscribers/{id}/{is_company}/{query}/{page}/{page_size}',
+                'action' => 'getOtherSubscribersAction'
             ],
 
             /**
@@ -2529,28 +2568,54 @@ $routes = [
              */
             [
                 'type' => 'get',
-                'path' => '/get/subscriptions',
+                'path' => '/get/my-subscriptions',
                 'action' => 'getSubscriptionsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscriptions/{account_id}',
+                'path' => '/get/my-subscriptions/{account_id}',
                 'action' => 'getSubscriptionsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscriptions/{account_id}/{query}',
+                'path' => '/get/my-subscriptions/{account_id}/{query}',
                 'action' => 'getSubscriptionsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscriptions/{account_id}/{query}/{page}',
+                'path' => '/get/my-subscriptions/{account_id}/{query}/{page}',
                 'action' => 'getSubscriptionsAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/subscriptions/{account_id}/{query}/{page}/{page_size}',
+                'path' => '/get/my-subscriptions/{account_id}/{query}/{page}/{page_size}',
                 'action' => 'getSubscriptionsAction'
+            ],
+
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{id}',
+                'action' => 'getOtherSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{id}/{is_company}',
+                'action' => 'getOtherSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{id}/{is_company}/{query}',
+                'action' => 'getOtherSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{id}/{is_company}/{query}/{page}',
+                'action' => 'getOtherSubscriptionsAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/subscriptions/{id}/{is_company}/{query}/{page}/{page_size}',
+                'action' => 'getOtherSubscriptionsAction'
             ],
 
             /**

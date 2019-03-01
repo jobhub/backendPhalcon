@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Controllers\HttpExceptions\Http400Exception;
 use App\Models\ActivationCodes;
 use App\Models\InvitesCompanyManager;
+use App\Models\InvitesModel;
+use App\Models\InvitesRegisterToBeManager;
 use App\Models\Users;
 use App\Models\Group;
 use App\Models\Phones;
@@ -18,6 +20,9 @@ use App\Libs\SupportClass;
  */
 class InviteService extends AbstractService
 {
+    const TYPE_INVITE_TO_BE_MANAGER = 1;
+    const TYPE_INVITE_TO_REGISTER_AND_BE_MANAGER = 2;
+
     const ADDED_CODE_NUMBER = 33000;
 
     /** Unable to create user */
@@ -26,10 +31,43 @@ class InviteService extends AbstractService
     const ERROR_INVITE_NOT_FOUND = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_CHANGE_INVITE = 4 + self::ADDED_CODE_NUMBER;
 
-    public function createInvite(array $inviteData)
+
+    const ERROR_INVALID_INVITE_TYPE = 5 + self::ADDED_CODE_NUMBER;
+
+    public function createNewObjectByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_INVITE_TO_BE_MANAGER:
+                $invite = new InvitesCompanyManager();
+                break;
+            case self::TYPE_INVITE_TO_REGISTER_AND_BE_MANAGER:
+                $invite = new InvitesRegisterToBeManager();
+                break;
+            default:
+                throw new ServiceException('Invalid type of invite', self::ERROR_INVALID_INVITE_TYPE);
+        }
+        return $invite;
+    }
+
+    public function getModelByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_INVITE_TO_BE_MANAGER:
+                $invite = 'App\\Models\\InvitesCompanyManager';
+                break;
+            case self::TYPE_INVITE_TO_REGISTER_AND_BE_MANAGER:
+                $invite = 'App\\Models\\InvitesRegisterToBeManager';
+                break;
+            default:
+                throw new ServiceException('Invalid type of invite', self::ERROR_INVALID_INVITE_TYPE);
+        }
+        return $invite;
+    }
+
+    public function createInvite(array $inviteData, $type)
     {
         try {
-            $invite = new InvitesCompanyManager();
+            $invite = $this->createNewObjectByType($type);
 
             $this->fillInvite($invite, $inviteData);
 
@@ -49,7 +87,7 @@ class InviteService extends AbstractService
         return $invite;
     }
 
-    public function changeInvite(InvitesCompanyManager $invite, array $inviteData)
+    public function changeInvite($invite, array $inviteData)
     {
         try {
             $this->fillInvite($invite, $inviteData);
@@ -69,22 +107,25 @@ class InviteService extends AbstractService
         return $invite;
     }
 
-    private function fillInvite(InvitesCompanyManager $invite, array $data)
+    private function fillInvite($invite, array $data)
     {
-        if (isset($data['invited']))
-            $invite->setInvited($data['invited']);
         if (isset($data['who_invited']))
             $invite->setWhoInvited($data['who_invited']);
         if (isset($data['where_invited']))
             $invite->setWhereInvited($data['where_invited']);
         if (!empty(trim($data['invite_date'])))
             $invite->setInviteDate(date('Y-m-d H:i:sO', strtotime($data['invite_date'])));
+
+        if (isset($data['invited']))
+            $invite->setInvited($data['invited']);
     }
 
-    public function getInviteById(int $inviteId)
+    public function getInviteById(int $inviteId, $type = self::TYPE_INVITE_TO_BE_MANAGER)
     {
         try {
-            $invite = InvitesCompanyManager::findFirstByInviteId($inviteId);
+            $model = $this->getModelByType($type);
+
+            $invite = $model::findFirstByInviteId($inviteId);
 
             if (!$invite || $invite == null) {
                 throw new ServiceException('Invite don\'t exists', self::ERROR_INVITE_NOT_FOUND);
@@ -95,25 +136,31 @@ class InviteService extends AbstractService
         return $invite;
     }
 
-    public function getInviteByData($invited, $where_invited, $who_invited = null)
+    public function getInviteByData($invited, $where_invited,
+                                    $type = self::TYPE_INVITE_TO_BE_MANAGER, $who_invited = null)
     {
         try {
-            if($who_invited == null) {
-                $invite = InvitesCompanyManager::findFirst([
+
+            /*$model = $this->getModelByType($type);
+
+            if ($who_invited == null) {
+                $invite = $model::findFirst([
                     'invited = :invited: and where_invited = :where_invited:',
-                    'bind'=> ['invited'=>$invited, 'where_invited'=>$where_invited]
+                    'bind' => ['invited' => $invited, 'where_invited' => $where_invited]
                 ]);
-            } else{
-                $invite = InvitesCompanyManager::findFirst([
+            } else {
+                $invite = $model::findFirst([
                     'invited = :invited: and where_invited = :where_invited: 
                     and who_invited = :who_invited:',
-                    'bind'=> [
-                        'invited'=>$invited,
-                        'where_invited'=>$where_invited,
-                        'who_invited'=>$who_invited
+                    'bind' => [
+                        'invited' => $invited,
+                        'where_invited' => $where_invited,
+                        'who_invited' => $who_invited
                     ]
                 ]);
-            }
+            }*/
+
+            $invite = InvitesModel::findInviteByData($invited,$where_invited,$type,$who_invited);
 
             if (!$invite || $invite == null) {
                 throw new ServiceException('Invite don\'t exists', self::ERROR_INVITE_NOT_FOUND);
@@ -124,7 +171,7 @@ class InviteService extends AbstractService
         return $invite;
     }
 
-    public function deleteInvite(InvitesCompanyManager $invite)
+    public function deleteInvite(InvitesModel $invite)
     {
         try {
             if (!$invite->delete()) {

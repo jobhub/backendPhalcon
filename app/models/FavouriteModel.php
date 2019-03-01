@@ -121,7 +121,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                                 $ids = SupportClass::to_pg_array($ids);*/
 
                                 $exists = self::findFirst(['subject_id = ANY(:ids:) and object_id = :objectId:', 'bind' =>
-                                    ['ids' => $account_exists->getRelatedAccounts(), 'objectId'=>$fav_model->getObjectId()]]);
+                                    ['ids' => $account_exists->getRelatedAccounts(), 'objectId' => $fav_model->getObjectId()]]);
 
                                 return $exists ? false : true;
                             }
@@ -209,7 +209,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $favs = self::find(['subject_id = ANY (:subjectId:)', 'bind' => [
             'subjectId' => $account->getRelatedAccounts()
-        ], 'offset' => $offset, 'limit' => $page_size, 'order'=>'favourite_date desc']);
+        ], 'offset' => $offset, 'limit' => $page_size, 'order' => 'favourite_date desc']);
 
         return self::handleFavourites($favs->toArray());
     }
@@ -236,20 +236,22 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $account = Accounts::findFirstById($accountId);
 
-        if (!$account)
-            return null;
+        /*if (!$account)
+            return null;*/
+
+        $relatedAccounts = $account?$account->getRelatedAccounts():null;
 
         $handledFavs = [];
         foreach ($favs as $fav) {
 
-            $handledFav = self::handleSubscriber($fav, $account->getRelatedAccounts());
+            $handledFav = self::handleSubscriber($fav, $relatedAccounts);
             if ($handledFav != null)
                 $handledFavs[] = $handledFav;
         }
         return $handledFavs;
     }
 
-    public static function handleSubscriber($fav, string $currentAccountIds)
+    public static function handleSubscriber($fav,$currentAccountIds)
     {
         $account = Accounts::findFirstById($fav['subject_id']);
 
@@ -267,13 +269,15 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 'subscriber' => $subscriber
             ];
 
-            $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
+            if ($currentAccountIds != null) {
+                $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
             and object_id = :companyId:', 'bind' => [
-                'currentAccountId' => $currentAccountIds,
-                'companyId' => $account->getCompanyId()
-            ]]);
+                    'currentAccountId' => $currentAccountIds,
+                    'companyId' => $account->getCompanyId()
+                ]]);
 
-            $handledFavUser['subscribed'] = $subscribed ? true : false;
+                $handledFavUser['subscribed'] = $subscribed ? true : false;
+            }
         } else {
 
             $subscriber = Userinfo::findUserInfoById($account->getUserId(),
@@ -285,14 +289,16 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             $handledFavUser = [
                 'subscriber' => $subscriber,
             ];
+            if ($currentAccountIds != null) {
 
-            $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
+                $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
             and object_id = :userId:', 'bind' => [
-                'currentAccountId' => $currentAccountIds,
-                'userId' => $account->getUserId()
-            ]]);
+                    'currentAccountId' => $currentAccountIds,
+                    'userId' => $account->getUserId()
+                ]]);
 
-            $handledFavUser['subscribed'] = $subscribed ? true : false;
+                $handledFavUser['subscribed'] = $subscribed ? true : false;
+            }
         }
         return $handledFavUser;
     }
@@ -304,8 +310,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $account = Accounts::findFirstById($accountId);
 
-        if (!$account)
-            return null;
+        /*if (!$account)
+            return null;*/
 
         $handledFavs = [];
         foreach ($favs as $fav) {
@@ -319,7 +325,6 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
     public static function handleSubscription($fav)
     {
-
         if ($fav['relation'] == 'favorite_companies') {
             $subscription = Companies::findCompanyById($fav['object_id'],
                 Companies::shortColumns);

@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Libs\SupportClass;
 use App\Models\CompanyRole;
+use App\Models\InvitesModel;
+use App\Models\Users;
 use App\Services\CategoryService;
 use App\Services\ConfirmService;
 use App\Services\InviteService;
@@ -42,11 +44,15 @@ use App\Services\ServiceExtendedException;
 class InviteController extends AbstractController
 {
     /**
-     * Приглашает указанного пользователя стать менеджером в компании
+     * Приглашает указанного пользователя стать менеджером в компании.
+     * Если есть user_id, email можно не указывать.
      *
      * @method POST
      *
      * @params user_id
+     *
+     * @params email
+     *
      * @params company_id
      *
      * @return int account_id
@@ -56,10 +62,11 @@ class InviteController extends AbstractController
         $inputData = $this->request->getJsonRawBody();
         $data['user_id'] = $inputData->user_id;
         $data['company_id'] = $inputData->company_id;
+        $data['email'] = $inputData->email;
 
         //validation
-        if (empty(trim($data['user_id']))) {
-            $errors['user_id'] = 'Missing required parameter "user_id"';
+        if (empty(trim($data['user_id'])) && empty(trim($data['email']))) {
+            $errors['user_id'] = 'Missing required parameter "user_id" or "email"';
         }
 
         if (empty(trim($data['company_id']))) {
@@ -86,16 +93,57 @@ class InviteController extends AbstractController
             $account_id = $this->accountService->createAccount($data);*/
 
             $account = $this->accountService->getForUserDefaultAccount($userId);
+            $invited_user_id = null;
+            if(!empty($data['user_id'])){
+                $invited_user_id = $data['user_id'];
+            } else{
+                $user = Users::findByLogin($data['email']);
 
-            $invite = $this->inviteService->createInvite(
-                [
-                    'invited' => $data['user_id'],
-                    'who_invited' => $account->getId(),
-                    'where_invited' => $data['company_id']
-                ]
-            );
+                if($user){
+                    $invited_user_id = $user->getUserId();
+                }
+            }
 
-            $this->notificationService->sendNotification($invite, NotificationService::TYPE_INVITE_TO_BE_MANAGER);
+            if(!is_null($invited_user_id)) {
+                $invite = InvitesModel::findInviteByData($data['user_id'],$data['company_id'],
+                    InviteService::TYPE_INVITE_TO_BE_MANAGER);
+
+                if($invite){
+                    $exception = new Http400Exception('Пользователь уже приглашен');
+                    throw $exception->addErrorDetails(['user_id'=>'User already invited']);
+                }
+                //Уже есть в системе
+                $invite = $this->inviteService->createInvite(
+                    [
+                        'invited' => $invited_user_id,
+                        'who_invited' => $account->getId(),
+                        'where_invited' => $data['company_id']
+                    ],
+                    InviteService::TYPE_INVITE_TO_BE_MANAGER
+                );
+                $this->notificationService->sendNotification($invite, NotificationService::TYPE_INVITE_TO_BE_MANAGER);
+            } else{
+                //Еще не зарегистрирован
+                $invite = InvitesModel::findInviteByData($data['email'],$data['company_id'],
+                    InviteService::TYPE_INVITE_TO_REGISTER_AND_BE_MANAGER);
+
+                if($invite){
+                    $exception = new Http400Exception('Человек уже приглашен');
+                    throw $exception->addErrorDetails(['email'=>'Person already invited']);
+                }
+
+                $invite = $this->inviteService->createInvite(
+                    [
+                        'invited' => $data['email'],
+                        'who_invited' => $account->getId(),
+                        'where_invited' => $data['company_id']
+                    ],
+                    InviteService::TYPE_INVITE_TO_REGISTER_AND_BE_MANAGER
+                );
+
+                $this->notificationService->sendNotification($company,
+                    NotificationService::TYPE_COMPANY_INVITE_TO_REGISTER_AND_BE_MANAGER,['email'=>$data['email']]);
+            }
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
