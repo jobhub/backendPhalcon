@@ -611,18 +611,37 @@ class CompaniesAPIController extends AbstractController
     }*/
 
     /**
-     * Возвращает публичную информацию о компании.
-     * Публичный доступ
+     * Возвращает информацию о компании для ЛК
+     *
+     * @access private
      *
      * @method GET
      *
      * @param $company_id
+     * @param $account_id = null
+     *
      * @return string - json array компаний
      */
-    public function getCompanyInfoAction($company_id)
+    public function getCompanyInfoAction($company_id, $account_id = null)
     {
         try {
             $company = $this->companyService->getCompanyById($company_id);
+
+            $currentUserId = self::getUserId();
+
+            if ($account_id != null && SupportClass::checkInteger($account_id)) {
+                if (!Accounts::checkUserHavePermission($currentUserId, $account_id, 'getNews')) {
+                    throw new Http403Exception('Permission error');
+                }
+
+                $account = Accounts::findFirstById($account_id);
+            } else {
+                $account = Accounts::findForUserDefaultAccount($currentUserId);
+            }
+
+            if(!$account)
+                $account = null;
+
         } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case CompanyService::ERROR_COMPANY_NOT_FOUND:
@@ -632,6 +651,18 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return Companies::handleCompanyFromArray([$company->toArray()]);
+        return Companies::handleCompanyToProfile($company->toArray(),$account);
+    }
+
+    /**
+     * Делает указанную коммпанию в том числе и магазином
+     *
+     * @access private
+     * @method POST
+     *
+     * @param $company_id
+     */
+    public function setShop(){
+
     }
 }

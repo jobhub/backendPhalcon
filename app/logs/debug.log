@@ -690,6 +690,7 @@ DETAIL:  Key (invited)=(1) is not present in table "users".
 [Mon, 25 Feb 19 16:32:26 +0300][CRITICAL] 13001 Company don't exists
 [Mon, 25 Feb 19 16:32:40 +0300][CRITICAL] 33001 Unable create invite
 [Mon, 25 Feb 19 16:32:46 +0300][CRITICAL] 33001 Unable create invite
+<<<<<<< HEAD
 >>>>>>> changing_to_micro
 [Thu, 28 Feb 19 11:43:53 +0300][CRITICAL] 2007 Incorrect password or login
 [Thu, 28 Feb 19 11:49:07 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "favorite_users" violates foreign key constraint "fkey_favourite_users_object_id"
@@ -741,3 +742,13 @@ DETAIL:  Key (object_id)=(312) is not present in table "users".
 [Fri, 01 Mar 19 11:01:25 +0300][CRITICAL] 21001 Unable subscribe account to object
 [Fri, 01 Mar 19 11:01:28 +0300][CRITICAL] 21001 Unable subscribe account to object
 [Fri, 01 Mar 19 11:01:49 +0300][CRITICAL] 21001 Unable subscribe account to object
+=======
+[Wed, 27 Feb 19 12:30:14 +0300][CRITICAL] 33001 Unable create invite
+[Wed, 27 Feb 19 12:30:35 +0300][CRITICAL] 33001 Unable create invite
+[Wed, 27 Feb 19 12:38:15 +0300][CRITICAL] 100003 Unable to send email
+[Wed, 27 Feb 19 13:06:12 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "favorite_users" violates foreign key constraint "fkey_favourite_users_object_id"
+DETAIL:  Key (object_id)=(62653) is not present in table "users".
+[Wed, 27 Feb 19 13:06:50 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Wed, 27 Feb 19 13:07:23 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Wed, 27 Feb 19 13:07:43 +0300][CRITICAL] 21001 Unable subscribe account to object
+>>>>>>> changing_to_micro

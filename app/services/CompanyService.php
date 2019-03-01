@@ -87,10 +87,13 @@ class CompanyService extends AbstractService {
             $company->setRatingExecutor($data['rating_executor']);
         if(!empty(trim($data['rating_client'])))
             $company->setRatingClient($data['rating_client']);
+
+        if(isset($data['is_shop']))
+            $company->setIsShop($data['is_shop']);
     }
 
     public function getCompanyById(int $companyId){
-        $company = Companies::findFirstByCompanyId($companyId);
+        $company = Companies::findCompanyById($companyId);
 
         if (!$company || $company == null) {
             throw new ServiceException('Company don\'t exists', self::ERROR_COMPANY_NOT_FOUND);

@@ -26,6 +26,7 @@ use App\Controllers\HttpExceptions\Http403Exception;
 use App\Controllers\HttpExceptions\Http404Exception;
 use App\Services\ServiceException;
 use App\Services\ServiceExtendedException;
+
 /**
  * Контроллер для работы с подписками на что-либо
  * Реализует методы для подписки, отписки, получения подписок
@@ -74,7 +75,7 @@ class FavouriteController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $this->favouriteService->subscribeTo($type,$data['account_id'], $data['object_id'],$data);
+            $this->favouriteService->subscribeTo($type, $data['account_id'], $data['object_id'], $data);
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -84,7 +85,7 @@ class FavouriteController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        }catch (ServiceException $e) {
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -100,7 +101,7 @@ class FavouriteController extends AbstractController
             }
         }
 
-        return self::successResponse('User was successfully subscribed');
+        return self::successResponse('Account was successfully subscribed');
     }
 
     /**
@@ -116,7 +117,7 @@ class FavouriteController extends AbstractController
         try {
             $userId = self::getUserId();
 
-            if(is_null($account_id) || !SupportClass::checkInteger($account_id)){
+            if (is_null($account_id) || !SupportClass::checkInteger($account_id)) {
                 $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
             }
 
@@ -124,7 +125,7 @@ class FavouriteController extends AbstractController
                 throw new Http403Exception('Permission error');
             }
 
-            $fav = $this->favouriteService->getSigningTo($type,$account_id,$object_id);
+            $fav = $this->favouriteService->getSigningTo($type, $account_id, $object_id);
 
             $this->favouriteService->unsubscribeFrom($fav);
 
@@ -136,7 +137,7 @@ class FavouriteController extends AbstractController
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
-        }catch (ServiceException $e) {
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                 case FavouriteService::ERROR_ACCOUNT_NOT_SUBSCRIBED:
@@ -168,24 +169,49 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array подписок
      */
-    public function getSubscribersAction($account_id = null,$query = null,
+    public function getSubscribersAction($account_id = null, $query = null,
                                          $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && SupportClass::checkInteger($account_id)){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
 
             $account = Accounts::findFirstById($account_id);
-        } else{
+        } else {
             $account = Accounts::findForUserDefaultAccount($userId);
         }
 
         self::setAccountId($account->getId());
 
-        return FavouriteModel::findSubscribers($account,$query,$page,$page_size);
+        return FavouriteModel::findSubscribers($account, $query, $page, $page_size);
+    }
+
+    /**
+     * Возвращает всех подписчиков указанного пользователя или компании (а именно, компанию или пользователя)
+     *
+     * @method GET
+     *
+     * @param $query = null
+     * @param $page = 1
+     * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array подписок
+     */
+    public function getOtherSubscribersAction($id, $is_company = false, $query = null,
+                                              $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if ($is_company && strtolower($is_company) != "false") {
+            $account = Accounts::findFirstByCompanyId($id);
+        } else {
+            $account = Accounts::findForUserDefaultAccount($id);
+        }
+
+        return FavouriteModel::findSubscribers($account, $query, $page, $page_size);
     }
 
     /**
@@ -200,12 +226,32 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array подписок
      */
-    public function getSubscriptionsAction($account_id = null,$query = null,
-                                         $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    public function getSubscriptionsAction($account_id = null, $query = null,
+                                           $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && SupportClass::checkInteger($account_id)){
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $account = Accounts::findFirstById($account_id);
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+        }
+
+        self::setAccountId($account->getId());
+
+        return FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
+    }
+
+    public function getOtherSubscriptionsAction($id, $is_company = false,$query = null,
+                                                $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        /*if($account_id!=null && SupportClass::checkInteger($account_id)){
             if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
                 throw new Http403Exception('Permission error');
             }
@@ -215,9 +261,17 @@ class FavouriteController extends AbstractController
             $account = Accounts::findForUserDefaultAccount($userId);
         }
 
-        self::setAccountId($account->getId());
+        self::setAccountId($account->getId());*/
 
-        return FavouriteModel::findSubscriptions($account,$query,$page,$page_size);
+        $userId = self::getUserId();
+
+        if ($is_company && strtolower($is_company) != "false") {
+            $account = Accounts::findFirstByCompanyId($id);
+        } else {
+            $account = Accounts::findForUserDefaultAccount($id);
+        }
+
+        return FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
     }
 
     /**
@@ -235,17 +289,17 @@ class FavouriteController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && SupportClass::checkInteger($account_id)){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
-        } else{
+        } else {
             $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
         }
 
         self::setAccountId($account_id);
 
-        return FavouriteServices::findFavourites($account_id,$page,$page_size);
+        return FavouriteServices::findFavourites($account_id, $page, $page_size);
     }
 
     /**
@@ -267,16 +321,16 @@ class FavouriteController extends AbstractController
 
         $userId = self::getUserId();
 
-        if($data['account_id']!=null && SupportClass::checkInteger($data['account_id'])){
-            if(!Accounts::checkUserHavePermission($userId,$data['account_id'],'getNews')){
+        if ($data['account_id'] != null && SupportClass::checkInteger($data['account_id'])) {
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
-        } else{
+        } else {
             $data['account_id'] = Accounts::findForUserDefaultAccount($userId)->getId();
         }
-        try{
-            $this->categoryService->editRadius($data['account_id'],$data['category_id'],$data['radius']);
-        }catch(ServiceExtendedException $e) {
+        try {
+            $this->categoryService->editRadius($data['account_id'], $data['category_id'], $data['radius']);
+        } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case CategoryService::ERROR_UNABlE_CHANGE_RADIUS:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -309,20 +363,20 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array - подписки пользователя
      */
-    public function getFavouritesCategoriesAction($account_id = null,$page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    public function getFavouritesCategoriesAction($account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
-        if($account_id!=null && SupportClass::checkInteger($account_id)){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
-        } else{
+        } else {
             $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
         }
 
         self::setAccountId($account_id);
 
-        return FavoriteCategories::findForUser($account_id,$page,$page_size);
+        return FavoriteCategories::findForUser($account_id, $page, $page_size);
     }
 }

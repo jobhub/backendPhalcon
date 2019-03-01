@@ -219,6 +219,12 @@ class SessionAPIController extends AbstractController
 
             $data = json_decode($this->request->getRawBody(), true);
 
+            $strData = var_export($data, true);
+            SupportClass::writeMessageInLogFile("Данные полученные при авторизации через соц. сеть" . $strData);
+
+            $strRawBody = var_export($this->request->getRawBody(), true);
+            SupportClass::writeMessageInLogFile("Данные полученные при авторизации через соц. сеть без decode" . $strRawBody);
+
             $this->db->begin();
 
             switch ($data['provider']) {

@@ -121,7 +121,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                                 $ids = SupportClass::to_pg_array($ids);*/
 
                                 $exists = self::findFirst(['subject_id = ANY(:ids:) and object_id = :objectId:', 'bind' =>
-                                    ['ids' => $account_exists->getRelatedAccounts(), 'objectId'=>$fav_model->getObjectId()]]);
+                                    ['ids' => $account_exists->getRelatedAccounts(), 'objectId' => $fav_model->getObjectId()]]);
 
                                 return $exists ? false : true;
                             }
@@ -209,7 +209,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $favs = self::find(['subject_id = ANY (:subjectId:)', 'bind' => [
             'subjectId' => $account->getRelatedAccounts()
-        ], 'offset' => $offset, 'limit' => $page_size, 'order'=>'favourite_date desc']);
+        ], 'offset' => $offset, 'limit' => $page_size, 'order' => 'favourite_date desc']);
 
         return self::handleFavourites($favs->toArray());
     }
@@ -236,20 +236,22 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $account = Accounts::findFirstById($accountId);
 
-        if (!$account)
-            return null;
+        /*if (!$account)
+            return null;*/
+
+        $relatedAccounts = $account?$account->getRelatedAccounts():null;
 
         $handledFavs = [];
         foreach ($favs as $fav) {
 
-            $handledFav = self::handleSubscriber($fav, $account->getRelatedAccounts());
+            $handledFav = self::handleSubscriber($fav, $relatedAccounts);
             if ($handledFav != null)
                 $handledFavs[] = $handledFav;
         }
         return $handledFavs;
     }
 
-    public static function handleSubscriber($fav, string $currentAccountIds)
+    public static function handleSubscriber($fav,$currentAccountIds)
     {
         $account = Accounts::findFirstById($fav['subject_id']);
 
@@ -264,7 +266,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 return null;
 
 
-            $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
+            if ($currentAccountIds != null) {
+                $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
             and object_id = :companyId:', 'bind' => [
                 'currentAccountId' => $currentAccountIds,
                 'companyId' => $account->getCompanyId()
@@ -277,13 +280,16 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             if (!$subscriber)
                 return null;
 
-            $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
-            and object_id = :userId:', 'bind' => [
-                'currentAccountId' => $currentAccountIds,
-                'userId' => $account->getUserId()
-            ]]);
+            if ($currentAccountIds != null) {
 
-            $handledFavUser['subscribed'] = $subscribed ? true : false;
+                $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
+            and object_id = :userId:', 'bind' => [
+                    'currentAccountId' => $currentAccountIds,
+                    'userId' => $account->getUserId()
+                ]]);
+
+                $handledFavUser['subscribed'] = $subscribed ? true : false;
+            }
         }
         $resp = $subscriber->toArray();
         $resp['subscribed'] = $subscribed ? true : false;
@@ -297,8 +303,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
         $account = Accounts::findFirstById($accountId);
 
-        if (!$account)
-            return null;
+        /*if (!$account)
+            return null;*/
 
         $handledFavs = [];
         foreach ($favs as $fav) {
@@ -312,7 +318,6 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
     public static function handleSubscription($fav)
     {
-
         if ($fav['relation'] == 'favorite_companies') {
             $subscription = Companies::findCompanyById($fav['object_id'],
                 Companies::shortColumns);

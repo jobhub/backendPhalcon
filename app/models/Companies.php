@@ -92,7 +92,10 @@ class Companies extends NotDeletedModelWithCascade
     protected $logotype;
 
     protected $rating_executor;
+
     protected $rating_client;
+
+    protected $is_shop;
     /**
      *
      * @var string
@@ -110,6 +113,24 @@ class Companies extends NotDeletedModelWithCascade
     const shortColumns = ['company_id', 'name', 'logotype'];
 
     const shortColumnsInStr = 'company_id, name, logotype';
+
+    const DEFAULT_COMPANY_LOGOTYPE = 'images/no_image.jpg';
+
+    /**
+     * @return mixed
+     */
+    public function getIsShop()
+    {
+        return $this->is_shop;
+    }
+
+    /**
+     * @param mixed $is_shop
+     */
+    public function setIsShop($is_shop)
+    {
+        $this->is_shop = $is_shop;
+    }
 
     /**
      * Method to set the value of field companyId
@@ -253,23 +274,6 @@ class Companies extends NotDeletedModelWithCascade
 
         return $this;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getPhones()
-    {
-        return $this->phones;
-    }
-
-    /**
-     * @param mixed $phones
-     */
-    public function setPhones($phones)
-    {
-        $this->phones = $phones;
-    }
-
 
     public function setRatingExecutor($rating_executor)
     {
@@ -531,7 +535,7 @@ class Companies extends NotDeletedModelWithCascade
                 $transaction = $manager->get();
                 $this->setTransaction($transaction);
 
-                Accounts::cascadeDeletingByAccountIds($this->getRelatedAccounts(),$transaction);
+                Accounts::cascadeDeletingByAccountIds($this->getRelatedAccounts(), $transaction);
 
                 $result = parent::delete($delete, false, $data, $whiteList);
 
@@ -624,12 +628,33 @@ class Companies extends NotDeletedModelWithCascade
     public static function findCompanyById(int $companyId, array $columns = null)
     {
         if ($columns == null)
-            return self::findFirst(['company_id = :companyId:',
-                'bind' => ['companyId' => $companyId]]);
+            return self::addDefaultLogotypeToCompany(self::findFirst(['company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]));
         else {
-            return self::findFirst(['columns' => $columns, 'company_id = :companyId:',
-                'bind' => ['companyId' => $companyId]]);
+            return self::addDefaultLogotypeToCompany(self::findFirst(['columns' => $columns, 'company_id = :companyId:',
+                'bind' => ['companyId' => $companyId]]));
         }
+    }
+
+    public static function addDefaultLogotypeToCompany($company){
+        if(is_array($company)){
+            if($company['logotype'] == null){
+                $company['logotype'] = self::DEFAULT_COMPANY_LOGOTYPE;
+            }
+        } elseif(is_object($company) == 'Company'){
+            if(method_exists($company,'getLogotype') &&
+                method_exists($company,'setLogotype') ){
+                if($company->getLogotype() == null){
+                    $company->setLogotype(self::DEFAULT_COMPANY_LOGOTYPE);
+                }
+            } else {
+                if ($company->logotype == null) {
+                    $company->logotype = self::DEFAULT_COMPANY_LOGOTYPE;
+                }
+            }
+        }
+
+        return $company;
     }
 
     public static function findCompaniesByUserOwner(int $userId)
@@ -661,10 +686,31 @@ class Companies extends NotDeletedModelWithCascade
         foreach ($companies as $company) {
             $company['phones'] = PhonesCompanies::getCompanyPhones($company['company_id']);
 
-            $result[] = $company;
+            $result[] = self::addDefaultLogotypeToCompany($company);
         }
 
         return $result;
+    }
+
+    public static function handleCompanyToProfile(array $company, Accounts $accountReceiver = null)
+    {
+        $phones = PhonesCompanies::getCompanyPhones($company['company_id']);
+
+        $handledCompany = SupportClass::getCertainColumnsFromArray($company,self::publicColumns);
+
+        $data = [
+            'company' => $handledCompany,
+            'phones'=>$phones
+        ];
+
+        $account = Accounts::findFirstByCompanyId($company['company_id']);
+
+        if (!$account)
+            return $data;
+
+        $data = Accounts::addInformationForCabinet($account, $data, $accountReceiver);
+
+        return $data;
     }
 
     /**
