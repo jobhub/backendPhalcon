@@ -691,3 +691,53 @@ DETAIL:  Key (invited)=(1) is not present in table "users".
 [Mon, 25 Feb 19 16:32:40 +0300][CRITICAL] 33001 Unable create invite
 [Mon, 25 Feb 19 16:32:46 +0300][CRITICAL] 33001 Unable create invite
 >>>>>>> changing_to_micro
+[Thu, 28 Feb 19 11:43:53 +0300][CRITICAL] 2007 Incorrect password or login
+[Thu, 28 Feb 19 11:49:07 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "favorite_users" violates foreign key constraint "fkey_favourite_users_object_id"
+DETAIL:  Key (object_id)=(312) is not present in table "users".
+[Thu, 28 Feb 19 14:44:38 +0300][CRITICAL] 26003 Invalid login
+[Thu, 28 Feb 19 16:00:40 +0300][DEBUG] 346
+[Thu, 28 Feb 19 16:34:40 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Thu, 28 Feb 19 16:34:44 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Thu, 28 Feb 19 16:36:21 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Thu, 28 Feb 19 16:38:20 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Thu, 28 Feb 19 16:40:38 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Thu, 28 Feb 19 16:49:28 +0300][CRITICAL] 21003 Account not subscribed to object
+[Thu, 28 Feb 19 23:34:00 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:34:02 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:34:28 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:34:29 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:34:33 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:38:17 +0300][DEBUG] Deletion of rastreniya 66  by user 346
+[Thu, 28 Feb 19 23:38:39 +0300][DEBUG] Deletion of rastreniya 69  by user 346
+[Thu, 28 Feb 19 23:39:01 +0300][DEBUG] Deletion of rastreniya 70  by user 346
+[Thu, 28 Feb 19 23:49:52 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:49:55 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:50:07 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:50:16 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:51:29 +0300][DEBUG] 346
+[Thu, 28 Feb 19 23:56:53 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:07:02 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:07:08 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:09:02 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:10:45 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:13:35 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:14:16 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:19:19 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:20:13 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:22:34 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:22:38 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:22:48 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:26:35 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:32:21 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:32:27 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:32:39 +0300][DEBUG] 346
+[Fri, 01 Mar 19 00:58:22 +0300][DEBUG] 346
+[Fri, 01 Mar 19 10:33:00 +0300][DEBUG] 346
+[Fri, 01 Mar 19 10:50:24 +0300][CRITICAL] 2007 Incorrect password or login
+[Fri, 01 Mar 19 10:52:45 +0300][CRITICAL] 2007 Incorrect password or login
+[Fri, 01 Mar 19 10:58:07 +0300][CRITICAL] 4001 Unable create info for user
+[Fri, 01 Mar 19 10:58:31 +0300][CRITICAL] 4001 Unable create info for user
+[Fri, 01 Mar 19 11:01:15 +0300][DEBUG] Deletion of rastreniya 71  by user 346
+[Fri, 01 Mar 19 11:01:25 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 11:01:28 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Fri, 01 Mar 19 11:01:49 +0300][CRITICAL] 21001 Unable subscribe account to object

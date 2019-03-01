@@ -281,7 +281,7 @@ class RastreniyaService extends AbstractService
         } else if (in_array($user_id, $dislikes)) {
             $item['infos']['is_disliked'] = true;
         }
-        if ($item['comments']['total'] > 0) {
+       /* if ($item['comments']['total'] > 0) {
             // Load last comments info;
             $last = RastreniyaResponses::findFirst([
                 'conditions' => 'rastreniya_id = :rast_id:',
@@ -297,7 +297,7 @@ class RastreniyaService extends AbstractService
                 $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
             $item['comments']['last_comment'] = $last;
             $item['comments']['user_info'] = $owner;
-        }
+        } */
         return $item;
     }
     /**
@@ -766,7 +766,7 @@ class RastreniyaService extends AbstractService
         } else if (in_array($user_id, $dislikes)) {
             $item['infos']['is_disliked'] = true;
         }
-        if ($item['comments']['total'] > 0) {
+        /*if ($item['comments']['total'] > 0) {
             // Load last comments info;
             $last = RastreniyaResponses::findFirst([
                 'conditions' => 'rastreniya_id = :rast_id:',
@@ -776,13 +776,10 @@ class RastreniyaService extends AbstractService
                 'order' => 'create_at DESC',
                 'columns' => RastreniyaResponses::PUBLIC_COLUMNS
             ]);
-            /*if ($account->getId() == $last['account_id'])
-                $owner = $user;
-            else*/
             $owner = Accounts::findFirst($rast->getAccountId())->getUserInfomations();
             $item['comments']['last_comment'] = $last;
             $item['comments']['user_info'] = $owner;
-        }
+        }*/
         return $item;
     }
 

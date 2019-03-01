@@ -123,9 +123,9 @@ class Userinfo extends \Phalcon\Mvc\Model
         birthday, male, city_id, about, status, rating_executor, rating_client, 
         path_to_photo, last_time, nickname, email, website';
 
-    const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo'];
+    const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo', 'status'];
 
-    const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo';
+    const shortColumnsInStr = 'user_id, first_name, last_name, path_to_photo, status';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
 
