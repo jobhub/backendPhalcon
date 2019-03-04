@@ -14,6 +14,8 @@ use App\Services\ServiceExtendedException;
 class SupportClass
 {
 
+    const COMMON_PAGE_SIZE = 10;
+
     public static function checkInteger($var)
     {
         return ((string)(int)$var == $var);
@@ -311,5 +313,30 @@ class SupportClass
             return $WriteFile;
         }
         return null;
+    }
+
+    public static function executeWithPagination(mixed $sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE){
+
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        if(is_string($sqlRequest)){
+            $db = DI::getDefault()->getDb();
+            $sqlRequest = str_replace('select','select count(*) OVER() AS full_count, ',strtolower($sqlRequest));
+
+            $sqlRequest.=' ORDER BY foo.date desc
+                    LIMIT :limit 
+                    OFFSET :offset';
+
+            $query = $db->prepare($sqlRequest);
+            $params['limit'] = $page_size;
+            $params['offset'] = $offset;
+
+            $results = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($results as $result){
+                
+            }
+        }
     }
 }
