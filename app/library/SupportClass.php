@@ -324,7 +324,6 @@ class SupportClass
         if(is_string($sqlRequest)){
             $db = DI::getDefault()->getDb();
             $sqlRequestReplaced = self::str_replace_once('select','select count(*) OVER() AS total_count_pagination, ',strtolower($sqlRequest));
-           /* $sqlRequestReplaced = $sqlRequest;*/
             $sqlRequestReplaced.='
                     LIMIT :limit 
                     OFFSET :offset';
@@ -357,7 +356,8 @@ class SupportClass
                 return ['pagination'=>['total'=>$results[0]['total_count_pagination']],'data'=>$final_results];
             } else{
 
-                $sqlRequestReplaced = str_replace(["\r","\n"],' ',strtolower($sqlRequest));
+                //$sqlRequestReplaced = str_replace(["\r","\n"],' ',strtolower($sqlRequest));
+                $sqlRequestReplaced = strtolower($sqlRequest);
                 $sqlRequestReplaced = preg_replace(
                     "#select.*?from#",'select count(*) AS total_count_pagination from',
                     $sqlRequestReplaced,1,$count);
@@ -379,8 +379,23 @@ class SupportClass
 
                 return ['data'=>[],'pagination'=>['total'=>$results[0]['total_count_pagination']]];
             }
-        } else{
-            return null;
+        } elseif(is_object($sqlRequest) && get_class($sqlRequest) == 'Phalcon\Mvc\Model\Query\Builder'){
+
+
+            $sqlGotRequest = $sqlRequest;
+            $sqlRequest->limit($page_size)
+                       ->offset($offset);
+
+            $data = $sqlRequest->getQuery()->execute();
+
+            $count = $sqlGotRequest->columns('count(*) as count')
+                ->limit(null)
+                ->offset(null)
+                ->orderBy(null)
+                ->getQuery()->execute();
+
+
+            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
         }
     }
 

@@ -390,7 +390,7 @@ class NewsAPIController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if ($account_id != null && is_integer(intval($account_id))) {
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
             if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }

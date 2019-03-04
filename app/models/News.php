@@ -254,8 +254,7 @@ class News extends AccountWithNotDeletedWithCascade
 
     public static function findNewsForCurrentAccount(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id 
-       FROM (
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id FROM (
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
@@ -310,8 +309,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;*/
 
-        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id
-	FROM (
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id FROM (
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
