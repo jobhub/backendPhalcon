@@ -117,9 +117,9 @@ class NewsAPIController extends AbstractController
             $account = $this->accountService->getAccountById($account_id);
 
             if($account->getCompanyId() != null){
-                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+                return self::successResponse('',News::findNewsByCompany($account->getCompanyId(), $page, $page_size));
             } else {
-                return News::findNewsByUser($userId, $page, $page_size);
+                return self::successResponse('',News::findNewsByUser($userId, $page, $page_size));
             }
 
         }catch (ServiceException $e) {

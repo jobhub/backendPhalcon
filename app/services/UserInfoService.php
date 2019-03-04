@@ -87,8 +87,10 @@ class UserInfoService extends AbstractService
             $userInfo->setLastName($data['last_name']);
         if (isset($data['patronymic']))
             $userInfo->setPatronymic($data['patronymic']);
+
         if (isset($data['male']))
             $userInfo->setMale($data['male']);
+
         if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id'])) {
             $city = $this->cityService->getCityById($data['city_id']);
             $userInfo->setCityId($data['city_id']);

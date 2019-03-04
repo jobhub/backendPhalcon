@@ -194,6 +194,8 @@ class FavouriteController extends AbstractController
      *
      * @method GET
      *
+     * @param $id
+     * @param $is_company
      * @param $query = null
      * @param $page = 1
      * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
@@ -206,12 +208,10 @@ class FavouriteController extends AbstractController
         $userId = self::getUserId();
 
         if ($is_company && strtolower($is_company) != "false") {
-            $account = Accounts::findFirstByCompanyId($id);
+            return FavouriteModel::findSubscribersByCompany($id, $query, $page, $page_size);
         } else {
-            $account = Accounts::findForUserDefaultAccount($id);
+            return FavouriteModel::findSubscribersByUser($id, $query, $page, $page_size);
         }
-
-        return FavouriteModel::findSubscribers($account, $query, $page, $page_size);
     }
 
     /**

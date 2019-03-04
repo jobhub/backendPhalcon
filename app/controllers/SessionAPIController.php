@@ -274,7 +274,6 @@ class SessionAPIController extends AbstractController
             $userSocial = UsersSocial::findByIdentity($userFromSocialNet['network'], $userFromSocialNet['identity']);
 
             if (!$userSocial) {
-
                 if(empty($userFromSocialNet['first_name'])){
                     $userFromSocialNet['first_name'] = $data['first_name'];
                 }
@@ -283,11 +282,12 @@ class SessionAPIController extends AbstractController
                     $userFromSocialNet['last_name'] = $data['last_name'];
                 }
 
-                if(empty($userFromSocialNet['city_id'])){
+                if(!isset($userFromSocialNet['city_id'])){
                     $userFromSocialNet['city_id'] = $data['city_id'];
                 }
 
-                if(empty($userFromSocialNet['male'])){
+                if(!isset($userFromSocialNet['male'])){
+                    SupportClass::writeMessageInLogFile("male is empty. userFromSocialNet['male'] = ". $userFromSocialNet['male']);
                     $userFromSocialNet['male'] = $data['male'];
                 }
 
@@ -299,11 +299,11 @@ class SessionAPIController extends AbstractController
                     $errors['last_name'] = 'Missing require field "last_name"';;
                 }
 
-                if(empty($userFromSocialNet['city_id'])){
+                if(!isset($userFromSocialNet['city_id'])){
                     $errors['city_id'] = 'Missing require field "city_id"';;
                 }
 
-                if(empty($userFromSocialNet['male'])){
+                if(!isset($userFromSocialNet['male'])){
                     $errors['male'] = 'Missing require field "male"';
                 }
 
