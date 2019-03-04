@@ -9,6 +9,7 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Url as UrlValidator;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\Alpha as AlphaValidator;
 
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
@@ -507,6 +508,24 @@ class Companies extends NotDeletedModelWithCascade
                     ]
                 )
             );
+
+        $validator->add(
+            "name",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
+                ]
+            )
+        );
+
+        $validator->add(
+            "full_name",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
+                ]
+            )
+        );
 
 
         return $this->validate($validator);

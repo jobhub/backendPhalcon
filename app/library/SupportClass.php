@@ -10,6 +10,7 @@ namespace App\Libs;
 
 use Phalcon\Http\Response;
 use App\Services\ServiceExtendedException;
+use Phalcon\DI\FactoryDefault as DI;
 
 class SupportClass
 {
@@ -315,28 +316,78 @@ class SupportClass
         return null;
     }
 
-    public static function executeWithPagination(mixed $sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE){
+    public static function executeWithPagination($sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE){
 
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
 
         if(is_string($sqlRequest)){
             $db = DI::getDefault()->getDb();
-            $sqlRequest = str_replace('select','select count(*) OVER() AS full_count, ',strtolower($sqlRequest));
-
-            $sqlRequest.=' ORDER BY foo.date desc
+            $sqlRequestReplaced = self::str_replace_once('select','select count(*) OVER() AS total_count_pagination, ',strtolower($sqlRequest));
+           /* $sqlRequestReplaced = $sqlRequest;*/
+            $sqlRequestReplaced.='
                     LIMIT :limit 
                     OFFSET :offset';
 
-            $query = $db->prepare($sqlRequest);
-            $params['limit'] = $page_size;
-            $params['offset'] = $offset;
+            $query = $db->prepare($sqlRequestReplaced);
+            $params_2 = [];
+            foreach ($params as $key=>$data){
+                $params_2[strtolower($key)] = $data;
+            }
+
+            $params_2['limit'] = $page_size;
+            $params_2['offset'] = $offset;
+
+            $query->execute($params_2);
 
             $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-            foreach ($results as $result){
-                
+            if(count($results)>0) {
+                $final_results = [];
+                foreach ($results as $result) {
+                    $final_result = [];
+                    foreach ($result as $key => $data) {
+                        if ($key != 'total_count_pagination') {
+                            $final_result[$key] = $data;
+                        }
+                    }
+                    $final_results[] = $final_result;
+                }
+
+                return ['pagination'=>['total'=>$results[0]['total_count_pagination']],'data'=>$final_results];
+            } else{
+
+                $sqlRequestReplaced = str_replace(["\r","\n"],' ',strtolower($sqlRequest));
+                $sqlRequestReplaced = preg_replace(
+                    "#select.*?from#",'select count(*) AS total_count_pagination from',
+                    $sqlRequestReplaced,1,$count);
+
+                $sqlRequestReplaced = preg_replace(
+                    "#order by.*#",'',
+                    $sqlRequestReplaced,1,$count);
+
+                $query = $db->prepare($sqlRequestReplaced);
+
+                $params_2 = [];
+                foreach ($params as $key=>$data){
+                    $params_2[strtolower($key)] = $data;
+                }
+
+                $query->execute($params_2);
+
+                $results = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+                return ['data'=>[],'pagination'=>['total'=>$results[0]['total_count_pagination']]];
             }
+        } else{
+            return null;
         }
+    }
+
+
+    public static function str_replace_once($search, $replace, $text)
+    {
+        $pos = strpos($text, $search);
+        return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
     }
 }

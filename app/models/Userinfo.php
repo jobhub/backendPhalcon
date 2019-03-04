@@ -508,6 +508,24 @@ class Userinfo extends \Phalcon\Mvc\Model
             )
         );
 
+        $validator->add(
+            "first_name",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
+                ]
+            )
+        );
+
+        $validator->add(
+            "last_name",
+            new AlphaValidator(
+                [
+                    "message" => ":field must contain only letters",
+                ]
+            )
+        );
+
         if ($this->getPathToPhoto() != null)
             $validator->add(
                 'path_to_photo',

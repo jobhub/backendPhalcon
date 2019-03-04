@@ -52,7 +52,9 @@ class NewsAPIController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return News::findNewsForCurrentAccount($account, $page, $page_size);
+        $result = News::findNewsForCurrentAccount($account, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -85,7 +87,9 @@ class NewsAPIController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return News::findAllNewsForCurrentUser($account, $page, $page_size);
+        $result = News::findAllNewsForCurrentUser($account, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -117,10 +121,12 @@ class NewsAPIController extends AbstractController
             $account = $this->accountService->getAccountById($account_id);
 
             if($account->getCompanyId() != null){
-                return self::successResponse('',News::findNewsByCompany($account->getCompanyId(), $page, $page_size));
+                $result =  News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
             } else {
-                return self::successResponse('',News::findNewsByUser($userId, $page, $page_size));
+                $result = News::findNewsByUser($userId, $page, $page_size);
             }
+
+            return self::successPaginationResponse('',$result['data'],$result['pagination']);
 
         }catch (ServiceException $e) {
             switch ($e->getCode()) {
@@ -395,9 +401,11 @@ class NewsAPIController extends AbstractController
         self::setAccountId($account_id);
 
         if ($is_company && strtolower($is_company) != "false")
-            return $news = News::findNewsByCompany($id, $page, $page_size);
+            $result = $news = News::findNewsByCompany($id, $page, $page_size);
         else
-            return $news = News::findNewsByUser($id, $page, $page_size);
+            $result = $news = News::findNewsByUser($id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**

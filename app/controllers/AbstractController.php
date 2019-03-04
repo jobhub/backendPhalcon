@@ -41,10 +41,10 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
     {
         if(!is_null($pagination)) {
             if (is_integer($pagination))
-                return ['success' => true, 'msg' => $msg, 'data' => $data, 'pagination' => ['total' => $pagination]];
+                return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination], 'data' => $data];
             else {
                 if (isset($pagination['total'])) {
-                    return ['success' => true, 'msg' => $msg, 'data' => $data, 'pagination' => ['total' => $pagination['total']]];
+                    return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination['total']], 'data' => $data];
                 }
             }
         }
