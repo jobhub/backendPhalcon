@@ -51,7 +51,7 @@ class ImageLoader
             return ImageLoader::RESULT_ERROR_NOT_SAVED;
         }
     }
-
+/*
     public static function loadServiceImage($tempname, $name, $serviceId, $imageId)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
@@ -113,7 +113,7 @@ class ImageLoader
         $filename =  ImageLoader::formImageName($imageFormat,$imageId);
         return ImageLoader::load('news',$tempname,
             $filename,$newId,null);
-    }
+    }*/
 
     public static function formImageName($format, $imageId)
     {

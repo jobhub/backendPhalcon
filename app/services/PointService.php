@@ -13,7 +13,7 @@ use App\Libs\SupportClass;
 
 //models
 use App\Models\Userinfo;
-use App\Models\ServicesTags;
+use App\Models\TagsServices;
 use App\Models\Tags;
 
 /**

@@ -133,7 +133,7 @@ class Tags extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("tags");
-        $this->hasMany('tag_id', 'App\Models\ServicesTags', 'tag_id', ['alias' => 'ServicesTags']);
+        $this->hasMany('tag_id', 'App\Models\TagsServices', 'tag_id', ['alias' => 'ServicesTags']);
     }
 
     /**

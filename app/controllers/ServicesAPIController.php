@@ -481,7 +481,7 @@ class ServicesAPIController extends AbstractController
 
             if($data['tags']!=null)
             foreach ($data['tags'] as $tag) {
-                $this->tagService->addTagToService($tag, $service->getServiceId());
+                $this->tagService->addTagToObject($tag, $service->getServiceId(),TagService::TYPE_SERVICE);
             }
 
             /*if($data['old_points']!=null)

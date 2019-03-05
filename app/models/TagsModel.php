@@ -5,16 +5,8 @@ namespace App\Models;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
-class ServicesTags extends \Phalcon\Mvc\Model
+class TagsModel extends \Phalcon\Mvc\Model
 {
-
-    /**
-     *
-     * @var integer
-     * @Primary
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $service_id;
 
     /**
      *
@@ -25,43 +17,41 @@ class ServicesTags extends \Phalcon\Mvc\Model
     protected $tag_id;
 
     /**
-     * Method to set the value of field serviceid
      *
-     * @param integer $serviceid
+     * @var integer
+     * @Primary
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $object_id;
+
+    /**
+     * Method to set the value of field tag_id
+     *
+     * @param integer $tag_id
      * @return $this
      */
-    public function setServiceId($serviceid)
+    public function setTagId($tag_id)
     {
-        $this->service_id = $serviceid;
+        $this->tag_id = $tag_id;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field tagid
+     * Method to set the value of field object_id
      *
-     * @param integer $tagid
+     * @param integer $object_id
      * @return $this
      */
-    public function setTagId($tagid)
+    public function setObjectId($object_id)
     {
-        $this->tag_id = $tagid;
+        $this->object_id = $object_id;
 
         return $this;
     }
 
     /**
-     * Returns the value of field serviceid
-     *
-     * @return integer
-     */
-    public function getServiceId()
-    {
-        return $this->service_id;
-    }
-
-    /**
-     * Returns the value of field tagid
+     * Returns the value of field tag_id
      *
      * @return integer
      */
@@ -71,29 +61,18 @@ class ServicesTags extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Validations and business logic
+     * Returns the value of field object_id
      *
-     * @return boolean
+     * @return integer
      */
+    public function getObjectId()
+    {
+        return $this->object_id;
+    }
+
     public function validation()
     {
         $validator = new Validation();
-
-        $validator->add(
-            'service_id',
-            new Callback(
-                [
-                    "message" => "Такая услуга не существует",
-                    "callback" => function ($serviceTag) {
-                        $service = Services::findFirstByServiceId($serviceTag->getServiceId());
-
-                        if ($service)
-                            return true;
-                        return false;
-                    }
-                ]
-            )
-        );
 
         $validator->add(
             'tag_id',
@@ -119,8 +98,7 @@ class ServicesTags extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("public");
-        $this->setSource("services_tags");
-        $this->belongsTo('service_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
+        $this->setSource("tags_model");
         $this->belongsTo('tag_id', 'App\Models\Tags', 'tag_id', ['alias' => 'Tags']);
     }
 
@@ -131,14 +109,14 @@ class ServicesTags extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'services_tags';
+        return 'tags_model';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ServicesTags[]|ServicesTags|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TagsModel[]|TagsModel|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -149,16 +127,16 @@ class ServicesTags extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ServicesTags|\Phalcon\Mvc\Model\ResultInterface
+     * @return TagsModel|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
     }
 
-    public static function findByIds($serviceId, $tagId)
+    public static function findByIds($objectId, $tagId)
     {
-        return ServicesTags::findFirst(['service_id = :serviceId: AND tag_id = :tagId:',
-            'bind' => ['serviceId' => $serviceId, 'tagId' => $tagId]]);
+        return self::findFirst(['object_id = :objectId: AND tag_id = :tagId:',
+            'bind' => ['objectId' => $objectId, 'tagId' => $tagId]]);
     }
 }

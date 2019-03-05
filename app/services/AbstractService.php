@@ -12,6 +12,16 @@ use App\Libs\PHPMailerApp;
  */
 abstract class AbstractService extends \Phalcon\DI\Injectable
 {
+    const TYPE_USER = 'user';
+    const TYPE_NEWS = 'news';
+    const TYPE_REVIEW = 'review';
+    const TYPE_SERVICE = 'service';
+    const TYPE_COMPANY = 'company';
+    const TYPE_TEMP = 'temp';
+    const TYPE_RASTRENIYA = 'rastreniya';
+    const TYPE_PRODUCT = 'product';
+    const TYPE_EVENT = 'event';
+
     /**
      * Invalid parameters anywhere
      */
@@ -24,6 +34,9 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
 
     const ERROR_UNABLE_SEND_TO_MAIL = 100003;
     const ERROR_UNABLE_SEND_TO_SMS = 100004;
+
+
+    const ERROR_INVALID_OBJECT_TYPE = 100005;
 
     public function sendMail($action, $view, $data, $title)
     {

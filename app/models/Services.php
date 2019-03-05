@@ -1295,9 +1295,8 @@ class Services extends AccountWithNotDeletedWithCascade
 
         $result = $modelsManager->createBuilder()
             ->from(["t" => "App\Models\Tags"])
-            ->join('App\Models\ServicesTags', 't.tag_id = st.tag_id', 'st')
-            ->join('App\Models\Services', 'st.service_id = s.service_id', 's')
-            ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
+            ->join('App\Models\TagsServices', 't.tag_id = st.tag_id', 'st')
+            ->where('st.object_id = :serviceId:', ['serviceId' => $serviceId])
             ->getQuery()
             ->execute();
 

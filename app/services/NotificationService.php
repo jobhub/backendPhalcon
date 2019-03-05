@@ -21,7 +21,7 @@ class NotificationService extends AbstractService
     const TYPE_INVITE_TO_BE_MANAGER = 1;
     const TYPE_COMPANY_INVITE_TO_REGISTER_AND_BE_MANAGER = 2;
 
-    const ADDED_CODE_NUMBER = 33000;
+    const ADDED_CODE_NUMBER = 34000;
 
     /** Unable to create user */
     const ERROR_INVALID_NOTIFICATION_TYPE = 1 + self::ADDED_CODE_NUMBER;
