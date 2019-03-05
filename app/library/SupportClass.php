@@ -381,7 +381,6 @@ class SupportClass
             }
         } elseif(is_object($sqlRequest) && get_class($sqlRequest) == 'Phalcon\Mvc\Model\Query\Builder'){
 
-
             $sqlGotRequest = $sqlRequest;
             $sqlRequest->limit($page_size)
                        ->offset($offset);
@@ -396,7 +395,27 @@ class SupportClass
 
 
             return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
+        } elseif(is_array($sqlRequest)){
+            $model = $sqlRequest['model'];
+
+            unset($sqlRequest['model']);
+
+            $sqlRequest['limit'] = $page_size;
+            $sqlRequest['offset'] = $offset;
+
+            $data = $model::find($sqlRequest);
+
+            unset($sqlRequest['limit']);
+            unset($sqlRequest['offset']);
+
+            $sqlRequest['columns'] = 'count(*) as count';
+
+            $count = $model::find($sqlRequest);
+
+            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
         }
+
+        return null;
     }
 
 

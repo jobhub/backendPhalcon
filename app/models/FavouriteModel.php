@@ -361,15 +361,19 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
     public static function findSubscribersByCompany($companyId, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
 
         if (empty(trim($query))) {
-            $result = FavoriteCompanies::find(['object_id = :companyId:', 'bind' => [
+            /*$result = FavoriteCompanies::find(['object_id = :companyId:', 'bind' => [
                 'companyId' => $companyId
-            ], 'offset' => $offset, 'limit' => $page_size])->toArray();
+            ], 'offset' => $offset, 'limit' => $page_size])->toArray();*/
+
+            $result = SupportClass::executeWithPagination(['model'=>'App\Models\FavoriteCompanies','object_id = :companyId:', 'bind' => [
+                'companyId' => $companyId
+            ]],null,$page,$page_size);
         } else {
-            $db = DI::getDefault()->getDb();
+            /*$db = DI::getDefault()->getDb();*/
 
             $sql = 'Select * FROM (
     (select fav_comp.* from favorite_companies as fav_comp
@@ -399,11 +403,12 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                     )      
     )
     ) as foo 
-    order by foo.favourite_date desc
-                LIMIT :limit
-                OFFSET :offset';
+    order by foo.favourite_date desc';
 
-            $query_sql = $db->prepare($sql);
+            $result = SupportClass::executeWithPagination($sql,['companyId' => $companyId,
+                'query' => $query],$page,$page_size);
+
+            /*$query_sql = $db->prepare($sql);
             $query_sql->execute([
                 'companyId' => $companyId,
                 'query' => $query,
@@ -411,23 +416,25 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 'offset' => $offset,
             ]);
 
-            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);*/
         }
 
-        return self::handleSubscribers($result);
+        $result['data'] = self::handleSubscribers($result['data']);
+
+        return $result;
     }
 
     public static function findSubscribersByUser($userId, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-
         if (empty(trim($query))) {
-            $result = FavoriteUsers::find(['object_id = :userId:', 'bind' => [
+            /*$result = FavoriteUsers::find(['object_id = :userId:', 'bind' => [
                 'userId' => $userId
-            ], 'offset' => $offset, 'limit' => $page_size])->toArray();
+            ], 'offset' => $offset, 'limit' => $page_size])->toArray();*/
+
+            $result = SupportClass::executeWithPagination(['model'=>'App\Models\FavoriteUsers','object_id = :userId:', 'bind' => [
+                'userId' => $userId
+            ]],null,$page,$page_size);
         } else {
-            $db = DI::getDefault()->getDb();
 
             $sql = 'Select * FROM (
     (select fav_user.* from favorite_users as fav_user
@@ -457,22 +464,15 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                     )      
     )
     ) as foo 
-    order by foo.favourite_date desc
-                LIMIT :limit
-                OFFSET :offset';
+    order by foo.favourite_date desc';
 
-            $query_sql = $db->prepare($sql);
-            $query_sql->execute([
-                'userId' => $userId,
-                'query' => $query,
-                'limit' => $page_size,
-                'offset' => $offset,
-            ]);
-
-            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            $result = SupportClass::executeWithPagination($sql,['companyId' => $companyId,
+                'query' => $query],$page,$page_size);
         }
 
-        return self::handleSubscribers($result);
+        $result['data'] = self::handleSubscribers($result['data']);
+
+        return $result;
     }
 
     public static function findSubscriptions(Accounts $account, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
@@ -496,18 +496,18 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 where fav_comp.subject_id = ANY(:ids) and c.deleted = false
     )
     ) as foo 
-    order by foo.favourite_date desc
-                LIMIT :limit
-                OFFSET :offset';
+    order by foo.favourite_date desc';
 
-            $query_sql = $db->prepare($sql);
+            /*$query_sql = $db->prepare($sql);
             $query_sql->execute([
                 'ids' => $account->getRelatedAccounts(),
                 'limit' => $page_size,
                 'offset' => $offset,
             ]);
 
-            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);*/
+
+            $result = SupportClass::executeWithPagination($sql,['ids' => $account->getRelatedAccounts()],$page,$page_size);
         } else {
 
             $sql = 'Select * FROM (
@@ -538,11 +538,9 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                     )   
     )
     ) as foo 
-    order by foo.favourite_date desc
-                LIMIT :limit
-                OFFSET :offset';
+    order by foo.favourite_date desc';
 
-            $query_sql = $db->prepare($sql);
+            /*$query_sql = $db->prepare($sql);
             $query_sql->execute([
                 'ids' => $account->getRelatedAccounts(),
                 'query' => $query,
@@ -550,10 +548,18 @@ class FavouriteModel extends \Phalcon\Mvc\Model
                 'offset' => $offset,
             ]);
 
-            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);*/
+
+            $result = SupportClass::executeWithPagination($sql,
+                ['ids' => $account->getRelatedAccounts(), 'query' => $query],
+                $page,$page_size);
         }
 
-        return self::handleSubscriptions($result);
+        /*return self::handleSubscriptions($result);*/
+
+        $result['data'] = self::handleSubscriptions($result['data']);
+
+        return $result;
     }
 
     public static function getSubscribersCount(Accounts $account)
