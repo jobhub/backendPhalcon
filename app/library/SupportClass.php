@@ -403,14 +403,26 @@ class SupportClass
             $sqlRequest['limit'] = $page_size;
             $sqlRequest['offset'] = $offset;
 
-            $data = $model::find($sqlRequest);
+            if(isset($sqlRequest['deleted'])){
+                $deleted = $sqlRequest['deleted'];
+                unset($sqlRequest['deleted']);
+            }
+
+            if(!is_null($deleted))
+                $data = $model::find($sqlRequest,$deleted);
+            else
+                $data = $model::find($sqlRequest);
 
             unset($sqlRequest['limit']);
             unset($sqlRequest['offset']);
+            unset($sqlRequest['order']);
 
             $sqlRequest['columns'] = 'count(*) as count';
 
-            $count = $model::find($sqlRequest);
+            if(!is_null($deleted))
+                $count = $model::find($sqlRequest,$deleted);
+            else
+                $count = $model::find($sqlRequest);
 
             return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
         }

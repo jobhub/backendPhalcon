@@ -541,6 +541,6 @@ class CommentsAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-        return $comments;
+        return self::successPaginationResponse('',$comments['data'],$comments['pagination']);
     }
 }

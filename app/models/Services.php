@@ -1342,40 +1342,40 @@ class Services extends AccountWithNotDeletedWithCascade
 
     public static function findServicesByUserId($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE, $accountId = null)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
         $modelsManager = DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id and a.company_id is null', 'a')
             ->where('a.user_id = :userId: and s.deleted = false', ['userId' => $userId])
-            ->orderBy('service_id desc')
-            ->limit($page_size)
-            ->offset($offset)
-            ->getQuery()
-            ->execute();
+            ->orderBy('service_id desc');
 
-        return self::handleServiceFromArray($result->toArray(), $accountId);
+        $services = SupportClass::executeWithPagination($result,['userId' => $userId],$page,$page_size);
+
+        $services['data'] = self::handleServiceFromArray($services['data'], $accountId);
+        return $services;
     }
 
     public static function findServicesByCompanyId($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE, $accountId = null)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
         $modelsManager = DI::getDefault()->get('modelsManager');
         $result = $modelsManager->createBuilder()
             ->columns(self::publicColumns)
             ->from(["s" => "App\Models\Services"])
             ->join('App\Models\Accounts', 'a.id = s.account_id', 'a')
             ->where('a.company_id = :companyId: and s.deleted = false', ['companyId' => $companyId])
-            ->orderBy('service_id desc')
-            ->limit($page_size)
+            ->orderBy('service_id desc');
+/*            ->limit($page_size)
             ->offset($offset)
             ->getQuery()
-            ->execute();
+            ->execute();*/
 
-        return self::handleServiceFromArray($result->toArray(), $accountId);
+        $services = SupportClass::executeWithPagination($result,['companyId' => $companyId],$page,$page_size);
+
+        $services['data'] = self::handleServiceFromArray($services['data'], $accountId);
+        return $services;
     }
 
     public static function handleServiceForNews(array $service, $accountId = null)
