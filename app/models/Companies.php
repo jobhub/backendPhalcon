@@ -510,22 +510,25 @@ class Companies extends NotDeletedModelWithCascade
             );
 
         $validator->add(
-            "name",
-            new AlphaValidator(
+            'name',
+            new Regex(
                 [
-                    "message" => ":field must contain only letters",
+                    "pattern" => "/^[А-пр-эa-zA-Z0-9](?:_?[А-пр-эa-zA-Z0-9 ,.-])*$/",
+                    "message" => ":field must contain only letters, numeric and space",
                 ]
             )
         );
 
-        $validator->add(
-            "full_name",
-            new AlphaValidator(
-                [
-                    "message" => ":field must contain only letters",
-                ]
-            )
-        );
+        if ($this->getFullName() != null)
+            $validator->add(
+                'full_name',
+                new Regex(
+                    [
+                        "pattern" => "/^[А-пр-эa-zA-Z0-9](?:_?[А-пр-эa-zA-Z0-9 ,.-])*$/",
+                        "message" => ":field must contain only letters, numeric and space",
+                    ]
+                )
+            );
 
 
         return $this->validate($validator);
@@ -655,15 +658,16 @@ class Companies extends NotDeletedModelWithCascade
         }
     }
 
-    public static function addDefaultLogotypeToCompany($company){
-        if(is_array($company)){
-            if($company['logotype'] == null){
+    public static function addDefaultLogotypeToCompany($company)
+    {
+        if (is_array($company)) {
+            if ($company['logotype'] == null) {
                 $company['logotype'] = self::DEFAULT_COMPANY_LOGOTYPE;
             }
-        } elseif(is_object($company) == 'Company'){
-            if(method_exists($company,'getLogotype') &&
-                method_exists($company,'setLogotype') ){
-                if($company->getLogotype() == null){
+        } elseif (is_object($company) == 'Company') {
+            if (method_exists($company, 'getLogotype') &&
+                method_exists($company, 'setLogotype')) {
+                if ($company->getLogotype() == null) {
                     $company->setLogotype(self::DEFAULT_COMPANY_LOGOTYPE);
                 }
             } else {
@@ -715,11 +719,11 @@ class Companies extends NotDeletedModelWithCascade
     {
         $phones = PhonesCompanies::getCompanyPhones($company['company_id']);
 
-        $handledCompany = SupportClass::getCertainColumnsFromArray($company,self::publicColumns);
+        $handledCompany = SupportClass::getCertainColumnsFromArray($company, self::publicColumns);
 
         $data = [
             'company' => $handledCompany,
-            'phones'=>$phones
+            'phones' => $phones
         ];
 
         $account = Accounts::findFirstByCompanyId($company['company_id']);

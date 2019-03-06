@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Libs\GeoCoding;
+use App\Models\Cities;
 use App\Models\Markers;
 use App\Models\Services;
 use App\Models\TradePoints;
@@ -84,8 +86,6 @@ class PointService extends AbstractService
     {
         $point = new TradePoints();
 
-        $marker = $this->markerService->createMarker($data['longitude'],$data['latitude']);
-        $data['marker_id'] = $marker->getMarkerId();
         $this->fillPoint($point, $data);
 
         if ($point->save() == false) {
@@ -145,8 +145,19 @@ class PointService extends AbstractService
             $point->setLongitude($data['longitude']);
         if (!empty(trim($data['latitude'])))
             $point->setLatitude($data['latitude']);*/
-        if(!empty(trim($data['marker_id'])))
-            $point->setMarkerId($data['marker_id']);
+
+        $data['longitude'] = filter_var($data['longitude'],FILTER_VALIDATE_FLOAT);
+        $data['latitude'] = filter_var($data['latitude'],FILTER_VALIDATE_FLOAT);
+        if(isset($data['longitude']) && isset($data['latitude'])){
+            $marker = $this->markerService->createMarker($data['longitude'],$data['latitude']);
+            $point->setMarkerId($marker->getMarkerId());
+
+            $city = GeoCoding::Get_City_From_Google_Maps($data['latitude'],$data['longitude']);
+
+            $city_object = Cities::findCityByName($city);
+            if($city_object)
+                $point->setCityId($city_object->getCityId());
+        }
     }
 
     public function deletePoint(TradePoints $point)

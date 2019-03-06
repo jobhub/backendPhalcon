@@ -791,3 +791,8 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Wed, 06 Mar 19 14:45:45 +0300][CRITICAL] 21003 Account not subscribed to object
 [Wed, 06 Mar 19 14:45:49 +0300][CRITICAL] 21003 Account not subscribed to object
 [Wed, 06 Mar 19 14:51:38 +0300][CRITICAL] 36002 Product does not exist
+[Wed, 06 Mar 19 16:27:48 +0300][CRITICAL] 310003 Time to resend did't come
+[Wed, 06 Mar 19 16:28:44 +0300][CRITICAL] 13004 Unable create company
+[Wed, 06 Mar 19 16:30:32 +0300][CRITICAL] 13004 Unable create company
+[Wed, 06 Mar 19 16:30:45 +0300][CRITICAL] 13004 Unable create company
+[Wed, 06 Mar 19 16:31:04 +0300][CRITICAL] 13004 Unable create company

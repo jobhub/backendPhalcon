@@ -294,7 +294,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array с подписками (просто id-шники)
      */
-    /*public function getFavouriteServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    public function getFavouriteServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -311,7 +311,7 @@ class FavouriteController extends AbstractController
         $result = FavouriteServices::findFavourites($account_id, $page, $page_size);
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
-    }*/
+    }
 
     /**
      * Возвращает избранные товары пользователя
@@ -324,7 +324,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array с подписками (просто id-шники)
      */
-    /*public function getFavouriteProductsAction($account_id = null, $page = 1, $page_size = Products::DEFAULT_RESULT_PER_PAGE)
+    public function getFavouriteProductsAction($account_id = null, $page = 1, $page_size = Products::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -341,7 +341,7 @@ class FavouriteController extends AbstractController
         $result = FavouriteProducts::findFavourites($account_id, $page, $page_size);
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
-    }*/
+    }
 
     /**
      * Меняет радиус на получение уведомлений для подписки на категорию
@@ -404,7 +404,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array - подписки пользователя
      */
-    /*public function getFavouritesCategoriesAction($account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    public function getFavouritesCategoriesAction($account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -421,7 +421,7 @@ class FavouriteController extends AbstractController
         $result = FavoriteCategories::findForUser($account_id, $page, $page_size);
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
-    }*/
+    }
 
     /**
      * Возвращает все подписки пользователя указанного типа (услуги, категории, товары).
@@ -437,7 +437,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array - подписки пользователя
      */
-    public function getFavouritesAction($type, $account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    /*public function getFavouritesAction($type, $account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -467,5 +467,5 @@ class FavouriteController extends AbstractController
         }
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
-    }
+    }*/
 }

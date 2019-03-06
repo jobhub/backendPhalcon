@@ -109,4 +109,7 @@ class Cities extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findCityByName($city_name){
+        return self::findFirstByCity($city_name);
+    }
 }

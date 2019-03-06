@@ -564,9 +564,8 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                 }
             }
 
-            $imagesNews = ImagesModel::findImages('App\Models\ImagesNews',$newsElement['news_id']);
-
-            $newsWithAllElement['images'] = ImagesNews::handleImages($imagesNews);
+            $imagesNews = ImagesModel::findAllImages('App\Models\ImagesNews',$newsElement['news_id']);
+            $newsWithAllElement['images'] = $imagesNews;
             /*foreach ($imagesNews as $image) {
                 $newsWithAllElement['images'][] = $image['image_path'];
             }*/

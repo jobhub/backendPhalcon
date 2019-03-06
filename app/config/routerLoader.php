@@ -2654,7 +2654,7 @@ $routes = [
              *
              * @return string - json array с подписками (просто id-шники)
              */
-            /*[
+            [
                 'type' => 'get',
                 'path' => '/get/service',
                 'action' => 'getFavouriteServicesAction'
@@ -2673,7 +2673,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/service/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouriteServicesAction'
-            ],*/
+            ],
 
             /**
              * Возвращает избранные товары пользователя
@@ -2686,7 +2686,7 @@ $routes = [
              *
              * @return string - json array с подписками (просто id-шники)
              */
-            /*[
+            [
                 'type' => 'get',
                 'path' => '/get/product',
                 'action' => 'getFavouritesCategoriesAction'
@@ -2705,7 +2705,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/product/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesCategoriesAction'
-            ],*/
+            ],
 
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
@@ -2736,7 +2736,7 @@ $routes = [
              *
              * @return string - json array - подписки пользователя
              */
-            /*[
+            [
                 'type' => 'get',
                 'path' => '/get/category',
                 'action' => 'getFavouritesCategoriesAction'
@@ -2755,7 +2755,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/category/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesCategoriesAction'
-            ],*/
+            ],
 
             /**
              * Возвращает все подписки пользователя указанного типа (услуги, категории, товары).
@@ -2771,7 +2771,7 @@ $routes = [
              *
              * @return string - json array - подписки пользователя
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/{type}',
                 'action' => 'getFavouritesAction'
@@ -2790,7 +2790,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/{type}/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesAction'
-            ],
+            ],*/
         ]
     ],
 
