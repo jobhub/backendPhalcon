@@ -935,7 +935,7 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/own/{company_id}/{page}/{page_size}',
-                'action' => 'getOwnServicesAction'
+                'action' => 'getOwnServicesAction',
             ],
 
             /**
@@ -1254,11 +1254,11 @@ $routes = [
              * @params (необязательные) tin, region_id, website, email, description
              * @return int company_id
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/add',
                 'action' => 'addCompanyAction'
-            ],
+            ],*/
 
             /**
              * Удаляет указанную компанию
@@ -1398,7 +1398,7 @@ $routes = [
              * @return string - json array of [status, [TradePoint, phones]], если все успешно,
              * или json array в формате Status в ином случае
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get',
                 'action' => 'getPointsAction'
@@ -1407,7 +1407,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/{company_id}',
                 'action' => 'getPointsAction'
-            ],
+            ],*/
 
             /**
              * Возвращает точки предоставления услуг назначенные текущему пользователю
@@ -1416,7 +1416,7 @@ $routes = [
              * @param  int $manager_user_id
              * @return string - json array of [TradePoint, phones]
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/for-manager',
                 'action' => 'getPointsForUserManagerAction'
@@ -1425,7 +1425,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/for-manager/{manager_user_id}',
                 'action' => 'getPointsForUserManagerAction'
-            ],
+            ],*/
 
             /**
              * Добавляет точку оказания услуг к компании
@@ -1437,11 +1437,11 @@ $routes = [
              * @params (Необязательные) (int manager_user_id, int company_id) - парой
              * @return array с point_id
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/add',
                 'action' => 'addTradePointAction'
-            ],
+            ],*/
 
             /**
              * Редактирует указанную точку оказания услуг
@@ -1467,11 +1467,11 @@ $routes = [
              * @param (Обязательные) $point_id
              * @return Phalcon\Http\Response с json массивом в формате Status
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/delete/{point_id}',
                 'action' => 'deleteTradePointAction'
-            ],
+            ],*/
 
             /**
              * Возвращает публичную информацию об указанной точке оказания услуг.
@@ -1493,7 +1493,8 @@ $routes = [
             [
                 'type' => 'post',
                 'path' => '/moderator/change-to-markers',
-                'action' => 'changePointsAction'
+                'action' => 'changePointsAction',
+                'access' => 'moderator'
             ],
         ]
     ],

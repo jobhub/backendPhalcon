@@ -144,7 +144,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * Возвращает все задания указанного субъекта
+     * Return products with filters and query. Its for search.
      *
      * @method GET
      *
@@ -153,7 +153,7 @@ class ProductController extends AbstractController
      *
      * @return string - массив заданий (Tasks)
      */
-    public function getTasksForSubjectAction($id, $is_company = false)
+    public function getProductsAction($id, $is_company = false)
     {
         if ($is_company && strtolower($is_company)!="false")
             return Tasks::findAcceptingTasksByCompany($id);
