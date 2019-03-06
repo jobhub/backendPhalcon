@@ -89,7 +89,7 @@ class ImageController extends AbstractController
             }
         }
 
-        return $images;
+        return self::successPaginationResponse('',$images['data'],$images['pagination']);
     }
 
     /**

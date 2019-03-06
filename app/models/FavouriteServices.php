@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -63,8 +64,8 @@ class FavouriteServices extends FavouriteModel
     }
 
     public static function findFavourites($accountId, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE){
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
         $modelsManager = DI::getDefault()->get('modelsManager');
 
         $account = Accounts::findFirstById($accountId);
@@ -80,12 +81,17 @@ class FavouriteServices extends FavouriteModel
             ->join('App\Models\FavouriteServices','fav_serv.object_id = s.service_id','fav_serv')
             ->where('fav_serv.subject_id = ANY(:ids:) and s.deleted = false',
                 ['ids' => $account->getRelatedAccounts()])
-            ->orderBy('fav_serv.favourite_date desc')
-            ->limit($page_size)
+            ->orderBy('fav_serv.favourite_date desc');
+            /*->limit($page_size)
             ->offset($offset)
             ->getQuery()
-            ->execute();
+            ->execute();*/
 
-        return Services::handleServiceFromArray($result->toArray());
+        $result = SupportClass::executeWithPagination($result,
+            ['ids' => $account->getRelatedAccounts()],$page,$page_size);
+
+        $result['data'] = Services::handleServiceFromArray($result['data']);
+
+        return $result;
     }
 }

@@ -254,13 +254,7 @@ class News extends AccountWithNotDeletedWithCascade
 
     public static function findNewsForCurrentAccount(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $db = DI::getDefault()->getDb();
-
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-
-        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id
-	FROM (
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id FROM (
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
@@ -291,31 +285,31 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
             INNER JOIN public.favorite_users favu ON (a.user_id = favu.object_id)
                         WHERE favu.subject_id = ANY (:ids)
         )
-    ) as foo
-                    ORDER BY foo.date desc
-                    LIMIT :limit 
-                    OFFSET :offset";
+    ) as foo ORDER BY foo.date desc";
 
+        $news = SupportClass::executeWithPagination($str,['ids'=>$account->getRelatedAccounts()],$page,$page_size);
+
+        /*$db = DI::getDefault()->getDb();
         $query = $db->prepare($str);
         $result = $query->execute([
-            'ids' => $account->getRelatedAccounts(),
-            'limit' => $page_size,
-            'offset' => $offset
+            'ids' => $account->getRelatedAccounts()
         ]);
 
-        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
-        return News::handleNewsSetWithForwards($news);
+        $news = $query->fetchAll(\PDO::FETCH_ASSOC);*/
+
+
+        $news['data'] = News::handleNewsSetWithForwards($news['data']);
+        return $news;
     }
 
     public static function findAllNewsForCurrentUser(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $db = DI::getDefault()->getDb();
+/*        $db = DI::getDefault()->getDb();
 
         $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
+        $offset = ($page - 1) * $page_size;*/
 
-        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id
-	FROM (
+        $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id FROM (
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
          FROM public.news n 
                     INNER JOIN public.accounts a ON (n.account_id = a.id)
@@ -356,20 +350,13 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid)
                         where m.account_id = ANY(:ids))
     ) as foo
-                    ORDER BY foo.date desc
-                    LIMIT :limit 
-                    OFFSET :offset";
+                    ORDER BY foo.date desc";
 
-        $query = $db->prepare($str);
-        $result = $query->execute([
-            'ids' => $account->getRelatedAccounts(),
-            'limit' => $page_size,
-            'offset' => $offset
-        ]);
+        $news = SupportClass::executeWithPagination($str,
+            ['ids'=>$account->getRelatedAccounts()],$page,$page_size);
 
-        $news = $query->fetchAll(\PDO::FETCH_ASSOC);
-
-        return News::handleNewsSetWithForwards($news);
+        $news['data'] = News::handleNewsSetWithForwards($news['data']);
+        return $news;
     }
 
     /*public static function findNewsByAccount($accountId)
@@ -382,9 +369,9 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
     public static function findNewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
+        /*$page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
-        $db = DI::getDefault()->getDb();
+        $db = DI::getDefault()->getDb();*/
 
         $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
                 (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
@@ -397,11 +384,9 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     inner join public.accounts a ON (m.account_id = a.id)
                         where a.company_id = :companyId)
                 ) foo
-                order by foo.date desc
-                LIMIT :limit
-                OFFSET :offset';
+                order by foo.date desc';
 
-        $query = $db->prepare($sql);
+        /*$query = $db->prepare($sql);
         $result = $query->execute([
             'companyId' => $companyId,
             'limit' => $page_size,
@@ -410,15 +395,17 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $news = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        return self::handleNewsSetWithForwards($news);
+        return self::handleNewsSetWithForwards($news);*/
+
+        $news = SupportClass::executeWithPagination($sql,
+            ['companyId' => $companyId],$page,$page_size);
+
+        $news['data'] = News::handleNewsSetWithForwards($news['data']);
+        return $news;
     }
 
     public static function findNewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-        $db = DI::getDefault()->getDb();
-
         $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
                 (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
                     from public.news n inner join 
@@ -430,11 +417,9 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
                         where a.user_id = :userId)
                 ) foo
-                order by foo.date desc
-                LIMIT :limit
-                OFFSET :offset';
+                order by foo.date desc';
 
-        $query = $db->prepare($sql);
+        /*$query = $db->prepare($sql);
         $query->execute([
             'userId' => $userId,
             'limit' => $page_size,
@@ -443,76 +428,14 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $newsResultset = $query->fetchAll(\PDO::FETCH_ASSOC);
         $newsResult = self::handleNewsSetWithForwards($newsResultset);
-        /*foreach ($newsResultset as $newsElement){
-            $resultElement = [];
-            switch ($newsElement['relname']){
-                case 'news':{
-                    $news = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
 
-                    $news = News::getPublicInfoFromArray($news);
+        return $newsResult;*/
 
-                    //$news = News::findNewsById($newsElement['object_id'],self::publicColumns)->toArray();
-                    $resultElement = self::handleNewsFromArray([$news])[0];
+        $news = SupportClass::executeWithPagination($sql,
+            ['userid' => $userId],$page,$page_size);
 
-                    $resultElement['is_forward'] = false;
-
-                    $newsResult[] = $resultElement;
-
-                    break;
-                }
-                case 'forwards_services':{
-                    $service = Services::findServiceById($newsElement['object_id'])->toArray();
-
-                    if(is_null($service))
-                        break;
-
-                    $resultElement['service'] = Services::handleServiceForNews($service);
-
-                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
-
-                    $resultElement = self::addForwardData($forwardData,$resultElement);
-
-                    $newsResult[] = $resultElement;
-
-                    break;
-                }
-                case 'forwards_news':{
-                    $news = News::findNewsById($newsElement['object_id'],News::publicColumns)->toArray();
-
-                    if(is_null($news))
-                        break;
-
-                    $resultElement['news'] = News::handleNewsFromArray([$news])[0];
-
-                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
-
-                    $resultElement = self::addForwardData($forwardData,$resultElement);
-
-                    $newsResult[] = $resultElement;
-
-                    break;
-                }
-                case 'forwards_images_users':{
-                $imageUser = ImagesUsers::findImageById($newsElement['object_id'])->toArray();
-
-                if(is_null($imageUser))
-                    break;
-
-                $resultElement['image_user'] = ImagesUsers::handleImages([$imageUser])[0];
-
-                $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
-
-                $resultElement = self::addForwardData($forwardData,$resultElement);
-
-                $newsResult[] = $resultElement;
-
-                break;
-                }
-            }
-        }*/
-
-        return /*self::handleNewsFromArray($news);*/
-            $newsResult;
+        $news['data'] = News::handleNewsSetWithForwards($news['data']);
+        return $news;
     }
 
     /**

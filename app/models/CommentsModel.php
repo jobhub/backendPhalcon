@@ -250,43 +250,47 @@ abstract class CommentsModel extends AccountWithNotDeleted
     public static function findParentComments($model, $objectId, $page = 1,
                                               $page_size = self::DEFAULT_RESULT_PER_PAGE_PARENT, $accountId = null)
     {
-        $page = $page > 0 ? $page : 1;
+        /*$page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         $comments = strval('App\Models\\' . $model)::find(['conditions' => 'object_id = :objectId: and reply_id is null',
             'bind' => ['objectId' => $objectId],
             'order' => 'comment_date DESC',
             'limit' => $page_size,
-            'offset' => $offset], false);
+            'offset' => $offset], false);*/
 
-        $comments_arr = self::handleComments($comments->toArray(), 'App\Models\\'.$model, $accountId);
-        /*for($i = 0; $i < count($comments_arr);$i++){
-            $like_model = 'App\Models\Likes'.$model;
-            $comments_arr[$i]['likes'] = count($like_model::findByCommentId($comments_arr[$i]['comment_id']));
-        }*/
-        return $comments_arr;
+        $comments = SupportClass::executeWithPagination(['model'=>'App\Models\\' . $model,
+            'conditions' => 'object_id = :objectId: and reply_id is null',
+            'bind' => ['objectId' => $objectId],
+            'order' => 'comment_date DESC','deleted'=>false],null,$page,$page_size);
+
+        $comments['data'] = self::handleComments($comments['data'], 'App\Models\\'.$model, $accountId);
+        return $comments;
     }
 
     private static function findChildCommentsWithoutHandle($model, $objectId, $parentId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE_CHILD)
     {
-        $page = $page > 0 ? $page : 1;
+        /*$page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
         $comments = strval('App\Models\\' . $model)::find(['conditions' => 'object_id = :objectId: and reply_id = :parentId:',
             'bind' => ['objectId' => $objectId, 'parentId' => $parentId],
             'order' => 'comment_date DESC',
             'limit' => $page_size,
-            'offset' => $offset], false);
+            'offset' => $offset], false);*/
+
+        $comments = SupportClass::executeWithPagination(['model'=>'App\Models\\' . $model,
+                'conditions' => 'object_id = :objectId: and reply_id = :parentId:',
+                'bind' => ['objectId' => $objectId, 'parentId' => $parentId],
+                'order' => 'comment_date DESC','deleted'=>false],null,$page,$page_size);
+
         return $comments;
     }
 
     public static function findChildComments($model, $objectId, $parentId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE_CHILD, $accountId = null)
     {
         $comments = self::findChildCommentsWithoutHandle($model, $objectId, $parentId, $page, $page_size);
-        $comments_arr = self::handleComments($comments->toArray(), 'App\Models\\'.$model, $accountId);
-        /*for($i = 0; $i < count($comments_arr);$i++){
-            $like_model = 'App\Models\Likes'.$model;
-            $comments_arr[$i]['likes'] = count($like_model::findByCommentId($comments_arr[$i]['comment_id']));
-        }*/
-        return $comments_arr;
+        $comments['data'] = self::handleComments($comments['data'], 'App\Models\\'.$model, $accountId);
+
+        return $comments;
     }
 
     /**

@@ -908,12 +908,12 @@ $routes = [
             /**
              * Возвращает все услуги данного юзера (или его компании).
              *
-             * @access private
-             *
              * @method GET
              *
-             * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
+             * @param $account_id - если не указан, то будут возвращены услуги текущего пользователя.
              *        Иначе компании, в которой он должен быть хотя бы менеджером.
+             * @param $page
+             * @param $page_size
              *
              * @return string -  массив услуг
              */
@@ -924,18 +924,18 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}',
+                'path' => '/get/own/{account_id}',
                 'action' => 'getOwnServicesAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}',
+                'path' => '/get/own/{account_id}/{page}',
                 'action' => 'getOwnServicesAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}/{page_size}',
-                'action' => 'getOwnServicesAction',
+                'path' => '/get/own/{account_id}/{page}/{page_size}',
+                'action' => 'getOwnServicesAction'
             ],
 
             /**

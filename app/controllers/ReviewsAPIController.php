@@ -268,9 +268,11 @@ class ReviewsAPIController extends AbstractController
                                                $page = 1, $page_size = Reviews::DEFAULT_RESULT_PER_PAGE)
     {
         if ($is_company && strtolower($is_company) != "false")
-            return Reviews::findReviewsByCompany($id,$page,$page_size);
+            $result = Reviews::findReviewsByCompany($id,$page,$page_size);
         else
-            return Reviews::findReviewsByUser($id,$page,$page_size);
+            $result = Reviews::findReviewsByUser($id,$page,$page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -303,9 +305,11 @@ class ReviewsAPIController extends AbstractController
         $account = $this->accountService->getAccountById($account_id);
 
         if ($account->getCompanyId()!=null)
-            return Reviews::findReviewsByCompany($account->getCompanyId(),$page,$page_size);
+            $result = Reviews::findReviewsByCompany($account->getCompanyId(),$page,$page_size);
         else
-            return Reviews::findReviewsByUser($account->getUserId(),$page,$page_size);
+            $result = Reviews::findReviewsByUser($account->getUserId(),$page,$page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -321,7 +325,9 @@ class ReviewsAPIController extends AbstractController
      */
     public function getReviewsForServiceAction($service_id, $page = 1, $page_size = Reviews::DEFAULT_RESULT_PER_PAGE)
     {
-        return Reviews::findReviewsForService($service_id,$page,$page_size);
+        $result = Reviews::findReviewsForService($service_id,$page,$page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**

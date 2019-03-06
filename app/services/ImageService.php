@@ -35,7 +35,6 @@ use Symfony\Component\EventDispatcher\Tests\Service;
  */
 class ImageService extends AbstractService
 {
-
     const TYPE_USER = 'user';
     const TYPE_NEWS = 'news';
     const TYPE_REVIEW = 'review';

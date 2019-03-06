@@ -186,7 +186,9 @@ class FavouriteController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return FavouriteModel::findSubscribers($account, $query, $page, $page_size);
+        $result = FavouriteModel::findSubscribers($account, $query, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -194,6 +196,8 @@ class FavouriteController extends AbstractController
      *
      * @method GET
      *
+     * @param $id
+     * @param $is_company
      * @param $query = null
      * @param $page = 1
      * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
@@ -206,12 +210,12 @@ class FavouriteController extends AbstractController
         $userId = self::getUserId();
 
         if ($is_company && strtolower($is_company) != "false") {
-            $account = Accounts::findFirstByCompanyId($id);
+            $result = FavouriteModel::findSubscribersByCompany($id, $query, $page, $page_size);
         } else {
-            $account = Accounts::findForUserDefaultAccount($id);
+            $result = FavouriteModel::findSubscribersByUser($id, $query, $page, $page_size);
         }
 
-        return FavouriteModel::findSubscribers($account, $query, $page, $page_size);
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -243,7 +247,8 @@ class FavouriteController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
+        $result = FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     public function getOtherSubscriptionsAction($id, $is_company = false,$query = null,
@@ -271,7 +276,9 @@ class FavouriteController extends AbstractController
             $account = Accounts::findForUserDefaultAccount($id);
         }
 
-        return FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
+        $result = FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -299,7 +306,9 @@ class FavouriteController extends AbstractController
 
         self::setAccountId($account_id);
 
-        return FavouriteServices::findFavourites($account_id, $page, $page_size);
+        $result = FavouriteServices::findFavourites($account_id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -377,6 +386,8 @@ class FavouriteController extends AbstractController
 
         self::setAccountId($account_id);
 
-        return FavoriteCategories::findForUser($account_id, $page, $page_size);
+        $result = FavoriteCategories::findForUser($account_id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 }

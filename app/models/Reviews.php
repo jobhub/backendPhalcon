@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -450,9 +451,6 @@ class Reviews extends NotDeletedModelWithCascade
 
     public static function findReviewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $db = DI::getDefault()->getDb();
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
 
         $columns = '';
         foreach (self::publicColumns as $publicColumn) {
@@ -461,13 +459,13 @@ class Reviews extends NotDeletedModelWithCascade
             $columns .= 'reviews.' . $publicColumn;
         }
 
-        $query = $db->prepare("Select * FROM (
+        $query = "Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
               (SELECT " . $columns . "
               FROM reviews inner join tasks 
               ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = 'task' AND reviews.executor = true)
               inner join accounts on (tasks.account_id = accounts.id and accounts.company_id is null)
-              WHERE accounts.user_id = :userId)
+              WHERE accounts.user_id = :userid1)
               UNION
               --Отзывы оставленные на предложения данного субъекта
               (SELECT " . $columns . "
@@ -475,7 +473,7 @@ class Reviews extends NotDeletedModelWithCascade
               ON (reviews.binder_id = offers.task_id AND reviews.binder_type = 'task'
                   AND reviews.executor = false AND offers.selected = true) 
               inner join accounts on (offers.account_id = accounts.id and accounts.company_id is null)
-              WHERE accounts.user_id = :userId) 
+              WHERE accounts.user_id = :userid2) 
               UNION
               --Отзывы оставленные на заявки
               (SELECT " . $columns . "
@@ -483,7 +481,7 @@ class Reviews extends NotDeletedModelWithCascade
               ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
                   AND reviews.executor = true)
               inner join accounts on (requests.account_id = accounts.id and accounts.company_id is null)
-              WHERE accounts.user_id = :userId)
+              WHERE accounts.user_id = :userid3)
               UNION
               --Отзывы оставленные на услуги
               (SELECT " . $columns . "
@@ -492,34 +490,26 @@ class Reviews extends NotDeletedModelWithCascade
               ON (reviews.binder_id = requests.request_id AND reviews.binder_type = 'request'
                   AND reviews.executor = false)
               inner join accounts on (services.account_id = accounts.id and accounts.company_id is null)
-              WHERE accounts.user_id = :userId)
+              WHERE accounts.user_id = :userid4)
               UNION
               --фейковые отзывы
               (SELECT " . $columns . "
               FROM reviews
               inner join accounts on (reviews.object_account_id = accounts.id)
-              WHERE accounts.user_id = :userId)
+              WHERE accounts.user_id = :userid5)
               ) p0
-              ORDER BY p0.review_date desc
-              LIMIT :limit 
-              OFFSET :offset"
-        );
+              ORDER BY p0.review_date desc";
 
-        $query->execute([
-            'userId' => $userId,
-            'limit' => $page_size,
-            'offset'=>$offset
-        ]);
+        $reviews = SupportClass::executeWithPagination($query,
+            ['userid1' => $userId,'userid2' => $userId,'userid3' => $userId,'userid4' => $userId,'userid5' => $userId,],
+            $page,$page_size);
 
-        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
+        $reviews['data'] =  self::handleReviewsFromArray($reviews['data']);
+        return $reviews;
     }
 
     public static function findReviewsByCompany($companyId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $db = DI::getDefault()->getDb();
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-
         $columns = '';
         foreach (self::publicColumns as $publicColumn) {
             if($columns == ''){
@@ -568,11 +558,9 @@ class Reviews extends NotDeletedModelWithCascade
               inner join accounts on (reviews.object_account_id = accounts.id)
               WHERE accounts.company_id = :companyId)
               ) p0
-              ORDER BY p0.review_date desc
-              LIMIT :limit 
-              OFFSET :offset";
+              ORDER BY p0.review_date desc";
 
-        $query = $db->prepare($str);
+        /*$query = $db->prepare($str);
 
         $query->execute([
             'companyId' => $companyId,
@@ -580,7 +568,13 @@ class Reviews extends NotDeletedModelWithCascade
             'offset'=>$offset
         ]);
 
-        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));
+        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));*/
+
+        $reviews = SupportClass::executeWithPagination($str,
+            ['companyId' => $companyId],$page,$page_size);
+
+        $reviews['data'] =  self::handleReviewsFromArray($reviews['data']);
+        return $reviews;
     }
 
     public static function reviewAlreadyExists($binderId, $binderType, $executor)
@@ -663,8 +657,8 @@ class Reviews extends NotDeletedModelWithCascade
 
     public static function findReviewsForService($serviceId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
 
         $modelsManager = DI::getDefault()->get('modelsManager');
         $columns = [];
@@ -676,13 +670,18 @@ class Reviews extends NotDeletedModelWithCascade
             ->from(["rev" => 'App\Models\Reviews'])
             ->join('App\Models\Requests', 'req.request_id = rev.binder_id and rev.binder_type = "request" and executor = false', 'req')
             ->join('App\Models\Services', 's.service_id = req.service_id', 's')
-            ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId])
-            ->limit($page_size)
-            ->offset($offset)
-            ->getQuery()
-            ->execute();
+            ->where('s.service_id = :serviceId:', ['serviceId' => $serviceId]);
+            /*->limit($page_size)
+            ->offset($offset)*/
+            /*->getQuery()
+            ->execute();*/
+        $reviews = SupportClass::executeWithPagination($result,
+            ['serviceId' => $serviceId],$page,$page_size);
 
-        return self::handleReviewsFromArray($result->toArray());
+        $reviews['data'] =  self::handleReviewsFromArray($reviews['data']);
+        return $reviews;
+
+        //return self::handleReviewsFromArray($result->toArray());
     }
 
     /*public static function getReviewsForService2($serviceId, $limit = null)
