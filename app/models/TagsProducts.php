@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class TagsProducts extends TagsModel
 {
     public function validation()

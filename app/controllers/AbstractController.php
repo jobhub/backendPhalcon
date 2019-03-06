@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 /**
  * Class AbstractController
  *
@@ -64,5 +66,10 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
 
     public function setAccountId($accountId){
         $this->session->set('accountId',$accountId);
+    }
+
+    public static function getAccountId(){
+        $di = DI::getDefault();
+        return $di->getSession()->get('accountId');
     }
 }

@@ -38,6 +38,24 @@ class CommentService extends AbstractService {
     const ERROR_UNABLE_CREATE_COMMENT = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_INVALID_COMMENT_TYPE = 5 + self::ADDED_CODE_NUMBER;
 
+    public function getModelByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_USER_IMAGES:
+                $model = 'CommentsImagesUsers';
+                break;
+            case self::TYPE_NEWS:
+                $model = 'CommentsNews';
+                break;
+            case self::TYPE_SERVICES:
+                $model = 'CommentsServices';
+                break;
+            default:
+                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
+        }
+        return 'App\Models\\'.$model;
+    }
+
     public function createComment(array $commentData, $type){
         switch ($type) {
             case self::TYPE_USER_IMAGES:
@@ -121,19 +139,7 @@ class CommentService extends AbstractService {
     }
 
     public function getParentComments(int $objectId, $type,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
-        switch ($type) {
-            case self::TYPE_USER_IMAGES:
-                $model = 'CommentsImagesUsers';
-                break;
-            case self::TYPE_NEWS:
-                $model = 'CommentsNews';
-                break;
-            case self::TYPE_SERVICES:
-                $model = 'CommentsServices';
-                break;
-            default:
-                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
-        }
+        $model = $this->getModelByType($type);
 
         $comments = CommentsModel::findParentComments($model,$objectId,$page,$page_size,$accountId);
 
@@ -141,19 +147,7 @@ class CommentService extends AbstractService {
     }
 
     public function getChildComments(int $objectId, $type, $parentId,$accountId, $page = 1, $page_size = CommentsModel::DEFAULT_RESULT_PER_PAGE_PARENT){
-        switch ($type) {
-            case self::TYPE_USER_IMAGES:
-                $model = 'CommentsImagesUsers';
-                break;
-            case self::TYPE_NEWS:
-                $model = 'CommentsNews';
-                break;
-            case self::TYPE_SERVICES:
-                $model = 'CommentsServices';
-                break;
-            default:
-                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
-        }
+        $model = $this->getModelByType($type);
 
         $comments = CommentsModel::findChildComments($model,$objectId,$parentId,$page,$page_size,$accountId);
 

@@ -770,3 +770,24 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Fri, 01 Mar 19 13:36:43 +0300][CRITICAL] 21001 Unable subscribe account to object
 [Fri, 01 Mar 19 13:36:49 +0300][CRITICAL] 21001 Unable subscribe account to object
 [Fri, 01 Mar 19 13:46:50 +0300][CRITICAL] 21001 Unable subscribe account to object
+[Wed, 06 Mar 19 12:32:54 +0300][CRITICAL] 12001 Unable add phone
+[Wed, 06 Mar 19 12:33:09 +0300][CRITICAL] 12001 Unable add phone
+[Wed, 06 Mar 19 12:33:51 +0300][CRITICAL] 12001 Unable add phone
+[Wed, 06 Mar 19 12:34:09 +0300][CRITICAL] 36001 Unable to create product
+[Wed, 06 Mar 19 12:38:37 +0300][CRITICAL] 36001 Unable to create product
+[Wed, 06 Mar 19 12:39:38 +0300][CRITICAL] 36001 Unable to create product
+[Wed, 06 Mar 19 12:48:12 +0300][CRITICAL] 10003 Unable create tag
+[Wed, 06 Mar 19 12:48:21 +0300][CRITICAL] 10003 Unable create tag
+[Wed, 06 Mar 19 12:48:25 +0300][CRITICAL] 100005 Invalid type of image
+[Wed, 06 Mar 19 12:48:43 +0300][CRITICAL] 100005 Invalid type of image
+[Wed, 06 Mar 19 12:50:03 +0300][CRITICAL] 100005 Invalid type of image
+[Wed, 06 Mar 19 13:04:56 +0300][CRITICAL] 21003 Account not subscribed to object
+[Wed, 06 Mar 19 13:08:03 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 06 Mar 19 13:08:12 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 06 Mar 19 13:08:44 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 06 Mar 19 13:08:57 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 06 Mar 19 13:15:02 +0300][CRITICAL] 36004 Unable to change task
+[Wed, 06 Mar 19 14:44:40 +0300][CRITICAL] 21003 Account not subscribed to object
+[Wed, 06 Mar 19 14:45:45 +0300][CRITICAL] 21003 Account not subscribed to object
+[Wed, 06 Mar 19 14:45:49 +0300][CRITICAL] 21003 Account not subscribed to object
+[Wed, 06 Mar 19 14:51:38 +0300][CRITICAL] 36002 Product does not exist

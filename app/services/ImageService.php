@@ -17,6 +17,7 @@ use App\Models\ImagesTemp;
 use App\Models\ImagesUsers;
 use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
+use App\Models\Products;
 use App\Models\Rastreniya;
 use App\Models\Users;
 use App\Models\News;
@@ -237,6 +238,13 @@ class ImageService extends AbstractService
 
                 $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
                 break;
+            case self::TYPE_PRODUCT:
+                $object = Products::findFirstByProductId($objectId);
+                if (!$object)
+                    return false;
+
+                $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -377,7 +385,7 @@ class ImageService extends AbstractService
             }*/
 
             $result = $this->loadImage($file->getTempName(), $file->getName(),
-                $some_object->getId(), $imagesIds[$i]['file_name'],$type);
+                $this->commonService->getIdFromObject($type,$some_object), $imagesIds[$i]['file_name'],$type);
 
             $i++;
             if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {

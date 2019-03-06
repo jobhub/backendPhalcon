@@ -534,7 +534,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         return $resultElement;
     }
 
-    private static function handleNewsFromArray(array $news, $accountId = null)
+    public static function handleNewsFromArray(array $news, $accountId = null)
     {
         $newsWithAll = [];
 
@@ -543,8 +543,11 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
             $accountId = $session->get('accountId');
         }
 
-        $account = Accounts::findFirstById($accountId);
-        $relatedAccounts = $account->getRelatedAccounts();
+        if($accountId!=null) {
+            $account = Accounts::findFirstById($accountId);
+            if($account)
+                $relatedAccounts = $account->getRelatedAccounts();
+        }
 
         foreach ($news as $newsElement) {
             $newsWithAllElement = $newsElement;

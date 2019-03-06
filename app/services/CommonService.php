@@ -46,6 +46,9 @@ class CommonService extends AbstractService
             case self::TYPE_RASTRENIYA:
                 $id = $some_object->getId();
                 break;
+            case self::TYPE_PRODUCT:
+                $id = $some_object->getProductId();
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_OBJECT_TYPE);
         }

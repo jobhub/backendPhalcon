@@ -237,7 +237,7 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
         $resultWhere = $modelsManager->createBuilder()
             /*->columns('id, image, build, other')*/
-            ->from(["imageModel" => "$model"])
+            ->from(["imageModel" => $model])
             ->where('object_id = :objectId:', ['objectId' => $objectId])
             ->orderBy('image_id desc');
 
@@ -245,6 +245,24 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
         $result['data'] = $model::handleImages(
             $result['data']
+        );
+
+        return $result;
+    }
+
+    public static function findAllImages($model, $objectId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->from(["imageModel" => $model])
+            ->where('object_id = :objectId:', ['objectId' => $objectId])
+            ->orderBy('image_id desc')
+            ->getQuery()
+            ->execute();
+
+        $result = $model::handleImages(
+            $result->toArray()
         );
 
         return $result;

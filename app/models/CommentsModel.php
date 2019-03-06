@@ -258,12 +258,12 @@ abstract class CommentsModel extends AccountWithNotDeleted
             'limit' => $page_size,
             'offset' => $offset], false);*/
 
-        $comments = SupportClass::executeWithPagination(['model'=>'App\Models\\' . $model,
+        $comments = SupportClass::executeWithPagination(['model'=>$model,
             'conditions' => 'object_id = :objectId: and reply_id is null',
             'bind' => ['objectId' => $objectId],
             'order' => 'comment_date DESC','deleted'=>false],null,$page,$page_size);
 
-        $comments['data'] = self::handleComments($comments['data'], 'App\Models\\'.$model, $accountId);
+        $comments['data'] = self::handleComments($comments['data'], $model, $accountId);
         return $comments;
     }
 
@@ -277,7 +277,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
             'limit' => $page_size,
             'offset' => $offset], false);*/
 
-        $comments = SupportClass::executeWithPagination(['model'=>'App\Models\\' . $model,
+        $comments = SupportClass::executeWithPagination(['model'=>$model,
                 'conditions' => 'object_id = :objectId: and reply_id = :parentId:',
                 'bind' => ['objectId' => $objectId, 'parentId' => $parentId],
                 'order' => 'comment_date DESC','deleted'=>false],null,$page,$page_size);
@@ -288,7 +288,7 @@ abstract class CommentsModel extends AccountWithNotDeleted
     public static function findChildComments($model, $objectId, $parentId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE_CHILD, $accountId = null)
     {
         $comments = self::findChildCommentsWithoutHandle($model, $objectId, $parentId, $page, $page_size);
-        $comments['data'] = self::handleComments($comments['data'], 'App\Models\\'.$model, $accountId);
+        $comments['data'] = self::handleComments($comments['data'], $model, $accountId);
 
         return $comments;
     }

@@ -134,7 +134,7 @@ class ImageController extends AbstractController
 
             $addedImages = [];
             foreach ($ids as $image_id){
-                $addedImages[] = $this->imageService->getModelForType($type)::handleImage($this->imageService->getImageById($image_id['image_id'],$type)->toArray());
+                $addedImages[] = $this->imageService->getModelByType($type)::handleImage($this->imageService->getImageById($image_id['image_id'],$type)->toArray());
             }
 
             $this->db->commit();

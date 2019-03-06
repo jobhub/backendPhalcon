@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
+
+use Phalcon\DI\FactoryDefault as DI;
+
 class FavouriteProducts extends FavouriteModel
 {
 
@@ -46,6 +50,35 @@ class FavouriteProducts extends FavouriteModel
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    public static function findFavourites($accountId, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE){
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $account = Accounts::findFirstById($accountId);
+
+        $columns = [];
+        foreach (Products::shortColumns as $shortColumn) {
+            $columns[] = 'p.' . $shortColumn;
+        }
+
+        $result = $modelsManager->createBuilder()
+            ->columns($columns)
+            ->from(["p" => "App\Models\Products"])
+            ->join('App\Models\FavouriteProducts','fav_prod.object_id = p.product_id','fav_prod')
+            ->where('fav_prod.subject_id = ANY(:ids:) and p.deleted = false',
+                ['ids' => $account->getRelatedAccounts()])
+            ->orderBy('fav_prod.favourite_date desc');
+
+
+        $result = SupportClass::executeWithPagination($result,
+            ['ids' => $account->getRelatedAccounts()],$page,$page_size);
+
+        $result['data'] = Products::handleShortInfoProductFromArray($result['data']);
+
+        return $result;
     }
 
 }

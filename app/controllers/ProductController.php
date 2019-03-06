@@ -2,8 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Models\Products;
 use App\Models\Tasks;
 use App\Services\OfferService;
+use App\Services\PhoneService;
 use App\Services\ProductService;
 use App\Services\TagService;
 use App\Services\TaskService;
@@ -90,7 +92,7 @@ class ProductController extends AbstractController
                 throw $exception->addErrorDetails($errors);
             }
 
-            $task = $this->productService->createProduct($data);
+            $product = $this->productService->createProduct($data);
 
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
@@ -99,6 +101,7 @@ class ProductController extends AbstractController
                 case ImageService::ERROR_UNABLE_CREATE_IMAGE:
                 case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                 case TagService::ERROR_UNABLE_CREATE_TAG:
+                case PhoneService::ERROR_UNABLE_CREATE_PHONE:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
@@ -115,7 +118,7 @@ class ProductController extends AbstractController
             }
         }
 
-        return self::successResponse('Product was successfully created', ['task' => $task->toArray()]);
+        return self::successResponse('Product was successfully created', ['product' => $product->toArray()]);
     }
 
     /**
@@ -207,6 +210,7 @@ class ProductController extends AbstractController
     /**
      * Editing of the product.
      *
+     * @access private
      * @method PUT
      * @params product_id int
      * @params product_name string
@@ -275,5 +279,42 @@ class ProductController extends AbstractController
         }
 
         return self::successResponse('Product was successfully changed');
+    }
+
+    /**
+     * Возвращает публичную информацию о товаре.
+     * @access public.
+     *
+     * @method GET
+     *
+     * @param $product_id
+     * @param $account_id
+     *
+     * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
+     */
+    public function getProductInfoAction($product_id, $account_id = null)
+    {
+        try {
+            $product = $this->productService->getProductById($product_id);
+
+            if(self::isAuthorized()) {
+                $userId = self::getUserId();
+
+                $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+                self::setAccountId($account->getId());
+            }
+
+            return self::successResponse('',Products::handleProductFromArray($product->toArray()));
+
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ProductService::ERROR_PRODUCT_NOT_FOUND:
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
     }
 }

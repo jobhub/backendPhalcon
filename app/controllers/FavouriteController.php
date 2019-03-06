@@ -5,7 +5,9 @@ namespace App\Controllers;
 use App\Libs\SupportClass;
 use App\Models\FavouriteModel;
 use App\Models\Accounts;
+use App\Models\FavouriteProducts;
 use App\Models\FavouriteServices;
+use App\Models\Products;
 use App\Models\Services;
 use App\Services\FavouriteService;
 use App\Models\FavoriteCategories;
@@ -292,7 +294,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array с подписками (просто id-шники)
      */
-    public function getFavouriteServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    /*public function getFavouriteServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -309,7 +311,37 @@ class FavouriteController extends AbstractController
         $result = FavouriteServices::findFavourites($account_id, $page, $page_size);
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
-    }
+    }*/
+
+    /**
+     * Возвращает избранные товары пользователя
+     *
+     * @method GET
+     *
+     * @param $account_id = null
+     * @param $page = 1
+     * @param $page_size = Products::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array с подписками (просто id-шники)
+     */
+    /*public function getFavouriteProductsAction($account_id = null, $page = 1, $page_size = Products::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+        } else {
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        $result = FavouriteProducts::findFavourites($account_id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+    }*/
 
     /**
      * Меняет радиус на получение уведомлений для подписки на категорию
@@ -372,7 +404,7 @@ class FavouriteController extends AbstractController
      *
      * @return string - json array - подписки пользователя
      */
-    public function getFavouritesCategoriesAction($account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    /*public function getFavouritesCategoriesAction($account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
 
@@ -387,6 +419,52 @@ class FavouriteController extends AbstractController
         self::setAccountId($account_id);
 
         $result = FavoriteCategories::findForUser($account_id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+    }*/
+
+    /**
+     * Возвращает все подписки пользователя указанного типа (услуги, категории, товары).
+     *
+     * @access private
+     *
+     * @GET
+     *
+     * @param $type
+     * @param $account_id
+     * @param $page
+     * @param $page_size
+     *
+     * @return string - json array - подписки пользователя
+     */
+    public function getFavouritesAction($type, $account_id = null, $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    {
+        $userId = self::getUserId();
+
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
+            if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
+                throw new Http403Exception('Permission error');
+            }
+        } else {
+            $account_id = Accounts::findForUserDefaultAccount($userId)->getId();
+        }
+
+        self::setAccountId($account_id);
+
+        switch ($type){
+            case 'category':{
+                $result = FavoriteCategories::findForUser($account_id, $page, $page_size);
+                break;
+            }
+            case 'service':{
+                $result = FavouriteServices::findFavourites($account_id, $page, $page_size);
+                break;
+            }
+            case 'product':{
+                $result = FavouriteProducts::findFavourites($account_id, $page, $page_size);
+                break;
+            }
+        }
 
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }

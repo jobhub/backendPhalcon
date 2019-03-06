@@ -472,6 +472,41 @@ class NewsAPIController extends AbstractController
     }
 
     /**
+     * Возвращает публичную информацию об услуге.
+     * @access public.
+     *
+     * @method GET
+     *
+     * @param $news_id
+     * @param $account_id
+     *
+     * @return array {status, service, [points => {point, [phones]}], reviews (до двух)}
+     */
+    public function getNewsInfoAction($news_id, $account_id = null)
+    {
+        try {
+            $news = News::findNewsById($news_id, News::publicColumns);
+
+            if(self::isAuthorized()) {
+                $userId = self::getUserId();
+
+                $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+                self::setAccountId($account->getId());
+            }
+
+            return News::handleNewsFromArray([$news->toArray()]);
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+    }
+
+    /**
      * Добавляет все отправленные файлы изображений к новости. Общее количество
      * фотографий для пользователя на данный момент не более некоторого количества.
      * Доступ не проверяется.

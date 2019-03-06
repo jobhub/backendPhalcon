@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Controllers\AbstractController;
+use App\Services\FavouriteService;
+use App\Services\ImageService;
+use Phalcon\DI\FactoryDefault as DI;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -71,6 +76,15 @@ class Products extends AccountWithNotDeletedWithCascade
      */
     protected $date_creation;
 
+    const publicColumns = ['product_id', 'description', 'date_publication', 'price', 'product_name', 'account_id', 'phone_id',
+        'show_company_place', 'category_id'];
+
+    const shortColumns = ['product_id', 'product_name', 'price'];
+
+    const DEFAULT_PRODUCT_IMAGE = 'images/no_image.jpg';
+
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
     /**
      * @return string
      */
@@ -86,6 +100,7 @@ class Products extends AccountWithNotDeletedWithCascade
     {
         $this->date_creation = $date_creation;
     }
+
     /**
      * @return int
      */
@@ -300,8 +315,8 @@ class Products extends AccountWithNotDeletedWithCascade
             'product_name',
             new Regex(
                 [
-                    "pattern" => "/^[а-яА-Яa-zA-Z0-9](?:_?[а-яА-Яa-zA-Z0-9 ])*$/",
-                    "message" => "product_name must contain only a-z, A-Z, , _,0-9",
+                    "pattern" => "/^[А-пр-эa-zA-Z0-9](?:_?[А-пр-эa-zA-Z0-9 ,.])*$/",
+                    "message" => "product_name must contain only letters, numeric and space",
                 ]
             )
         );
@@ -353,7 +368,104 @@ class Products extends AccountWithNotDeletedWithCascade
         return parent::findFirst($parameters);
     }
 
-    public static function findProductById($productId){
+    public static function findProductById($productId)
+    {
         return self::findFirstByProductId($productId);
+    }
+
+    /**
+     * Function for handle information about products for favourite products.
+     *
+     * @param array $products
+     * @param null $accountId
+     * @return array
+     */
+    public static function handleShortInfoProductFromArray(array $products, $accountId = null)
+    {
+        $productsAll = [];
+
+        foreach ($products as $product) {
+            $productAll = [];
+
+            $productAll['product_name'] = $product['product_name'];
+            $productAll['product_id'] = $product['product_id'];
+            $productAll['price'] = $product['price'];
+            $productAll['category_id'] = $product['category_id'];
+
+            $account = Accounts::findFirstById($product['account_id']);
+
+            if ($account) {
+                $productAll['publisher_company'] = $account->getUserInformation();
+            }
+
+            $images = ImagesProducts::findImages('App\Models\ImagesProducts', $productAll['product_id'], 1, 1);
+            if (count($images['data']) > 0)
+                $productAll['image'] = $images['data'][0];
+            else
+                $productAll['image'] = self::DEFAULT_PRODUCT_IMAGE;
+
+            $productsAll[] = $productAll;
+        }
+        return $productsAll;
+    }
+
+    /**
+     * Function for handle complete information about products. To show all information about product.
+     *
+     * @param array $product
+     * @param null $accountId
+     * @return array
+     */
+    public static function handleProductFromArray(array $product, $accountId = null)
+    {
+        if ($accountId == null) {
+            $accountId = AbstractController::getAccountId();
+        }
+
+        $productAll = [];
+
+        $productAll['product_name'] = $product['product_name'];
+        $productAll['description'] = $product['description'];
+        $productAll['product_id'] = $product['product_id'];
+        $productAll['price'] = $product['price'];
+
+        if ($product['show_company_place']) {
+
+            $account = Accounts::findFirstByAccountId($productAll['account_id']);
+
+            if ($account->getCompanyId() != null) {
+                //$company = Companies::findCompanyById($account->getCompanyId());
+                $points = TradePoints::findPointsByCompany($account->getCompanyId());
+
+                if (count($points) > 0) {
+                    $marker = $points[0]->markers;
+
+                    $productAll['address'] = $points[0]['address'];
+                    $productAll['longitude'] = $marker->getLongitude();
+                    $productAll['latitude'] = $marker->getLatitude();
+                }
+            }
+        }
+
+        $di = DI::getDefault();
+
+        $productAll['images'] = ImagesModel::findAllImages($di->getImageService()->getModelByType(ImageService::TYPE_PRODUCT),
+            $productAll['product_id']);
+
+        if($product['phone_id']!=null)
+            $productAll['phone'] = Phones::findPhoneById($product['phone_id']);
+
+
+
+        $account = Accounts::findFirstById($product['account_id']);
+
+        if ($account) {
+            $productAll['publisher_company'] = $account->getUserInformation();
+        }
+
+        $productAll['signed'] = FavouriteProducts::findByIds($di->getFavouriteService()->getModelByType(
+            FavouriteService::TYPE_PRODUCT),$accountId,$productAll['product_id'])?true:false;
+
+        return $productAll;
     }
 }

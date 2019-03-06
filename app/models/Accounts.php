@@ -243,6 +243,14 @@ class Accounts extends \Phalcon\Mvc\Model
         return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumns);
     }
 
+    public function getUserInformation()
+    {
+        if (!is_null($this->company_id)) {
+            return Companies::findCompanyById($this->company_id, Companies::shortColumns);
+        }
+        return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumns);
+    }
+
     /**
      * @return string - array of accounts in postgresql format
      */

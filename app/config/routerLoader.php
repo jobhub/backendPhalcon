@@ -631,6 +631,29 @@ $routes = [
     '\App\Controllers\NewsAPIController' => [
         'prefix' => '/news',
         'resources' => [
+
+            /**
+             * Возвращает указанную новость
+             *
+             * @access private
+             *
+             * @param $account_id
+             * @param $news_id
+             * @method GET
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get-info/{news_id}',
+                'action' => 'getNewsInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-info/{news_id}/{account_id}',
+                'action' => 'getNewsInfoAction'
+            ],
+
             /**
              * Возвращает новости для ленты текущего пользователя или указанного аккаунта (компании)
              *
@@ -2439,6 +2462,7 @@ $routes = [
          *      'service';
          *      'company';
          *      'category';
+         *      'product';
          */
 
         'resources' => [
@@ -2630,7 +2654,7 @@ $routes = [
              *
              * @return string - json array с подписками (просто id-шники)
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/service',
                 'action' => 'getFavouriteServicesAction'
@@ -2649,7 +2673,39 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/service/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouriteServicesAction'
+            ],*/
+
+            /**
+             * Возвращает избранные товары пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Products::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            /*[
+                'type' => 'get',
+                'path' => '/get/product',
+                'action' => 'getFavouritesCategoriesAction'
             ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}/{page}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],*/
 
             /**
              * Меняет радиус на получение уведомлений для подписки на категорию
@@ -2680,7 +2736,7 @@ $routes = [
              *
              * @return string - json array - подписки пользователя
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/category',
                 'action' => 'getFavouritesCategoriesAction'
@@ -2699,6 +2755,41 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/category/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesCategoriesAction'
+            ],*/
+
+            /**
+             * Возвращает все подписки пользователя указанного типа (услуги, категории, товары).
+             *
+             * @access private
+             *
+             * @GET
+             *
+             * @param $type
+             * @param $account_id
+             * @param $page
+             * @param $page_size
+             *
+             * @return string - json array - подписки пользователя
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/{type}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}/{page}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesAction'
             ],
         ]
     ],
@@ -2961,6 +3052,98 @@ $routes = [
                 'type' => 'post',
                 'path' => '/send-message-to-email',
                 'action' => 'sendMessageAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\ProductController' => [
+        'prefix' => '/product',
+        'resources' => [
+            /**
+             * Добавляет товар
+             *
+             * @access private
+             * @method POST
+             *
+             * @input Form data
+             *
+             * @params product_name string
+             * @params description string
+             * @params category_id int
+             * @params phone string | phone_id int
+             * @params price int
+             * @params account_id int
+             * @params tags array of string
+             * @params images in $_FILES
+             *
+             * @return string - json array  формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addProductAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Deleting of the product
+             *
+             * @access private
+             * @method DELETE
+             *
+             * @param $product_id
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{product_id}',
+                'action' => 'deleteProductAction',
+                'access' => 'private'
+            ],
+
+            /**
+             * Editing of the product.
+             *
+             * @method PUT
+             * @params product_id int
+             * @params product_name string
+             * @params description string
+             * @params category_id int
+             * @params phone string | phone_id int. If phone is boolean or string like boolean = false - set phone = null.
+             * @params price int
+             * @params account_id int
+             * @params added_tags array of string
+             * @params deleted_tags array of int
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editProductAction',
+                'access' => 'private'
+            ],
+
+            /**
+             * Возвращает публичную информацию о товаре.
+             * @access public.
+             *
+             * @method GET
+             *
+             * @param $product_id
+             * @param $account_id
+             *
+             * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{product_id}',
+                'action' => 'getProductInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/info/{product_id}/{account_id}',
+                'action' => 'getProductInfoAction'
             ],
         ]
     ],

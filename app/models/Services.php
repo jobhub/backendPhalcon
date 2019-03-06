@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Controllers\AbstractController;
 use App\Libs\TileSystem;
 use Phalcon\DI\FactoryDefault as DI;
 

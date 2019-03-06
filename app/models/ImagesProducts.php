@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+
 class ImagesProducts extends ImagesModel
 {
 
@@ -71,4 +74,16 @@ class ImagesProducts extends ImagesModel
         return parent::findFirst($parameters);
     }
 
+    public function delete($data = null, $whiteList = null)
+    {
+        $images = self::findAllImages(get_class(),$this->getObjectId());
+
+        if(count($images)<2){
+            $this->appendMessage('Unable to delete last image from product');
+            return false;
+        }
+
+        $result = parent::delete($data, $whiteList);
+        return $result;
+    }
 }

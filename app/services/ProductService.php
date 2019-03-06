@@ -42,6 +42,10 @@ class ProductService extends AbstractService
     public function createProduct(array $productData)
     {
         try {
+            if (!(isset($productData['images']) && is_array($productData['images']))) {
+                throw new ServiceExtendedException('Unable to create product without images', self::ERROR_UNABLE_CREATE_PRODUCT);
+            }
+
             $this->db->begin();
             $product = new Products();
 
@@ -59,14 +63,13 @@ class ProductService extends AbstractService
                 }
             }
 
-            if (isset($productData['images']) && is_array($productData['images'])) {
-                $ids = $this->imageService->createImagesToObject($productData['images'], $product, ImageService::TYPE_PRODUCT);
+            $ids = $this->imageService->createImagesToObject($productData['images'], $product, ImageService::TYPE_PRODUCT);
 
-                $this->imageService->saveImagesToObject($productData['images'], $product, $ids, ImageService::TYPE_PRODUCT);
-            }
-        }catch (\PDOException $e){
+            $this->imageService->saveImagesToObject($productData['images'], $product, $ids, ImageService::TYPE_PRODUCT);
+
+        } catch (\PDOException $e) {
             $this->db->rollback();
-            throw new ServiceException($e->getMessage(),$e->getCode(),$e);
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
 
         $this->db->commit();
@@ -91,17 +94,17 @@ class ProductService extends AbstractService
         if (!empty(trim($data['category_id'])))
             $product->setCategoryId($data['category_id']);
 
-        if (isset($data['phone'])){
-            $phoneDeleted = filter_var($data['phone'],FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE);
+        if (isset($data['phone'])) {
+            $phoneDeleted = filter_var($data['phone'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-            if(!is_null($phoneDeleted) && $phoneDeleted){
+            if (!is_null($phoneDeleted) && $phoneDeleted) {
                 $product->setPhoneId(null);
             } else {
                 $phoneObject = $this->phoneService->createPhone($data['phone']);
                 $product->setPhoneId($phoneObject->getPhoneId());
             }
 
-        }elseif (!empty(trim($data['phone_id']))){
+        } elseif (!empty(trim($data['phone_id']))) {
             $product->setPhoneId($data['phone_id']);
         }
 
