@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\Callback;
+use Phalcon\DI\FactoryDefault as DI;
 use Phalcon\Db\RawValue;
 
 use App\Libs\ImageLoader;
@@ -231,11 +233,38 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
     public static function findImages($model, $objectId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-        return $model::handleImages(
-            $model::find(['conditions' => 'object_id = :objectId:', 'bind' => ['objectId' => $objectId],
-                'limit' => $page_size, 'offset' => $offset, 'order'=>'image_id desc'])->toArray()
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $resultWhere = $modelsManager->createBuilder()
+            /*->columns('id, image, build, other')*/
+            ->from(["imageModel" => $model])
+            ->where('object_id = :objectId:', ['objectId' => $objectId])
+            ->orderBy('image_id desc');
+
+        $result = SupportClass::executeWithPagination($resultWhere,['objectId' => $objectId],$page,$page_size);
+
+        $result['data'] = $model::handleImages(
+            $result['data']
         );
+
+        return $result;
+    }
+
+    public static function findAllImages($model, $objectId)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+
+        $result = $modelsManager->createBuilder()
+            ->from(["imageModel" => $model])
+            ->where('object_id = :objectId:', ['objectId' => $objectId])
+            ->orderBy('image_id desc')
+            ->getQuery()
+            ->execute();
+
+        $result = $model::handleImages(
+            $result->toArray()
+        );
+
+        return $result;
     }
 }

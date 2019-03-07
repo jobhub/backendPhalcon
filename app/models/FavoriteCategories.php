@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
+use Phalcon\DI\FactoryDefault as DI;
 
 class FavoriteCategories extends FavouriteModel
 {
@@ -94,5 +96,24 @@ class FavoriteCategories extends FavouriteModel
     public static function findForUser($accountId,$page = 1,$page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         return FavoriteCategories::findFavourites($accountId,$page,$page_size);
+    }
+
+    public static function findFavourites($subjectId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        $account = Accounts::findFirstById($subjectId);
+
+        $result = $modelsManager->createBuilder()
+            ->from(["m" => get_class()])
+            ->where('subject_id = ANY (:subjectId:)',
+                ['subjectId' => $account->getRelatedAccounts()])
+            ->orderBy('favourite_date desc');
+
+        $favs = SupportClass::executeWithPagination($result,['subjectId' => $account->getRelatedAccounts()],
+            $page,$page_size);
+
+        $favs['data'] = self::handleFavourites($favs['data']);
+
+        return $favs;
     }
 }

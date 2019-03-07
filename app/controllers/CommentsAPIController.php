@@ -416,6 +416,10 @@ class CommentsAPIController extends AbstractController
 
             $comment = $this->commentService->createComment($data, $type);
 
+            return self::successResponse('Comment was successfully created',
+                ['comment' => CommentsModel::handleComments([$comment->toArray()],
+                    $this->commentService->getModelByType($type),$data['account_id'])]);
+
         } catch (ServiceExtendedException $e) {
             switch ($e->getCode()) {
                 case CommentService::ERROR_UNABLE_CREATE_COMMENT:
@@ -439,8 +443,6 @@ class CommentsAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
-        return self::successResponse('Comment was successfully created', ['comment' => $comment->toArray()]);
     }
 
     /**
@@ -541,6 +543,6 @@ class CommentsAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-        return $comments;
+        return self::successPaginationResponse('',$comments['data'],$comments['pagination']);
     }
 }

@@ -10,9 +10,12 @@ namespace App\Libs;
 
 use Phalcon\Http\Response;
 use App\Services\ServiceExtendedException;
+use Phalcon\DI\FactoryDefault as DI;
 
 class SupportClass
 {
+
+    const COMMON_PAGE_SIZE = 10;
 
     public static function checkInteger($var)
     {
@@ -311,5 +314,126 @@ class SupportClass
             return $WriteFile;
         }
         return null;
+    }
+
+    public static function executeWithPagination($sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE){
+
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        if(is_string($sqlRequest)){
+            $db = DI::getDefault()->getDb();
+            $sqlRequestReplaced = self::str_replace_once('select','select count(*) OVER() AS total_count_pagination, ',strtolower($sqlRequest));
+            $sqlRequestReplaced.='
+                    LIMIT :limit 
+                    OFFSET :offset';
+
+            $query = $db->prepare($sqlRequestReplaced);
+            $params_2 = [];
+            foreach ($params as $key=>$data){
+                $params_2[strtolower($key)] = $data;
+            }
+
+            $params_2['limit'] = $page_size;
+            $params_2['offset'] = $offset;
+
+            $query->execute($params_2);
+
+            $results = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+            if(count($results)>0) {
+                $final_results = [];
+                foreach ($results as $result) {
+                    $final_result = [];
+                    foreach ($result as $key => $data) {
+                        if ($key != 'total_count_pagination') {
+                            $final_result[$key] = $data;
+                        }
+                    }
+                    $final_results[] = $final_result;
+                }
+
+                return ['pagination'=>['total'=>$results[0]['total_count_pagination']],'data'=>$final_results];
+            } else{
+
+                //$sqlRequestReplaced = str_replace(["\r","\n"],' ',strtolower($sqlRequest));
+                $sqlRequestReplaced = strtolower($sqlRequest);
+                $sqlRequestReplaced = preg_replace(
+                    "#select.*?from#",'select count(*) AS total_count_pagination from',
+                    $sqlRequestReplaced,1,$count);
+
+                $sqlRequestReplaced = preg_replace(
+                    "#order by.*#",'',
+                    $sqlRequestReplaced,1,$count);
+
+                $query = $db->prepare($sqlRequestReplaced);
+
+                $params_2 = [];
+                foreach ($params as $key=>$data){
+                    $params_2[strtolower($key)] = $data;
+                }
+
+                $query->execute($params_2);
+
+                $results = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+                return ['data'=>[],'pagination'=>['total'=>$results[0]['total_count_pagination']]];
+            }
+        } elseif(is_object($sqlRequest) && get_class($sqlRequest) == 'Phalcon\Mvc\Model\Query\Builder'){
+
+            $sqlGotRequest = $sqlRequest;
+            $sqlRequest->limit($page_size)
+                       ->offset($offset);
+
+            $data = $sqlRequest->getQuery()->execute();
+
+            $count = $sqlGotRequest->columns('count(*) as count')
+                ->limit(null)
+                ->offset(null)
+                ->orderBy(null)
+                ->getQuery()->execute();
+
+
+            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
+        } elseif(is_array($sqlRequest)){
+            $model = $sqlRequest['model'];
+
+            unset($sqlRequest['model']);
+
+            $sqlRequest['limit'] = $page_size;
+            $sqlRequest['offset'] = $offset;
+
+            if(isset($sqlRequest['deleted'])){
+                $deleted = $sqlRequest['deleted'];
+                unset($sqlRequest['deleted']);
+            }
+
+            if(!is_null($deleted))
+                $data = $model::find($sqlRequest,$deleted);
+            else
+                $data = $model::find($sqlRequest);
+
+            unset($sqlRequest['limit']);
+            unset($sqlRequest['offset']);
+            unset($sqlRequest['order']);
+
+            $sqlRequest['columns'] = 'count(*) as count';
+
+            if(!is_null($deleted))
+                $count = $model::find($sqlRequest,$deleted);
+            else
+                $count = $model::find($sqlRequest);
+
+            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
+        }
+
+        return null;
+    }
+
+
+    public static function str_replace_once($search, $replace, $text)
+    {
+        $pos = strpos($text, $search);
+        return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
     }
 }

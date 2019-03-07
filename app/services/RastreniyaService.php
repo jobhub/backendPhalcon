@@ -16,6 +16,7 @@ use App\Models\UserChatGroups;
 
 use App\Models\Userinfo;
 use App\Models\Users;
+use function MongoDB\BSON\toJSON;
 use Phalcon\Mvc\Model\Transaction\Failed as TxFailed;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 
@@ -38,7 +39,9 @@ class RastreniyaService extends AbstractService
             throw new Http400Exception(_('Missing content'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }
 
-        if (is_null($is_incognito) || !is_bool($is_incognito)) {
+        $is_incognito = filter_var($is_incognito, FILTER_VALIDATE_BOOLEAN);
+
+        if (is_null($is_incognito) /*|| !is_bool($is_incognito)*/ || (is_string($is_incognito) && $is_incognito == 'false')) {
             $is_incognito = false;
             //throw new Http400Exception(_('Wrong data : Missing is_incognito'), AbstractHttpException::BAD_REQUEST_CONTENT);
         }

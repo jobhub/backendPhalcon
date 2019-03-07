@@ -52,7 +52,9 @@ class NewsAPIController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return News::findNewsForCurrentAccount($account, $page, $page_size);
+        $result = News::findNewsForCurrentAccount($account, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -85,7 +87,9 @@ class NewsAPIController extends AbstractController
 
         self::setAccountId($account->getId());
 
-        return News::findAllNewsForCurrentUser($account, $page, $page_size);
+        $result = News::findAllNewsForCurrentUser($account, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -117,10 +121,12 @@ class NewsAPIController extends AbstractController
             $account = $this->accountService->getAccountById($account_id);
 
             if($account->getCompanyId() != null){
-                return News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+                $result =  News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
             } else {
-                return News::findNewsByUser($userId, $page, $page_size);
+                $result = News::findNewsByUser($userId, $page, $page_size);
             }
+
+            return self::successPaginationResponse('',$result['data'],$result['pagination']);
 
         }catch (ServiceException $e) {
             switch ($e->getCode()) {
@@ -384,7 +390,7 @@ class NewsAPIController extends AbstractController
     {
         $userId = self::getUserId();
 
-        if ($account_id != null && is_integer(intval($account_id))) {
+        if ($account_id != null && SupportClass::checkInteger($account_id)) {
             if (!Accounts::checkUserHavePermission($userId, $account_id, 'getNews')) {
                 throw new Http403Exception('Permission error');
             }
@@ -395,9 +401,11 @@ class NewsAPIController extends AbstractController
         self::setAccountId($account_id);
 
         if ($is_company && strtolower($is_company) != "false")
-            return $news = News::findNewsByCompany($id, $page, $page_size);
+            $result = $news = News::findNewsByCompany($id, $page, $page_size);
         else
-            return $news = News::findNewsByUser($id, $page, $page_size);
+            $result = $news = News::findNewsByUser($id, $page, $page_size);
+
+        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**
@@ -461,6 +469,41 @@ class NewsAPIController extends AbstractController
         }
 
         return self::successResponse('Image was successfully added to news');
+    }
+
+    /**
+     * Возвращает публичную информацию об услуге.
+     * @access public.
+     *
+     * @method GET
+     *
+     * @param $news_id
+     * @param $account_id
+     *
+     * @return array {status, service, [points => {point, [phones]}], reviews (до двух)}
+     */
+    public function getNewsInfoAction($news_id, $account_id = null)
+    {
+        try {
+            $news = News::findNewsById($news_id, News::publicColumns);
+
+            if(self::isAuthorized()) {
+                $userId = self::getUserId();
+
+                $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+                self::setAccountId($account->getId());
+            }
+
+            return News::handleNewsFromArray([$news->toArray()]);
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
     }
 
     /**

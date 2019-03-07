@@ -631,6 +631,29 @@ $routes = [
     '\App\Controllers\NewsAPIController' => [
         'prefix' => '/news',
         'resources' => [
+
+            /**
+             * Возвращает указанную новость
+             *
+             * @access private
+             *
+             * @param $account_id
+             * @param $news_id
+             * @method GET
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get-info/{news_id}',
+                'action' => 'getNewsInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get-info/{news_id}/{account_id}',
+                'action' => 'getNewsInfoAction'
+            ],
+
             /**
              * Возвращает новости для ленты текущего пользователя или указанного аккаунта (компании)
              *
@@ -908,12 +931,12 @@ $routes = [
             /**
              * Возвращает все услуги данного юзера (или его компании).
              *
-             * @access private
-             *
              * @method GET
              *
-             * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
+             * @param $account_id - если не указан, то будут возвращены услуги текущего пользователя.
              *        Иначе компании, в которой он должен быть хотя бы менеджером.
+             * @param $page
+             * @param $page_size
              *
              * @return string -  массив услуг
              */
@@ -924,17 +947,17 @@ $routes = [
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}',
+                'path' => '/get/own/{account_id}',
                 'action' => 'getOwnServicesAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}',
+                'path' => '/get/own/{account_id}/{page}',
                 'action' => 'getOwnServicesAction'
             ],
             [
                 'type' => 'get',
-                'path' => '/get/own/{company_id}/{page}/{page_size}',
+                'path' => '/get/own/{account_id}/{page}/{page_size}',
                 'action' => 'getOwnServicesAction'
             ],
 
@@ -1254,11 +1277,11 @@ $routes = [
              * @params (необязательные) tin, region_id, website, email, description
              * @return int company_id
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/add',
                 'action' => 'addCompanyAction'
-            ],
+            ],*/
 
             /**
              * Удаляет указанную компанию
@@ -1398,7 +1421,7 @@ $routes = [
              * @return string - json array of [status, [TradePoint, phones]], если все успешно,
              * или json array в формате Status в ином случае
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get',
                 'action' => 'getPointsAction'
@@ -1407,7 +1430,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/{company_id}',
                 'action' => 'getPointsAction'
-            ],
+            ],*/
 
             /**
              * Возвращает точки предоставления услуг назначенные текущему пользователю
@@ -1416,7 +1439,7 @@ $routes = [
              * @param  int $manager_user_id
              * @return string - json array of [TradePoint, phones]
              */
-            [
+            /*[
                 'type' => 'get',
                 'path' => '/get/for-manager',
                 'action' => 'getPointsForUserManagerAction'
@@ -1425,7 +1448,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/for-manager/{manager_user_id}',
                 'action' => 'getPointsForUserManagerAction'
-            ],
+            ],*/
 
             /**
              * Добавляет точку оказания услуг к компании
@@ -1437,11 +1460,11 @@ $routes = [
              * @params (Необязательные) (int manager_user_id, int company_id) - парой
              * @return array с point_id
              */
-            [
+            /*[
                 'type' => 'post',
                 'path' => '/add',
                 'action' => 'addTradePointAction'
-            ],
+            ],*/
 
             /**
              * Редактирует указанную точку оказания услуг
@@ -1467,11 +1490,11 @@ $routes = [
              * @param (Обязательные) $point_id
              * @return Phalcon\Http\Response с json массивом в формате Status
              */
-            [
+            /*[
                 'type' => 'delete',
                 'path' => '/delete/{point_id}',
                 'action' => 'deleteTradePointAction'
-            ],
+            ],*/
 
             /**
              * Возвращает публичную информацию об указанной точке оказания услуг.
@@ -1493,7 +1516,8 @@ $routes = [
             [
                 'type' => 'post',
                 'path' => '/moderator/change-to-markers',
-                'action' => 'changePointsAction'
+                'action' => 'changePointsAction',
+                'access' => 'moderator'
             ],
         ]
     ],
@@ -2438,6 +2462,7 @@ $routes = [
          *      'service';
          *      'company';
          *      'category';
+         *      'product';
          */
 
         'resources' => [
@@ -2651,6 +2676,38 @@ $routes = [
             ],
 
             /**
+             * Возвращает избранные товары пользователя
+             *
+             * @method GET
+             *
+             * @param $account_id = null
+             * @param $page = 1
+             * @param $page_size = Products::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array с подписками (просто id-шники)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/product',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}/{page}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/product/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesCategoriesAction'
+            ],
+
+            /**
              * Меняет радиус на получение уведомлений для подписки на категорию
              *
              * @method PUT
@@ -2699,6 +2756,41 @@ $routes = [
                 'path' => '/get/category/{account_id}/{page}/{page_size}',
                 'action' => 'getFavouritesCategoriesAction'
             ],
+
+            /**
+             * Возвращает все подписки пользователя указанного типа (услуги, категории, товары).
+             *
+             * @access private
+             *
+             * @GET
+             *
+             * @param $type
+             * @param $account_id
+             * @param $page
+             * @param $page_size
+             *
+             * @return string - json array - подписки пользователя
+             */
+            /*[
+                'type' => 'get',
+                'path' => '/get/{type}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}/{page}',
+                'action' => 'getFavouritesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}/{account_id}/{page}/{page_size}',
+                'action' => 'getFavouritesAction'
+            ],*/
         ]
     ],
 
@@ -2960,6 +3052,98 @@ $routes = [
                 'type' => 'post',
                 'path' => '/send-message-to-email',
                 'action' => 'sendMessageAction'
+            ],
+        ]
+    ],
+
+    '\App\Controllers\ProductController' => [
+        'prefix' => '/product',
+        'resources' => [
+            /**
+             * Добавляет товар
+             *
+             * @access private
+             * @method POST
+             *
+             * @input Form data
+             *
+             * @params product_name string
+             * @params description string
+             * @params category_id int
+             * @params phone string | phone_id int
+             * @params price int
+             * @params account_id int
+             * @params tags array of string
+             * @params images in $_FILES
+             *
+             * @return string - json array  формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addProductAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Deleting of the product
+             *
+             * @access private
+             * @method DELETE
+             *
+             * @param $product_id
+             *
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{product_id}',
+                'action' => 'deleteProductAction',
+                'access' => 'private'
+            ],
+
+            /**
+             * Editing of the product.
+             *
+             * @method PUT
+             * @params product_id int
+             * @params product_name string
+             * @params description string
+             * @params category_id int
+             * @params phone string | phone_id int. If phone is boolean or string like boolean = false - set phone = null.
+             * @params price int
+             * @params account_id int
+             * @params added_tags array of string
+             * @params deleted_tags array of int
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editProductAction',
+                'access' => 'private'
+            ],
+
+            /**
+             * Возвращает публичную информацию о товаре.
+             * @access public.
+             *
+             * @method GET
+             *
+             * @param $product_id
+             * @param $account_id
+             *
+             * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{product_id}',
+                'action' => 'getProductInfoAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/info/{product_id}/{account_id}',
+                'action' => 'getProductInfoAction'
             ],
         ]
     ],

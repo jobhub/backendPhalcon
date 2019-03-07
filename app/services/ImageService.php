@@ -11,11 +11,13 @@ use App\Models\Accounts;
 use App\Models\Companies;
 use App\Models\ImagesModel;
 use App\Models\ImagesNews;
+use App\Models\ImagesProducts;
 use App\Models\ImagesRastreniya;
 use App\Models\ImagesTemp;
 use App\Models\ImagesUsers;
 use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
+use App\Models\Products;
 use App\Models\Rastreniya;
 use App\Models\Users;
 use App\Models\News;
@@ -34,7 +36,6 @@ use Symfony\Component\EventDispatcher\Tests\Service;
  */
 class ImageService extends AbstractService
 {
-
     const TYPE_USER = 'user';
     const TYPE_NEWS = 'news';
     const TYPE_REVIEW = 'review';
@@ -42,6 +43,8 @@ class ImageService extends AbstractService
     const TYPE_COMPANY = 'company';
     const TYPE_TEMP = 'temp';
     const TYPE_RASTRENIYA = 'rastreniya';
+    const TYPE_PRODUCT = 'product';
+    const TYPE_EVENT = 'event';
 
     const ADDED_CODE_NUMBER = 7000;
 
@@ -57,31 +60,112 @@ class ImageService extends AbstractService
 
     const ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP = 8 + self::ADDED_CODE_NUMBER;
 
+    public function createNewObjectByType($type,$data)
+    {
+        switch ($type) {
+            case self::TYPE_USER:
+                $image = new ImagesUsers();
+                $image->setImageText($data/*['image_text']*/);
+                break;
+            case self::TYPE_NEWS:
+                $image = new ImagesNews();
+                break;
+            case self::TYPE_REVIEW:
+                $image = new ImagesReviews();
+                break;
+            case self::TYPE_SERVICE:
+                $image = new ImagesServices();
+                break;
+            case self::TYPE_TEMP:
+                $image = new ImagesTemp();
+                $image->setFurtherPath($data['further_path'] == null ? 'magic' : $data['further_path']);
+                break;
+            case self::TYPE_RASTRENIYA:
+                $image = new ImagesRastreniya();
+                break;
+            case self::TYPE_PRODUCT:
+                $image = new ImagesProducts();
+                break;
+            default:
+                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+        }
+        return $image;
+    }
+
+
+    public function getModelByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_USER:
+                $model = 'App\Models\ImagesUsers';
+                break;
+            case self::TYPE_NEWS:
+                $model = 'App\Models\ImagesNews';
+                break;
+            case self::TYPE_REVIEW:
+                $model = 'App\Models\ImagesReviews';
+                break;
+            case self::TYPE_SERVICE:
+                $model = 'App\Models\ImagesServices';
+                break;
+            case self::TYPE_TEMP:
+                $model = 'App\Models\ImagesTemp';
+                break;
+            case self::TYPE_RASTRENIYA:
+                $model = 'App\Models\ImagesRastreniya';
+                break;
+            case self::TYPE_PRODUCT:
+                $model = 'App\Models\ImagesProducts';
+                break;
+            default:
+                $model = 'App\Models\ImagesModel';
+        }
+        return $model;
+    }
+
+
+    public function getSubPathForImages($type){
+        switch ($type){
+            case self::TYPE_USER:
+                $subpath = 'users';
+                break;
+            case self::TYPE_NEWS:
+                $subpath = 'news';
+                break;
+            case self::TYPE_REVIEW:
+                $subpath = 'reviews';
+                break;
+            case self::TYPE_SERVICE:
+                $subpath = 'services';
+                break;
+            case self::TYPE_TEMP:
+                $subpath = 'accounts/temp';
+                break;
+            case self::TYPE_RASTRENIYA:
+                $subpath = 'rastreniya';
+                break;
+            case self::TYPE_PRODUCT:
+                $subpath = 'products';
+                break;
+            case self::TYPE_COMPANY:
+                $subpath = 'companies';
+                break;
+            case self::TYPE_EVENT:
+                $subpath = 'events';
+                break;
+            default:
+                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
+        }
+        return $subpath;
+    }
+
     public function getImageById($id, $type)
     {
         try {
-            switch ($type) {
-                case self::TYPE_USER:
-                    $image = ImagesUsers::findImageById($id);
-                    break;
-                case self::TYPE_NEWS:
-                    $image = ImagesNews::findImageById($id);
-                    break;
-                case self::TYPE_REVIEW:
-                    $image = ImagesReviews::findImageById($id);
-                    break;
-                case self::TYPE_SERVICE:
-                    $image = ImagesServices::findImageById($id);
-                    break;
-                case self::TYPE_TEMP:
-                    $image = ImagesTemp::findImageById($id);
-                    break;
-                case self::TYPE_RASTRENIYA:
-                    $image = ImagesRastreniya::findImageById($id);
-                    break;
-                default:
-                    throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
-            }
+
+            $model = $this->getModelByType($type);
+            $image = $model::findImageById($id);
+
             if (!$image) {
                 throw new ServiceException('Image not found', self::ERROR_IMAGE_NOT_FOUND);
             }
@@ -93,76 +177,16 @@ class ImageService extends AbstractService
 
     public function getImages(int $objectId, $type, $page = 1, $page_size = ImagesModel::DEFAULT_RESULT_PER_PAGE)
     {
-        switch ($type) {
-            case self::TYPE_USER:
-                //$images = ImagesUsers::findImagesForUser($objectId,$page,$page_size);
-                $model = 'App\Models\ImagesUsers';
-                break;
-            case self::TYPE_NEWS:
-                //$images = ImagesNews::findImagesForNews($objectId,$page,$page_size);
-                $model = 'App\Models\ImagesNews';
-                break;
-            case self::TYPE_REVIEW:
-                //$images = ImagesReviews::findImagesForReview($objectId,$page,$page_size);
-                $model = 'App\Models\ImagesReviews';
-                break;
-            case self::TYPE_SERVICE:
-                //$images = ImagesServices::findImagesForService($objectId,$page,$page_size);
-                $model = 'App\Models\ImagesServices';
-                break;
-            case self::TYPE_TEMP:
-                //$images = ImagesModel::findImages('App\Models\ImagesTemp',$objectId,$page,$page_size);
-                $model = 'App\Models\ImagesTemp';
-                break;
-            case self::TYPE_RASTRENIYA:
-                $model = 'App\Models\ImagesRastreniya';
-                break;
-            default:
-                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
-        }
+        $model = $this->getModelByType($type);
         $images = ImagesModel::findImages($model, $objectId, $page, $page_size);
 
         return $images;
-    }
-
-    public function getModelForType($type)
-    {
-        switch ($type) {
-            case self::TYPE_USER:
-                $model = 'App\Models\ImagesUsers';
-                break;
-            case self::TYPE_NEWS:
-                $model = 'App\Models\ImagesNews';
-                break;
-            case self::TYPE_REVIEW:
-                $model = 'App\Models\ImagesReviews';
-                break;
-            case self::TYPE_SERVICE:
-                $model = 'App\Models\ImagesServices';
-                break;
-            case self::TYPE_TEMP:
-                $model = 'App\Models\ImagesTemp';
-                break;
-            case self::TYPE_RASTRENIYA:
-                $model = 'App\Models\ImagesRastreniya';
-                break;
-            default:
-                $model = 'App\Models\ImagesModel';
-        }
-        return $model;
     }
 
     public function checkPermissionToObject($type, $objectId, $userId, $right)
     {
         switch ($type) {
             case self::TYPE_USER:
-                /*$account = Accounts::findForUserDefaultAccount($objectId);
-
-                if(!$account)
-                    return false;
-
-                $result = Accounts::checkUserHavePermission($userId,$account->getId(),$right);*/
-
                 $object = Users::findFirstByUserId($userId);
                 if ($objectId != null)
                     $result = $objectId == $userId;
@@ -214,6 +238,13 @@ class ImageService extends AbstractService
 
                 $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
                 break;
+            case self::TYPE_PRODUCT:
+                $object = Products::findFirstByProductId($objectId);
+                if (!$object)
+                    return false;
+
+                $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -243,34 +274,8 @@ class ImageService extends AbstractService
 
     public function createImagesToObject($files, $some_object, $type, $data = null)
     {
-        switch ($type) {
-            case self::TYPE_USER:
-                $path = 'users';
-                $id = $some_object->getUserId();
-                break;
-            case self::TYPE_NEWS:
-                $path = 'news';
-                $id = $some_object->getNewsId();
-                break;
-            case self::TYPE_REVIEW:
-                $path = 'reviews';
-                $id = $some_object->getReviewId();
-                break;
-            case self::TYPE_SERVICE:
-                $path = 'services';
-                $id = $some_object->getServiceId();
-                break;
-            case self::TYPE_TEMP:
-                $path = 'accounts/temp';
-                $id = $some_object->getId();
-                break;
-            case self::TYPE_RASTRENIYA:
-                $path = 'rastreniya';
-                $id = $some_object->getId();
-                break;
-            default:
-                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
-        }
+        $path = $this->getSubPathForImages($type);
+        $id = $this->commonService->getIdFromObject($type,$some_object);
 
         $imagesIds = [];
         $i = 0;
@@ -346,7 +351,7 @@ class ImageService extends AbstractService
     {
         $i = 0;
         foreach ($files as $file) {
-            switch ($type) {
+            /*switch ($type) {
                 case self::TYPE_USER:
                     $result = ImageLoader::loadUserPhoto($file->getTempName(), $file->getName(),
                         $some_object->getUserId(), $imagesIds[$i]['file_name']);
@@ -377,7 +382,11 @@ class ImageService extends AbstractService
                     break;
                 default:
                     throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
-            }
+            }*/
+
+            $result = $this->loadImage($file->getTempName(), $file->getName(),
+                $this->commonService->getIdFromObject($type,$some_object), $imagesIds[$i]['file_name'],$type);
+
             $i++;
             if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
                 if ($result == ImageLoader::RESULT_ERROR_FORMAT_NOT_SUPPORTED) {
@@ -398,30 +407,7 @@ class ImageService extends AbstractService
 
     private function createImage(int $id, string $pathToImage, $type, $data = null)
     {
-        switch ($type) {
-            case self::TYPE_USER:
-                $image = new ImagesUsers();
-                $image->setImageText($data/*['image_text']*/);
-                break;
-            case self::TYPE_NEWS:
-                $image = new ImagesNews();
-                break;
-            case self::TYPE_REVIEW:
-                $image = new ImagesReviews();
-                break;
-            case self::TYPE_SERVICE:
-                $image = new ImagesServices();
-                break;
-            case self::TYPE_TEMP:
-                $image = new ImagesTemp();
-                $image->setFurtherPath($data['further_path'] == null ? 'magic' : $data['further_path']);
-                break;
-            case self::TYPE_RASTRENIYA:
-                $image = new ImagesRastreniya();
-                break;
-            default:
-                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
-        }
+        $image = $this->createNewObjectByType($type,$data);
         $image->setObjectId($id);
         $image->setImagePath($pathToImage);
 
@@ -529,5 +515,13 @@ class ImageService extends AbstractService
 
         $this->deleteImage($tempImage);
         return $filename;
+    }
+
+    public function loadImage($tempname, $name, $objectId, $imageId, $type)
+    {
+        $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
+        $filename =  ImageLoader::formImageName($imageFormat,$imageId);
+        return ImageLoader::load($this->getSubPathForImages($type),$tempname,
+            $filename,$objectId,null);
     }
 }

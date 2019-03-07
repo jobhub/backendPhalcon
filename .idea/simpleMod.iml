@@ -66,7 +66,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-<<<<<<< Updated upstream
     <orderEntry type="module-library">
       <library name="PHP" type="php">
         <CLASSES>
@@ -209,7 +208,5 @@
         </SOURCES>
       </library>
     </orderEntry>
-=======
->>>>>>> Stashed changes
   </component>
 </module>

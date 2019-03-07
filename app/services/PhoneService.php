@@ -130,7 +130,7 @@ class PhoneService extends AbstractService {
 
     public function deletePhonePoint(PhonesPoints $phonePoint){
 
-        $phone = $this->getPhoneById($phonePoint->getPhoneId());
+        //$phone = $this->getPhoneById($phonePoint->getPhoneId());
 
         if (!$phonePoint->delete()) {
             $errors = SupportClass::getArrayWithErrors($phonePoint);
@@ -143,13 +143,13 @@ class PhoneService extends AbstractService {
             }
         }
 
-        if ($phone->countOfReferences() == 0) {
+        /*if ($phone->countOfReferences() == 0) {
             $this->deletePhone($phone);
-        }
+        }*/
     }
 
     public function deletePhoneCompany(PhonesCompanies $phoneCompany){
-        $phone = $this->getPhoneById($phoneCompany->getPhoneId());
+        //$phone = $this->getPhoneById($phoneCompany->getPhoneId());
 
         if (!$phoneCompany->delete()) {
             $errors = SupportClass::getArrayWithErrors($phoneCompany);
@@ -162,9 +162,9 @@ class PhoneService extends AbstractService {
             }
         }
 
-        if ($phone->countOfReferences() == 0) {
+        /*if ($phone->countOfReferences() == 0) {
             $this->deletePhone($phone);
-        }
+        }*/
     }
 
     public function deletePhone(Phones $phone){
@@ -213,7 +213,7 @@ class PhoneService extends AbstractService {
 
     public function deletePhoneUser(PhonesUsers $phoneUsers){
 
-        $phone = $this->getPhoneById($phoneUsers->getPhoneId());
+        //$phone = $this->getPhoneById($phoneUsers->getPhoneId());
 
         if (!$phoneUsers->delete()) {
             $errors = SupportClass::getArrayWithErrors($phoneUsers);
@@ -225,9 +225,9 @@ class PhoneService extends AbstractService {
                     self::ERROR_UNABLE_DELETE_PHONE_FROM_USER);
             }
         }
-
+/*
         if ($phone->countOfReferences() == 0) {
             $this->deletePhone($phone);
-        }
+        }*/
     }
 }

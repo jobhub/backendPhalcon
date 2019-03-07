@@ -59,7 +59,10 @@ class CompaniesAPIController extends AbstractController
             $result2 = [];
             foreach ($result['companies'] as $company) {
                 $points = TradePoints::findPointsByCompany($company['company_id']);
-                $result2[] = ['company' => $company, 'points' => $points];
+                if(count($points)>0)
+                    $result2[] = ['company' => $company, 'point' => $points[0]];
+                else
+                    $result2[] = ['company' => $company, 'point' => []];
             }
 
             return $result2;

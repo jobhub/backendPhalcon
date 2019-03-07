@@ -243,6 +243,14 @@ class Accounts extends \Phalcon\Mvc\Model
         return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumns);
     }
 
+    public function getUserInformation()
+    {
+        if (!is_null($this->company_id)) {
+            return Companies::findCompanyById($this->company_id, Companies::shortColumns);
+        }
+        return Userinfo::findUserInfoById($this->user_id, Userinfo::shortColumns);
+    }
+
     /**
      * @return string - array of accounts in postgresql format
      */
@@ -399,6 +407,8 @@ class Accounts extends \Phalcon\Mvc\Model
         Tasks::cascadeDeletingByAccountIds($accountIds, $transaction);
 
         Offers::cascadeDeletingByAccountIds($accountIds, $transaction);
+
+        Products::cascadeDeletingByAccountIds($accountIds, $transaction);
     }
 
     public static function cascadeRestoringByAccountIds(string $accountIds, $transaction)
@@ -416,6 +426,8 @@ class Accounts extends \Phalcon\Mvc\Model
         Tasks::cascadeRestoringByAccountIds($accountIds, $transaction);
 
         Offers::cascadeRestoringByAccountIds($accountIds, $transaction);
+
+        Products::cascadeRestoringByAccountIds($accountIds, $transaction);
     }
 
     /**

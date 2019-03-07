@@ -216,4 +216,9 @@ class Phones extends \Phalcon\Mvc\Model
 
         return $phonesCompanies->count() + $phonesPoints->count() + $phonesUsers->count();
     }
+
+    public static function findPhoneById($phone_id)
+    {
+        return self::findFirstByPhoneId($phone_id);
+    }
 }

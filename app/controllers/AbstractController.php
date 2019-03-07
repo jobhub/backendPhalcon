@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Phalcon\DI\FactoryDefault as DI;
+
 /**
  * Class AbstractController
  *
@@ -37,6 +39,20 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
         return ['success' => true, 'msg' => $msg, 'data' => $data];
     }
 
+    public function successPaginationResponse($msg, $data = null, $pagination = null)
+    {
+        if(!is_null($pagination)) {
+            if (is_integer($pagination))
+                return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination], 'data' => $data];
+            else {
+                if (isset($pagination['total'])) {
+                    return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination['total']], 'data' => $data];
+                }
+            }
+        }
+        return ['success' => true, 'msg' => $msg, 'data' => $data];
+    }
+
     public function isAuthorized(){
         $payload = $this->session->get('auth');
         return $payload!=null && $payload['id']!=null;
@@ -50,5 +66,10 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
 
     public function setAccountId($accountId){
         $this->session->set('accountId',$accountId);
+    }
+
+    public static function getAccountId(){
+        $di = DI::getDefault();
+        return $di->getSession()->get('accountId');
     }
 }

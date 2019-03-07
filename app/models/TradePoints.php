@@ -93,16 +93,39 @@ class TradePoints extends AccountWithNotDeletedWithCascade
 
     /**
      *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=false)
+     */
+    protected $city_id;
+
+    /**
+     *
      * @var string
      * @Column(type="string", nullable=true)
      */
     protected $position_variable;
 
     const publicColumns = ['point_id', 'name', 'longitude', 'latitude', 'time',
-        'email', 'user_manager', 'website', 'address', 'position_variable', 'marker_id'];
+        'email', 'user_manager', 'website', 'address', 'position_variable', 'marker_id', 'city_id'];
 
     const publicColumnsInStr = ['point_id, name, longitude, latitude, time,
-        email, user_manager, website, address, position_variable, marker_id'];
+        email, user_manager, website, address, position_variable, marker_id, city_id'];
+
+    /**
+     * @return int
+     */
+    public function getCityId()
+    {
+        return $this->city_id;
+    }
+
+    /**
+     * @param int $city_id
+     */
+    public function setCityId($city_id)
+    {
+        $this->city_id = $city_id;
+    }
 
     /**
      * Method to set the value of field pointId
@@ -494,6 +517,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         $this->hasMany('point_id', 'App\Models\PhonesPoints', 'point_id', ['alias' => 'PhonesPoints']);
         $this->belongsTo('user_manager', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
         $this->belongsTo('marker_id', 'App\Models\Markers', 'marker_id', ['alias' => 'Markers']);
+        $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
     }
 
     /**

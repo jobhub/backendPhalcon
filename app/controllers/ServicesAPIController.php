@@ -68,12 +68,12 @@ class ServicesAPIController extends AbstractController
             self::setAccountId($account->getId());
         }
 
-        if ($is_company && strtolower($is_company) != "false") {
+        if ($is_company && strtolower($is_company) != "false" && strtolower($is_company)!='null') {
             $services = Services::findServicesByCompanyId($id,$page,$page_size);
         } else {
             $services = Services::findServicesByUserId($id,$page,$page_size);
         }
-        return $services;
+        return self::successPaginationResponse('',$services['data'],$services['pagination']);
     }
 
     /**
@@ -81,7 +81,7 @@ class ServicesAPIController extends AbstractController
      *
      * @method GET
      *
-     * @param $company_id - если не указан, то будут возвращены услуги текущего пользователя.
+     * @param $account_id - если не указан, то будут возвращены услуги текущего пользователя.
      *        Иначе компании, в которой он должен быть хотя бы менеджером.
      * @param $page
      * @param $page_size
@@ -90,29 +90,25 @@ class ServicesAPIController extends AbstractController
      *      regionid, name, rating, [Categories], [images (массив строк)] {TradePoint}, [Tags],
      *      {Userinfo или Company} }].
      */
-    public function getOwnServicesAction($company_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
+    public function getOwnServicesAction($account_id = null, $page = 1, $page_size = Services::DEFAULT_RESULT_PER_PAGE)
     {
         $userId = self::getUserId();
-        if ($company_id == null || !SupportClass::checkInteger($company_id)) {
+        if ($account_id == null || !SupportClass::checkInteger($account_id)) {
             $accountId = Accounts::findForUserDefaultAccount($userId)->getId();
             $this->session->set('accountId',$accountId);
             $services = Services::findServicesByUserId($userId,$page,$page_size);
         } else {
-            if(!Accounts::checkUserHavePermissionToCompany($userId,$company_id,'getServices')){
+            if(!Accounts::checkUserHavePermission($userId,$account_id,'getServices')){
                 throw new Http403Exception('Permission error');
             }
 
-            $accountId = Accounts::findFirst(['user_id = :userId: and company_id = :companyId:','bind'=>
-                [
-                    'userId'=>$userId,
-                    'companyId'=>$company_id
-                ]])->getId();
+            $account = $this->accountService->getAccountById($account_id);
 
-            $this->session->set('accountId',$accountId);
-            $services = Services::findServicesByCompanyId($company_id,$page,$page_size);
+            $this->session->set('accountId',$account_id);
+            $services = Services::findServicesByCompanyId($account->getCompanyId(),$page,$page_size);
         }
 
-        return $services;
+        return self::successPaginationResponse('',$services['data'],$services['pagination']);
     }
 
     /**
@@ -481,7 +477,7 @@ class ServicesAPIController extends AbstractController
 
             if($data['tags']!=null)
             foreach ($data['tags'] as $tag) {
-                $this->tagService->addTagToService($tag, $service->getServiceId());
+                $this->tagService->addTagToObject($tag, $service->getServiceId(),TagService::TYPE_SERVICE);
             }
 
             /*if($data['old_points']!=null)
