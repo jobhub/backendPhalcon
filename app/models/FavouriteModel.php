@@ -274,7 +274,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             and object_id = :companyId:', 'bind' => [
                     'currentAccountId' => $currentAccountIds,
                     'companyId' => $account->getCompanyId()
-                ]]); 
+                ]]);
             }
         } else {
 
