@@ -34,12 +34,16 @@ $routes = [
                 'action' => 'sendMessageAction'
             ],
             ['type' => 'post',
-                'path' => '/chat-box',
+                'path' => '/chat-box', // get all messages privates chat @param other_user_id @param page
                 'action' => 'getChatBoxAction'
             ],
-            ['type' => 'post',
-                'path' => '/all-readed',
+            ['type' => 'put',
+                'path' => '/read', // set all messages privates chat to readed @param other_user_id
                 'action' => 'setAllToReadAction'
+            ],
+            ['type' => 'get',
+                'path' => '/unread', // get all messages privates chat @param other_user_id @param page
+                'action' => 'getUnReadChatBoxAction'
             ]
         ],
     ],

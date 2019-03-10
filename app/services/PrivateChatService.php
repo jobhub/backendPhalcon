@@ -3,17 +3,20 @@
 namespace App\Services;
 
 use App\Controllers\HttpExceptions\Http400Exception;
+use App\Libs\SupportClass;
 use App\Models\ChatHistory;
 use App\Models\Message;
 use App\Models\PrivateChat;
 use App\Models\Userinfo;
+use App\Models\Users;
 
 /**
  * business logic for users
  *
  * Class UsersService
  */
-class PrivateChatService extends AbstractService {
+class PrivateChatService extends AbstractService
+{
 
     const ADDED_CODE_NUMBER = 28000;
 
@@ -31,25 +34,26 @@ class PrivateChatService extends AbstractService {
      * @param $createIfNoExist boolean
      * @return PrivateChat $chatBox
      */
-    public function getPrivateChat($user_id, $related_user, $createIfNoExist = false) {
+    public function getPrivateChat($user_id, $related_user, $createIfNoExist = false)
+    {
         try {
             $chatBox = PrivateChat::findFirst(
-                            [
-                                'conditions' => 'user_id = :user: and related_user_id = :related_user:',
-                                'bind' => [
-                                    "user" => $user_id,
-                                    "related_user" => $related_user
-                                ],
-                            ]
+                [
+                    'conditions' => 'user_id = :user: and related_user_id = :related_user:',
+                    'bind' => [
+                        "user" => $user_id,
+                        "related_user" => $related_user
+                    ],
+                ]
             );
             if (!$chatBox && $createIfNoExist) {
                 // create a private chat for these users
                 $chatBox = new PrivateChat();
                 $chatHis = $this->chatHistoryService->createChatHistory();
                 $chatBox->setUserId($user_id)
-                        ->setRelatedUserId($related_user)
-                        ->setChatHistId($chatHis->getId())
-                        ->create();
+                    ->setRelatedUserId($related_user)
+                    ->setChatHistId($chatHis->getId())
+                    ->create();
                 $chatBox2 = new PrivateChat();
                 $chatBox2->setUserId($related_user)
                     ->setRelatedUserId($user_id)
@@ -72,20 +76,21 @@ class PrivateChatService extends AbstractService {
      * @param $createIfNoExist boolean
      * @return ChatHistory $chatBox
      */
-    public function getChatHistory($user_id, $related_user, $createIfNoExist = false) {
+    public function getChatHistory($user_id, $related_user, $createIfNoExist = false)
+    {
         try {
             $chatBox = $this->getPrivateChat($user_id, $related_user, $createIfNoExist);
             if (!$chatBox)
                 return null;
             $this->logger->log(
-               'user '. $user_id.' send message to user '. $related_user
+                'user ' . $user_id . ' send message to user ' . $related_user
             );
             return $chatBox->getRelated('Chathistory');
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e, $this->logger);
         }
     }
-    
+
     /**
      * Returns all user chatHistory
      *
@@ -94,53 +99,22 @@ class PrivateChatService extends AbstractService {
      * @param $is_hidden boolean "get only spam hidden"
      * @return array
      */
-    public function getUserPublicChats($user_id, $is_spam = false, $is_hidden = false) {
+    public function getUserPublicChats($user_id, $is_spam = false, $is_hidden = false)
+    {
         try {
-            if($is_hidden){
-                $chatBox = PrivateChat::findHidden(
-                    [
-                        'conditions' => 'user_id = :user:',
-                        'bind' => [
-                            "user" => $user_id,
-                        ],
-                    ]
-                );
+            if ($is_hidden) {
+                $chatBox = $this->getHiddenChat($user_id);
+            } elseif ($is_spam) {
+                $chatBox = $this->getHiddenChat($user_id);
+            } else {
+                $chatBox = $this->getPublicChat($user_id);
             }
-            elseif($is_spam){
-                $chatBox = PrivateChat::findSpam(
-                    [
-                        'conditions' => 'user_id = :user:',
-                        'bind' => [
-                            "user" => $user_id,
-                        ],
-                    ]
-                );
-            }
-            else{
-                $chatBox = PrivateChat::findEnabled(
-                    [
-                        'conditions' => 'user_id = :user:',
-                        'bind' => [
-                            "user" => $user_id,
-                        ],
-                    ]
-                );
-            }
+
+            //var_dump($chatBox);
             $toRet = [];
             $ob = [];
             foreach ($chatBox as $value) {
-                $this->logger->log(
-                    'chat id '. $value->getId()
-                );
-                $user = $value->getRelated('relatedUser');
-                $ob['user'] =$user->getRelated('Userinfo', [
-                    'columns' => Userinfo::publicColumns
-                ]);
-                $ob['msg'] = $value->getRelated('Chathistory')->getRelated('Messages', [
-                    'order' => 'create_at DESC',
-                    'limit' => 1,
-                    'columns' => Message::PUBLIC_COLUMNS
-            ]);
+                $ob = $this->formatPrivateChat($user_id, $value);
                 array_push($toRet, $ob);
             }
             return $toRet;
@@ -150,13 +124,63 @@ class PrivateChatService extends AbstractService {
     }
 
     /**
+     * Returns all user chatHistory
+     *
+     * @param $user_id integer
+     * @param $is_spam boolean "get only spam discussions"
+     * @param $is_hidden boolean "get only spam hidden"
+     * @return array
+     */
+    public function getUnReadMessages($user_id, $is_spam = false, $is_hidden = false)
+    {
+        try {
+            /* if ($is_hidden) {
+                 $chatBox = $this->getHiddenChat($user_id);
+             } elseif ($is_spam) {
+                 $chatBox = $this->getHiddenChat($user_id);
+             } else {
+                 $chatBox = $this->getPublicChat($user_id);
+             }*/
+
+            //var_dump($chatBox);
+            $chatBox = $this->getUnReadChat($user_id);
+            $toRet = [];
+            $ob = [];
+            foreach ($chatBox as $value) {
+               $ob = $this->formatPrivateChat($user_id, $value);
+               array_push($toRet, $ob);
+            }
+            return $toRet;
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    public function formatPrivateChat($user_id, $value)
+    {
+        $ob = [];
+        $user = Users::findFirst($value['related_user_id']);
+        $ob['user'] = $user->getRelated('Userinfo', [
+            'columns' => Userinfo::shortColumns
+        ]);
+        $ob['msg'] = ChatHistory::findFirst($value['chat_hist_id'])->getRelated('Messages', [
+            'order' => 'create_at DESC',
+            'limit' => 1,
+            'columns' => Message::PUBLIC_COLUMNS
+        ]);
+        $ob['unread'] = Message::countUnRead($user_id, $value['chat_hist_id']);
+        return $ob;
+    }
+
+    /**
      * Return true if success
      *
      * @param $user_id integer
      * @param $chat_id boolean "chat history id"
      * @return boolean
      */
-    public function togglePrivateChatToSpam($user_id, $chat_id){
+    public function togglePrivateChatToSpam($user_id, $chat_id)
+    {
         try {
             $chatBox = PrivateChat::findFirst(
                 [
@@ -167,7 +191,7 @@ class PrivateChatService extends AbstractService {
                     ],
                 ]
             );
-            if(!$chatBox){
+            if (!$chatBox) {
                 throw new Http400Exception('unable get private chat : missing id', self::ERROR_GET_CHAT_HIS);
             }
             $chatBox->spam();
@@ -184,7 +208,8 @@ class PrivateChatService extends AbstractService {
      * @param $chat_id boolean "chat history id"
      * @return boolean
      */
-    public function togglePrivateChatToHidden($user_id, $chat_id){
+    public function togglePrivateChatToHidden($user_id, $chat_id)
+    {
         try {
             $chatBox = PrivateChat::findFirst(
                 [
@@ -195,7 +220,7 @@ class PrivateChatService extends AbstractService {
                     ],
                 ]
             );
-            if(!$chatBox){
+            if (!$chatBox) {
                 throw new Http400Exception('unable get private chat : missing id', self::ERROR_GET_CHAT_HIS);
             }
             $chatBox->hidden();
@@ -205,6 +230,36 @@ class PrivateChatService extends AbstractService {
         }
     }
 
+    public function getSpamChat($user_id)
+    {
+        return $this->db->fetchAll('SELECT user_id, related_user_id, chat_hist_id FROM "privateChat" as p INNER JOIN "chatHistory" as c ON p.chat_hist_id = c.id  WHERE user_id = ' . $user_id . ' AND deleted != true AND is_hidden != true  AND is_spam = true ORDER BY c.last_modification_date DESC
+        ');
+    }
+
+    public function getHiddenChat($user_id)
+    {
+        return $this->db->fetchAll('SELECT user_id, related_user_id, chat_hist_id FROM "privateChat" as p INNER JOIN "chatHistory" as c ON p.chat_hist_id = c.id  WHERE user_id = ' . $user_id . ' AND deleted != true AND is_hidden = true  AND is_spam != true ORDER BY c.last_modification_date DESC
+        ');
+    }
+
+
+    public function getPublicChat($user_id)
+    {
+        return $this->db->fetchAll('SELECT user_id, related_user_id, chat_hist_id FROM "privateChat" as p INNER JOIN "chatHistory" as c ON p.chat_hist_id = c.id  WHERE user_id = ' . $user_id . ' AND deleted != true AND is_hidden != true  AND is_spam != true ORDER BY c.last_modification_date DESC
+        ');
+    }
+
+    public function getUnReadChat($user_id)
+    {
+        return $this->db->fetchAll('
+            SELECT DISTINCT user_id, related_user_id, p.chat_hist_id, c.last_modification_date FROM "privateChat" as p 
+            INNER JOIN "chatHistory" as c ON p.chat_hist_id = c.id  
+            INNER JOIN  "message" as m ON m.chat_hist_id = c.id 
+            WHERE p.user_id = ' . $user_id . ' AND NOT (' . $user_id . ' = ANY (m.readed_users)) AND p.deleted != true AND is_hidden != true  AND is_spam != true 
+            ORDER BY c.last_modification_date DESC
+     ');
+    }
+
     /**
      *  set all unread messages to read
      *
@@ -212,29 +267,27 @@ class PrivateChatService extends AbstractService {
      * @param $related_user integer,
      * @return boolean
      */
-    public function setAllMessageToReaded($user_id, $related_user) {
+    public function setAllMessageToReaded($user_id, $related_user)
+    {
         try {
             $chatBox = $this->getPrivateChat($user_id, $related_user, false);
             if (!$chatBox)
                 return true;
-            $msgs =$chatBox->getRelated('Chathistory')->getRelated('Messages', [ 
-                'conditions' => 'is_readed = :isReaded:',
-                'bind' => [
-                                    "isReaded" => 0,
-                                ]
-            ]); 
+            $msgs = Message::findUnreaded($user_id, $chatBox->getId());
             foreach ($msgs as $value) {
-                $value->setIsReaded(true);
-                   $value->update(); 
-}
+                $readed = SupportClass::to_php_array($value->getReadedUsers());
+                array_push($readed, $user_id);
+                $value->setReadedUsers($readed);
+                $value->update();
+            }
 
         } catch (\PDOException $e) {
             $this->logger->critical(
-                  $e->getMessage()
-                );
+                $e->getMessage()
+            );
             throw new ServiceException($e->getMessage(), $e->getCode(), $e, $this->logger);
         }
         return true;
-    } 
+    }
 
 }

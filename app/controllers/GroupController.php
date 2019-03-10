@@ -36,6 +36,18 @@ class GroupController extends AbstractController {
         return parent::successResponse('Message successfully send');
     }
 
+    public function setMessageToReadAction(){
+        $user_id = $this->getUserId();
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $user_id;
+        try {
+            $this->messageService->setAllMessageToReaded($data, true); // using same message service with private chat
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        return parent::successResponse('Message successfully send');
+    }
+
     public function messageAction(){
         $user_id = $this->getUserId();
         $data = json_decode($this->request->getRawBody(), true);

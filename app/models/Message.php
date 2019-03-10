@@ -503,6 +503,17 @@ class Message extends \Phalcon\Mvc\Model
         return $messages;
     }
 
+    public static function countUnRead($user_id, $chatHistory_id){
+       $unread = Message::find([
+            'conditions' => 'chat_hist_id = :chat_hist_id: AND NOT (:user_id: = ANY (readed_users))',
+            'bind' => [
+                "chat_hist_id" => $chatHistory_id,
+                "user_id" => $user_id
+            ]
+        ]);
+       return count($unread);
+    }
+
     public static function handleMessages(array $messages)
     {
         $handledMessages = [];

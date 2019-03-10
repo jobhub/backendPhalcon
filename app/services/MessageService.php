@@ -89,6 +89,9 @@ class MessageService extends AbstractService
                 ->setReadedUsers(SupportClass::to_pg_array($statut_array))
                 ->setReceivedUsers(SupportClass::to_pg_array($statut_array))
                 ->create();
+            $data = new \DateTime();
+            $chatHistory->setLastModificationDate($data->format('Y-m-d H:i:s'));
+            $chatHistory->update();
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
@@ -203,6 +206,43 @@ class MessageService extends AbstractService
             }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
+     * @param $data
+     * @param $is_group_msg
+     * @return bool
+     */
+    public function setAllMessageToReaded($data, $is_group_msg)
+    {
+        $user_id = $data['sender'];
+        try {
+            $chatHistory = $this->getChatHistoryByDataType($data, $is_group_msg);
+            if (!$chatHistory)
+                return true;
+           // $msgs = Message::findUnreaded($user_id, $chatHistory->getId());
+            $msgs = Message::find([
+                'conditions' => 'chat_hist_id = :chat_hist_id: AND NOT (:user_id: = ANY (readed_users))',
+                'bind' => [
+                    "chat_hist_id" => $chatHistory->getId(),
+                    "user_id" => $user_id
+                ]
+
+            ]);
+            foreach ($msgs as $value) {
+                $readed = SupportClass::to_php_array($value->getReadedUsers()); 
+                array_push($readed, $user_id);
+                $value->setReadedUsers(SupportClass::to_pg_array($readed));
+                $value->update();
+            }
+
+        } catch (\PDOException $e) {
+            $this->logger->critical(
+                $e->getMessage()
+            );
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e, $this->logger);
         }
         return true;
     }

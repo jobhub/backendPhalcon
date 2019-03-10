@@ -12,6 +12,12 @@ class ChatHistory extends \Phalcon\Mvc\Model
     protected $id;
 
     /**
+     *
+     * @var date
+     */
+    protected $last_modification_date;
+
+    /**
      * Method to set the value of field id
      *
      * @param integer $id
@@ -43,7 +49,8 @@ class ChatHistory extends \Phalcon\Mvc\Model
         $this->setSource("chatHistory");
         $this->hasMany('id', 'App\Models\Groups', 'chat_hist_id', ['alias' => 'Group']);
         $this->hasMany('id', 'App\Models\Message', 'chat_hist_id', ['alias' => 'Messages']);
-        $this->hasMany('id', 'App\Models\PrivateChat', 'chat_hist_id', ['alias' => 'Privatechat']);
+        $this->hasMany('id', 'App\Models\PrivateChat', 'chat_hist_id', ['alias' => 'Privatechat','params' => ['order' => 'id ASC'
+    ]]);
     }
 
     /**
@@ -59,6 +66,24 @@ class ChatHistory extends \Phalcon\Mvc\Model
     public function getSequenceName() {
         return "\"chatHistory_id_seq\"";
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastModificationDate()
+    {
+        return $this->last_modification_date;
+    }
+
+    /**
+     * @param \DateTime $last_modification_date
+     */
+    public function setLastModificationDate($last_modification_date)
+    {
+        $this->last_modification_date = $last_modification_date;
+    }
+
+
 
     /**
      * Allows to query a set of records that match the specified conditions

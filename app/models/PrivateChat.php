@@ -185,6 +185,20 @@ class PrivateChat extends HiddenSpamModel
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'User']);
     }
 
+    public static function newFind($user_id){
+        $data = PrivateChat::query()
+            ->where('user_id = :user:')
+            ->andWhere('deleted != true AND is_hidden != true  AND is_spam != true')
+            ->bind(["user" => $user_id])
+            ->innerJoin('ChatHistory')
+            ->inWhere("id", [1, 2, 3]);
+            //->orderBy("Chathistory.last_modification_date")
+           // ->limit(1)
+            //->execute();
+        var_dump($data);
+        return $data;
+    }
+
     /**
      * Returns table name mapped in the model.
      *

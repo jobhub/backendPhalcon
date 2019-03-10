@@ -52,18 +52,31 @@ class MessageController extends AbstractController {
      *
      * @return array
      */
-    public function setAllToReadAction() {
-        $data = [];
-        $jsonData = $this->request->getJsonRawBody();
-        $data["sender"] = $this->getUserId();
-        $data["reciever"] = $jsonData->reciever;     
-       
+    public function getUnReadChatBoxAction() {
         try {
-           $response = $this->privateChatService->setAllMessageToReaded($data["sender"], $data["reciever"]);
+            $response = $this->privateChatService->getUnReadMessages($this->getUserId());
         } catch (ServiceException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
-        return parent::chatResponce('',$response);
+        return $response;
+    }
+
+    /**
+     * send message to other user
+     * Returns user list
+     *
+     * @return array
+     */
+    public function setAllToReadAction() {
+        $user_id = $this->getUserId();
+        $data = json_decode($this->request->getRawBody(), true);
+        $data["sender"] = $user_id;
+        try {
+            $this->messageService->setAllMessageToReaded($data, false); // using same message service with group chat
+        } catch (ServiceException $e) {
+            throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+        }
+        return parent::successResponse('Done');
     }
  
 
