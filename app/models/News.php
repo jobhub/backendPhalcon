@@ -572,6 +572,21 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
                     break;
                 }
+                case 'forwards_products':{
+                    $product = Products::findProductById($newsElement['object_id'])->toArray();
+                    if (is_null($product))
+                        break;
+
+                    $resultElement['product'] = Products::handleProductFromArray($product);
+
+                    $forwardData = SupportClass::translateInPhpArrFromPostgreJsonObject($newsElement['data']);
+
+                    $resultElement = self::addForwardData($forwardData, $resultElement);
+
+                    $newsResult[] = $resultElement;
+
+                    break;
+                }
             }
         }
         return $newsResult;

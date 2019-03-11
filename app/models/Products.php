@@ -76,7 +76,7 @@ class Products extends AccountWithNotDeletedWithCascade
      */
     protected $date_creation;
 
-    const publicColumns = ['product_id', 'description', 'date_publication', 'price', 'product_name', 'account_id', 'phone_id',
+    const publicColumns = ['product_id','product_name', 'description', 'price', 'account_id', 'phone_id',
         'show_company_place', 'category_id'];
 
     const shortColumns = ['product_id', 'product_name', 'price'];
@@ -372,9 +372,15 @@ class Products extends AccountWithNotDeletedWithCascade
         return parent::findFirst($parameters);
     }
 
-    public static function findProductById($productId)
+    public static function findProductById($productId, array $columns = null)
     {
-        return self::findFirstByProductId($productId);
+        if ($columns == null)
+            return self::findFirst(['product_id = :productId:',
+                'bind' => ['productId' => $productId]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'product_id = :productId:',
+                'bind' => ['productId' => $productId]]);
+        }
     }
 
     /**

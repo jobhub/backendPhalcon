@@ -57,6 +57,7 @@ class ForwardsController extends AbstractController
         $data['forward_text'] = $inputData->forward_text;
         $data['account_id'] = $inputData->account_id;
 
+        $this->db->begin();
         try {
             $auth = $this->session->get('auth');
             $userId = $auth['id'];
@@ -84,6 +85,7 @@ class ForwardsController extends AbstractController
 
             $forward = $this->forwardService->getForwardByIds($data['account_id'],$forward->getObjectId(),$type);
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case ForwardService::ERROR_UNABLE_CREATE_FORWARD:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -92,6 +94,7 @@ class ForwardsController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -106,7 +109,7 @@ class ForwardsController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
+        $this->db->commit();
         return self::successResponse('Forward was successfully created', ['forward' => $forward->toArray()]);
     }
 

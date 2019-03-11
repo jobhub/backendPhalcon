@@ -79,6 +79,10 @@ class MessageService extends AbstractService
                     $service = $this->serviceService->getServiceById($data["attached_id"]);
                     $msg->setAttachedId($data["attached_id"]);
                     break;
+                case Message::TYPE_FORWARD_PRODUCT:
+                    $product = $this->productService->getProductById($data["attached_id"]);
+                    $msg->setAttachedId($data["attached_id"]);
+                    break;
             }
 
             $statut_array = [$data["sender"]];
@@ -164,7 +168,11 @@ class MessageService extends AbstractService
 
             ]);
             $result = $messages->toArray();
-            return Message::handleMessages($result);
+            try {
+                return Message::handleMessages($result);
+            }catch (\Exception $e){
+                echo $e;
+            }
         } catch (\PDOException $e) {
             throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }

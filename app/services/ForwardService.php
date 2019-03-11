@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ForwardsImagesUsers;
 use App\Models\ForwardsInNewsModel;
 use App\Models\ForwardsNews;
+use App\Models\ForwardsProducts;
 use App\Models\ForwardsServices;
 use App\Models\CompanyRole;
 use Phalcon\DI\FactoryDefault as DI;
@@ -28,6 +29,7 @@ class ForwardService extends AbstractService
     const TYPE_NEWS = 'news';
     const TYPE_SERVICE = 'service';
     const TYPE_IMAGE_USER = 'image-user';
+    const TYPE_PRODUCT = 'product';
 
     const ADDED_CODE_NUMBER = 20000;
 
@@ -38,7 +40,28 @@ class ForwardService extends AbstractService
     const ERROR_UNABLE_CREATE_FORWARD = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_INVALID_FORWARD_TYPE = 5 + self::ADDED_CODE_NUMBER;
 
-    public function createForward(array $forwardData, $type)
+    public function getModelByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_NEWS:
+                $model = 'ForwardsNews';
+                break;
+            case self::TYPE_SERVICE:
+                $model = 'ForwardsServices';
+                break;
+            case self::TYPE_IMAGE_USER:
+                $model = 'ForwardsImagesUsers';
+                break;
+            case self::TYPE_PRODUCT:
+                $model = 'ForwardsProducts';
+                break;
+            default:
+                throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FORWARD_TYPE);
+        }
+        return 'App\Models\\' . $model;
+    }
+
+    public function createNewObjectByType($type)
     {
         switch ($type) {
             case self::TYPE_NEWS:
@@ -50,9 +73,18 @@ class ForwardService extends AbstractService
             case self::TYPE_IMAGE_USER:
                 $forward = new ForwardsImagesUsers();
                 break;
+            case self::TYPE_PRODUCT:
+                $forward = new ForwardsProducts();
+                break;
             default:
                 throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FORWARD_TYPE);
         }
+        return $forward;
+    }
+
+    public function createForward(array $forwardData, $type)
+    {
+        $forward = $this->createNewObjectByType($type);
 
         $this->fillForward($forward, $forwardData, $type);
 
@@ -100,19 +132,10 @@ class ForwardService extends AbstractService
 
     public function getForwardByIds($accountId, $objectId, $type)
     {
-        switch ($type) {
-            case self::TYPE_NEWS:
-                $forward = ForwardsNews::findForwardByIds($accountId, $objectId);
-                break;
-            case self::TYPE_SERVICE:
-                $forward = ForwardsServices::findForwardByIds($accountId, $objectId);
-                break;
-            case self::TYPE_IMAGE_USER:
-                $forward = ForwardsImagesUsers::findForwardByIds($accountId, $objectId);
-                break;
-            default:
-                throw new ServiceException('Invalid type of forward', self::ERROR_INVALID_FORWARD_TYPE);
-        }
+        $model = $this->getModelByType($type);
+
+
+        $forward = $model::findForwardByIds($accountId, $objectId);
 
         if (!$forward) {
             throw new ServiceException('Forward don\'t exists', self::ERROR_FORWARD_NOT_FOUND);

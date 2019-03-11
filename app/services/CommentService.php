@@ -56,7 +56,8 @@ class CommentService extends AbstractService {
         return 'App\Models\\'.$model;
     }
 
-    public function createComment(array $commentData, $type){
+    public function createNewObjectByType($type)
+    {
         switch ($type) {
             case self::TYPE_USER_IMAGES:
                 $comment = new CommentsImagesUsers();
@@ -70,6 +71,12 @@ class CommentService extends AbstractService {
             default:
                 throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
         }
+        return $comment;
+    }
+
+    public function createComment(array $commentData, $type){
+
+        $comment = $this->createNewObjectByType($type);
 
         $this->fillComment($comment,$commentData,$type);
 
@@ -118,19 +125,8 @@ class CommentService extends AbstractService {
     }
 
     public function getCommentById(int $commentId, $type){
-        switch ($type) {
-            case self::TYPE_USER_IMAGES:
-                $comment = CommentsImagesUsers::findFirstByCommentId($commentId);
-                break;
-            case self::TYPE_NEWS:
-                $comment = CommentsNews::findFirstByCommentId($commentId);
-                break;
-            case self::TYPE_SERVICES:
-                $comment = CommentsServices::findFirstByCommentId($commentId);
-                break;
-            default:
-                throw new ServiceException('Invalid type of comment', self::ERROR_INVALID_COMMENT_TYPE);
-        }
+        $model = $this->getModelByType($type);
+        $comment = $model::findFirstByCommentId($commentId);
 
         if (!$comment) {
             throw new ServiceException('Comment don\'t exists', self::ERROR_COMMENT_NOT_FOUND);

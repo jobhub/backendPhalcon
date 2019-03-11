@@ -800,3 +800,18 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Mon, 11 Mar 19 10:51:54 +0300][CRITICAL] 5002 Unable to add like
 [Mon, 11 Mar 19 10:55:13 +0300][CRITICAL] 5003 Invalid type of like
 [Mon, 11 Mar 19 13:02:16 +0300][CRITICAL] 1002 Account not found
+[Mon, 11 Mar 19 16:05:05 +0300][CRITICAL] 36002 Product does not exist
+[Mon, 11 Mar 19 16:07:29 +0300][CRITICAL] 20004 Unable create forward
+[Mon, 11 Mar 19 16:09:16 +0300][CRITICAL] 20004 Unable create forward
+[Mon, 11 Mar 19 16:24:33 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :newsId
+[Mon, 11 Mar 19 16:25:17 +0300][CRITICAL] HY093 SQLSTATE[HY093]: Invalid parameter number: :newsId
+[Mon, 11 Mar 19 16:29:14 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:29:37 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:29:43 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:30:04 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:30:32 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:30:37 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:30:50 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:31:05 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:32:03 +0300][DEBUG] user 7 send message to user 6
+[Mon, 11 Mar 19 16:33:07 +0300][DEBUG] user 7 send message to user 6

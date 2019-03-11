@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-class ForwardsServices extends ForwardsInNewsModel
+class ForwardsProducts extends ForwardsInNewsModel
 {
-
     public function validation()
     {
         return parent::validation();
     }
-
     /**
      * Initialize method for model.
      */
     public function initialize()
     {
         parent::initialize();
-        $this->setSource("forwards_services");
-        $this->belongsTo('object_id', 'App\Models\Services', 'service_id', ['alias' => 'Services']);
+        $this->setSchema("public");
+        $this->setSource("forwards_products");
+        $this->belongsTo('object_id', 'App\Models\Products', 'product_id', ['alias' => 'Products']);
     }
 
     /**
@@ -27,14 +26,14 @@ class ForwardsServices extends ForwardsInNewsModel
      */
     public function getSource()
     {
-        return 'forwards_services';
+        return 'forwards_products';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ForwardsNews[]|ForwardsNews|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return ForwardsProducts[]|ForwardsProducts|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -45,7 +44,7 @@ class ForwardsServices extends ForwardsInNewsModel
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return ForwardsNews|\Phalcon\Mvc\Model\ResultInterface
+     * @return ForwardsProducts|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

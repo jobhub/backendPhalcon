@@ -17,6 +17,7 @@ class Message extends \Phalcon\Mvc\Model
     const TYPE_FORWARD_NEWS = 'FRW_NEWS';
     const TYPE_FORWARD_SERVICE = 'FRW_SERV';
     const TYPE_FORWARD_IMAGE_USER = 'FRW_IMG_U';
+    const TYPE_FORWARD_PRODUCT = 'FRW_PROD';
 
     const TYPE_DEFAULT = 'TEXT';
     /**
@@ -520,6 +521,12 @@ class Message extends \Phalcon\Mvc\Model
                 case Message::TYPE_FORWARD_SERVICE:
                     $handledMessage['forward_data'] = Services::findServiceById($message['attached_id'],
                         Services::publicColumns)->toArray();
+                    break;
+                case Message::TYPE_FORWARD_PRODUCT:
+                    $handledMessage['forward_data'] = Products::findProductById(
+                        $message['attached_id'],
+                        Products::publicColumns
+                    )->toArray();
                     break;
             }
 
