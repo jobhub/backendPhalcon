@@ -1378,6 +1378,60 @@ class Services extends AccountWithNotDeletedWithCascade
         return $services;
     }
 
+    public static function findServicesByAccount($relatedAccounts, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE, $accountId = null)
+    {
+        /*$page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;*/
+        /*$modelsManager = DI::getDefault()->get('modelsManager');
+        $result = $modelsManager->createBuilder()
+            ->columns(self::publicColumns)
+            ->from(["s" => "App\Models\Services"])
+            ->join('App\Models\Accounts', 'a.id = s.account_id', 'a')
+            ->where('a.company_id = :companyId: and s.deleted = false', ['companyId' => $companyId])
+            ->orderBy('service_id desc');*/
+        /*            ->limit($page_size)
+                    ->offset($offset)
+                    ->getQuery()
+                    ->execute();*/
+
+        /*$services = Services::find(['columns'=>self::publicColumns,
+            'conditions'=>'account_id=ANY(:ids:)',
+            'order'=>'service_id desc',
+            'bind'=>[
+                'ids'=>$relatedAccounts
+            ]]);*/
+        $query = self::getQueryForFindServicesByAccount($relatedAccounts);
+        $sql = SupportClass::formQuery($query);
+
+        $services = SupportClass::executeWithPagination(/*['model'=>get_class(),
+            'columns'=>self::publicColumns,
+            'conditions'=>'account_id=ANY(:ids:)',
+            'order'=>'service_id desc',
+            'bind'=>[
+                'ids'=>$relatedAccounts
+            ]]*/
+            $sql,$query['bind'],$page,$page_size);
+
+        $services['data'] = self::handleServiceFromArray($services['data'], $accountId);
+        return $services;
+    }
+
+    public static function getQueryForFindServicesByAccount($relatedAccounts){
+        return [
+            'where' => 'account_id=ANY(:ids) and deleted = false',
+            'order' => 'service_id desc',
+            'columns' => self::publicColumnsInStr,
+            'from' => 'services',
+            'bind' => [
+                'ids' => $relatedAccounts
+            ]
+        ];
+    }
+
+    public static function getIdField(){
+        return 'service_id';
+    }
+
     public static function handleServiceForNews(array $service, $accountId = null)
     {
         if ($accountId == null) {

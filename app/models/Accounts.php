@@ -268,6 +268,16 @@ class Accounts extends \Phalcon\Mvc\Model
         return SupportClass::to_pg_array($accounts);
     }
 
+    public static function getRelatedAccountsForCompany($companyId)
+    {
+        $accounts_obj = Accounts::findByCompanyId($companyId);
+        $accounts = [];
+        foreach ($accounts_obj as $account) {
+            $accounts[] = $account->getId();
+        }
+        return SupportClass::to_pg_array($accounts);
+    }
+
     public static function checkAccountsRelated(Accounts $accountOne, Accounts $accountTwo)
     {
         if ($accountOne == null || $accountTwo == null)
@@ -438,5 +448,16 @@ class Accounts extends \Phalcon\Mvc\Model
     public function getSource()
     {
         return 'accounts';
+    }
+
+    public static function findAccountById(int $accountId, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['id = :account_id:',
+                'bind' => ['account_id' => $accountId]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'id = :account_id:',
+                'bind' => ['account_id' => $accountId]]);
+        }
     }
 }

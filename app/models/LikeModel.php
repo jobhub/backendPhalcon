@@ -46,25 +46,14 @@ class LikeModel
         return count($result) != 0;
     }
 
-    public static function getLikedByArray(array $likes, int $accountId): bool
+    public static function getLikedByArray(array $likes, string $relatedAccounts): bool
     {
-        $account = Accounts::findFirstById($accountId);
-        if ($account->getCompanyId() == null) {
-            $accounts = [$account->getId()];
-        } else {
-            $accounts_obj = Accounts::findByCompanyId($account->getCompanyId());
-            $accounts = [];
-            foreach ($accounts_obj as $account) {
-                $accounts[] = $account->getId();
-            }
-        }
-
-        $intersect = array_intersect($likes,$accounts);
+        $intersect = array_intersect($likes,SupportClass::translateInPhpArrFromPostgreArr($relatedAccounts));
 
         return count($intersect) != 0;
     }
 
-    public static function handleObjectWithLikes(array $handledObject, array $object, $accountId = null){
+    public static function handleObjectWithLikes(array $handledObject, array $object, $accountId = null, $relatedAccounts = null){
 
         if(is_array($object['likes']))
             $likes = $object['likes'];
@@ -76,7 +65,16 @@ class LikeModel
             $handledObject['stats']['likes'] = count($likes);
 
         if($accountId!=null && SupportClass::checkInteger($accountId)){
-            $handledObject['liked'] = LikeModel::getLikedByArray($likes,$accountId);
+            if($relatedAccounts!=null)
+                $handledObject['liked'] = LikeModel::getLikedByArray($likes,$relatedAccounts);
+            else{
+                if($accountId!=null){
+                    $account = Accounts::findAccountById($accountId);
+                    if($account){
+                        $handledObject['liked'] = LikeModel::getLikedByArray($likes,$account->getRelatedAccounts());
+                    }
+                }
+            }
         }
 
         return $handledObject;

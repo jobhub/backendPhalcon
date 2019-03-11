@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Libs\SupportClass;
 use App\Models\ImagesTemp;
+use App\Services\CommonService;
+use Phalcon\Http\Client\Exception;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -48,13 +50,13 @@ class NewsAPIController extends AbstractController
     {
         $userId = self::getUserId();
 
-        $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId,$account_id);
+        $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
 
         self::setAccountId($account->getId());
 
         $result = News::findNewsForCurrentAccount($account, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -89,7 +91,7 @@ class NewsAPIController extends AbstractController
 
         $result = News::findAllNewsForCurrentUser($account, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -101,7 +103,7 @@ class NewsAPIController extends AbstractController
      * @param $page_size
      * @param $account_id
      *
-     * @return string - json array объектов news или Status, если ошибка
+     * @return array
      */
     public function getOwnNewsAction($account_id = null, $page = 1, $page_size = News::DEFAULT_RESULT_PER_PAGE)
     {
@@ -120,15 +122,13 @@ class NewsAPIController extends AbstractController
             $this->session->set('accountId', $account_id);
             $account = $this->accountService->getAccountById($account_id);
 
-            if($account->getCompanyId() != null){
-                $result =  News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
+            if ($account->getCompanyId() != null) {
+                $result = News::findNewsByCompany($account->getCompanyId(), $page, $page_size);
             } else {
                 $result = News::findNewsByUser($userId, $page, $page_size);
             }
-
-            return self::successPaginationResponse('',$result['data'],$result['pagination']);
-
-        }catch (ServiceException $e) {
+            return self::successPaginationResponse('', $result['data'], $result['pagination']);
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                     throw new Http400Exception(_($e->getMessage()), $e->getCode(), $e);
@@ -264,8 +264,8 @@ class NewsAPIController extends AbstractController
         }
         $this->db->commit();
 
-        return self::successResponse('News was successfully created',
-            ['news_id' => SupportClass::getCertainColumnsFromArray($news->toArray(), News::publicColumns)]);
+        return self::successResponse('News was successfully created', [
+            'news' => News::handleNewsFromArray([$news->toArray()], $data['account_id'])[0]]);
     }
 
     /**
@@ -373,6 +373,7 @@ class NewsAPIController extends AbstractController
 
         return self::successResponse('News was successfully changed');
     }
+
     /**
      * Возвращает новости указанного объекта
      *
@@ -405,7 +406,7 @@ class NewsAPIController extends AbstractController
         else
             $result = $news = News::findNewsByUser($id, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -487,7 +488,7 @@ class NewsAPIController extends AbstractController
         try {
             $news = News::findNewsById($news_id, News::publicColumns);
 
-            if(self::isAuthorized()) {
+            if (self::isAuthorized()) {
                 $userId = self::getUserId();
 
                 $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
@@ -495,10 +496,23 @@ class NewsAPIController extends AbstractController
                 self::setAccountId($account->getId());
             }
 
-            return News::handleNewsFromArray([$news->toArray()]);
-        }catch (ServiceException $e) {
+            $handleNews = News::handleNewsObjectFromArray($news->toArray());
+            $account = $this->accountService->getAccountById($handleNews['account_id']);
+            if ($account->getCompanyId() != null) {
+                $query = News::getQueryForFindNewsByCompany($account->getCompanyId());
+            } else {
+                $query = News::getQueryForFindNewsByUser($account->getUserId());
+            }
+
+            $sortCondition = $this->commonService->getSortCondition(CommonService::TYPE_NEWS, $query, $handleNews);
+
+            $count = SupportClass::getCountForObjectByQuery($sortCondition['from'],
+                $sortCondition['conditions'], $sortCondition['bind']);
+
+            return $this->successPaginationResponse('', $handleNews, ['pagination' => ['position' => $count + 1]]);
+        } catch (ServiceException $e) {
             switch ($e->getCode()) {
-                case ServiceService::ERROR_SERVICE_NOT_FOUND:
+                case NewsService::ERROR_NEWS_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);

@@ -459,7 +459,7 @@ class Reviews extends NotDeletedModelWithCascade
             $columns .= 'reviews.' . $publicColumn;
         }
 
-        $query = "Select * FROM (
+        /*$query = "Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
               (SELECT " . $columns . "
               FROM reviews inner join tasks 
@@ -498,7 +498,11 @@ class Reviews extends NotDeletedModelWithCascade
               inner join accounts on (reviews.object_account_id = accounts.id)
               WHERE accounts.user_id = :userid5)
               ) p0
-              ORDER BY p0.review_date desc";
+              ORDER BY p0.review_date desc";*/
+
+        $query = self::getQueryForFindReviewsByUser($userId,$columns);
+
+        $str = SupportClass::formQuery($query);
 
         $reviews = SupportClass::executeWithPagination($query,
             ['userid1' => $userId,'userid2' => $userId,'userid3' => $userId,'userid4' => $userId,'userid5' => $userId,],
@@ -519,7 +523,7 @@ class Reviews extends NotDeletedModelWithCascade
         }
         //$columns[strlen($columns) - 1] = '';
 
-        $str = "Select * FROM (
+        /*$str = "Select * FROM (
               --Отзывы оставленные на заказы данного субъекта
               (SELECT " . $columns . "
               FROM reviews inner join tasks 
@@ -558,23 +562,119 @@ class Reviews extends NotDeletedModelWithCascade
               inner join accounts on (reviews.object_account_id = accounts.id)
               WHERE accounts.company_id = :companyId)
               ) p0
-              ORDER BY p0.review_date desc";
+              ORDER BY p0.review_date desc";*/
 
-        /*$query = $db->prepare($str);
+        $query = self::getQueryForFindReviewsByCompany($companyId);
 
-        $query->execute([
-            'companyId' => $companyId,
-            'limit' => $page_size,
-            'offset'=>$offset
-        ]);
-
-        return self::handleReviewsFromArray($query->fetchAll(\PDO::FETCH_ASSOC));*/
+        $str = SupportClass::formQuery($query);
 
         $reviews = SupportClass::executeWithPagination($str,
             ['companyId' => $companyId],$page,$page_size);
 
         $reviews['data'] =  self::handleReviewsFromArray($reviews['data']);
         return $reviews;
+    }
+
+    public static function getQueryForFindReviewsByUser($userId,$columns){
+        return [
+            'where' => '',
+            'order' => 'p0.review_date desc',
+            'from' => "(
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join tasks 
+              ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = \'task\' AND reviews.executor = true)
+              inner join accounts on (tasks.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userid1)
+              UNION
+              --Отзывы оставленные на предложения данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join offers 
+              ON (reviews.binder_id = offers.task_id AND reviews.binder_type = \'task\'
+                  AND reviews.executor = false AND offers.selected = true) 
+              inner join accounts on (offers.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userid2) 
+              UNION
+              --Отзывы оставленные на заявки
+              (SELECT " . $columns . "
+              FROM reviews inner join requests
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = \'request\'
+                  AND reviews.executor = true)
+              inner join accounts on (requests.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userid3)
+              UNION
+              --Отзывы оставленные на услуги
+              (SELECT " . $columns . "
+              FROM services inner join requests ON (requests.service_id = services.service_id)
+              inner join reviews
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = \'request\'
+                  AND reviews.executor = false)
+              inner join accounts on (services.account_id = accounts.id and accounts.company_id is null)
+              WHERE accounts.user_id = :userid4)
+              UNION
+              --фейковые отзывы
+              (SELECT " . $columns . "
+              FROM reviews
+              inner join accounts on (reviews.object_account_id = accounts.id)
+              WHERE accounts.user_id = :userid5)
+              ) p0",
+            'bind' => ['userid1' => $userId,'userid2' => $userId,'userid3' => $userId,'userid4' => $userId,'userid5' => $userId,],
+            'columns_map' => [
+                'review_date' => 'p0.review_date',
+                'review_id' => 'p0.review_id',
+            ],
+            'id' => 'p0.review_id'];
+    }
+
+    public static function getQueryForFindReviewsByCompany($companyId){
+        return [
+            'where' => '',
+            'order' => 'p0.review_date desc',
+            'from' => '(
+              --Отзывы оставленные на заказы данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join tasks 
+              ON (reviews.binder_id= tasks.task_id AND reviews.binder_type = \'task\' AND reviews.executor = true)
+              inner join accounts on (tasks.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --Отзывы оставленные на предложения данного субъекта
+              (SELECT " . $columns . "
+              FROM reviews inner join offers 
+              ON (reviews.binder_id = offers.task_id AND reviews.binder_type = \'task\'
+                  AND reviews.executor = false AND offers.selected = true) 
+              inner join accounts on (offers.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId) 
+              UNION
+              --Отзывы оставленные на заявки
+              (SELECT " . $columns . "
+              FROM reviews inner join requests
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = \'request\'
+                  AND reviews.executor = true)
+              inner join accounts on (requests.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --Отзывы оставленные на услуги
+              (SELECT " . $columns . "
+              FROM services inner join requests ON (requests.service_id = services.service_id)
+              inner join reviews
+              ON (reviews.binder_id = requests.request_id AND reviews.binder_type = \'request\'
+                  AND reviews.executor = false)
+              inner join accounts on (services.account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              UNION
+              --фейковые отзывы
+              (SELECT " . $columns . "
+              FROM reviews
+              inner join accounts on (reviews.object_account_id = accounts.id)
+              WHERE accounts.company_id = :companyId)
+              ) p0',
+            'bind' => ['companyId' => $companyId],
+            'columns_map' => [
+                'review_date' => 'p0.review_date',
+                'review_id' => 'p0.review_id',
+            ],
+            'id' => 'p0.review_id'];
     }
 
     public static function reviewAlreadyExists($binderId, $binderType, $executor)

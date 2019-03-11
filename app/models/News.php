@@ -287,7 +287,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         )
     ) as foo ORDER BY foo.date desc";
 
-        $news = SupportClass::executeWithPagination($str,['ids'=>$account->getRelatedAccounts()],$page,$page_size);
+        $news = SupportClass::executeWithPagination($str, ['ids' => $account->getRelatedAccounts()], $page, $page_size);
 
         /*$db = DI::getDefault()->getDb();
         $query = $db->prepare($str);
@@ -304,10 +304,10 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
     public static function findAllNewsForCurrentUser(Accounts $account, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-/*        $db = DI::getDefault()->getDb();
+        /*        $db = DI::getDefault()->getDb();
 
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;*/
+                $page = $page > 0 ? $page : 1;
+                $offset = ($page - 1) * $page_size;*/
 
         $str = "SELECT  foo.date, foo.data, foo.relname, foo.object_id FROM (
         (SELECT row_to_json(n.*) as data, 'news' as relname, n.publish_date as date, n.news_id as object_id 
@@ -353,7 +353,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     ORDER BY foo.date desc";
 
         $news = SupportClass::executeWithPagination($str,
-            ['ids'=>$account->getRelatedAccounts()],$page,$page_size);
+            ['ids' => $account->getRelatedAccounts()], $page, $page_size);
 
         $news['data'] = News::handleNewsSetWithForwards($news['data']);
         return $news;
@@ -373,7 +373,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         $offset = ($page - 1) * $page_size;
         $db = DI::getDefault()->getDb();*/
 
-        $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
+        /*$sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
                 (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
                     from public.news n inner join 
 		            public.accounts a ON (n.account_id = a.id)
@@ -384,7 +384,11 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                     inner join public.accounts a ON (m.account_id = a.id)
                         where a.company_id = :companyId)
                 ) foo
-                order by foo.date desc';
+                order by foo.date desc';*/
+
+        $query = self::getQueryForFindNewsByCompany($companyId);
+
+        $sql = SupportClass::formQuery($query);
 
         /*$query = $db->prepare($sql);
         $result = $query->execute([
@@ -398,7 +402,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         return self::handleNewsSetWithForwards($news);*/
 
         $news = SupportClass::executeWithPagination($sql,
-            ['companyId' => $companyId],$page,$page_size);
+            $query['bind'], $page, $page_size);
 
         $news['data'] = News::handleNewsSetWithForwards($news['data']);
         return $news;
@@ -406,7 +410,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
     public static function findNewsByUser($userId, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
+        /*$sql = 'Select foo.date, foo.data, foo.relname, foo.object_id from (
                 (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
                     from public.news n inner join 
 		            public.accounts a ON (n.account_id = a.id and a.company_id is null)
@@ -419,23 +423,80 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                 ) foo
                 order by foo.date desc';
 
-        /*$query = $db->prepare($sql);
-        $query->execute([
-            'userId' => $userId,
-            'limit' => $page_size,
-            'offset' => $offset,
-        ]);
+        $news = SupportClass::executeWithPagination($sql,
+            ['userid' => $userId], $page, $page_size);
 
-        $newsResultset = $query->fetchAll(\PDO::FETCH_ASSOC);
-        $newsResult = self::handleNewsSetWithForwards($newsResultset);
+        $news['data'] = News::handleNewsSetWithForwards($news['data']);
+        return $news;*/
 
-        return $newsResult;*/
+        $query = self::getQueryForFindNewsByUser($userId);
+
+        $sql = SupportClass::formQuery($query);
 
         $news = SupportClass::executeWithPagination($sql,
-            ['userid' => $userId],$page,$page_size);
+            $query['bind'], $page, $page_size);
 
         $news['data'] = News::handleNewsSetWithForwards($news['data']);
         return $news;
+    }
+
+    public static function getQueryForFindNewsByUser($userId)
+    {
+        return [
+            'where' => '',
+            'order' => 'foo.date desc',
+            'columns' => 'foo.date, foo.data, foo.relname, foo.object_id',
+            'from' => '(
+                (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
+                    from public.news n inner join 
+		            public.accounts a ON (n.account_id = a.id and a.company_id is null)
+                    where a.user_id = :userId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL (
+                    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+                    inner join public.accounts a ON (m.account_id = a.id and a.company_id is null)
+                        where a.user_id = :userId)
+                ) foo',
+            'bind' => [
+                'userId' => $userId
+            ],
+            'columns_map' => [
+                'foo.date' => 'publish_date',
+                'foo.object_id' => 'news_id'
+            ],
+            'id' => 'foo.object_id'];
+    }
+
+    public static function getQueryForFindNewsByCompany($companyId)
+    {
+        return [
+            'where' => '',
+            'order' => 'foo.date desc',
+            'columns' => 'foo.date, foo.data, foo.relname, foo.object_id',
+            'from' => '(
+                (  select row_to_json(n.*) as data, \'news\' as relname, n.publish_date as date, n.news_id as object_id
+                    from public.news n inner join 
+		            public.accounts a ON (n.account_id = a.id)
+                    where a.company_id = :companyId and n.deleted = false and n.publish_date < CURRENT_TIMESTAMP  )
+                UNION ALL (
+                    select row_to_json(m.*) as data, p.relname, m.forward_date as date, m.object_id
+                    from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oid) 
+                    inner join public.accounts a ON (m.account_id = a.id)
+                        where a.company_id = :companyId)
+                ) foo',
+            'bind' => [
+                'companyId' => $companyId
+            ],
+            'columns_map' => [
+                'publish_date' => 'foo.date',
+                'news_id' => 'foo.object_id'
+            ],
+            'id' => 'foo.object_id'];
+    }
+
+    public static function getIdField()
+    {
+        return 'news_id';
     }
 
     /**
@@ -525,7 +586,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         $account = Accounts::findFirstById($data['account_id']);
 
         if ($account != null) {
-            if($account->getCompanyId()==null)
+            if ($account->getCompanyId() == null)
                 $resultElement['publisher_user'] = $account->getUserInfomations();
             else
                 $resultElement['publisher_company'] = $account->getUserInfomations();
@@ -543,48 +604,50 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
             $accountId = $session->get('accountId');
         }
 
-        if($accountId!=null) {
+        if ($accountId != null) {
             $account = Accounts::findFirstById($accountId);
-            if($account)
+            if ($account)
                 $relatedAccounts = $account->getRelatedAccounts();
         }
 
         foreach ($news as $newsElement) {
-            $newsWithAllElement = $newsElement;
-            unset($newsWithAllElement['likes']);
-            if ($newsElement['account_id'] != null) {
-                $account = Accounts::findFirstById($newsElement['account_id']);
-                if ($account->getCompanyId() == null) {
-                    $user = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
-                    $newsWithAllElement['publisherUser'] = $user;
-                } else {
-                    $company = Companies::findCompanyById($account->getCompanyId(),
-                        Companies::shortColumns);
-                    $newsWithAllElement['publisherCompany'] = $company;
-                }
-            }
-
-            $imagesNews = ImagesModel::findAllImages('App\Models\ImagesNews',$newsElement['news_id']);
-            $newsWithAllElement['images'] = $imagesNews;
-            /*foreach ($imagesNews as $image) {
-                $newsWithAllElement['images'][] = $image['image_path'];
-            }*/
-
-            $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews', $newsElement['news_id']);
-
-            $newsWithAllElement['last_comment'] = $last_comment;
-
-            //$newsWithAllElement['stats']['comments'] = count(CommentsNews::findByObjectId($newsElement['news_id']));
-            $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, $accountId);
-            $newsWithAllElement = ForwardsInNewsModel::handleObjectWithForwards(
-                'App\Models\ForwardsNews',$newsWithAllElement, $newsElement['news_id'], $relatedAccounts);
-
-            $newsWithAllElement['stats']['comments'] = CommentsModel::getCountOfComments('comments_news', $newsElement['news_id']);
-
-            $newsWithAll[] = $newsWithAllElement;
+            $newsWithAll[] = self::handleNewsObjectFromArray($newsElement, $relatedAccounts);
         }
         return $newsWithAll;
     }
+
+    public static function handleNewsObjectFromArray(array $newsElement, $relatedAccounts = null)
+    {
+        $newsWithAllElement = $newsElement;
+        unset($newsWithAllElement['likes']);
+        if ($newsElement['account_id'] != null) {
+            $account = Accounts::findFirstById($newsElement['account_id']);
+            if ($account->getCompanyId() == null) {
+                $user = Userinfo::findUserInfoById($account->getUserId(), Userinfo::shortColumns);
+                $newsWithAllElement['publisherUser'] = $user;
+            } else {
+                $company = Companies::findCompanyById($account->getCompanyId(),
+                    Companies::shortColumns);
+                $newsWithAllElement['publisherCompany'] = $company;
+            }
+        }
+
+        $imagesNews = ImagesModel::findAllImages('App\Models\ImagesNews', $newsElement['news_id']);
+        $newsWithAllElement['images'] = $imagesNews;
+
+        $last_comment = CommentsNews::findLastParentComment('App\Models\CommentsNews', $newsElement['news_id']);
+
+        $newsWithAllElement['last_comment'] = $last_comment;
+
+        $newsWithAllElement = LikeModel::handleObjectWithLikes($newsWithAllElement, $newsElement, null, $relatedAccounts);
+        $newsWithAllElement = ForwardsInNewsModel::handleObjectWithForwards(
+            'App\Models\ForwardsNews', $newsWithAllElement, $newsElement['news_id'], $relatedAccounts);
+
+        $newsWithAllElement['stats']['comments'] = CommentsModel::getCountOfComments('comments_news', $newsElement['news_id']);
+
+        return $newsWithAllElement;
+    }
+
 
     public static function findNewsById(int $newsId, array $columns = null)
     {
@@ -759,7 +822,8 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
         return $toRet;
     }
 
-    public static function getPublicationCount(Accounts $account){
+    public static function getPublicationCount(Accounts $account)
+    {
         $db = DI::getDefault()->getDb();
 
         $sql = 'Select SUM(count) from (

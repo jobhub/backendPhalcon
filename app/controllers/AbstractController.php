@@ -41,35 +41,41 @@ abstract class AbstractController extends \Phalcon\DI\Injectable
 
     public function successPaginationResponse($msg, $data = null, $pagination = null)
     {
-        if(!is_null($pagination)) {
+        if (!is_null($pagination)) {
             if (is_integer($pagination))
                 return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination], 'data' => $data];
-            else {
-                if (isset($pagination['total'])) {
-                    return ['success' => true, 'msg' => $msg, 'pagination' => ['total' => $pagination['total']], 'data' => $data];
-                }
+            elseif(is_array($pagination)) {
+                return ['success' => true, 'msg' => $msg, 'pagination' => $pagination, 'data' => $data];
             }
         }
         return ['success' => true, 'msg' => $msg, 'data' => $data];
     }
 
-    public function isAuthorized(){
-        $payload = $this->session->get('auth');
-        return $payload!=null && $payload['id']!=null;
-    }
+public
+function isAuthorized()
+{
+    $payload = $this->session->get('auth');
+    return $payload != null && $payload['id'] != null;
+}
 
-    public function getUserId(){
-        $payload = $this->session->get('auth');
-        $current_user_id = $payload['id'];
-        return $current_user_id;
-    }
+public
+function getUserId()
+{
+    $payload = $this->session->get('auth');
+    $current_user_id = $payload['id'];
+    return $current_user_id;
+}
 
-    public function setAccountId($accountId){
-        $this->session->set('accountId',$accountId);
-    }
+public
+function setAccountId($accountId)
+{
+    $this->session->set('accountId', $accountId);
+}
 
-    public static function getAccountId(){
-        $di = DI::getDefault();
-        return $di->getSession()->get('accountId');
-    }
+public
+static function getAccountId()
+{
+    $di = DI::getDefault();
+    return $di->getSession()->get('accountId');
+}
 }

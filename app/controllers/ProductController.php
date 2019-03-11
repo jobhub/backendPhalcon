@@ -305,6 +305,8 @@ class ProductController extends AbstractController
                 self::setAccountId($account->getId());
             }
 
+
+
             return self::successResponse('',Products::handleProductFromArray($product->toArray()));
 
         }catch (ServiceException $e) {

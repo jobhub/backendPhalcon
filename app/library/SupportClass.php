@@ -301,12 +301,13 @@ class SupportClass
      *
      * @return $file
      */
-    public static function downloadFile ($URL, $PATH) {
-        $ReadFile = fopen ($URL, "rb");
+    public static function downloadFile($URL, $PATH)
+    {
+        $ReadFile = fopen($URL, "rb");
         if ($ReadFile) {
-            $WriteFile = fopen ($PATH, "wb");
-            if ($WriteFile){
-                while(!feof($ReadFile)) {
+            $WriteFile = fopen($PATH, "wb");
+            if ($WriteFile) {
+                while (!feof($ReadFile)) {
                     fwrite($WriteFile, fread($ReadFile, 4096));
                 }
             }
@@ -316,21 +317,21 @@ class SupportClass
         return null;
     }
 
-    public static function executeWithPagination($sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE){
-
+    public static function executeWithPagination($sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE)
+    {
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
 
-        if(is_string($sqlRequest)){
+        if (is_string($sqlRequest)) {
             $db = DI::getDefault()->getDb();
-            $sqlRequestReplaced = self::str_replace_once('select','select count(*) OVER() AS total_count_pagination, ',strtolower($sqlRequest));
-            $sqlRequestReplaced.='
+            $sqlRequestReplaced = self::str_replace_once('select', 'select count(*) OVER() AS total_count_pagination, ', strtolower($sqlRequest));
+            $sqlRequestReplaced .= '
                     LIMIT :limit 
                     OFFSET :offset';
 
             $query = $db->prepare($sqlRequestReplaced);
             $params_2 = [];
-            foreach ($params as $key=>$data){
+            foreach ($params as $key => $data) {
                 $params_2[strtolower($key)] = $data;
             }
 
@@ -341,7 +342,7 @@ class SupportClass
 
             $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-            if(count($results)>0) {
+            if (count($results) > 0) {
                 $final_results = [];
                 foreach ($results as $result) {
                     $final_result = [];
@@ -353,37 +354,31 @@ class SupportClass
                     $final_results[] = $final_result;
                 }
 
-                return ['pagination'=>['total'=>$results[0]['total_count_pagination']],'data'=>$final_results];
-            } else{
-
+                return ['pagination' => ['total' => $results[0]['total_count_pagination']], 'data' => $final_results];
+            } else {
                 //$sqlRequestReplaced = str_replace(["\r","\n"],' ',strtolower($sqlRequest));
-                $sqlRequestReplaced = strtolower($sqlRequest);
+                $sqlRequestReplaced = $sqlRequest;
                 $sqlRequestReplaced = preg_replace(
-                    "#select.*?from#",'select count(*) AS total_count_pagination from',
-                    $sqlRequestReplaced,1,$count);
+                    "/select.*?from/is", 'select count(*) AS total_count_pagination from',
+                    $sqlRequestReplaced, 1, $count);
 
                 $sqlRequestReplaced = preg_replace(
-                    "#order by.*#",'',
-                    $sqlRequestReplaced,1,$count);
+                    "#order by.*#", '',
+                    $sqlRequestReplaced, 1, $count);
 
                 $query = $db->prepare($sqlRequestReplaced);
 
-                $params_2 = [];
-                foreach ($params as $key=>$data){
-                    $params_2[strtolower($key)] = $data;
-                }
-
-                $query->execute($params_2);
+                $query->execute($params);
 
                 $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
-                return ['data'=>[],'pagination'=>['total'=>$results[0]['total_count_pagination']]];
+                return ['data' => [], 'pagination' => ['total' => $results[0]['total_count_pagination']]];
             }
-        } elseif(is_object($sqlRequest) && get_class($sqlRequest) == 'Phalcon\Mvc\Model\Query\Builder'){
+        } elseif (is_object($sqlRequest) && get_class($sqlRequest) == 'Phalcon\Mvc\Model\Query\Builder') {
 
             $sqlGotRequest = $sqlRequest;
             $sqlRequest->limit($page_size)
-                       ->offset($offset);
+                ->offset($offset);
 
             $data = $sqlRequest->getQuery()->execute();
 
@@ -394,8 +389,8 @@ class SupportClass
                 ->getQuery()->execute();
 
 
-            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
-        } elseif(is_array($sqlRequest)){
+            return ['data' => $data->toArray(), 'pagination' => ['total' => $count[0]->toArray()['count']]];
+        } elseif (is_array($sqlRequest)) {
             $model = $sqlRequest['model'];
 
             unset($sqlRequest['model']);
@@ -403,13 +398,13 @@ class SupportClass
             $sqlRequest['limit'] = $page_size;
             $sqlRequest['offset'] = $offset;
 
-            if(isset($sqlRequest['deleted'])){
+            if (isset($sqlRequest['deleted'])) {
                 $deleted = $sqlRequest['deleted'];
                 unset($sqlRequest['deleted']);
             }
 
-            if(!is_null($deleted))
-                $data = $model::find($sqlRequest,$deleted);
+            if (!is_null($deleted))
+                $data = $model::find($sqlRequest, $deleted);
             else
                 $data = $model::find($sqlRequest);
 
@@ -419,21 +414,62 @@ class SupportClass
 
             $sqlRequest['columns'] = 'count(*) as count';
 
-            if(!is_null($deleted))
-                $count = $model::find($sqlRequest,$deleted);
+            if (!is_null($deleted))
+                $count = $model::find($sqlRequest, $deleted);
             else
                 $count = $model::find($sqlRequest);
 
-            return ['data'=>$data->toArray(),'pagination'=>['total'=>$count[0]->toArray()['count']]];
+            return ['data' => $data->toArray(), 'pagination' => ['total' => $count[0]->toArray()['count']]];
         }
 
         return null;
     }
 
+    public static function getCountForObjectByModel($model, $where_condition, $params)
+    {
+        $result = $model::findFirst(['columns' => 'count(*) as count', 'conditions' => $where_condition,
+            'bind' => $params]);
+        /*$result = $model::findFirst(['columns'=>'count(*) as count',
+            'conditions'=>'(publish_date > :publish_date:) OR (publish_date = :publish_date_2: AND news_id > :news_id:)',
+            'bind'=>$params]);*/
+        return $result['count'];
+    }
+
+    public static function getCountForObjectByQuery($from, $where_condition, $params)
+    {
+        $result_query = "SELECT count(*) " . $from . " " . $where_condition;
+
+        $db = DI::getDefault()->getDb();
+
+        $query = $db->prepare($result_query);
+        $query->execute($params);
+
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $result[0]['count'];
+    }
 
     public static function str_replace_once($search, $replace, $text)
     {
         $pos = strpos($text, $search);
-        return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
+        return $pos !== false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
+    }
+
+    public static function formQuery($query): string
+    {
+        if(!is_null($query['columns']))
+            $sql_query = 'SELECT '.$query['columns'];
+        else
+            $sql_query = 'SELECT *';
+
+        $sql_query.=' FROM '.$query['from'];
+
+        if(!empty($query['where']))
+            $sql_query .= ' where '.$query['where'];
+
+        if(!is_null($query['order']))
+            $sql_query .= ' order by '.$query['order'];
+
+        return $sql_query;
     }
 }

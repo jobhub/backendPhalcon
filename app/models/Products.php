@@ -346,6 +346,10 @@ class Products extends AccountWithNotDeletedWithCascade
         return 'products';
     }
 
+    public static function getIdField(){
+        return 'product_id';
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *

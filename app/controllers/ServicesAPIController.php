@@ -8,6 +8,7 @@ use App\Models\FavouriteServices;
 use App\Models\TradePoints;
 use App\Services\AccountService;
 use App\Services\CategoryService;
+use App\Services\CommonService;
 use App\Services\PhoneService;
 use App\Services\PointService;
 use App\Services\ServiceService;
@@ -67,12 +68,15 @@ class ServicesAPIController extends AbstractController
 
             self::setAccountId($account->getId());
         }
-
         if ($is_company && strtolower($is_company) != "false" && strtolower($is_company)!='null') {
-            $services = Services::findServicesByCompanyId($id,$page,$page_size);
+            $relatedAccounts = Accounts::getRelatedAccountsForCompany($is_company);
+            //$services = Services::findServicesByCompanyId($id,$page,$page_size);
         } else {
-            $services = Services::findServicesByUserId($id,$page,$page_size);
+            $account = Accounts::findForUserDefaultAccount($id);
+            $relatedAccounts = $account->getRelatedAccounts();
+            //$services = Services::findServicesByUserId($id,$page,$page_size);
         }
+        $services = Services::findServicesByAccount($relatedAccounts,$page,$page_size);
         return self::successPaginationResponse('',$services['data'],$services['pagination']);
     }
 
@@ -1330,6 +1334,22 @@ class ServicesAPIController extends AbstractController
                 $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
 
                 self::setAccountId($account->getId());
+
+                $handledService = Services::handleServiceFromArray([$service->toArray()])[0];
+                $account = $this->accountService->getAccountById($handledService['account_id']);
+
+                $query = Services::getQueryForFindServicesByAccount($account->getRelatedAccounts());
+
+                $sortCondition = $this->commonService->getSortCondition(CommonService::TYPE_SERVICE, $query, $handledService);
+
+                try {
+                    $count = SupportClass::getCountForObjectByQuery($sortCondition['from'],
+                        $sortCondition['conditions'], $sortCondition['bind']);
+
+                }catch (\Exception $e){
+                    echo $e;
+                }
+                return $this->successPaginationResponse('', $handledService, ['pagination' => ['position' => $count + 1]]);
             }
         }catch (ServiceException $e) {
             switch ($e->getCode()) {
@@ -1339,8 +1359,6 @@ class ServicesAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
-        return Services::handleServiceFromArray([$service->toArray()]);
     }
 
     /**

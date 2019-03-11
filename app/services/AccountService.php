@@ -80,7 +80,7 @@ class AccountService extends AbstractService {
     }
 
     public function getAccountByIds(int $companyId, int $userId){
-        $account = Accounts::findFirst(['company_id = :companyId: and user_id = :userId:',
+        $account = Accounts::findFirst(['(company_id = :companyId: OR company_id is :companyId:) and user_id = :userId:',
             'bind' =>[
                 'userId'=>$userId,
                 'companyId'=>$companyId
