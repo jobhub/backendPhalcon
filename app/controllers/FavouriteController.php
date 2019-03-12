@@ -9,8 +9,11 @@ use App\Models\FavouriteProducts;
 use App\Models\FavouriteServices;
 use App\Models\Products;
 use App\Models\Services;
+use App\Services\CompanyService;
 use App\Services\FavouriteService;
 use App\Models\FavoriteCategories;
+use App\Services\UserService;
+use Phalcon\Http\Client\Exception;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
@@ -198,18 +201,38 @@ class FavouriteController extends AbstractController
      *
      * @method GET
      *
-     * @param $id
-     * @param $is_company
-     * @param $query = null
-     * @param $page = 1
-     * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+     * @params $id
+     * @params $is_company
+     * @params $query = null
+     * @params $page = 1
+     * @params $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
      *
      * @return string - json array подписок
      */
-    public function getOtherSubscribersAction($id, $is_company = false, $query = null,
-                                              $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    public function getOtherSubscribersAction(/*$id, $is_company = false, $query = null,
+                                              $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE*/)
     {
-        $userId = self::getUserId();
+        $inputData = $this->request->getJsonRawBody();
+        $id = $inputData->id;
+        $is_company = $inputData->is_company!=null?$inputData->is_company:false;
+        $query = $inputData->query;
+        $page = $inputData->page;
+        $page_size = $inputData->page_size;
+
+        if(is_null($page)||!SupportClass::checkInteger($page))
+            $page = 1;
+        if(is_null($page_size)||!SupportClass::checkInteger($page_size))
+            $page_size = 10;
+
+        if(is_null($id)){
+            $errors['id'] = 'Missing required parameter "id"';
+        }
+
+        if (!is_null($errors)) {
+            $exception = new Http400Exception(_('Invalid some parameters'));
+            $errors['errors'] = true;
+            throw $exception->addErrorDetails($errors);
+        }
 
         if ($is_company && strtolower($is_company) != "false") {
             $result = FavouriteModel::findSubscribersByCompany($id, $query, $page, $page_size);
@@ -253,34 +276,62 @@ class FavouriteController extends AbstractController
         return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
-    public function getOtherSubscriptionsAction($id, $is_company = false,$query = null,
-                                                $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE)
+    /**
+     * Возвращает все подписки указанного пользователя или компании
+     *
+     * @method POST
+     *
+     * @params $id = null
+     * @params $is_company = null
+     * @params $query = null
+     * @params $page = 1
+     * @params $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+     *
+     * @return string - json array подписок
+     */
+    public function getOtherSubscriptionsAction(/*$id = null, $is_company = false,$query = null,
+                                                $page = 1, $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE*/)
     {
-        $userId = self::getUserId();
+        try {
+            $inputData = $this->request->getJsonRawBody();
+            $id = $inputData->id;
+            $is_company = $inputData->is_company;
+            $query = $inputData->query;
+            $page = $inputData->page;
+            $page_size = $inputData->page_size;
 
-        /*if($account_id!=null && SupportClass::checkInteger($account_id)){
-            if(!Accounts::checkUserHavePermission($userId,$account_id,'getNews')){
-                throw new Http403Exception('Permission error');
+            $userId = self::getUserId();
+            $account = Accounts::findForUserDefaultAccount($userId);
+            self::setAccountId($account->getId());
+
+            if ($is_company && strtolower($is_company) != "false") {
+                //Here i just check company is exists
+                $company = $this->companyService->getCompanyById($id);
+                $relatedAccounts = $this->accountService->getForCompanyRelatedAccounts($company->getCompanyId());
+            } else {
+                //Here i check user on existing
+                $user = $this->userService->getUserById($id);
+                $account = $this->accountService->getForUserDefaultAccount($user->getUserId());
+                $relatedAccounts = $account->getRelatedAccounts();
             }
 
-            $account = Accounts::findFirstById($account_id);
-        } else{
-            $account = Accounts::findForUserDefaultAccount($userId);
+            try {
+                $result = FavouriteModel::findSubscriptions($relatedAccounts, $query, $page, $page_size);
+            }catch (\Exception $e){
+                echo $e;
+            }
+            return self::successPaginationResponse('', $result['data'], $result['pagination']);
+
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                case UserService::ERROR_USER_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
         }
-
-        self::setAccountId($account->getId());*/
-
-        $userId = self::getUserId();
-
-        if ($is_company && strtolower($is_company) != "false") {
-            $account = Accounts::findFirstByCompanyId($id);
-        } else {
-            $account = Accounts::findForUserDefaultAccount($id);
-        }
-
-        $result = FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
-
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
     }
 
     /**

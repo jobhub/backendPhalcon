@@ -62,7 +62,7 @@ class FavoriteCompanies extends FavouriteModel
 
 
 
-    public static function handleSubscription($fav)
+    public static function handleSubscription($fav,$relatedAccount = null)
     {
         $handledFavUser = [
             'subscription' => Companies::findCompanyById($fav['object_id'],Companies::shortColumnsInStr),

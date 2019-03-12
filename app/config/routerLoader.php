@@ -2541,19 +2541,24 @@ $routes = [
             ],
 
             /**
-             * Возвращает всех подписчиков на текущий аккаунт (а именно, компанию или пользователя)
+             * Возвращает всех подписчиков указанного пользователя или компании (а именно, компанию или пользователя)
              *
              * @method GET
              *
-             * @param $account_id = null
-             * @param $query = null
-             * @param $page = 1
-             * @param $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             * @params $id
+             * @params $is_company
+             * @params $query = null
+             * @params $page = 1
+             * @params $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
              *
              * @return string - json array подписок
              */
-
             [
+                'type' => 'post',
+                'path' => '/get/subscribers',
+                'action' => 'getOtherSubscribersAction'
+            ],
+            /*[
                 'type' => 'get',
                 'path' => '/get/subscribers/{id}',
                 'action' => 'getOtherSubscribersAction'
@@ -2577,7 +2582,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/subscribers/{id}/{is_company}/{query}/{page}/{page_size}',
                 'action' => 'getOtherSubscribersAction'
-            ],
+            ],*/
 
             /**
              * Возвращает все подписки текущего аккаунта (или всех аккаунтов компании, если аккаунт с ней связан)
@@ -2617,7 +2622,25 @@ $routes = [
                 'action' => 'getSubscriptionsAction'
             ],
 
+            /**
+             * Возвращает все подписки указанного пользователя или компании
+             *
+             * @method POST
+             *
+             * @params $id = null
+             * @params $is_company = null
+             * @params $query = null
+             * @params $page = 1
+             * @params $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
+             *
+             * @return string - json array подписок
+             */
             [
+                'type' => 'post',
+                'path' => '/get/subscriptions',
+                'action' => 'getOtherSubscriptionsAction'
+            ],
+            /*[
                 'type' => 'get',
                 'path' => '/get/subscriptions/{id}',
                 'action' => 'getOtherSubscriptionsAction'
@@ -2641,7 +2664,7 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/subscriptions/{id}/{is_company}/{query}/{page}/{page_size}',
                 'action' => 'getOtherSubscriptionsAction'
-            ],
+            ],*/
 
             /**
              * Возвращает избранные услуги пользователя

@@ -79,6 +79,14 @@ class AccountService extends AbstractService {
         return $account;
     }
 
+    public function getForCompanyRelatedAccounts($companyId){
+        $accounts = Accounts::getRelatedAccountsForCompany($companyId);
+
+        if(empty($accounts) || $accounts == '{}')
+            throw new ServiceException('Accounts for company not found',self::ERROR_ACCOUNT_NOT_FOUND);
+        return $accounts;
+    }
+
     public function getAccountByIds(int $companyId, int $userId){
         $account = Accounts::findFirst(['(company_id = :companyId: OR company_id is :companyId:) and user_id = :userId:',
             'bind' =>[

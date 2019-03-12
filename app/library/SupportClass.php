@@ -324,6 +324,7 @@ class SupportClass
 
         if (is_string($sqlRequest)) {
             $db = DI::getDefault()->getDb();
+
             $sqlRequestReplaced = self::str_replace_once('select', 'select count(*) OVER() AS total_count_pagination, ', strtolower($sqlRequest));
             $sqlRequestReplaced .= '
                     LIMIT :limit 
@@ -338,7 +339,11 @@ class SupportClass
             $params_2['limit'] = $page_size;
             $params_2['offset'] = $offset;
 
-            $query->execute($params_2);
+            try {
+                $query->execute($params_2);
+            }catch (\Exception $e){
+                echo $e;
+            }
 
             $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -457,18 +462,18 @@ class SupportClass
 
     public static function formQuery($query): string
     {
-        if(!is_null($query['columns']))
-            $sql_query = 'SELECT '.$query['columns'];
+        if (!is_null($query['columns']))
+            $sql_query = 'SELECT ' . $query['columns'];
         else
             $sql_query = 'SELECT *';
 
-        $sql_query.=' FROM '.$query['from'];
+        $sql_query .= ' FROM ' . $query['from'];
 
-        if(!empty($query['where']))
-            $sql_query .= ' where '.$query['where'];
+        if (!empty($query['where']))
+            $sql_query .= ' where ' . $query['where'];
 
-        if(!is_null($query['order']))
-            $sql_query .= ' order by '.$query['order'];
+        if (!is_null($query['order']))
+            $sql_query .= ' order by ' . $query['order'];
 
         return $sql_query;
     }

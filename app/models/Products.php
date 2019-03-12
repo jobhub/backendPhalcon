@@ -16,6 +16,8 @@ use Phalcon\Validation\Validator\Alnum as AlnumValidator;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
 use Phalcon\Validation\Validator\Regex;
 
+use App\Libs\SphinxClient;
+
 class Products extends AccountWithNotDeletedWithCascade
 {
 
@@ -477,5 +479,58 @@ class Products extends AccountWithNotDeletedWithCascade
             FavouriteService::TYPE_PRODUCT),$accountId,$productAll['product_id'])?true:false;
 
         return $productAll;
+    }
+
+    public static function findProductsWithFilters($query, $center, $diagonal, $regions = null,
+                                                  $categories = null, $priceMin = null, $priceMax = null, $ratingMin = null)
+    {
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
+        $cl->SetLimits(0, 10000, 50);
+        $cl->SetSortMode(SPH_SORT_ATTR_DESC);
+
+
+        if ($regions != null)
+            $cl->setFilter('regionid', $regions, false);
+        if ($categories != null)
+            $cl->setFilter('categoryid', $categories, false);
+
+        if ($priceMin != null)
+            $cl->setFilterFloatRange('pricemin', $priceMin, 9223372036854775807, false);
+
+        if ($priceMax != null)
+            $cl->setFilterFloatRange('pricemax', 0, $priceMax, false);
+
+        if ($ratingMin != null)
+            $cl->setFilterFloatRange('rating', $ratingMin, 100.0, false);
+
+        if ($center != null && $diagonal != null) {
+            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
+            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
+                $diagonal['latitude'], $diagonal['longitude']);
+            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        }
+
+        $cl->AddQuery($query, 'services_with_filters_index');
+        $results = $cl->RunQueries();
+
+        $services = [];
+        $allmatches = [];
+        foreach ($results as $result) {
+            if ($result['total'] > 0) {
+                $allmatches = array_merge($allmatches, $result['matches']);
+            }
+        }
+
+        $res = usort($allMatches, function ($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] > $b['weight']) ? -1 : 1;
+        });
+
+        return self::handleServiceFromArrayForSearch($allmatches);
     }
 }

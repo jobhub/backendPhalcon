@@ -815,3 +815,8 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Mon, 11 Mar 19 16:31:05 +0300][DEBUG] user 7 send message to user 6
 [Mon, 11 Mar 19 16:32:03 +0300][DEBUG] user 7 send message to user 6
 [Mon, 11 Mar 19 16:33:07 +0300][DEBUG] user 7 send message to user 6
+[Tue, 12 Mar 19 10:09:25 +0300][CRITICAL] 1002 Accounts for company not found
+[Tue, 12 Mar 19 10:11:17 +0300][CRITICAL] 1002 Accounts for company not found
+[Tue, 12 Mar 19 10:13:46 +0300][CRITICAL] 13001 Company don't exists
+[Tue, 12 Mar 19 10:14:25 +0300][CRITICAL] 13001 Company don't exists
+[Tue, 12 Mar 19 10:14:44 +0300][CRITICAL] 26003 User don't exists

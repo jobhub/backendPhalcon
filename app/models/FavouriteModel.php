@@ -308,33 +308,55 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         /*if (!$account)
             return null;*/
 
+        if($account)
+            $relatedAccount = $account->getRelatedAccounts();
+
         $handledFavs = [];
         foreach ($favs as $fav) {
 
-            $handledFav = self::handleSubscription($fav);
+            $handledFav = self::handleSubscription($fav,$relatedAccount);
             if ($handledFav != null)
                 $handledFavs[] = $handledFav;
         }
         return $handledFavs;
     }
 
-    public static function handleSubscription($fav)
+    public static function handleSubscription($fav,$relatedAccount = null)
     {
         if ($fav['relation'] == 'favorite_companies') {
             $subscription = Companies::findCompanyById($fav['object_id'],
-                Companies::shortColumns);
+                Companies::shortColumns)->toArray();
 
             if (!$subscription)
                 return null;
+
+            if ($relatedAccount != null) {
+
+                $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
+            and object_id = :companyId:', 'bind' => [
+                    'currentAccountId' => $relatedAccount,
+                    'companyId' => $fav['object_id']
+                ]]);
+                $subscription['subscribed'] = $subscribed!=false ? true : false;
+            }
 
         } else {
             $subscription = Userinfo::findUserInfoById($fav['object_id'],
-                Userinfo::shortColumns);
+                Userinfo::shortColumns)->toArray();
 
             if (!$subscription)
                 return null;
 
+            if ($relatedAccount != null) {
+                $subscribed = FavoriteUsers::findFirst(['subject_id = ANY(:currentAccountId:) 
+            and object_id = :userId:', 'bind' => [
+                    'currentAccountId' => $relatedAccount,
+                    'userId' => $fav['object_id']
+                ]]);
+                $subscription['subscribed'] = $subscribed!=false ? true : false;
+            }
         }
+
         return $subscription;
     }
 
@@ -455,7 +477,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
     ) as foo 
     order by foo.favourite_date desc';
 
-            $result = SupportClass::executeWithPagination($sql,['companyId' => $companyId,
+            $result = SupportClass::executeWithPagination($sql,['userId' => $userId,
                 'query' => $query],$page,$page_size);
         }
 
@@ -464,13 +486,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
         return $result;
     }
 
-    public static function findSubscriptions(Accounts $account, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    public static function findSubscriptions($relatedAccounts, $query, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        $page = $page > 0 ? $page : 1;
-        $offset = ($page - 1) * $page_size;
-
-        $db = DI::getDefault()->getDb();
-
         if (empty(trim($query))) {
             $sql = 'Select * FROM (
     (
@@ -496,7 +513,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
 
             $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);*/
 
-            $result = SupportClass::executeWithPagination($sql,['ids' => $account->getRelatedAccounts()],$page,$page_size);
+            $result = SupportClass::executeWithPagination($sql,['ids' => $relatedAccounts],$page,$page_size);
         } else {
 
             $sql = 'Select * FROM (
@@ -540,7 +557,7 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             $result = $query_sql->fetchAll(\PDO::FETCH_ASSOC);*/
 
             $result = SupportClass::executeWithPagination($sql,
-                ['ids' => $account->getRelatedAccounts(), 'query' => $query],
+                ['ids' => $relatedAccounts, 'query' => $query],
                 $page,$page_size);
         }
 
