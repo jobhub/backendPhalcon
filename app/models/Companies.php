@@ -97,6 +97,13 @@ class Companies extends NotDeletedModelWithCascade
     protected $rating_client;
 
     protected $is_shop;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", nullable=true)
+     */
+    protected $date_creation;
     /**
      *
      * @var string
@@ -117,6 +124,8 @@ class Companies extends NotDeletedModelWithCascade
 
     const DEFAULT_COMPANY_LOGOTYPE = 'images/no_image.jpg';
 
+    const DEFAULT_RESULT_PER_PAGE = 10;
+
     /**
      * @return mixed
      */
@@ -131,6 +140,22 @@ class Companies extends NotDeletedModelWithCascade
     public function setIsShop($is_shop)
     {
         $this->is_shop = $is_shop;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateCreation(): string
+    {
+        return $this->date_creation;
+    }
+
+    /**
+     * @param string $date_creation
+     */
+    public function setDateCreation(string $date_creation)
+    {
+        $this->date_creation = $date_creation;
     }
 
     /**
@@ -736,6 +761,21 @@ class Companies extends NotDeletedModelWithCascade
         return $data;
     }
 
+    public static function handleShops(array $companies){
+        $handledShops = [];
+
+        foreach ($companies as $company){
+            $handledShop = [];
+            $handledShop['name'] = $company['name'];
+            $handledShop['description'] = $company['description'];
+            $handledShop['logotype'] = $company['logotype'];
+
+            $handledShops = self::addDefaultLogotypeToCompany($handledShop);
+        }
+
+        return $handledShops;
+    }
+
     /**
      * @return string - array of accounts in postgresql format
      */
@@ -747,5 +787,35 @@ class Companies extends NotDeletedModelWithCascade
             $accounts[] = $account->getId();
         }
         return SupportClass::to_pg_array($accounts);
+    }
+
+    public static function findShops($query = null, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    {
+        if (empty(trim($query))) {
+
+            $result = SupportClass::executeWithPagination([
+                'model' => get_class(),
+                'conditions' => 'is_shop = true',
+                'order' => 'date_creation desc'
+            ], null, $page, $page_size);
+
+        } else {
+
+            $sql = 'select * from companies
+                where is_shop = true and deleted = false
+                and (
+                    ((name || full_name) ilike \'%\'||:query||\'%\')
+                    or ((name) ilike \'%\'||:query||\'%\')
+                    ) 
+            order by date_creation desc';
+
+            $result = SupportClass::executeWithPagination($sql,
+                ['query' => $query],
+                $page, $page_size);
+        }
+
+        $result['data'] = self::handleSubscriptions($result['data']);
+
+        return $result;
     }
 }

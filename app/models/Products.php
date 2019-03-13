@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Controllers\AbstractController;
+use App\Libs\SupportClass;
 use App\Services\FavouriteService;
 use App\Services\ImageService;
 use Phalcon\DI\FactoryDefault as DI;
@@ -78,7 +79,7 @@ class Products extends AccountWithNotDeletedWithCascade
      */
     protected $date_creation;
 
-    const publicColumns = ['product_id','product_name', 'description', 'price', 'account_id', 'phone_id',
+    const publicColumns = ['product_id', 'product_name', 'description', 'price', 'account_id', 'phone_id',
         'show_company_place', 'category_id'];
 
     const shortColumns = ['product_id', 'product_name', 'price'];
@@ -348,7 +349,8 @@ class Products extends AccountWithNotDeletedWithCascade
         return 'products';
     }
 
-    public static function getIdField(){
+    public static function getIdField()
+    {
         return 'product_id';
     }
 
@@ -440,17 +442,18 @@ class Products extends AccountWithNotDeletedWithCascade
         $productAll['description'] = $product['description'];
         $productAll['product_id'] = $product['product_id'];
         $productAll['price'] = $product['price'];
+        $productAll['account_id'] = $product['account_id'];
 
         if ($product['show_company_place']) {
 
-            $account = Accounts::findFirstByAccountId($productAll['account_id']);
+            $account = Accounts::findAccountById($productAll['account_id']);
 
             if ($account->getCompanyId() != null) {
                 //$company = Companies::findCompanyById($account->getCompanyId());
                 $points = TradePoints::findPointsByCompany($account->getCompanyId());
 
                 if (count($points) > 0) {
-                    $marker = $points[0]->markers;
+                    $marker = Markers::findById($points[0]['marker_id']);
 
                     $productAll['address'] = $points[0]['address'];
                     $productAll['longitude'] = $marker->getLongitude();
@@ -464,9 +467,8 @@ class Products extends AccountWithNotDeletedWithCascade
         $productAll['images'] = ImagesModel::findAllImages($di->getImageService()->getModelByType(ImageService::TYPE_PRODUCT),
             $productAll['product_id']);
 
-        if($product['phone_id']!=null)
+        if ($product['phone_id'] != null)
             $productAll['phone'] = Phones::findPhoneById($product['phone_id']);
-
 
 
         $account = Accounts::findFirstById($product['account_id']);
@@ -475,62 +477,105 @@ class Products extends AccountWithNotDeletedWithCascade
             $productAll['publisher_company'] = $account->getUserInformation();
         }
 
-        $productAll['signed'] = FavouriteProducts::findByIds($di->getFavouriteService()->getModelByType(
-            FavouriteService::TYPE_PRODUCT),$accountId,$productAll['product_id'])?true:false;
+        if ($accountId != null)
+            $productAll['signed'] = FavouriteProducts::findByIds($di->getFavouriteService()->getModelByType(
+                FavouriteService::TYPE_PRODUCT), $accountId, $productAll['product_id']) ? true : false;
 
         return $productAll;
     }
 
-    public static function findProductsWithFilters($query, $center, $diagonal, $regions = null,
-                                                  $categories = null, $priceMin = null, $priceMax = null, $ratingMin = null)
+
+    public static function handleProductsFromSearch($search_result)
     {
+        $handledProducts = [];
+        if ($search_result != null)
+            foreach ($search_result as $product) {
+                $handledProduct = SupportClass::translateInPhpArrFromPostgreJsonObject($product['attrs']['product']);
+
+                $handledProducts[] = self::handleShortInfoProductFromArray([$handledProduct])[0];
+            }
+        return $handledProducts;
+    }
+
+    /**
+     * @param $query
+     * @param array $filter_array => [
+     *                                  [categories], [cities],
+     *                                  [companies], price_max, price_min,
+     *                                  distance, center=>[longitude, latitude]
+     *                               ]
+     * @param string $sort = null
+     * @param int $page
+     * @param int $page_size
+     * @return array
+     */
+    public static function findProductsWithFilters($query, array $filter_array, $sort = null,
+                                                   $page = 1, $page_size = Products::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
         require(APP_PATH . '/library/sphinxapi.php');
         $cl = new SphinxClient();
         $cl->setServer('127.0.0.1', 9312);
-        $cl->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $cl->SetLimits(0, 10000, 50);
-        $cl->SetSortMode(SPH_SORT_ATTR_DESC);
+        /*$cl->SetMatchMode(SPH_MATCH_EXTENDED2);*/
 
+        if ($query == null || trim($query) == '')
+            $cl->SetMatchMode(SPH_MATCH_ALL);
+        else
+            $cl->SetMatchMode(SPH_MATCH_ANY);
 
-        if ($regions != null)
-            $cl->setFilter('regionid', $regions, false);
-        if ($categories != null)
-            $cl->setFilter('categoryid', $categories, false);
+        $cl->SetLimits($offset, $page_size, 400);
 
-        if ($priceMin != null)
-            $cl->setFilterFloatRange('pricemin', $priceMin, 9223372036854775807, false);
+        if ($sort == "price asc")
+            $cl->SetSortMode(SPH_SORT_ATTR_ASC, "price");
+        elseif ($sort == "price desc")
+            $cl->SetSortMode(SPH_SORT_ATTR_DESC, "price");
+        elseif ($sort == "date desc")
+            $cl->SetSortMode(SPH_SORT_ATTR_DESC, "date");
+        else
+            $cl->SetSortMode(SPH_SORT_RELEVANCE);
 
-        if ($priceMax != null)
-            $cl->setFilterFloatRange('pricemax', 0, $priceMax, false);
+        /*if($sort == "price asc")
+            $cl->SetSortMode(SPH_SORT_EXTENDED, "price asc");
+        elseif($sort == "price desc")
+            $cl->SetSortMode(SPH_SORT_ATTR_DESC, "price desc");
+        elseif($sort == "date asc")
+            $cl->SetSortMode(SPH_SORT_ATTR_DESC, "date");
+        else
+            $cl->SetSortMode(SPH_SORT_RELEVANCE);*/
 
-        if ($ratingMin != null)
-            $cl->setFilterFloatRange('rating', $ratingMin, 100.0, false);
+        //Filters
+        if (!empty($filter_array['categories']) && is_array($filter_array['categories']))
+            $cl->setFilter('category_id', $filter_array['categories'], false);
 
-        if ($center != null && $diagonal != null) {
-            $cl->SetGeoAnchor('latitude', 'longitude', deg2rad($center['latitude']), deg2rad($center['longitude']));
-            $radius = SupportClass::codexworldGetDistanceOpt($center['latitude'], $center['longitude'],
-                $diagonal['latitude'], $diagonal['longitude']);
-            $cl->SetFilterFloatRange("@geodist", 0, $radius, false);
+        if (!empty($filter_array['companies']) && is_array($filter_array['companies']))
+            $cl->setFilter('company_id', $filter_array['companies'], false);
+
+        if (!empty($filter_array['cities']) && is_array($filter_array['cities']))
+            $cl->setFilter('city_id', $filter_array['cities'], false);
+
+        if (isset($filter_array['distance']) && SupportClass::checkInteger($filter_array['distance'])
+            && !empty($filter_array['center']) && is_array($filter_array['center'])) {
+
+            $cl->SetGeoAnchor('latitude', 'longitude',
+                deg2rad($filter_array['center']['latitude']),
+                deg2rad($filter_array['center']['longitude']));
+
+            $cl->SetFilterFloatRange("@geodist", 0, $filter_array['distance']*1000, false);
         }
 
-        $cl->AddQuery($query, 'services_with_filters_index');
+
+        if (isset($filter_array['price_min']) && SupportClass::checkInteger($filter_array['price_min']))
+            $cl->SetFilterRange('price', $filter_array['price_min'], 9223372036854775807, false);
+
+        if (isset($filter_array['price_max']) && SupportClass::checkInteger($filter_array['price_max']))
+            $cl->SetFilterRange('price', 0, $filter_array['price_max'], false);
+
+        $cl->AddQuery($query, 'products_with_filters_index');
         $results = $cl->RunQueries();
 
-        $services = [];
-        $allmatches = [];
-        foreach ($results as $result) {
-            if ($result['total'] > 0) {
-                $allmatches = array_merge($allmatches, $result['matches']);
-            }
-        }
-
-        $res = usort($allMatches, function ($a, $b) {
-            if ($a['weight'] == $b['weight']) {
-                return 0;
-            }
-            return ($a['weight'] > $b['weight']) ? -1 : 1;
-        });
-
-        return self::handleServiceFromArrayForSearch($allmatches);
+        //return self::handleServiceFromArrayForSearch($allmatches);
+        return ['data' => self::handleProductsFromSearch($results[0]['matches']), 'pagination' => ['total' => $results[0]['total_found']]];
     }
 }

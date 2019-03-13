@@ -820,3 +820,15 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Tue, 12 Mar 19 10:13:46 +0300][CRITICAL] 13001 Company don't exists
 [Tue, 12 Mar 19 10:14:25 +0300][CRITICAL] 13001 Company don't exists
 [Tue, 12 Mar 19 10:14:44 +0300][CRITICAL] 26003 User don't exists
+[Tue, 12 Mar 19 14:21:11 +0300][CRITICAL] 13001 Company don't exists
+[Tue, 12 Mar 19 14:22:00 +0300][CRITICAL] 13001 Company don't exists
+[Tue, 12 Mar 19 15:56:18 +0300][CRITICAL] 7002 Image not found
+[Tue, 12 Mar 19 16:22:14 +0300][CRITICAL] 13001 Company don't exists
+[Tue, 12 Mar 19 16:22:43 +0300][CRITICAL] 13001 Company don't exists
+[Wed, 13 Mar 19 11:47:40 +0300][CRITICAL] 7003 Unable create image
+[Wed, 13 Mar 19 11:50:24 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 13 Mar 19 11:51:45 +0300][CRITICAL] 7001 Invalid type of image
+[Wed, 13 Mar 19 12:05:32 +0300][CRITICAL] 7006 Unable delete image
+[Wed, 13 Mar 19 12:07:53 +0300][CRITICAL] 7002 Image not found
+[Wed, 13 Mar 19 12:11:44 +0300][CRITICAL] 7003 Unable create images
+[Wed, 13 Mar 19 12:12:08 +0300][CRITICAL] 7003 Unable create images

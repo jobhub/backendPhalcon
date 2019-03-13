@@ -193,7 +193,7 @@ class FavouriteController extends AbstractController
 
         $result = FavouriteModel::findSubscribers($account, $query, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -203,6 +203,7 @@ class FavouriteController extends AbstractController
      *
      * @params $id
      * @params $is_company
+     * @params $account_id
      * @params $query = null
      * @params $page = 1
      * @params $page_size = FavouriteModel::DEFAULT_RESULT_PER_PAGE
@@ -214,17 +215,18 @@ class FavouriteController extends AbstractController
     {
         $inputData = $this->request->getJsonRawBody();
         $id = $inputData->id;
-        $is_company = $inputData->is_company!=null?$inputData->is_company:false;
+        $is_company = $inputData->is_company != null ? $inputData->is_company : false;
         $query = $inputData->query;
+        $account_id = $inputData->account_id;
         $page = $inputData->page;
         $page_size = $inputData->page_size;
 
-        if(is_null($page)||!SupportClass::checkInteger($page))
+        if (is_null($page) || !SupportClass::checkInteger($page))
             $page = 1;
-        if(is_null($page_size)||!SupportClass::checkInteger($page_size))
+        if (is_null($page_size) || !SupportClass::checkInteger($page_size))
             $page_size = 10;
 
-        if(is_null($id)){
+        if (is_null($id)) {
             $errors['id'] = 'Missing required parameter "id"';
         }
 
@@ -234,13 +236,17 @@ class FavouriteController extends AbstractController
             throw $exception->addErrorDetails($errors);
         }
 
+        $account = $this->accountService->checkPermissionOrGetDefaultAccount();
+
+        self::setAccountId($account->getAccountId());
+
         if ($is_company && strtolower($is_company) != "false") {
             $result = FavouriteModel::findSubscribersByCompany($id, $query, $page, $page_size);
         } else {
             $result = FavouriteModel::findSubscribersByUser($id, $query, $page, $page_size);
         }
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -273,7 +279,7 @@ class FavouriteController extends AbstractController
         self::setAccountId($account->getId());
 
         $result = FavouriteModel::findSubscriptions($account, $query, $page, $page_size);
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -315,11 +321,8 @@ class FavouriteController extends AbstractController
                 $relatedAccounts = $account->getRelatedAccounts();
             }
 
-            try {
-                $result = FavouriteModel::findSubscriptions($relatedAccounts, $query, $page, $page_size);
-            }catch (\Exception $e){
-                echo $e;
-            }
+            $result = FavouriteModel::findSubscriptions($relatedAccounts, $query, $page, $page_size);
+
             return self::successPaginationResponse('', $result['data'], $result['pagination']);
 
         } catch (ServiceException $e) {
@@ -361,7 +364,7 @@ class FavouriteController extends AbstractController
 
         $result = FavouriteServices::findFavourites($account_id, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -391,7 +394,7 @@ class FavouriteController extends AbstractController
 
         $result = FavouriteProducts::findFavourites($account_id, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**
@@ -471,7 +474,7 @@ class FavouriteController extends AbstractController
 
         $result = FavoriteCategories::findForUser($account_id, $page, $page_size);
 
-        return self::successPaginationResponse('',$result['data'],$result['pagination']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 
     /**

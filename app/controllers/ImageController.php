@@ -9,6 +9,7 @@
 namespace App\Controllers;
 
 use App\Controllers\HttpExceptions\Http403Exception;
+use App\Libs\ImageLoader;
 use App\Libs\SupportClass;
 use App\Models\ImagesModel;
 use App\Models\Accounts;
@@ -206,8 +207,15 @@ class ImageController extends AbstractController
                 $images[] = $image;
             }
 
-            foreach ($images as $image)
+            $paths = [];
+            foreach ($images as $image) {
+                $paths[] = $image->getImagePath();
                 $this->imageService->deleteImage($image);
+            }
+
+            foreach ($paths as $path){
+                ImageLoader::delete($path);
+            }
 
             $this->db->commit();
         } catch (ServiceExtendedException $e) {
@@ -225,7 +233,12 @@ class ImageController extends AbstractController
                 case ImageService::ERROR_IMAGE_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
                 case ImageService::ERROR_INVALID_IMAGE_TYPE:
-                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+                    $exception = new Http404Exception(
+                        _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
+                        new \Exception('URI not found: ' .
+                            $this->request->getMethod() . ' ' . $this->request->getURI())
+                    );
+                    throw $exception;
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }

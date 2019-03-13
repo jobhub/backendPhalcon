@@ -3153,20 +3153,42 @@ $routes = [
              *
              * @method GET
              *
-             * @param $product_id
-             * @param $account_id
+             * @param product_id
+             * @params $account_id
              *
-             * @return string - json array {status, service, [points => {point, [phones]}], reviews (до двух)}
+             * @return array
              */
             [
                 'type' => 'get',
                 'path' => '/get/info/{product_id}',
                 'action' => 'getProductInfoAction'
             ],
+
+            /**
+             * Возвращает товары в соответствии с фильтрами
+             * @access private.
+             *
+             * @method POST
+             *
+             * @params account_id int
+             * @params sort string : "price asc", "price desc", "date desc"
+             * @params query string
+             * @params page int
+             * @params page_size int
+             *
+             * @params category_id int
+             * @params city_id int
+             * @params distance int  - must be > 1 or null.
+             * @params company_id int
+             * @params center [latitude, longitude]
+             * @params price_min int
+             * @params price_max int
+             *
+             */
             [
-                'type' => 'get',
-                'path' => '/get/info/{product_id}/{account_id}',
-                'action' => 'getProductInfoAction'
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findProductsAction'
             ],
         ]
     ],

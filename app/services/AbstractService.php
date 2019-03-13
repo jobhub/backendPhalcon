@@ -57,7 +57,7 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
     public function sendSms($phone, $message){
         try {
             $sms = $this->di->get('SMS');
-            $response = $sms->call('SmsAero')->setRecipient('NUMBER')->send('MESSAGE');
+            $response = $sms->call('SmsAero')->setRecipient($phone)->send($message);
 
             return $response;
         }catch(\Exception $e){

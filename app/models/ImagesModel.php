@@ -194,13 +194,13 @@ abstract class ImagesModel extends \Phalcon\Mvc\Model
 
     public function delete($delete = false, $data = null, $whiteList = null)
     {
-        $path = $this->getImagePath();
+        //$path = $this->getImagePath();
 
         $result = parent::delete($delete, $data, $whiteList);
 
-        if ($result && $path != null && $delete = true) {
+        /*if ($result && $path != null && $delete = true) {
             ImageLoader::delete($path);
-        }
+        }*/
 
         return $result;
     }

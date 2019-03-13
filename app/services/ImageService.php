@@ -60,6 +60,24 @@ class ImageService extends AbstractService
 
     const ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP = 8 + self::ADDED_CODE_NUMBER;
 
+    public function checkAbilityToCreateNewImage($type, $data = null){
+        $enable = true;
+        $error_message = '';
+        switch ($type){
+            case self::TYPE_PRODUCT:
+                $images = ImagesProducts::findFirst(['columns'=>'count(*) as count','conditions'=>'object_id = :product_id:',
+                    'bind'=>[
+                        'product_id'=>$data['object_id']
+                    ]]);
+                if($images['count']+$data['new_count']>ImagesProducts::MAX_IMAGES) {
+                    $enable = false;
+                    $error_message = 'You may not to create more then '.ImagesProducts::MAX_IMAGES.' images for product';
+                }
+        }
+
+        return ['enable'=>$enable, 'error_message'=>$error_message];
+    }
+
     public function createNewObjectByType($type,$data)
     {
         switch ($type) {
@@ -118,7 +136,7 @@ class ImageService extends AbstractService
                 $model = 'App\Models\ImagesProducts';
                 break;
             default:
-                $model = 'App\Models\ImagesModel';
+                throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
         return $model;
     }
@@ -274,8 +292,23 @@ class ImageService extends AbstractService
 
     public function createImagesToObject($files, $some_object, $type, $data = null)
     {
+
         $path = $this->getSubPathForImages($type);
         $id = $this->commonService->getIdFromObject($type,$some_object);
+
+        //Checking
+        if(is_array($data)){
+            $result_data_arr = array_merge(['object_id'=>$id,'new_count'=>count($files)],
+                $data);
+        }else
+            $result_data_arr = ['object_id'=>$id,'new_count'=>count($files)];
+
+        $enable = $this->checkAbilityToCreateNewImage($type,$result_data_arr);
+
+        if(!$enable['enable']){
+            throw new ServiceExtendedException('Unable create images',
+                self::ERROR_UNABLE_CREATE_IMAGE, null, null, [$enable['error_message']]);
+        }
 
         $imagesIds = [];
         $i = 0;
@@ -308,13 +341,6 @@ class ImageService extends AbstractService
 
             $filename = ImageLoader::formFullImageName($path, $imageFormat,
                 $id, $imagesIds[count($imagesIds) - 1]['file_name']);
-
-            /*if($type == self::TYPE_TEMP) {
-                $further_filename = ImageLoader::formFullImageName('news', $imageFormat,
-                    $id, 'temp_'.$imagesIds[count($imagesIds)-1]);
-
-                $newImage->setFurtherPath($further_filename);
-            }*/
 
             $this->changePathToImage($newImage, $filename);
             $i++;
@@ -414,10 +440,10 @@ class ImageService extends AbstractService
         if (!$image->create()) {
             $errors = SupportClass::getArrayWithErrors($image);
             if (count($errors) > 0)
-                throw new ServiceExtendedException('Unable save image',
+                throw new ServiceExtendedException('Unable create image',
                     self::ERROR_UNABLE_CREATE_IMAGE, null, null, $errors);
             else {
-                throw new ServiceExtendedException('Unable save image',
+                throw new ServiceExtendedException('Unable create image',
                     self::ERROR_UNABLE_CREATE_IMAGE);
             }
         }

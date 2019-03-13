@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
-
+use Phalcon\Mvc\Model\Message;
 class ImagesProducts extends ImagesModel
 {
+    const MAX_IMAGES = 3;
 
     public function validation()
     {
@@ -79,7 +80,10 @@ class ImagesProducts extends ImagesModel
         $images = self::findAllImages(get_class(),$this->getObjectId());
 
         if(count($images)<2){
-            $this->appendMessage('Unable to delete last image from product');
+            $message = new Message(
+                'Unable to delete last image from product'
+            );
+            $this->appendMessage($message);
             return false;
         }
 

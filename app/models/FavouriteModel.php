@@ -265,10 +265,6 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             if (!$subscriber)
                 return null;
 
-            $handledFavUser = [
-                'subscriber' => $subscriber
-            ];
-
             if ($currentAccountIds != null) {
                 $subscribed = FavoriteCompanies::findFirst(['subject_id = ANY(:currentAccountId:) 
             and object_id = :companyId:', 'bind' => [
@@ -294,7 +290,8 @@ class FavouriteModel extends \Phalcon\Mvc\Model
             }
         }
         $resp = $subscriber->toArray();
-        $resp['subscribed'] = $subscribed ? true : false;
+        if($subscribed != null)
+            $resp['subscribed'] = $subscribed ? true : false;
         return $resp;
     }
 

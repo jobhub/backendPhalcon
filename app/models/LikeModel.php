@@ -64,7 +64,7 @@ class LikeModel
         else
             $handledObject['stats']['likes'] = count($likes);
 
-        if($accountId!=null && SupportClass::checkInteger($accountId)){
+        if($accountId!=null && SupportClass::checkInteger($accountId) || $relatedAccounts!=null){
             if($relatedAccounts!=null)
                 $handledObject['liked'] = LikeModel::getLikedByArray($likes,$relatedAccounts);
             else{

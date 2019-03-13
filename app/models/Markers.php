@@ -179,4 +179,14 @@ class Markers extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findById(int $id, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['marker_id = :id:',
+                'bind' => ['id' => $id]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'marker_id = :id:',
+                'bind' => ['id' => $id]]);
+        }
+    }
 }

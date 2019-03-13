@@ -368,12 +368,16 @@ class SupportClass
                     $sqlRequestReplaced, 1, $count);
 
                 $sqlRequestReplaced = preg_replace(
-                    "#order by.*#", '',
+                    "/order by.*/i", '',
                     $sqlRequestReplaced, 1, $count);
 
                 $query = $db->prepare($sqlRequestReplaced);
 
-                $query->execute($params);
+                try {
+                    $query->execute($params);
+                }catch (\Exception $e){
+                    echo $e;
+                }
 
                 $results = $query->fetchAll(\PDO::FETCH_ASSOC);
 
