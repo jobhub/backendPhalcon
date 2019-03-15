@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\Database\CustomQuery;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -111,12 +112,19 @@ class Companies extends NotDeletedModelWithCascade
      */
     protected $description;
 
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $product_category_id;
+
     const publicColumns = ['company_id', 'name', 'full_name', 'tin',
         'region_id', /*'user_id',*/
-        'website', 'email', 'logotype', 'rating_executor', 'rating_client'];
+        'website', 'email', 'logotype', 'rating_executor', 'rating_client', 'product_category_id'];
 
     const publicColumnsInStr = 'company_id, name, full_name, tin,
-        region_id, website, email, logotype, rating_executor, rating_client';
+        region_id, website, email, logotype, rating_executor, rating_client, product_category_id';
 
     const shortColumns = ['company_id', 'name', 'logotype'];
 
@@ -125,6 +133,22 @@ class Companies extends NotDeletedModelWithCascade
     const DEFAULT_COMPANY_LOGOTYPE = 'images/no_image.jpg';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    /**
+     * @return int
+     */
+    public function getProductCategoryId()
+    {
+        return $this->product_category_id;
+    }
+
+    /**
+     * @param int $product_category_id
+     */
+    public function setProductCategoryId($product_category_id)
+    {
+        $this->product_category_id = $product_category_id;
+    }
 
     /**
      * @return mixed
@@ -555,6 +579,19 @@ class Companies extends NotDeletedModelWithCascade
                 )
             );
 
+        if ($this->getProductCategoryId() != null)
+            $validator->add(
+                'product_category_id',
+                new Callback(
+                    [
+                        "message" => "Category for product does not exists",
+                        "callback" => function ($company) {
+                            return empty($company->CategoriesForProducts)?false:true;
+
+                        }
+                    ]
+                )
+            );
 
         return $this->validate($validator);
     }
@@ -570,6 +607,8 @@ class Companies extends NotDeletedModelWithCascade
         $this->hasMany('company_id', 'App\Models\PhonesCompanies', 'company_id', ['alias' => 'PhonesCompanies']);
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
         $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
+        $this->belongsTo('product_category_id', 'App\Models\CategoriesForProducts', 'category_id',
+            ['alias' => 'CategoriesForProducts']);
     }
 
     public function delete($delete = false, $deletedCascade = false, $data = null, $whiteList = null)
@@ -761,16 +800,18 @@ class Companies extends NotDeletedModelWithCascade
         return $data;
     }
 
-    public static function handleShops(array $companies){
+    public static function handleShops(array $companies)
+    {
         $handledShops = [];
 
-        foreach ($companies as $company){
+        foreach ($companies as $company) {
             $handledShop = [];
             $handledShop['name'] = $company['name'];
             $handledShop['description'] = $company['description'];
             $handledShop['logotype'] = $company['logotype'];
+            $handledShop['company_id'] = $company['company_id'];
 
-            $handledShops = self::addDefaultLogotypeToCompany($handledShop);
+            $handledShops[] = self::addDefaultLogotypeToCompany($handledShop);
         }
 
         return $handledShops;
@@ -789,32 +830,41 @@ class Companies extends NotDeletedModelWithCascade
         return SupportClass::to_pg_array($accounts);
     }
 
-    public static function findShops($query = null, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
+    public static function findShops($search_query = null, $filters = null, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
-        if (empty(trim($query))) {
+        $query = new CustomQuery([
+            'where' => 'c.is_shop = true and c.deleted = false',
+            'from' => 'companies c',
+            'order' => 'date_creation desc'
+        ]);
 
-            $result = SupportClass::executeWithPagination([
-                'model' => get_class(),
-                'conditions' => 'is_shop = true',
-                'order' => 'date_creation desc'
-            ], null, $page, $page_size);
-
-        } else {
-
-            $sql = 'select * from companies
-                where is_shop = true and deleted = false
-                and (
+        if ($search_query!=null && !empty(trim($search_query))) {
+            $query->addWhere('(
                     ((name || full_name) ilike \'%\'||:query||\'%\')
                     or ((name) ilike \'%\'||:query||\'%\')
-                    ) 
-            order by date_creation desc';
-
-            $result = SupportClass::executeWithPagination($sql,
-                ['query' => $query],
-                $page, $page_size);
+                    )', ['query' => $search_query]);
         }
 
-        $result['data'] = self::handleSubscriptions($result['data']);
+        if ($filters != null && is_array($filters)) {
+            if (!empty($filters['categories']) && is_array($filters['categories'])) {
+                $categories = SupportClass::to_pg_array($filters['categories']);
+
+                $query->addWhere('product_category_id = ANY(:categories)', ['categories' => $categories]);
+            }
+
+            if (!empty($filters['city_id']) && SupportClass::checkInteger($filters['city_id'])) {
+                $query->setFrom($query->getFrom().' inner join accounts a using(company_id) 
+                                                    inner join "tradePoints" tp ON(tp.account_id = a.id)');
+
+                $query->addWhere('tp.city_id = :city_id', ['city_id' => $filters['city_id']]);
+            }
+        }
+
+        $sql = $query->formSql();
+        $result = SupportClass::executeWithPagination($sql, $query->getBind(),
+            $page, $page_size);
+
+        $result['data'] = self::handleShops($result['data']);
 
         return $result;
     }

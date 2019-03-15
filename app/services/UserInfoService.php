@@ -113,6 +113,12 @@ class UserInfoService extends AbstractService
         if(isset($data['delete_photo']) && $data['delete_photo'])
             $userInfo->setPathToPhoto(null);
 
+        if(isset($data['product_category_id'])) {
+            if(is_bool($data['product_category_id']) && !$data['product_category_id'])
+                $userInfo->setProductCategoryId(null);
+            else
+                $userInfo->setProductCategoryId($data['product_category_id']);
+        }
     }
 
     public function CreateSettings(int $userId)

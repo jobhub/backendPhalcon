@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Controllers\HttpExceptions\Http404Exception;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Dispatcher;
@@ -32,10 +33,28 @@ class CategoriesAPIController extends AbstractController
      *
      * @method GET
      *
+     * @param $type
+     *
      */
-    public function getCategoriesAction()
+    public function getCategoriesAction($type = 'service')
     {
-        return Categories::findAllCategories()->toArray();
+        try {
+            $model = $this->categoryService->getModelByType($type);
+            return $model::findAllCategories()->toArray();
+        }catch (ServiceException $e) {
+            $this->db->rollback();
+            switch ($e->getCode()) {
+                case CategoryService::ERROR_INVALID_CATEGORY_TYPE:
+                    $exception = new Http404Exception(
+                        _('URI not found or error in request.'), AbstractController::ERROR_NOT_FOUND,
+                        new \Exception('URI not found: ' .
+                            $this->request->getMethod() . ' ' . $this->request->getURI())
+                    );
+                    throw $exception;
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
     }
 
     /**

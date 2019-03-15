@@ -832,3 +832,8 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Wed, 13 Mar 19 12:07:53 +0300][CRITICAL] 7002 Image not found
 [Wed, 13 Mar 19 12:11:44 +0300][CRITICAL] 7003 Unable create images
 [Wed, 13 Mar 19 12:12:08 +0300][CRITICAL] 7003 Unable create images
+[Wed, 13 Mar 19 16:22:48 +0300][CRITICAL] 13003 Unable change company
+[Wed, 13 Mar 19 16:23:28 +0300][CRITICAL] 13003 Unable change company
+[Wed, 13 Mar 19 16:24:03 +0300][CRITICAL] 13003 Unable change company
+[Wed, 13 Mar 19 16:25:12 +0300][CRITICAL] 13003 Unable change company
+[Wed, 13 Mar 19 16:25:52 +0300][CRITICAL] 13003 Unable change company

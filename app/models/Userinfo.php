@@ -114,14 +114,21 @@ class Userinfo extends \Phalcon\Mvc\Model
      */
     protected $website;
 
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $product_category_id;
+
 
     const publicColumns = ['user_id', 'first_name', 'last_name', 'patronymic',
         'birthday', 'male', 'city_id', 'about', 'status', 'rating_executor', 'rating_client',
-        'path_to_photo', 'last_time', 'nickname', 'email', 'website'];
+        'path_to_photo', 'last_time', 'nickname', 'email', 'website', 'product_category_id'];
 
     const publicColumnsInStr = 'user_id, first_name, last_name, patronymic,
         birthday, male, city_id, about, status, rating_executor, rating_client, 
-        path_to_photo, last_time, nickname, email, website';
+        path_to_photo, last_time, nickname, email, website,product_category_id';
 
     const shortColumns = ['user_id', 'first_name', 'last_name', 'path_to_photo', 'status'];
 
@@ -130,6 +137,23 @@ class Userinfo extends \Phalcon\Mvc\Model
     const DEFAULT_RESULT_PER_PAGE = 10;
 
     const DEFAULT_USER_IMAGE = 'images/no_image.jpg';
+
+
+    /**
+     * @return int
+     */
+    public function getProductCategoryId()
+    {
+        return $this->product_category_id;
+    }
+
+    /**
+     * @param int $product_category_id
+     */
+    public function setProductCategoryId($product_category_id)
+    {
+        $this->product_category_id = $product_category_id;
+    }
 
     /**
      * @return string
@@ -624,6 +648,20 @@ class Userinfo extends \Phalcon\Mvc\Model
                 )
             );
 
+        if ($this->getProductCategoryId() != null)
+            $validator->add(
+                'product_category_id',
+                new Callback(
+                    [
+                        "message" => "Category for product does not exists",
+                        "callback" => function ($userinfo) {
+                            return empty($userinfo->CategoriesForProducts)?false:true;
+
+                        }
+                    ]
+                )
+            );
+
         return $this->validate($validator);
     }
 
@@ -636,6 +674,8 @@ class Userinfo extends \Phalcon\Mvc\Model
         $this->setSource("userinfo");
         $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
         $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
+        $this->belongsTo('product_category_id', 'App\Models\CategoriesForProducts', 'category_id',
+            ['alias' => 'CategoriesForProducts']);
     }
 
     /**

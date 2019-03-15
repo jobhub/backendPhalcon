@@ -16,12 +16,17 @@ use App\Models\UsersCategories;
  */
 class CategoryService extends AbstractService
 {
+    const TYPE_SERVICE = 'service';
+    const TYPE_PRODUCT = 'product';
+
     const ADDED_CODE_NUMBER = 6000;
 
     const ERROR_UNABlE_CHANGE_RADIUS = 1 + self::ADDED_CODE_NUMBER;
     const ERROR_CATEGORY_NOT_FOUND = 2 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY = 3 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABlE_LINK_CATEGORY_WITH_USER = 4 + self::ADDED_CODE_NUMBER;
+
+    const ERROR_INVALID_CATEGORY_TYPE = 6 + self::ADDED_CODE_NUMBER;
 
     /*public function setFavourite(int $userId, int $categoryId, $radius)
     {
@@ -49,6 +54,21 @@ class CategoryService extends AbstractService
 
         return $fav;
     }*/
+
+    public function getModelByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_SERVICE:
+                $model = 'Categories';
+                break;
+            case self::TYPE_PRODUCT:
+                $model = 'CategoriesForProducts';
+                break;
+            default:
+                throw new ServiceException('Invalid type of category', self::ERROR_INVALID_CATEGORY_TYPE);
+        }
+        return 'App\Models\\'.$model;
+    }
 
     public function editRadius(int $accountId, int $categoryId, $radius)
     {
@@ -97,6 +117,26 @@ class CategoryService extends AbstractService
         $companyCategory->setCompanyId($companyId);
         $companyCategory->setCategoryId($category->getCategoryId());
 
+        if ($exceptionIfExists?(!$companyCategory->create()):(!$companyCategory->save())) {
+            $errors = SupportClass::getArrayWithErrors($companyCategory);
+            if (count($errors) > 0)
+                throw new ServiceExtendedException('Unable to link company with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY, null, null, $errors);
+            else {
+                throw new ServiceExtendedException('Unable to link company with category',
+                    self::ERROR_UNABlE_LINK_CATEGORY_WITH_COMPANY);
+            }
+        }
+        return $companyCategory;
+    }
+
+    public function linkCompanyWithProductCategory($categoryId, $companyId, $exceptionIfExists = true){
+        $category = $this->getCategoryById($categoryId);
+
+        $companyCategory = new CompaniesCategories();
+        $companyCategory->setCompanyId($companyId);
+        $companyCategory->setCategoryId($category->getCategoryId());
+
 
         if ($exceptionIfExists?(!$companyCategory->create()):(!$companyCategory->save())) {
             $errors = SupportClass::getArrayWithErrors($companyCategory);
@@ -131,8 +171,9 @@ class CategoryService extends AbstractService
         return $userCategory;
     }
 
-    public function getCategoryById(int $categoryId){
-        $category = Categories::findFirstByCategoryId($categoryId);
+    public function getCategoryById(int $categoryId, $type = self::TYPE_SERVICE){
+        $model = $this->getModelByType($type);
+        $category = $model::findFirstByCategoryId($categoryId);
 
         if (!$category || $category == null) {
             throw new ServiceException('Category don\'t exists', self::ERROR_CATEGORY_NOT_FOUND);

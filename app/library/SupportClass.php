@@ -319,29 +319,36 @@ class SupportClass
 
     public static function executeWithPagination($sqlRequest, $params, $page = 1, $page_size = self::COMMON_PAGE_SIZE)
     {
+        $page = filter_var($page, FILTER_VALIDATE_INT);
+        $page = (!$page) ? 1 : $page;
+
+        $page_size = filter_var($page_size, FILTER_VALIDATE_INT);
+        $page_size = (!$page_size) ? self::COMMON_PAGE_SIZE : $page_size;
+
         $page = $page > 0 ? $page : 1;
         $offset = ($page - 1) * $page_size;
 
         if (is_string($sqlRequest)) {
             $db = DI::getDefault()->getDb();
 
-            $sqlRequestReplaced = self::str_replace_once('select', 'select count(*) OVER() AS total_count_pagination, ', strtolower($sqlRequest));
+            $sqlRequestReplaced = self::str_replace_once('select', 'select count(*) OVER() AS total_count_pagination, ', $sqlRequest);
             $sqlRequestReplaced .= '
                     LIMIT :limit 
                     OFFSET :offset';
 
             $query = $db->prepare($sqlRequestReplaced);
             $params_2 = [];
-            foreach ($params as $key => $data) {
-                $params_2[strtolower($key)] = $data;
-            }
+            if ($params != null)
+                foreach ($params as $key => $data) {
+                    $params_2[strtolower($key)] = $data;
+                }
 
             $params_2['limit'] = $page_size;
             $params_2['offset'] = $offset;
 
             try {
                 $query->execute($params_2);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 echo $e;
             }
 
@@ -375,7 +382,7 @@ class SupportClass
 
                 try {
                     $query->execute($params);
-                }catch (\Exception $e){
+                } catch (\Exception $e) {
                     echo $e;
                 }
 
@@ -460,11 +467,11 @@ class SupportClass
 
     public static function str_replace_once($search, $replace, $text)
     {
-        $pos = strpos($text, $search);
+        $pos = stripos($text, $search);
         return $pos !== false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
     }
 
-    public static function formQuery($query): string
+    /*public static function formQuery($query): string
     {
         if (!is_null($query['columns']))
             $sql_query = 'SELECT ' . $query['columns'];
@@ -480,5 +487,5 @@ class SupportClass
             $sql_query .= ' order by ' . $query['order'];
 
         return $sql_query;
-    }
+    }*/
 }

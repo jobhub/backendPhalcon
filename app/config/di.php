@@ -101,6 +101,7 @@ $di->setShared('inviteService', '\App\Services\InviteService'); //33
 $di->setShared('notificationService', '\App\Services\NotificationService'); //34
 $di->setShared('commonService', '\App\Services\CommonService'); //35
 $di->setShared('productService', '\App\Services\ProductService'); //36
+$di->setShared('linkService', '\App\Services\LinkService'); //37
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];

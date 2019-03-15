@@ -425,11 +425,17 @@ $routes = [
              *
              * @method GET
              *
-             * @return string - json array с категориями
+             * @param $type
+             *
              */
             [
                 'type' => 'get',
                 'path' => '/get',
+                'action' => 'getCategoriesAction'
+            ],
+            [
+                'type' => 'get',
+                'path' => '/get/{type}',
                 'action' => 'getCategoriesAction'
             ],
 
@@ -1406,6 +1412,25 @@ $routes = [
                 'type' => 'post',
                 'path' => '/add/business',
                 'action' => 'createBusinessAccount'
+            ],
+
+            /**
+             * Возвращает магазины по запросу + фильтр по категории
+             * @access public
+             *
+             * @method POST
+             *
+             * @params query string;
+             * @params categories array of int
+             * @params page int
+             * @params page_size int
+             *
+             * @return array - json array компаний
+             */
+            [
+                'type' => 'post',
+                'path' => '/find/shops',
+                'action' => 'findShopsAction'
             ],
         ]
     ],

@@ -90,6 +90,13 @@ class CompanyService extends AbstractService {
 
         if(isset($data['is_shop']))
             $company->setIsShop($data['is_shop']);
+
+        if(isset($data['product_category_id'])) {
+            if(is_bool($data['product_category_id']) && !$data['product_category_id'])
+                $company->setProductCategoryId(null);
+            else
+                $company->setProductCategoryId($data['product_category_id']);
+        }
     }
 
     public function getCompanyById(int $companyId){

@@ -59,7 +59,7 @@ class CompaniesAPIController extends AbstractController
             $result2 = [];
             foreach ($result['companies'] as $company) {
                 $points = TradePoints::findPointsByCompany($company['company_id']);
-                if(count($points)>0)
+                if (count($points) > 0)
                     $result2[] = ['company' => $company, 'point' => $points[0]];
                 else
                     $result2[] = ['company' => $company, 'point' => []];
@@ -360,6 +360,7 @@ class CompaniesAPIController extends AbstractController
         $data['website'] = $inputData->website;
         $data['email'] = $inputData->email;
         $data['description'] = $inputData->description;
+        $data['product_category_id'] = $inputData->product_category_id;
 
         try {
             //validation
@@ -642,7 +643,7 @@ class CompaniesAPIController extends AbstractController
                 $account = Accounts::findForUserDefaultAccount($currentUserId);
             }
 
-            if(!$account)
+            if (!$account)
                 $account = null;
 
         } catch (ServiceException $e) {
@@ -654,7 +655,7 @@ class CompaniesAPIController extends AbstractController
             }
         }
 
-        return Companies::handleCompanyToProfile($company->toArray(),$account);
+        return Companies::handleCompanyToProfile($company->toArray(), $account);
     }
 
     /**
@@ -665,7 +666,41 @@ class CompaniesAPIController extends AbstractController
      *
      * @param $company_id
      */
-    public function setShop(){
+    public function setShop()
+    {
 
+    }
+
+    /**
+     * Возвращает магазины по запросу + фильтр по категории
+     * @access public
+     *
+     * @method POST
+     *
+     * @params query string;
+     * @params categories array of int
+     * @params city_id int
+     * @params page int
+     * @params page_size int
+     *
+     * @return array - json array компаний
+     */
+    public function findShopsAction()
+    {
+        $inputData = $this->request->getJsonRawBody();
+        $data['query'] = $inputData->query;
+        $data['categories'] = $inputData->categories;
+        $data['city_id'] = $inputData->city_id;
+        $data['page'] = $inputData->page;
+        $data['page_size'] = $inputData->page_size;
+
+        if (is_array($data['categories']))
+            $filter['categories'] = $data['categories'];
+
+        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
+            $filter['city_id'] = $data['city_id'];
+
+        $result = Companies::findShops($data['query'], $filter, $data['page'], $data['page_size']);
+        return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\Database\CustomQuery;
 use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
@@ -388,7 +389,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $query = self::getQueryForFindNewsByCompany($companyId);
 
-        $sql = SupportClass::formQuery($query);
+        $sql = $query->formSql();
 
         /*$query = $db->prepare($sql);
         $result = $query->execute([
@@ -431,7 +432,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
         $query = self::getQueryForFindNewsByUser($userId);
 
-        $sql = SupportClass::formQuery($query);
+        $sql = $query->formSql();
 
         $news = SupportClass::executeWithPagination($sql,
             $query['bind'], $page, $page_size);
@@ -442,7 +443,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
 
     public static function getQueryForFindNewsByUser($userId)
     {
-        return [
+        return new CustomQuery([
             'where' => '',
             'order' => 'foo.date desc',
             'columns' => 'foo.date, foo.data, foo.relname, foo.object_id',
@@ -464,12 +465,12 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                 'foo.date' => 'publish_date',
                 'foo.object_id' => 'news_id'
             ],
-            'id' => 'foo.object_id'];
+            'id' => 'foo.object_id']);
     }
 
     public static function getQueryForFindNewsByCompany($companyId)
     {
-        return [
+        return new CustomQuery([
             'where' => '',
             'order' => 'foo.date desc',
             'columns' => 'foo.date, foo.data, foo.relname, foo.object_id',
@@ -491,7 +492,7 @@ from public.forwards_in_news_model m inner join pg_class p ON (m.tableoid = p.oi
                 'publish_date' => 'foo.date',
                 'news_id' => 'foo.object_id'
             ],
-            'id' => 'foo.object_id'];
+            'id' => 'foo.object_id']);
     }
 
     public static function getIdField()
