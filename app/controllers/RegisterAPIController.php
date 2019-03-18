@@ -6,6 +6,7 @@ use App\Models\Userinfo;
 use App\Services\AbstractService;
 use App\Services\CityService;
 use App\Services\ResetPasswordService;
+use App\Services\SettingsService;
 use Dmkit\Phalcon\Auth\Auth;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
@@ -211,7 +212,7 @@ class RegisterAPIController extends AbstractController
             $data['user_id'] = $user->getUserId();
             $this->userInfoService->createUserInfo($data);
 
-            $this->userInfoService->createSettings($user->getUserId());
+            $this->settingsService->createSettings($user->getUserId());
             $this->userService->setNewRoleForUser($user, ROLE_USER);
 
             $tokens = $this->authService->createSession($user);
@@ -219,7 +220,7 @@ class RegisterAPIController extends AbstractController
             $this->db->rollback();
             switch ($e->getCode()) {
                 case UserInfoService::ERROR_UNABLE_CREATE_USER_INFO:
-                case UserInfoService::ERROR_UNABLE_CREATE_SETTINGS:
+                case SettingsService::ERROR_UNABLE_CREATE_SETTINGS:
                 case UserService::ERROR_UNABLE_CHANGE_USER:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Companies;
 use App\Models\Products;
 use Phalcon\DI\FactoryDefault as DI;
 
@@ -163,5 +164,10 @@ class ProductService extends AbstractService
         }
 
         return $product;
+    }
+
+    public function getProductCountByCompany(Companies $company){
+        return SupportClass::getCountForObjectByModel($this->commonService->getModel(CommonService::TYPE_PRODUCT),
+            'account_id = ANY(:ids:)',['ids'=> $company->getRelatedAccounts()]);
     }
 }

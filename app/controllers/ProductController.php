@@ -343,7 +343,7 @@ class ProductController extends AbstractController
      *
      * @params category_id int
      * @params city_id int
-     * @params distance int  - must be > 1 or null.
+     * @params distance int  - must be > 1 and < 200 or null.
      * @params company_id int
      * @params center [latitude, longitude]
      * @params price_min int
@@ -390,7 +390,7 @@ class ProductController extends AbstractController
             $data['price_min'] = ($data['price_min']<0|| !$data['price_min'])? null : $data['price_min'];
 
             $data['distance'] = filter_var($data['distance'],FILTER_VALIDATE_INT);
-            $data['distance'] = ($data['distance'] < 1 || !$data['distance'])? null : $data['distance'];
+            $data['distance'] = ($data['distance'] < 1 || !$data['distance'] || $data['distance'] > 200)? null : $data['distance'];
 
             if(!empty($data['center']['longitude']) && !empty($data['center']['latitude'])){
                 $data['center']['longitude'] = filter_var($data['center']['longitude'],FILTER_VALIDATE_FLOAT);

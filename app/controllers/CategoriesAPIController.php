@@ -35,14 +35,17 @@ class CategoriesAPIController extends AbstractController
      *
      * @param $type
      *
+     * @return array
      */
     public function getCategoriesAction($type = 'service')
     {
         try {
+            if($type == 'site')
+                return Categories::findCategoriesForSite();
+
             $model = $this->categoryService->getModelByType($type);
             return $model::findAllCategories()->toArray();
         }catch (ServiceException $e) {
-            $this->db->rollback();
             switch ($e->getCode()) {
                 case CategoryService::ERROR_INVALID_CATEGORY_TYPE:
                     $exception = new Http404Exception(
@@ -55,17 +58,6 @@ class CategoriesAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-    }
-
-    /**
-     * Возвращает категории в удобном для сайта виде
-     *
-     * @method GET
-     *
-     */
-    public function getCategoriesForSiteAction()
-    {
-        return Categories::findCategoriesForSite();
     }
 
     //Now not uses moderator actions

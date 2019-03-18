@@ -2,9 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Controllers\HttpExceptions\Http404Exception;
 use App\Libs\SupportClass;
 use App\Models\CompanyRole;
+use App\Models\Products;
 use App\Services\CategoryService;
+use App\Services\CommonService;
 use App\Services\ConfirmService;
 use App\Services\InviteService;
 use App\Services\MarkerService;
@@ -41,21 +44,45 @@ use App\Services\ServiceExtendedException;
 class CompaniesAPIController extends AbstractController
 {
     /**
-     * Возвращает компании текущего пользователя
-     *
-     * @param $with_points
+     * Возвращает компании текущего или указанного пользователя
      *
      * @method GET
+     * @access private
+     *
+     * @params with_points
+     * @params user_id
+     *
      * @return array - json array компаний
      */
     public function getCompaniesAction($with_points = false)
     {
-        $auth = $this->session->get('auth');
-        $userId = $auth['id'];
+        $inputData = $this->request->getQuery();
 
-        $result['companies'] = Companies::findCompaniesByUserOwner($userId);
+        if($inputData['with_points']!=null)
+            $with_points = filter_var($inputData['with_points'],FILTER_VALIDATE_BOOLEAN);
 
-        if ($with_points && $with_points != 'false') {
+        $user_id = $inputData['user_id'];
+        $userId = self::getUserId();
+
+        $user_id = filter_var($user_id,FILTER_VALIDATE_INT);
+
+        if(!$user_id)
+            $user_id = $userId;
+
+        if(is_null($with_points))
+            $with_points = false;
+
+        if($userId!=$user_id){
+            $settings = $this->settingsService->getSettingsById($user_id);
+
+            if(!$settings->getShowCompanies()){
+                throw new Http403Exception('User forbid to show his companies');
+            }
+        }
+
+        $result['companies'] = Companies::findCompaniesByUserOwner($user_id);
+
+        if ($with_points && $with_points !== 'false') {
             $result2 = [];
             foreach ($result['companies'] as $company) {
                 $points = TradePoints::findPointsByCompany($company['company_id']);
@@ -664,15 +691,46 @@ class CompaniesAPIController extends AbstractController
      * @access private
      * @method POST
      *
-     * @param $company_id
+     * @params $company_id
      */
-    public function setShop()
+    public function setShopAction()
     {
+        $inputData = $this->request->getJsonRawBody();
+        $data['company_id'] = $inputData->company_id;
 
+        try {
+            $userId = self::getUserId();
+
+            if (!Accounts::checkUserHavePermissionToCompany($userId, $data['company_id'], 'setShop')) {
+                throw new Http403Exception('Permission error');
+            }
+
+            $company = $this->companyService->getCompanyById($data['company_id']);
+
+            $this->companyService->setShop($company);
+
+        } catch (ServiceExtendedException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_UNABLE_CHANGE_COMPANY:
+                    $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                    throw $exception->addErrorDetails($e->getData());
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        } catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case CompanyService::ERROR_COMPANY_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+
+        return self::successResponse('Company is shop now');
     }
 
     /**
-     * Возвращает магазины по запросу + фильтр по категории
+     * Возвращает магазины по запросу + фильтр по категориям, городу, дистанции
      * @access public
      *
      * @method POST
@@ -680,6 +738,8 @@ class CompaniesAPIController extends AbstractController
      * @params query string;
      * @params categories array of int
      * @params city_id int
+     * @params distance int  - must be > 1 and < 200 or null.
+     * @params center [latitude as double, longitude as double]
      * @params page int
      * @params page_size int
      *
@@ -687,20 +747,38 @@ class CompaniesAPIController extends AbstractController
      */
     public function findShopsAction()
     {
-        $inputData = $this->request->getJsonRawBody();
-        $data['query'] = $inputData->query;
-        $data['categories'] = $inputData->categories;
-        $data['city_id'] = $inputData->city_id;
-        $data['page'] = $inputData->page;
-        $data['page_size'] = $inputData->page_size;
+        $inputData = json_decode($this->request->getRawBody(),true);
+        $data['query'] = $inputData['query'];
+        $data['categories'] = $inputData['categories'];
+        $data['city_id'] = $inputData['city_id'];
+        $data['distance'] = $inputData['distance'];
+        $data['center'] = $inputData['center'];
+        $data['page'] = $inputData['page'];
+        $data['page_size'] = $inputData['page_size'];
 
+        $filter = [];
         if (is_array($data['categories']))
             $filter['categories'] = $data['categories'];
 
-        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
-            $filter['city_id'] = $data['city_id'];
+        if (is_array($data['center']))
+            $filter['center'] = $data['center'];
 
-        $result = Companies::findShops($data['query'], $filter, $data['page'], $data['page_size']);
+        $data['distance'] = filter_var($data['distance'],FILTER_VALIDATE_INT);
+        $data['distance'] = ($data['distance'] < 1 || !$data['distance'] || $data['distance'] > 200)? null : $data['distance'];
+
+        $data['page'] = filter_var($data['page'],FILTER_VALIDATE_INT);
+        $data['page'] = (!$data['page'])?1:$data['page'];
+
+        $data['page_size'] = filter_var($data['page_size'],FILTER_VALIDATE_INT);
+        $data['page_size'] = (!$data['page_size'])?Companies::DEFAULT_RESULT_PER_PAGE:$data['page_size'];
+
+        if(!empty($data['distance']))
+            $filter['distance'] = $data['distance'];
+
+        if (isset($data['city_id']) && SupportClass::checkInteger($data['city_id']))
+            $filter['cities'][] = $data['city_id'];
+
+        $result = Companies::findShopsWithFilters($data['query'], $filter, $data['page'], $data['page_size']);
         return self::successPaginationResponse('', $result['data'], $result['pagination']);
     }
 }

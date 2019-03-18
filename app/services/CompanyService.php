@@ -19,7 +19,8 @@ use App\Controllers\HttpExceptions\Http500Exception;
  *
  * Class UsersService
  */
-class CompanyService extends AbstractService {
+class CompanyService extends AbstractService
+{
 
     const ADDED_CODE_NUMBER = 13000;
 
@@ -30,17 +31,18 @@ class CompanyService extends AbstractService {
     const ERROR_UNABLE_CREATE_COMPANY = 4 + self::ADDED_CODE_NUMBER;
     const ERROR_UNABLE_RESTORE_COMPANY = 5 + self::ADDED_CODE_NUMBER;
 
-    public function createCompany(array $companyData){
+    public function createCompany(array $companyData)
+    {
         $company = new Companies();
 
-        $this->fillCompany($company,$companyData);
+        $this->fillCompany($company, $companyData);
 
         if ($company->save() == false) {
             $errors = SupportClass::getArrayWithErrors($company);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable create company',
-                    self::ERROR_UNABLE_CREATE_COMPANY,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_CREATE_COMPANY, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable create company',
                     self::ERROR_UNABLE_CREATE_COMPANY);
             }
@@ -49,14 +51,15 @@ class CompanyService extends AbstractService {
         return $company;
     }
 
-    public function changeCompany(Companies $company, array $companyData){
-        $this->fillCompany($company,$companyData);
+    public function changeCompany(Companies $company, array $companyData)
+    {
+        $this->fillCompany($company, $companyData);
         if ($company->update() == false) {
             $errors = SupportClass::getArrayWithErrors($company);
-            if(count($errors)>0)
+            if (count($errors) > 0)
                 throw new ServiceExtendedException('Unable change company',
-                    self::ERROR_UNABLE_CHANGE_COMPANY,null,null,$errors);
-            else{
+                    self::ERROR_UNABLE_CHANGE_COMPANY, null, null, $errors);
+            else {
                 throw new ServiceExtendedException('Unable change company',
                     self::ERROR_UNABLE_CHANGE_COMPANY);
             }
@@ -64,42 +67,44 @@ class CompanyService extends AbstractService {
         return $company;
     }
 
-    private function fillCompany(Companies $company, array $data){
-        if(!empty(trim($data['name'])))
+    private function fillCompany(Companies $company, array $data)
+    {
+        if (!empty(trim($data['name'])))
             $company->setName($data['name']);
-        if(!empty(trim($data['description'])))
+        if (!empty(trim($data['description'])))
             $company->setDescription($data['description']);
-        if(!empty(trim($data['full_name'])))
+        if (!empty(trim($data['full_name'])))
             $company->setFullName($data['full_name']);
-        if(!empty(trim($data['tin'])))
+        if (!empty(trim($data['tin'])))
             $company->setTIN($data['tin']);
-        if(!empty(trim($data['logotype'])))
+        if (!empty(trim($data['logotype'])))
             $company->setLogotype($data['logotype']);
-        if(!empty(trim($data['region_id'])))
+        if (!empty(trim($data['region_id'])))
             $company->setRegionId($data['region_id']);
-        if(!empty(trim($data['website'])))
+        if (!empty(trim($data['website'])))
             $company->setWebsite($data['website']);
-        if(!empty(trim($data['email'])))
+        if (!empty(trim($data['email'])))
             $company->setEmail($data['email']);
-        if(!empty(trim($data['is_master'])))
+        if (!empty(trim($data['is_master'])))
             $company->setIsMaster($data['is_master']);
-        if(!empty(trim($data['rating_executor'])))
+        if (!empty(trim($data['rating_executor'])))
             $company->setRatingExecutor($data['rating_executor']);
-        if(!empty(trim($data['rating_client'])))
+        if (!empty(trim($data['rating_client'])))
             $company->setRatingClient($data['rating_client']);
 
-        if(isset($data['is_shop']))
+        if (isset($data['is_shop']))
             $company->setIsShop($data['is_shop']);
 
-        if(isset($data['product_category_id'])) {
-            if(is_bool($data['product_category_id']) && !$data['product_category_id'])
+        if (isset($data['product_category_id'])) {
+            if (is_bool($data['product_category_id']) && !$data['product_category_id'])
                 $company->setProductCategoryId(null);
             else
                 $company->setProductCategoryId($data['product_category_id']);
         }
     }
 
-    public function getCompanyById(int $companyId){
+    public function getCompanyById(int $companyId)
+    {
         $company = Companies::findCompanyById($companyId);
 
         if (!$company || $company == null) {
@@ -108,25 +113,27 @@ class CompanyService extends AbstractService {
         return $company;
     }
 
-    public function deleteCompany(Companies $company){
-        try{
-        if (!$company->delete()) {
-            $errors = SupportClass::getArrayWithErrors($company);
-            if (count($errors) > 0)
-                throw new ServiceExtendedException('Unable to delete company',
-                    self::ERROR_UNABLE_DELETE_COMPANY, null, null, $errors);
-            else {
-                throw new ServiceExtendedException('Unable to delete company',
-                    self::ERROR_UNABLE_DELETE_COMPANY);
+    public function deleteCompany(Companies $company)
+    {
+        try {
+            if (!$company->delete()) {
+                $errors = SupportClass::getArrayWithErrors($company);
+                if (count($errors) > 0)
+                    throw new ServiceExtendedException('Unable to delete company',
+                        self::ERROR_UNABLE_DELETE_COMPANY, null, null, $errors);
+                else {
+                    throw new ServiceExtendedException('Unable to delete company',
+                        self::ERROR_UNABLE_DELETE_COMPANY);
+                }
             }
-        }
-        }catch(\PDOException $e){
+        } catch (\PDOException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
     }
 
-    public function getDeletedCompanyById(int $companyId){
-        $company = Companies::findFirst(['company_id = :companyId:','bind'=>['companyId'=>$companyId]],false);
+    public function getDeletedCompanyById(int $companyId)
+    {
+        $company = Companies::findFirst(['company_id = :companyId:', 'bind' => ['companyId' => $companyId]], false);
 
         if (!$company || $company == null) {
             throw new ServiceException('Company don\'t exists', self::ERROR_COMPANY_NOT_FOUND);
@@ -134,8 +141,9 @@ class CompanyService extends AbstractService {
         return $company;
     }
 
-    public function restoreCompany(Companies $company){
-        try{
+    public function restoreCompany(Companies $company)
+    {
+        try {
             if (!$company->restore()) {
                 $errors = SupportClass::getArrayWithErrors($company);
                 if (count($errors) > 0)
@@ -146,8 +154,28 @@ class CompanyService extends AbstractService {
                         self::ERROR_UNABLE_RESTORE_COMPANY);
                 }
             }
-        }catch(\PDOException $e){
+        } catch (\PDOException $e) {
             throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
         }
+    }
+
+    public function setShop(Companies $company)
+    {
+        if($company->getIsShop()){
+            throw new ServiceExtendedException('Unable to set company shop',
+                self::ERROR_UNABLE_CHANGE_COMPANY, null, null,
+                ['Company already is shop']);
+        }
+
+        $products_count = $this->productService->getProductCountByCompany($company);
+
+        if ($products_count < Companies::MIN_COUNT_OF_PRODUCTS_TO_BE_SHOP) {
+            throw new ServiceExtendedException('Unable to set company shop',
+                self::ERROR_UNABLE_CHANGE_COMPANY, null, null,
+                ['Company must have at least '.Companies::MIN_COUNT_OF_PRODUCTS_TO_BE_SHOP .' products to be shop']);
+        }
+
+        $change['is_shop'] = true;
+        return $this->companyService->changeCompany($company, $change);
     }
 }

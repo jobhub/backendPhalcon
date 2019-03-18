@@ -286,7 +286,7 @@ class Products extends AccountWithNotDeletedWithCascade
                 [
                     "message" => "Category does not exist",
                     "callback" => function ($product) {
-                        $category = Categories::findFirstByCategoryId($product->getCategoryId());
+                        $category = CategoriesForProducts::findFirstByCategoryId($product->getCategoryId());
 
                         if ($category)
                             return true;

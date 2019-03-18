@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libs\Database\CustomQuery;
+use App\Libs\SphinxClient;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -133,6 +134,8 @@ class Companies extends NotDeletedModelWithCascade
     const DEFAULT_COMPANY_LOGOTYPE = 'images/no_image.jpg';
 
     const DEFAULT_RESULT_PER_PAGE = 10;
+
+    const MIN_COUNT_OF_PRODUCTS_TO_BE_SHOP = 20;
 
     /**
      * @return int
@@ -586,7 +589,7 @@ class Companies extends NotDeletedModelWithCascade
                     [
                         "message" => "Category for product does not exists",
                         "callback" => function ($company) {
-                            return empty($company->CategoriesForProducts)?false:true;
+                            return empty($company->CategoriesForProducts) ? false : true;
 
                         }
                     ]
@@ -805,15 +808,34 @@ class Companies extends NotDeletedModelWithCascade
         $handledShops = [];
 
         foreach ($companies as $company) {
-            $handledShop = [];
-            $handledShop['name'] = $company['name'];
-            $handledShop['description'] = $company['description'];
-            $handledShop['logotype'] = $company['logotype'];
-            $handledShop['company_id'] = $company['company_id'];
-
-            $handledShops[] = self::addDefaultLogotypeToCompany($handledShop);
+            $handledShops[] = self::handleShop($company);
         }
 
+        return $handledShops;
+    }
+
+    public static function handleShop(array $company)
+    {
+        $handledShop = [];
+        $handledShop['name'] = $company['name'];
+        $handledShop['description'] = $company['description'];
+        $handledShop['logotype'] = $company['logotype'];
+        $handledShop['company_id'] = $company['company_id'];
+
+        $handledShop = self::addDefaultLogotypeToCompany($handledShop);
+
+        return $handledShop;
+    }
+
+    public static function handleShopsFromSearch($search_results)
+    {
+        $handledShops = [];
+        if ($search_results != null)
+            foreach ($search_results as $product) {
+                $handledShop = SupportClass::translateInPhpArrFromPostgreJsonObject($product['attrs']['company']);
+
+                $handledShops[] = self::handleShop($handledShop);
+            }
         return $handledShops;
     }
 
@@ -830,6 +852,60 @@ class Companies extends NotDeletedModelWithCascade
         return SupportClass::to_pg_array($accounts);
     }
 
+    /**
+     * @param $query
+     * @param array $filter_array => [
+     *                                  [product_categories], [cities],
+     *                                  distance in km, center=>[longitude, latitude]
+     *                               ]
+     * @param int $page
+     * @param int $page_size
+     * @return array
+     */
+    public static function findShopsWithFilters($query, array $filter_array,
+                                                $page = 1, $page_size = Companies::DEFAULT_RESULT_PER_PAGE)
+    {
+        $page = $page > 0 ? $page : 1;
+        $offset = ($page - 1) * $page_size;
+
+        require(APP_PATH . '/library/sphinxapi.php');
+        $cl = new SphinxClient();
+        $cl->setServer('127.0.0.1', 9312);
+        /*$cl->SetMatchMode(SPH_MATCH_EXTENDED2);*/
+
+        if ($query == null || trim($query) == '')
+            $cl->SetMatchMode(SPH_MATCH_ALL);
+        else
+            $cl->SetMatchMode(SPH_MATCH_ANY);
+
+        $cl->SetLimits($offset, $page_size, 400);
+
+        $cl->SetSortMode(SPH_SORT_RELEVANCE);
+
+        //Filters
+        if (!empty($filter_array['categories']) && is_array($filter_array['categories']))
+            $cl->setFilter('category_id', $filter_array['categories'], false);
+
+        if (!empty($filter_array['cities']) && is_array($filter_array['cities']))
+            $cl->setFilter('city_id', $filter_array['cities'], false);
+
+        if (isset($filter_array['distance']) && SupportClass::checkInteger($filter_array['distance'])
+            && !empty($filter_array['center']) && is_array($filter_array['center'])) {
+
+            $cl->SetGeoAnchor('latitude', 'longitude',
+                deg2rad($filter_array['center']['latitude']),
+                deg2rad($filter_array['center']['longitude']));
+
+            $cl->SetFilterFloatRange("@geodist", 0, $filter_array['distance'] * 1000, false);
+        }
+
+        $cl->AddQuery($query, 'stores_with_filters_index');
+        $results = $cl->RunQueries();
+
+        //return self::handleServiceFromArrayForSearch($allmatches);
+        return ['data' => self::handleShopsFromSearch($results[0]['matches']), 'pagination' => ['total' => $results[0]['total_found']]];
+    }
+
     public static function findShops($search_query = null, $filters = null, $page = 1, $page_size = self::DEFAULT_RESULT_PER_PAGE)
     {
         $query = new CustomQuery([
@@ -838,7 +914,7 @@ class Companies extends NotDeletedModelWithCascade
             'order' => 'date_creation desc'
         ]);
 
-        if ($search_query!=null && !empty(trim($search_query))) {
+        if ($search_query != null && !empty(trim($search_query))) {
             $query->addWhere('(
                     ((name || full_name) ilike \'%\'||:query||\'%\')
                     or ((name) ilike \'%\'||:query||\'%\')
@@ -853,7 +929,7 @@ class Companies extends NotDeletedModelWithCascade
             }
 
             if (!empty($filters['city_id']) && SupportClass::checkInteger($filters['city_id'])) {
-                $query->setFrom($query->getFrom().' inner join accounts a using(company_id) 
+                $query->setFrom($query->getFrom() . ' inner join accounts a using(company_id) 
                                                     inner join "tradePoints" tp ON(tp.account_id = a.id)');
 
                 $query->addWhere('tp.city_id = :city_id', ['city_id' => $filters['city_id']]);

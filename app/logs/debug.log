@@ -837,3 +837,15 @@ DETAIL:  Key (subject_id)=(50) is not present in table "companies".
 [Wed, 13 Mar 19 16:24:03 +0300][CRITICAL] 13003 Unable change company
 [Wed, 13 Mar 19 16:25:12 +0300][CRITICAL] 13003 Unable change company
 [Wed, 13 Mar 19 16:25:52 +0300][CRITICAL] 13003 Unable change company
+[Mon, 18 Mar 19 11:40:34 +0300][CRITICAL] 13005 Unable to set company shop
+[Mon, 18 Mar 19 11:40:58 +0300][CRITICAL] 13003 Unable to set company shop
+[Mon, 18 Mar 19 11:42:15 +0300][CRITICAL] 13003 Unable to set company shop
+[Mon, 18 Mar 19 11:47:09 +0300][CRITICAL] 310003 Time to resend did't come
+[Mon, 18 Mar 19 14:12:09 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "products" violates foreign key constraint "fkey_products_categories_category_id"
+DETAIL:  Key (category_id)=(15) is not present in table "categories_for_products".
+[Mon, 18 Mar 19 14:12:41 +0300][CRITICAL] 23503 SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "products" violates foreign key constraint "fkey_products_categories_category_id"
+DETAIL:  Key (category_id)=(15) is not present in table "categories_for_products".
+[Mon, 18 Mar 19 14:13:56 +0300][CRITICAL] 36001 Unable to create product
+[Mon, 18 Mar 19 14:28:48 +0300][CRITICAL] 6006 Invalid type of category
+[Mon, 18 Mar 19 14:31:23 +0300][CRITICAL] 6006 Invalid type of category
+[Mon, 18 Mar 19 14:31:34 +0300][CRITICAL] 6006 Invalid type of category

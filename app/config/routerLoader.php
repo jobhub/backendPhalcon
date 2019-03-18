@@ -408,21 +408,8 @@ $routes = [
         'prefix' => '/categories',
         'resources' => [
             /**
-             * Возвращает категории в удобном для сайта виде
-             *
-             * @method GET
-             *
-             * @return string - json array с категориями
-             */
-            [
-                'type' => 'get',
-                'path' => '/get/site',
-                'action' => 'getCategoriesForSiteAction'
-            ],
-
-            /**
              * Возвращает категории
-             *
+             * @access public
              * @method GET
              *
              * @param $type
@@ -431,12 +418,14 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get',
-                'action' => 'getCategoriesAction'
+                'action' => 'getCategoriesAction',
+                'access'=>'public'
             ],
             [
                 'type' => 'get',
                 'path' => '/get/{type}',
-                'action' => 'getCategoriesAction'
+                'action' => 'getCategoriesAction',
+                'access'=>'public'
             ],
 
             /**
@@ -1415,13 +1404,16 @@ $routes = [
             ],
 
             /**
-             * Возвращает магазины по запросу + фильтр по категории
+             * Возвращает магазины по запросу + фильтр по категориям, городу, дистанции
              * @access public
              *
              * @method POST
              *
              * @params query string;
              * @params categories array of int
+             * @params city_id int
+             * @params distance int  - must be > 1 and < 200 or null.
+             * @params center [latitude as double, longitude as double]
              * @params page int
              * @params page_size int
              *
@@ -1431,6 +1423,20 @@ $routes = [
                 'type' => 'post',
                 'path' => '/find/shops',
                 'action' => 'findShopsAction'
+            ],
+
+            /**
+             * Делает указанную коммпанию в том числе и магазином
+             *
+             * @access private
+             * @method POST
+             *
+             * @params $company_id
+             */
+            [
+                'type' => 'post',
+                'path' => '/set/shop',
+                'action' => 'setShopAction'
             ],
         ]
     ],
@@ -2737,22 +2743,22 @@ $routes = [
             [
                 'type' => 'get',
                 'path' => '/get/product',
-                'action' => 'getFavouritesCategoriesAction'
+                'action' => 'getFavouriteProductsAction'
             ],
             [
                 'type' => 'get',
                 'path' => '/get/product/{account_id}',
-                'action' => 'getFavouritesCategoriesAction'
+                'action' => 'getFavouriteProductsAction'
             ],
             [
                 'type' => 'get',
                 'path' => '/get/product/{account_id}/{page}',
-                'action' => 'getFavouritesCategoriesAction'
+                'action' => 'getFavouriteProductsAction'
             ],
             [
                 'type' => 'get',
                 'path' => '/get/product/{account_id}/{page}/{page_size}',
-                'action' => 'getFavouritesCategoriesAction'
+                'action' => 'getFavouriteProductsAction'
             ],
 
             /**
@@ -3215,6 +3221,30 @@ $routes = [
                 'path' => '/find',
                 'action' => 'findProductsAction'
             ],
+        ]
+    ],
+
+    '\App\Controllers\SettingsController' => [
+        'prefix' => '/settings',
+        'resources' => [
+            /**
+             * Editing current user's settings
+             *
+             * @access private
+             * @method POST
+             *
+             * @params show_companies
+             *
+             * @return array
+             */
+            [
+                'type' => 'post',
+                'path' => '/change',
+                'action' => 'setSettingsAction',
+                'access'=>'private'
+            ],
+
+
         ]
     ],
 ];
