@@ -9,6 +9,8 @@ use App\Libs\ImageLoader;
 //models
 use App\Models\Accounts;
 use App\Models\Companies;
+use App\Models\Events;
+use App\Models\ImagesEvents;
 use App\Models\ImagesModel;
 use App\Models\ImagesNews;
 use App\Models\ImagesProducts;
@@ -26,6 +28,7 @@ use App\Models\Reviews;
 use App\Models\Binders;
 
 //other
+use Composer\Script\Event;
 use Phalcon\DI\FactoryDefault as DI;
 use Symfony\Component\EventDispatcher\Tests\Service;
 
@@ -60,25 +63,37 @@ class ImageService extends AbstractService
 
     const ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP = 8 + self::ADDED_CODE_NUMBER;
 
-    public function checkAbilityToCreateNewImage($type, $data = null){
+    public function checkAbilityToCreateNewImage($type, $data = null)
+    {
         $enable = true;
         $error_message = '';
-        switch ($type){
+        switch ($type) {
             case self::TYPE_PRODUCT:
-                $images = ImagesProducts::findFirst(['columns'=>'count(*) as count','conditions'=>'object_id = :product_id:',
-                    'bind'=>[
-                        'product_id'=>$data['object_id']
+                $images = ImagesProducts::findFirst(['columns' => 'count(*) as count', 'conditions' => 'object_id = :product_id:',
+                    'bind' => [
+                        'product_id' => $data['object_id']
                     ]]);
-                if($images['count']+$data['new_count']>ImagesProducts::MAX_IMAGES) {
+                if ($images['count'] + $data['new_count'] > ImagesProducts::MAX_IMAGES) {
                     $enable = false;
-                    $error_message = 'You may not to create more then '.ImagesProducts::MAX_IMAGES.' images for product';
+                    $error_message = 'You may not to create more then ' . ImagesProducts::MAX_IMAGES . ' images for product';
                 }
+                break;
+            case self::TYPE_EVENT:
+                $images = ImagesEvents::findFirst(['columns' => 'count(*) as count', 'conditions' => 'object_id = :event_id:',
+                    'bind' => [
+                        'event_id' => $data['object_id']
+                    ]]);
+                if ($images['count'] + $data['new_count'] > ImagesEvents::MAX_IMAGES) {
+                    $enable = false;
+                    $error_message = 'You may not to create more then ' . ImagesEvents::MAX_IMAGES . ' images for event';
+                }
+                break;
         }
 
-        return ['enable'=>$enable, 'error_message'=>$error_message];
+        return ['enable' => $enable, 'error_message' => $error_message];
     }
 
-    public function createNewObjectByType($type,$data)
+    public function createNewObjectByType($type, $data)
     {
         switch ($type) {
             case self::TYPE_USER:
@@ -103,6 +118,9 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_PRODUCT:
                 $image = new ImagesProducts();
+                break;
+            case self::TYPE_EVENT:
+                $image = new ImagesEvents();
                 break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
@@ -135,6 +153,9 @@ class ImageService extends AbstractService
             case self::TYPE_PRODUCT:
                 $model = 'App\Models\ImagesProducts';
                 break;
+            case self::TYPE_EVENT:
+                $model = 'App\Models\ImagesEvents';
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -142,8 +163,9 @@ class ImageService extends AbstractService
     }
 
 
-    public function getSubPathForImages($type){
-        switch ($type){
+    public function getSubPathForImages($type)
+    {
+        switch ($type) {
             case self::TYPE_USER:
                 $subpath = 'users';
                 break;
@@ -188,8 +210,8 @@ class ImageService extends AbstractService
                 throw new ServiceException('Image not found', self::ERROR_IMAGE_NOT_FOUND);
             }
             return $image;
-        }catch (\PDOException $e){
-            throw new ServiceException($e->getMessage(), $e->getCode(),$e);
+        } catch (\PDOException $e) {
+            throw new ServiceException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -210,7 +232,7 @@ class ImageService extends AbstractService
                     $result = $objectId == $userId;
                 else
                     $result = true;
-                    break;
+                break;
             case self::TYPE_NEWS:
                 $object = News::findFirstByNewsId($objectId);
                 if (!$object)
@@ -240,9 +262,9 @@ class ImageService extends AbstractService
 
                 $result = Accounts::checkUserHavePermission($userId,$account->getId(),$right);*/
 
-                if($objectId!=null) {
+                if ($objectId != null) {
                     $object = Accounts::findFirstById($objectId);
-                } else{
+                } else {
                     $object = Accounts::findForUserDefaultAccount($userId);
                 }
                 if (!$object)
@@ -258,6 +280,13 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_PRODUCT:
                 $object = Products::findFirstByProductId($objectId);
+                if (!$object)
+                    return false;
+
+                $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
+                break;
+            case self::TYPE_EVENT:
+                $object = Events::findById($objectId);
                 if (!$object)
                     return false;
 
@@ -294,18 +323,18 @@ class ImageService extends AbstractService
     {
 
         $path = $this->getSubPathForImages($type);
-        $id = $this->commonService->getIdFromObject($type,$some_object);
+        $id = $this->commonService->getIdFromObject($type, $some_object);
 
         //Checking
-        if(is_array($data)){
-            $result_data_arr = array_merge(['object_id'=>$id,'new_count'=>count($files)],
+        if (is_array($data)) {
+            $result_data_arr = array_merge(['object_id' => $id, 'new_count' => count($files)],
                 $data);
-        }else
-            $result_data_arr = ['object_id'=>$id,'new_count'=>count($files)];
+        } else
+            $result_data_arr = ['object_id' => $id, 'new_count' => count($files)];
 
-        $enable = $this->checkAbilityToCreateNewImage($type,$result_data_arr);
+        $enable = $this->checkAbilityToCreateNewImage($type, $result_data_arr);
 
-        if(!$enable['enable']){
+        if (!$enable['enable']) {
             throw new ServiceExtendedException('Unable create images',
                 self::ERROR_UNABLE_CREATE_IMAGE, null, null, [$enable['error_message']]);
         }
@@ -318,19 +347,19 @@ class ImageService extends AbstractService
             $newImage = get_class($newImage)::findFirstByImageId($newImage->getImageId());
 
             if ($type == self::TYPE_NEWS && $file->getKey() == 'title')
-                $imagesIds[] = ['image_id' => $newImage->getImageId(),'file_name' => $file->getKey()];
+                $imagesIds[] = ['image_id' => $newImage->getImageId(), 'file_name' => $file->getKey()];
             else
-                $imagesIds[] =['image_id' => $newImage->getImageId(),'file_name' => $newImage->getImageId()];
+                $imagesIds[] = ['image_id' => $newImage->getImageId(), 'file_name' => $newImage->getImageId()];
 
             $imageFormat = pathinfo($file->getName(), PATHINFO_EXTENSION);
 
-            if($type == self::TYPE_NEWS) {
+            if ($type == self::TYPE_NEWS) {
                 if ($imagesIds[$i]['file_name'] == 'title') {
                     $existsTitle = ImagesNews::findFirst(['object_id = :newsId: and image_path like :image_path:',
                         'bind' => ['newsId' => $some_object->getNewsId(),
                             'image_path' =>
-                                '%'.ImageLoader::formFullImageName('news', '',
-                                    $some_object->getNewsId(), $imagesIds[$i]['file_name']).'%',
+                                '%' . ImageLoader::formFullImageName('news', '',
+                                    $some_object->getNewsId(), $imagesIds[$i]['file_name']) . '%',
                         ]]);
 
                     if ($existsTitle) {
@@ -411,7 +440,7 @@ class ImageService extends AbstractService
             }*/
 
             $result = $this->loadImage($file->getTempName(), $file->getName(),
-                $this->commonService->getIdFromObject($type,$some_object), $imagesIds[$i]['file_name'],$type);
+                $this->commonService->getIdFromObject($type, $some_object), $imagesIds[$i]['file_name'], $type);
 
             $i++;
             if ($result != ImageLoader::RESULT_ALL_OK || $result === null) {
@@ -433,7 +462,7 @@ class ImageService extends AbstractService
 
     private function createImage(int $id, string $pathToImage, $type, $data = null)
     {
-        $image = $this->createNewObjectByType($type,$data);
+        $image = $this->createNewObjectByType($type, $data);
         $image->setObjectId($id);
         $image->setImagePath($pathToImage);
 
@@ -524,16 +553,16 @@ class ImageService extends AbstractService
     public function transferTempImageToNewsFile(ImagesTemp $tempImage, $news_id, $filename)
     {
         //объект в базе создан. Осталось переместить
-        if(!is_dir(IMAGE_PATH . 'news' . '/'. $news_id)) {
-            $result = mkdir(IMAGE_PATH . 'news' . '/'. $news_id);
+        if (!is_dir(IMAGE_PATH . 'news' . '/' . $news_id)) {
+            $result = mkdir(IMAGE_PATH . 'news' . '/' . $news_id);
 
-            if(!$result)
+            if (!$result)
                 throw new ServiceException('Не удалось переместить временное изображение в новости',
                     self::ERROR_UNABLE_CREATE_IMAGE_FROM_TEMP);
         }
 
-        $result = copy(BASE_PATH.'/public/'.$tempImage->getImagePath(),
-            BASE_PATH.'/public/'.$filename);
+        $result = copy(BASE_PATH . '/public/' . $tempImage->getImagePath(),
+            BASE_PATH . '/public/' . $filename);
 
         if (!$result)
             throw new ServiceException('Не удалось переместить временное изображение в новости',
@@ -546,8 +575,8 @@ class ImageService extends AbstractService
     public function loadImage($tempname, $name, $objectId, $imageId, $type)
     {
         $imageFormat = pathinfo($name, PATHINFO_EXTENSION);
-        $filename =  ImageLoader::formImageName($imageFormat,$imageId);
-        return ImageLoader::load($this->getSubPathForImages($type),$tempname,
-            $filename,$objectId,null);
+        $filename = ImageLoader::formImageName($imageFormat, $imageId);
+        return ImageLoader::load($this->getSubPathForImages($type), $tempname,
+            $filename, $objectId, null);
     }
 }

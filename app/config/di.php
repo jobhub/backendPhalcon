@@ -16,6 +16,7 @@ use App\Services\SessionService;
 use App\Libs\PseudoSession;
 use Phalcon\Mailer;
 use Phalcon\Di\FactoryDefault;
+use App\Libs\Database\MySQLAdapter;
 
 // Initializing a DI Container
 $di = new FactoryDefault();
@@ -46,6 +47,13 @@ $di->set(
         "dbname" => $config->database->dbname,
             ]
     );
+}
+);
+
+$di->setShared(
+    "mysql", function () use ($config) {
+    $mysql = new MySQLAdapter($config['mysql_server']);
+    return $mysql;
 }
 );
 
@@ -103,6 +111,7 @@ $di->setShared('commonService', '\App\Services\CommonService'); //35
 $di->setShared('productService', '\App\Services\ProductService'); //36
 $di->setShared('linkService', '\App\Services\LinkService'); //37
 $di->setShared('settingsService', '\App\Services\SettingsService'); //38
+$di->setShared('eventService', '\App\Services\eventService'); //39
 
 $di['mailer'] = function() {
     $config = $this->getConfig()['mail'];

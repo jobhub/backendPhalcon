@@ -22,6 +22,11 @@ class SupportClass
         return ((string)(int)$var == $var);
     }
 
+    public static function convertBooleanToString($var)
+    {
+        return $var ? 'true' : 'false';
+    }
+
     public static function checkPositiveInteger($var)
     {
         return ((string)(int)$var == $var);

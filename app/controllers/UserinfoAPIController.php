@@ -54,7 +54,7 @@ class UserinfoAPIController extends AbstractController
 
             $image = $this->imageService->getImageById($data['image_id'], ImageService::TYPE_USER);
 
-            if ($image->getUserId() != $userId) {
+            if ($image->getObjectId() != $userId) {
                 throw new ServiceException('Image not found', ImageService::ERROR_IMAGE_NOT_FOUND);
             }
 

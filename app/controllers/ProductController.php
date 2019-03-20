@@ -126,51 +126,6 @@ class ProductController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         }
-
-
-    }
-
-    /**
-     * Возвращает все задания субъекта (для него самого)
-     *
-     * @method GET
-     *
-     * @param $company_id
-     *
-     * @return string - массив заданий (Tasks) и Status
-     *
-     */
-    public function getTasksForCurrentUserAction($company_id = null)
-    {
-        $userId = self::getUserId();
-
-        if ($company_id != null) {
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getTask')) {
-                throw new Http403Exception('Permission error');
-            }
-
-            return Tasks::findTasksByCompany($company_id);
-        }
-        else
-            return Tasks::findTasksByUser($userId);
-    }
-
-    /**
-     * Return products with filters and query. Its for search.
-     *
-     * @method GET
-     *
-     * @param $id
-     * @param $is_company
-     *
-     * @return string - массив заданий (Tasks)
-     */
-    public function getProductsAction($id, $is_company = false)
-    {
-        if ($is_company && strtolower($is_company)!="false")
-            return Tasks::findAcceptingTasksByCompany($id);
-        else
-            return Tasks::findAcceptingTasksByUser($id);
     }
 
     /**
@@ -227,7 +182,6 @@ class ProductController extends AbstractController
      * @params category_id int
      * @params phone string | phone_id int. If phone is boolean or string like boolean = false - set phone = null.
      * @params price int
-     * @params account_id int
      * @params added_tags array of string
      * @params deleted_tags array of int
      * @return string - json array в формате Status
@@ -242,7 +196,6 @@ class ProductController extends AbstractController
         $data['phone'] = $inputData->phone;
         $data['phone_id'] = $inputData->phone_id;
         $data['price'] = $inputData->price;
-        $data['account_id'] = $inputData->account_id;
         $data['added_tags'] = $inputData->tags;
         $data['deleted_tags'] = $inputData->deleted_tags;
 
@@ -477,4 +430,6 @@ class ProductController extends AbstractController
             }
         }
     }
+
+
 }

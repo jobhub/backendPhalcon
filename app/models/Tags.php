@@ -133,7 +133,6 @@ class Tags extends \Phalcon\Mvc\Model
     {
         $this->setSchema("public");
         $this->setSource("tags");
-        $this->hasMany('tag_id', 'App\Models\TagsServices', 'tag_id', ['alias' => 'ServicesTags']);
     }
 
     /**
@@ -154,7 +153,7 @@ class Tags extends \Phalcon\Mvc\Model
     public function save($data = null, $whiteList = null)
     {
         $this->setTag(mb_strtolower($this->getTag()));
-        $tag = Tags::findFirstByTag($this->getTag());
+        $tag = Tags::findByTag($this->getTag());
         if ($tag) {
             $this->setTag($tag->getTag());
             $this->setTagId($tag->getTagId());
@@ -187,4 +186,14 @@ class Tags extends \Phalcon\Mvc\Model
         return parent::findFirst($parameters);
     }
 
+    public static function findByTag($tag, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['tag = :tag:',
+                'bind' => ['tag' => $tag]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'tag = :tag:',
+                'bind' => ['tag' => $tag]]);
+        }
+    }
 }

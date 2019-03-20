@@ -3247,6 +3247,154 @@ $routes = [
 
         ]
     ],
+
+    '\App\Controllers\EventsAPIController' => [
+        'prefix' => '/event',
+        'resources' => [
+            /**
+             * Adding event
+             *
+             * @access private
+             * @method POST
+             *
+             * @input Form data
+             *
+             * @params name string
+             * @params description string
+             * @params account_id int
+             * @params center [longitude, latitude]
+             * @params radius int (в километрах)
+             * @params tags array of string
+             * @params images in $_FILES
+             *
+             * @return string - json array  формате Status
+             */
+            [
+                'type' => 'post',
+                'path' => '/add',
+                'action' => 'addEventAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Editing of the product.
+             *
+             * @access private
+             * @method PUT
+             * @params event_id int
+             * @params name string
+             * @params description string
+             * @params center [longitude, latitude]
+             * @params radius int (в километрах)
+             * @return string - json array в формате Status`
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editEventAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Deleting of the event
+             *
+             * @access private
+             * @method DELETE
+             *
+             * @param $event_id
+             *
+             * @return string - json array в формате Status
+             *
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{event_id}',
+                'action' => 'deleteEventAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Возвращает публичную информацию об акции.
+             * @access public.
+             *
+             * @method GET
+             *
+             * @param $event_id
+             * @params $account_id
+             *
+             * @return array
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{event_id}',
+                'action' => 'getEventInfoAction',
+                'access'=>'public'
+            ],
+
+            /**
+             * Возвращает акции указанной компании
+             * active and divided_by_active can use only owner of the company.
+             *
+             * @access public
+             * @method GET
+             *
+             * @params account_id
+             * @params company_id
+             * @params page
+             * @params active
+             * @params divided_by_active
+             * @params page_size
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'get',
+                'path' => '/get',
+                'action' => 'getEventsAction',
+                'access'=>'public'
+            ],
+
+            /**
+             * Возвращает акции, полученные по поисковой строке для указанной геопозиции.
+             *
+             * @access public
+             * @method POST
+             *
+             * @params query string
+             * @params page_size int
+             * @params page int
+             * @params center [longitude, latitude]
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'post',
+                'path' => '/find',
+                'action' => 'findEventsAction',
+                'access'=>'public'
+            ],
+
+            /**
+             * Увеличивается статистику акции
+             *
+             * @access private
+             * @method POST
+             *
+             * @params event_id int
+             * @params number_of_clicks
+             * @params average_display_time
+             * @params number_of_display
+             *
+             * @return string - json array с новостями (или их отсутствием)
+             */
+            [
+                'type' => 'post',
+                'path' => '/increment/statistics',
+                'action' => 'changeStatisticsAction',
+                'access'=>'public'
+            ],
+        ]
+    ],
 ];
 
 return $routes;

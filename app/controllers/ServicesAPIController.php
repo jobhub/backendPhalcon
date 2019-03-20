@@ -68,6 +68,7 @@ class ServicesAPIController extends AbstractController
 
             self::setAccountId($account->getId());
         }
+
         if ($is_company && strtolower($is_company) != "false" && strtolower($is_company)!='null') {
             $relatedAccounts = Accounts::getRelatedAccountsForCompany($is_company);
             //$services = Services::findServicesByCompanyId($id,$page,$page_size);

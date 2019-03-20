@@ -53,6 +53,9 @@ class CommonService extends AbstractService
             case self::TYPE_PRODUCT:
                 $id = $some_object->getProductId();
                 break;
+            case self::TYPE_EVENT:
+                $id = $some_object->getEventId();
+                break;
             default:
                 throw new ServiceException('Invalid type of object', self::ERROR_INVALID_OBJECT_TYPE);
         }

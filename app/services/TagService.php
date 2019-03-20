@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Services;
+use App\Models\TagsEvents;
 use App\Models\TagsModel;
 use App\Models\TagsProducts;
 use App\Models\Users;
@@ -25,6 +26,7 @@ class TagService extends AbstractService {
 
     const TYPE_SERVICE = 'service';
     const TYPE_PRODUCT = 'product';
+    const TYPE_EVENT = 'event';
 
     const ADDED_CODE_NUMBER = 10000;
 
@@ -44,6 +46,9 @@ class TagService extends AbstractService {
             case self::TYPE_PRODUCT:
                 $tag = new TagsProducts();
                 break;
+            case self::TYPE_EVENT:
+                $tag = new TagsEvents();
+                break;
             default:
                 throw new ServiceException('Invalid type of tag relation', self::ERROR_INVALID_INVITE_TYPE);
         }
@@ -58,6 +63,9 @@ class TagService extends AbstractService {
                 break;
             case self::TYPE_PRODUCT:
                 $tagRelation = 'App\\Models\\TagsProducts';
+                break;
+            case self::TYPE_EVENT:
+                $tagRelation = 'App\\Models\\TagsEvents';
                 break;
             default:
                 throw new ServiceException('Invalid type of invite', self::ERROR_INVALID_INVITE_TYPE);

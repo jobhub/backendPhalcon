@@ -73,4 +73,12 @@ class Binders
             return false;
     }
 
+    public static function getBinderByServiceType($binder_id, $type){
+        if($type=='service')
+            $binder = Services::findServiceById($binder_id);
+        else if($type=='product')
+            $binder = Products::findProductById($binder_id);
+
+        return $binder;
+    }
 }

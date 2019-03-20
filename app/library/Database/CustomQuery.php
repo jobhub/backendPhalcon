@@ -2,6 +2,8 @@
 
 namespace App\Libs\Database;
 
+use App\Libs\SupportClass;
+
 class CustomQuery
 {
     private $where;
@@ -17,6 +19,60 @@ class CustomQuery
     private $id;
 
     private $order;
+
+    private $limit;
+
+    private $offset;
+
+    private $not_deleted;
+
+    /**
+     * @return mixed
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param mixed $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNotDeleted()
+    {
+        return $this->not_deleted;
+    }
+
+    /**
+     * @param mixed $not_deleted
+     */
+    public function setNotDeleted($not_deleted)
+    {
+        $this->not_deleted = $not_deleted;
+    }
 
     /**
      * @return mixed
@@ -42,12 +98,10 @@ class CustomQuery
         return $this->where;
     }
 
-    /**
-     * @param mixed $where
-     */
     public function setWhere($where)
     {
         $this->where = $where;
+        return $this;
     }
 
     public function addWhere($where, $bind=null){
@@ -56,6 +110,18 @@ class CustomQuery
             $this->bind = $bind;
         else if($bind!=null && is_array($bind))
             $this->bind = array_merge($this->bind,$bind);
+
+        return $this;
+    }
+
+    public function addDeleted($deleted){
+        $this->where .= ' and deleted = :deleted';
+        if($this->bind==null)
+            $this->bind = ['deleted'=>SupportClass::convertBooleanToString($deleted)];
+        else
+            $this->bind = array_merge($this->bind,['deleted'=>SupportClass::convertBooleanToString($deleted)]);
+
+        return $this;
     }
 
     /**
@@ -138,7 +204,7 @@ class CustomQuery
         $this->id = $id;
     }
 
-    public function __construct(array $query = null)
+    public function __construct(array $query = null, $not_deleted = null)
     {
         if($query!=null) {
             $this->setWhere($query['where']);
@@ -148,7 +214,25 @@ class CustomQuery
             $this->setColumnsMap($query['columns_map']);
             $this->setFrom($query['from']);
             $this->setOrder($query['order']);
+            $this->setLimit($query['limit']);
+            $this->setOffset($query['offset']);
         }
+    }
+
+    public function getQueryInArray(){
+        return [
+            'from'=>$this->getFrom(),
+            'where'=>$this->getWhere(),
+            'id'=>$this->getId(),
+            'bind'=>$this->getBind(),
+            'columns'=>$this->getColumns(),
+            'columns_map'=>$this->getColumnsMap(),
+            'order'=>$this->getOrder()
+        ];
+    }
+
+    public function getCopy(){
+        return new CustomQuery($this->getQueryInArray());
     }
 
     public function formSql(): string
@@ -165,6 +249,12 @@ class CustomQuery
 
         if (!is_null($this->getOrder()))
             $sql_query .= ' order by ' . $this->getOrder();
+
+        if(!is_null($this->getLimit()))
+            $sql_query .= ' limit ' . $this->getLimit();
+
+        if(!is_null($this->getOffset()))
+            $sql_query .= ' offset ' . $this->getOffset();
 
         return $sql_query;
     }
