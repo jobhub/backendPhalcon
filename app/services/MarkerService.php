@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Libs\GeoCoding;
+use App\Models\Cities;
 use App\Models\FavoriteUsers;
 use App\Models\FavouriteModel;
+use App\Models\MarkersWithCity;
 use App\Models\Users;
 use App\Models\Group;
 use App\Models\Phones;
@@ -26,6 +29,25 @@ class MarkerService extends AbstractService {
         $marker = new Markers();
         $marker->setLongitude($longitude);
         $marker->setLatitude($latitude);
+
+        if ($marker->create() == false) {
+            SupportClass::getErrorsWithException($marker,self::ERROR_UNABLE_CREATE_MARKER,'Unable create marker');
+        }
+
+        return $marker;
+    }
+
+    public function createMarkerWithCity($longitude, $latitude)
+    {
+        $marker = new MarkersWithCity();
+        $marker->setLongitude($longitude);
+        $marker->setLatitude($latitude);
+
+        $city = GeoCoding::Get_City_From_Google_Maps($latitude,$longitude);
+
+        $city_object = Cities::findCityByName($city);
+        if($city_object)
+            $marker->setCityId($city_object->getCityId());
 
         if ($marker->create() == false) {
             SupportClass::getErrorsWithException($marker,self::ERROR_UNABLE_CREATE_MARKER,'Unable create marker');

@@ -31,20 +31,6 @@ class TradePoints extends AccountWithNotDeletedWithCascade
     /**
      *
      * @var string
-     * @Column(type="string", length=53, nullable=false)
-     */
-    protected $longitude;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=53, nullable=false)
-     */
-    protected $latitude;
-
-    /**
-     *
-     * @var string
      * @Column(type="string", length=45, nullable=true)
      */
     protected $fax;
@@ -93,23 +79,34 @@ class TradePoints extends AccountWithNotDeletedWithCascade
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=false)
-     */
-    protected $city_id;
-
-    /**
-     *
      * @var string
      * @Column(type="string", nullable=true)
      */
     protected $position_variable;
 
     const publicColumns = ['point_id', 'name', 'longitude', 'latitude', 'time',
-        'email', 'user_manager', 'website', 'address', 'position_variable', 'marker_id', 'city_id'];
+        'email', 'user_manager', 'website', 'address', 'position_variable', 'marker_id'];
 
     const publicColumnsInStr = ['point_id, name, longitude, latitude, time,
-        email, user_manager, website, address, position_variable, marker_id, city_id'];
+        email, user_manager, website, address, position_variable, marker_id'];
+
+
+    //-------------------------
+    //Deprecated
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=false)
+     */
+    protected $longitude;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=53, nullable=false)
+     */
+    protected $latitude;
+    //----------------------------
 
     /**
      * @return int
@@ -477,10 +474,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
                     [
                         "message" => "Маркер не был создан",
                         "callback" => function ($point) {
-                            $marker = Markers::findFirstByMarkerId($point->getMarkerId());
-                            if ($marker)
-                                return true;
-                            return false;
+                            return $point->markers?true:false;
                         }
                     ]
                 )
@@ -516,7 +510,7 @@ class TradePoints extends AccountWithNotDeletedWithCascade
         $this->setSource("tradePoints");
         $this->hasMany('point_id', 'App\Models\PhonesPoints', 'point_id', ['alias' => 'PhonesPoints']);
         $this->belongsTo('user_manager', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
-        $this->belongsTo('marker_id', 'App\Models\Markers', 'marker_id', ['alias' => 'Markers']);
+        $this->belongsTo('marker_id', 'App\Models\MarkersWithCities', 'marker_id', ['alias' => 'Markers']);
         $this->belongsTo('city_id', 'App\Models\Cities', 'city_id', ['alias' => 'Cities']);
     }
 
@@ -580,9 +574,10 @@ class TradePoints extends AccountWithNotDeletedWithCascade
             $point['phones'] = PhonesPoints::findPhonesForPoint($point['point_id']);
 
             if(!is_null($point['marker_id'])){
-                $marker = Markers::findFirstByMarkerId($point['marker_id']);
+                $marker = MarkersWithCity::findFirstByMarkerId($point['marker_id']);
                 $point['latitude'] = $marker->getLatitude();
                 $point['longitude'] = $marker->getLongitude();
+                $point['city_id'] = $marker->getCityId();
             }
 
             if($point['email'] == null || $point['website'] == null){

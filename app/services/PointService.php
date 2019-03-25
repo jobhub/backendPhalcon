@@ -149,14 +149,8 @@ class PointService extends AbstractService
         $data['longitude'] = filter_var($data['longitude'],FILTER_VALIDATE_FLOAT);
         $data['latitude'] = filter_var($data['latitude'],FILTER_VALIDATE_FLOAT);
         if(isset($data['longitude']) && isset($data['latitude'])){
-            $marker = $this->markerService->createMarker($data['longitude'],$data['latitude']);
+            $marker = $this->markerService->createMarkerWithCity($data['longitude'],$data['latitude']);
             $point->setMarkerId($marker->getMarkerId());
-
-            $city = GeoCoding::Get_City_From_Google_Maps($data['latitude'],$data['longitude']);
-
-            $city_object = Cities::findCityByName($city);
-            if($city_object)
-                $point->setCityId($city_object->getCityId());
         }
     }
 

@@ -22,6 +22,12 @@ class SupportClass
         return ((string)(int)$var == $var);
     }
 
+    public static function checkDouble($var)
+    {
+        $result = filter_var($var,FILTER_VALIDATE_FLOAT);
+        return $result==$var;
+    }
+
     public static function convertBooleanToString($var)
     {
         return $var ? 'true' : 'false';

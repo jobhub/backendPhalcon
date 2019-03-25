@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Libs\GeoPosition;
 use App\Libs\TileSystem;
+
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
 
 class Markers extends \Phalcon\Mvc\Model
 {
@@ -129,6 +133,37 @@ class Markers extends \Phalcon\Mvc\Model
         return $this->quadkey;
     }
 
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            'latitude',
+            new Callback([
+                "message" => "Не указана широта или указана неверно",
+                'callback' => function ($task) {
+                    if (GeoPosition::checkLatitude($task->getLatitude()))
+                        return false;
+                    return true;
+                }
+            ])
+        );
+
+        $validator->add(
+            'longitude',
+            new Callback([
+                "message" => "Не указана долгота или указана неверно",
+                'callback' => function ($task) {
+                    if (GeoPosition::checkLongitude($task->getLongitude()))
+                        return false;
+                    return true;
+                }
+            ])
+        );
+
+        return $this->validate($validator);
+    }
+
     /**
      * Initialize method for model.
      */
@@ -149,12 +184,14 @@ class Markers extends \Phalcon\Mvc\Model
         return 'markers';
     }
 
-    public function getSequenceName() {
+    public function getSequenceName()
+    {
         return "markers_marker_id_seq";
     }
 
-    public function beforeSave(){
-        $this->setQuadkey(TileSystem::latLongToQuadKeyDec($this->getLatitude(),$this->getLongitude(),TileSystem::MaxZoom));
+    public function beforeSave()
+    {
+        $this->setQuadkey(TileSystem::latLongToQuadKeyDec($this->getLatitude(), $this->getLongitude(), TileSystem::MaxZoom));
     }
 
     /**

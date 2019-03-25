@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Phalcon\Validation;
-use Phalcon\Validation\Validator\Callback;
-use Phalcon\Validation\Validator\PresenceOf;
-
-use App\Libs\SupportClass;
-
 class Tasks extends AccountWithNotDeletedWithCascade
 {
+
     /**
+     *
      * @var integer
      * @Primary
      * @Identity
@@ -49,7 +45,7 @@ class Tasks extends AccountWithNotDeletedWithCascade
     /**
      *
      * @var integer
-     * @Column(type="integer", length=32, nullable=true)
+     * @Column(type="integer", length=32, nullable=false)
      */
     protected $price;
 
@@ -63,50 +59,36 @@ class Tasks extends AccountWithNotDeletedWithCascade
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
-    protected $polygon;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=32, nullable=true)
-     */
-    protected $region_id;
+    protected $date_creation;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=53, nullable=true)
-     */
-    protected $longitude;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=53, nullable=true)
-     */
-    protected $latitude;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", nullable=false)
      */
     protected $date_start;
 
     /**
      *
      * @var string
-     * @Column(type="string", nullable=true)
+     * @Column(type="string", length=300, nullable=true)
      */
-    protected $date_end;
-
-    const publicColumns = ['task_id', 'category_id','name', 'description', 'deadline', 'price',
-        'status', 'polygon', 'region_id', 'longitude', 'latitude', 'date_start', 'date_end'];
+    protected $address;
 
     /**
-     * Method to set the value of field taskId
+     *
+     * @var integer
+     * @Column(type="integer", length=32, nullable=true)
+     */
+    protected $marker_id;
+
+    const publicColumns = ['task_id', 'category_id', 'deadline', 'description', 'price', 'name', 'status',
+        'date_start','address','marker_id'];
+
+    /**
+     * Method to set the value of field task_id
      *
      * @param integer $task_id
      * @return $this
@@ -119,7 +101,7 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Method to set the value of field categoryId
+     * Method to set the value of field category_id
      *
      * @param integer $category_id
      * @return $this
@@ -171,32 +153,6 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Method to set the value of field dateStart
-     *
-     * @param string $date_start
-     * @return $this
-     */
-    public function setDateStart($date_start)
-    {
-        $this->date_start = $date_start;
-
-        return $this;
-    }
-
-    /**
-     * Method to set the value of field dateEnd
-     *
-     * @param string $date_end
-     * @return $this
-     */
-    public function setDateEnd($date_end)
-    {
-        $this->date_end = $date_end;
-
-        return $this;
-    }
-
-    /**
      * Method to set the value of field price
      *
      * @param integer $price
@@ -223,59 +179,59 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Method to set the value of field polygon
+     * Method to set the value of field date_creation
      *
-     * @param string $polygon
+     * @param string $date_creation
      * @return $this
      */
-    public function setPolygon($polygon)
+    public function setDateCreation($date_creation)
     {
-        $this->polygon = $polygon;
+        $this->date_creation = $date_creation;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field regionId
+     * Method to set the value of field date_start
      *
-     * @param integer $region_id
+     * @param string $date_start
      * @return $this
      */
-    public function setRegionId($region_id)
+    public function setDateStart($date_start)
     {
-        $this->region_id = $region_id;
+        $this->date_start = $date_start;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field longitude
+     * Method to set the value of field address
      *
-     * @param string $longitude
+     * @param string $address
      * @return $this
      */
-    public function setLongitude($longitude)
+    public function setAddress($address)
     {
-        $this->longitude = $longitude;
+        $this->address = $address;
 
         return $this;
     }
 
     /**
-     * Method to set the value of field latitude
+     * Method to set the value of field marker_id
      *
-     * @param string $latitude
+     * @param integer $marker_id
      * @return $this
      */
-    public function setLatitude($latitude)
+    public function setMarkerId($marker_id)
     {
-        $this->latitude = $latitude;
+        $this->marker_id = $marker_id;
 
         return $this;
     }
 
     /**
-     * Returns the value of field taskId
+     * Returns the value of field task_id
      *
      * @return integer
      */
@@ -285,7 +241,7 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Returns the value of field categoryId
+     * Returns the value of field category_id
      *
      * @return integer
      */
@@ -325,26 +281,6 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Returns the value of field dateStart
-     *
-     * @return string
-     */
-    public function getDateStart()
-    {
-        return $this->date_start;
-    }
-
-    /**
-     * Returns the value of field dateEnd
-     *
-     * @return string
-     */
-    public function getDateEnd()
-    {
-        return $this->date_end;
-    }
-
-    /**
      * Returns the value of field price
      *
      * @return integer
@@ -365,43 +301,43 @@ class Tasks extends AccountWithNotDeletedWithCascade
     }
 
     /**
-     * Returns the value of field polygon
+     * Returns the value of field date_creation
      *
      * @return string
      */
-    public function getPolygon()
+    public function getDateCreation()
     {
-        return $this->polygon;
+        return $this->date_creation;
     }
 
     /**
-     * Returns the value of field regionId
+     * Returns the value of field date_start
+     *
+     * @return string
+     */
+    public function getDateStart()
+    {
+        return $this->date_start;
+    }
+
+    /**
+     * Returns the value of field address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Returns the value of field marker_id
      *
      * @return integer
      */
-    public function getRegionId()
+    public function getMarkerId()
     {
-        return $this->region_id;
-    }
-
-    /**
-     * Returns the value of field longitude
-     *
-     * @return string
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
-    }
-
-    /**
-     * Returns the value of field latitude
-     *
-     * @return string
-     */
-    public function getLatitude()
-    {
-        return $this->latitude;
+        return $this->marker_id;
     }
 
     /**
@@ -434,41 +370,13 @@ class Tasks extends AccountWithNotDeletedWithCascade
             new Callback([
                 "message" => "Поле статус имеет неверное значение.",
                 'callback' => function ($task) {
-                $status = Statuses::findFirstByStatusId($task->getStatus());
+                    $status = Statuses::findFirstByStatusId($task->getStatus());
                     if (!$status)
                         return false;
                     return true;
                 }
             ])
         );
-
-        if($this->getLatitude() != null) {
-            $validator->add(
-                'latitude',
-                new Callback([
-                    "message" => "Не указана долгота",
-                    'callback' => function ($task) {
-                        if($task->getLongitude() == null)
-                            return false;
-                        return true;
-                    }
-                ])
-            );
-        }
-
-        if($this->getLongitude() != null) {
-            $validator->add(
-                'longitude',
-                new Callback([
-                    "message" => "Не указана широта",
-                    'callback' => function ($task) {
-                        if($task->getLatitude() == null)
-                            return false;
-                        return true;
-                    }
-                ])
-            );
-        }
 
         $validator->add(
             'name',
@@ -482,30 +390,12 @@ class Tasks extends AccountWithNotDeletedWithCascade
             new Callback([
                 "message" => "Должна быть указана цена",
                 'callback' => function ($task) {
-                    if($task->getPrice() == null ||
-                        (!is_double($task->getPrice()) && !is_integer($task->getPrice())))
+                    if ($task->getPrice() == null || !SupportClass::checkDouble($task->getPrice()))
                         return false;
                     return true;
                 }
             ])
         );
-
-        if ($this->getRegionId() != null) {
-            $validator->add(
-                'region_id',
-                new Callback(
-                    [
-                        "message" => "Указанный регион не существует",
-                        "callback" => function ($task) {
-
-                            if ($task->regions != null)
-                                return true;
-                            return false;
-                        }
-                    ]
-                )
-            );
-        }
 
         $validator->add(
             'date_start',
@@ -515,20 +405,12 @@ class Tasks extends AccountWithNotDeletedWithCascade
         );
 
         $validator->add(
-            'date_end',
-            new PresenceOf([
-                "message" => "Дата завершения приема заявок должна быть указана"
-            ])
-        );
-
-        $validator->add(
-            'date_end',
+            'date_start',
             new Callback(
                 [
-                    "message" => "Дата завершения приема заявок должна быть не раньше даты начала и не позже даты завершения задания",
+                    "message" => "Дата начала задания должна быть раньше даты завершения задания",
                     "callback" => function ($task) {
-                        if (strtotime($task->getDateStart()) < strtotime($task->getDateEnd())
-                                && strtotime($task->getDateEnd()) < strtotime($task->getDeadline()))
+                        if (strtotime($task->getDateStart()) < strtotime($task->getDeadline()))
                             return true;
                         return false;
                     }
@@ -539,6 +421,41 @@ class Tasks extends AccountWithNotDeletedWithCascade
         return $this->validate($validator) && parent::validation();
     }
 
+    public static function findTasksByCompany($companyId)
+    {
+        $result = self::findByCompany($companyId, get_class(), self::publicColumns);
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findTasksByUser($userId)
+    {
+        $result = self::findByUser($userId, get_class(), self::publicColumns);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findAcceptingTasksByUser($userId)
+    {
+        $result = self::findByUser($userId, get_class(), self::publicColumns,
+            ['status = :status:'], ['status' => STATUS_ACCEPTING]);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+    public static function findAcceptingTasksByCompany($companyId)
+    {
+        $result = self::findByCompany($companyId, get_class(), self::publicColumns,
+            ['status = :status:'], ['status' => STATUS_ACCEPTING]);
+
+        return self::handleTaskFromArray($result->toArray());
+    }
+
+
+    public static function handleTaskFromArray(array $tasks)
+    {
+        return $tasks;
+    }
+
     /**
      * Initialize method for model.
      */
@@ -547,10 +464,11 @@ class Tasks extends AccountWithNotDeletedWithCascade
         parent::initialize();
         $this->setSchema("public");
         $this->setSource("tasks");
+        $this->hasMany('task_id', 'App\Models\Offers', 'task_id', ['alias' => 'Offers']);
+        $this->belongsTo('account_id', 'App\Models\Accounts', 'id', ['alias' => 'Accounts']);
         $this->belongsTo('category_id', 'App\Models\Categories', 'category_id', ['alias' => 'Categories']);
-        $this->belongsTo('region_id', 'App\Models\Regions', 'region_id', ['alias' => 'Regions']);
+        $this->belongsTo('marker_id', 'App\Models\MarkersWithCity', 'marker_id', ['alias' => 'MarkersWithCity']);
         $this->belongsTo('status', 'App\Models\Statuses', 'status_id', ['alias' => 'Statuses']);
-        $this->belongsTo('user_id', 'App\Models\Users', 'user_id', ['alias' => 'Users']);
     }
 
     /**
@@ -563,45 +481,29 @@ class Tasks extends AccountWithNotDeletedWithCascade
         return 'tasks';
     }
 
-    public function getSequenceName()
+    /**
+     * Allows to query a set of records that match the specified conditions
+     *
+     * @param mixed $parameters
+     * @return Tasks[]|Tasks|\Phalcon\Mvc\Model\ResultSetInterface
+     */
+    public static function find($parameters = null)
     {
-        return "tasks_taskid_seq";
+        return parent::find($parameters);
     }
 
-    public static function findTasksByCompany($companyId)
+    /**
+     * Allows to query the first record that match the specified conditions
+     *
+     * @param mixed $parameters
+     * @return Tasks|\Phalcon\Mvc\Model\ResultInterface
+     */
+    public static function findFirst($parameters = null)
     {
-        $result = self::findByCompany($companyId,"App\Models\Tasks",self::publicColumns);
-        return self::handleTaskFromArray($result->toArray());
-    }
-
-    public static function findTasksByUser($userId)
-    {
-        $result = self::findByUser($userId,"App\Models\Tasks",self::publicColumns);
-
-        return self::handleTaskFromArray($result->toArray());
-    }
-
-    public static function findAcceptingTasksByUser($userId)
-    {
-        $result = self::findByUser($userId,"App\Models\Tasks",self::publicColumns,
-            ['status = :status:'],['status'=>STATUS_ACCEPTING]);
-
-        return self::handleTaskFromArray($result->toArray());
-    }
-
-    public static function findAcceptingTasksByCompany($companyId)
-    {
-        $result = self::findByCompany($companyId,"App\Models\Tasks",self::publicColumns,
-            ['status = :status:'],['status'=>STATUS_ACCEPTING]);
-
-        return self::handleTaskFromArray($result->toArray());
+        return parent::findFirst($parameters);
     }
 
 
-
-    public static function handleTaskFromArray(array $tasks){
-        return $tasks;
-    }
 
     /*public static function checkUserHavePermission($userId, $taskId, $right = null)
     {
@@ -635,12 +537,4 @@ class Tasks extends AccountWithNotDeletedWithCascade
         }
         return false;
     }*/
-
-    public function beforeDelete(){
-        //Проверка, можно ли удалить задание
-        $offers = Offers::findByTaskId($this->getTaskId());
-        if(count($offers)!= 0)
-            return false;
-        return true;
-    }
 }
