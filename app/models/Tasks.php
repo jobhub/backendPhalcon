@@ -2,6 +2,16 @@
 
 namespace App\Models;
 
+use Phalcon\DI\FactoryDefault as DI;
+
+use App\Controllers\AbstractController;
+use App\Services\ImageService;
+use App\Libs\SupportClass;
+
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Callback;
+use Phalcon\Validation\Validator\PresenceOf;
+
 class Tasks extends AccountWithNotDeletedWithCascade
 {
 
@@ -85,8 +95,9 @@ class Tasks extends AccountWithNotDeletedWithCascade
     protected $marker_id;
 
     const publicColumns = ['task_id', 'category_id', 'deadline', 'description', 'price', 'name', 'status',
-        'date_start','address','marker_id'];
+        'date_start','address','marker_id', 'account_id'];
 
+    const DEFAULT_PAGE_SIZE = 10;
     /**
      * Method to set the value of field task_id
      *
@@ -424,14 +435,31 @@ class Tasks extends AccountWithNotDeletedWithCascade
     public static function findTasksByCompany($companyId)
     {
         $result = self::findByCompany($companyId, get_class(), self::publicColumns);
-        return self::handleTaskFromArray($result->toArray());
+        return $result->toArray();
+    }
+
+    public static function findTasksByCompanyWithPagination($companyId,$page = 1, $page_size = Tasks::DEFAULT_PAGE_SIZE)
+    {
+        $result = self::findByCompanyWithPagination($companyId, get_class(), self::publicColumns,
+            null,null,'m.status!=ANY '.STATUSES_FINISHED.', m.date_creation desc',$page,$page_size);
+        $result['data'] = self::handleYourTasksFromArray($result['data']);
+        return $result;
     }
 
     public static function findTasksByUser($userId)
     {
         $result = self::findByUser($userId, get_class(), self::publicColumns);
 
-        return self::handleTaskFromArray($result->toArray());
+        return $result->toArray();
+    }
+
+    public static function findTasksByUserWithPagination($userId, $page = 1, $page_size = Tasks::DEFAULT_PAGE_SIZE)
+    {
+        $result = self::findByUserWithPagination($userId, get_class(), self::publicColumns,
+            null,null,'m.status!=ANY'.STATUSES_FINISHED.', m.date_creation desc',$page,$page_size);
+
+        $result['data'] = self::handleYourTasksFromArray($result['data']);
+        return $result;
     }
 
     public static function findAcceptingTasksByUser($userId)
@@ -439,7 +467,7 @@ class Tasks extends AccountWithNotDeletedWithCascade
         $result = self::findByUser($userId, get_class(), self::publicColumns,
             ['status = :status:'], ['status' => STATUS_ACCEPTING]);
 
-        return self::handleTaskFromArray($result->toArray());
+        return self::handleTasksFromArray($result->toArray());
     }
 
     public static function findAcceptingTasksByCompany($companyId)
@@ -447,13 +475,113 @@ class Tasks extends AccountWithNotDeletedWithCascade
         $result = self::findByCompany($companyId, get_class(), self::publicColumns,
             ['status = :status:'], ['status' => STATUS_ACCEPTING]);
 
-        return self::handleTaskFromArray($result->toArray());
+        return self::handleTasksFromArray($result->toArray());
     }
 
-
-    public static function handleTaskFromArray(array $tasks)
+    public static function handleTasksFromArray(array $tasks)
     {
-        return $tasks;
+        $handledTasks = [];
+        if ($tasks != null)
+            foreach ($tasks as $task) {
+                $handledTasks[] = self::handleTaskFromArray($task);
+            }
+        return $handledTasks;
+    }
+
+    public static function handleYourTasksFromArray(array $tasks)
+    {
+        $handledTasks = [];
+        if ($tasks != null)
+            foreach ($tasks as $task) {
+                $handledTasks[] = self::handleYourTaskFromArray($task);
+            }
+        return $handledTasks;
+    }
+
+    public static function handleTaskFromArray(array $task, $accountId = null)
+    {
+        if ($accountId == null) {
+            $accountId = AbstractController::getAccountId();
+        }
+
+        $taskAll = [];
+
+        $taskAll['name'] = $task['name'];
+        $taskAll['description'] = $task['description'];
+        $taskAll['task_id'] = $task['task_id'];
+        $taskAll['address'] = $task['address'];
+
+        if(!is_null($task['marker_id'])) {
+            $marker = MarkersWithCity::findById($task['marker_id']);
+
+            $taskAll['longitude'] = $marker->getLongitude();
+            $taskAll['latitude'] = $marker->getLatitude();
+            $taskAll['city_id'] = $marker->getCityId();
+        }
+
+        $taskAll['category_id'] = $task['category_id'];
+
+        $account = Accounts::findAccountById($task['account_id']);
+
+        if($account) {
+            if($account->getCompanyId()!=null)
+                $taskAll['publisher_company'] = $account->getUserInformation();
+            else
+                $taskAll['publisher_user'] = $account->getUserInformation();
+        }
+
+
+        $taskAll['date_start'] = $task['date_start'];
+        $taskAll['deadline'] = $task['deadline'];
+
+        $di = DI::getDefault();
+
+        /*$taskAll['images'] = ImagesModel::findAllImages(
+            $di->getImageService()->getModelByType(ImageService::TYPE_TASK),
+            $taskAll['task_id']);*/
+
+        $taskAll['images'] = $di->getImageService()->getAllImages($taskAll['task_id'],ImageService::TYPE_TASK);
+
+        return $taskAll;
+    }
+
+    public static function handleYourTaskFromArray(array $task, $accountId = null)
+    {
+        if ($accountId == null) {
+            $accountId = AbstractController::getAccountId();
+        }
+
+        $taskAll = [];
+
+        $taskAll['name'] = $task['name'];
+        $taskAll['task_id'] = $task['task_id'];
+
+        $taskAll['category_id'] = $task['category_id'];
+
+        $account = Accounts::findAccountById($task['account_id']);
+
+        if($account) {
+            if($account->getCompanyId()!=null)
+                $taskAll['publisher_company'] = $account->getUserInformation();
+            else
+                $taskAll['publisher_user'] = $account->getUserInformation();
+        }
+
+
+        $taskAll['date_start'] = $task['date_start'];
+        $taskAll['deadline'] = $task['deadline'];
+        $taskAll['status'] = $task['status'];
+
+        $taskAll['offers'] = Offers::findOffersForTask($taskAll['task_id']);
+
+        $di = DI::getDefault();
+
+        $images = $di->getImageService()->getAllImages($taskAll['task_id'],ImageService::TYPE_TASK);
+
+        if(count($images)>0)
+            $taskAll['image'] = $images[0]['image_path'];
+
+        return $taskAll;
     }
 
     /**
@@ -481,6 +609,11 @@ class Tasks extends AccountWithNotDeletedWithCascade
         return 'tasks';
     }
 
+    public function getSequenceName()
+    {
+        return "tasks_taskid_seq";
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *
@@ -503,6 +636,16 @@ class Tasks extends AccountWithNotDeletedWithCascade
         return parent::findFirst($parameters);
     }
 
+    public static function findById(int $id, array $columns = null)
+    {
+        if ($columns == null)
+            return self::findFirst(['task_id = :id:',
+                'bind' => ['id' => $id]]);
+        else {
+            return self::findFirst(['columns' => $columns, 'task_id = :id:',
+                'bind' => ['id' => $id]]);
+        }
+    }
 
 
     /*public static function checkUserHavePermission($userId, $taskId, $right = null)

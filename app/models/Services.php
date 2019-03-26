@@ -1444,7 +1444,13 @@ class Services extends AccountWithNotDeletedWithCascade
         if($currentAccount!=null)
             $relatedAccountsWithCurrent =$currentAccount->getRelatedAccounts();
 
-        $serviceAll = $service;
+        $serviceAll['service_id'] = $service['service_id'];
+        $serviceAll['name'] = $service['name'];
+        $serviceAll['rating'] = $service['rating'];
+        $serviceAll['description'] = $service['description'];
+        $serviceAll['price_min'] = $service['price_min'];
+        $serviceAll['price_max'] = $service['price_max'];
+        $serviceAll['date_publication'] = $service['date_publication'];
 
         $account = Accounts::findFirstById($service['account_id']);
 
@@ -1493,21 +1499,21 @@ class Services extends AccountWithNotDeletedWithCascade
             $points[0] : [];
 
         //tags
-        $tags = Services::getTagsForService($service['service_id']);
+        /*$tags = Services::getTagsForService($service['service_id']);
         $serviceAll['tags'] = count($tags) > 0 ?
-            $tags : [];
+            $tags : [];*/
 
         //likes and liked
-        $serviceAll = LikeModel::handleObjectWithLikes($serviceAll, $service, $accountId);
-        unset($serviceAll['likes']);
+        /*$serviceAll = LikeModel::handleObjectWithLikes($serviceAll, $service, $accountId);
+        unset($serviceAll['likes']);*/
 
         //comments
         /*$last_comment = CommentsNews::findLastParentComment('App\Models\CommentsServices', $service['service_id']);
         $serviceAll['last_comment'] = $last_comment;*/
 
-        $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
+        /*$serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
         $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',
-            $serviceAll, $service['service_id'], $relatedAccountsWithCurrent);
+            $serviceAll, $service['service_id'], $relatedAccountsWithCurrent);*/
 
         return $serviceAll;
     }
@@ -1573,7 +1579,7 @@ class Services extends AccountWithNotDeletedWithCascade
 
             $serviceAll = LikeModel::handleObjectWithLikes($serviceAll, $service, $accountId);
             $serviceAll['stats']['comments'] = CommentsModel::getCountOfComments('comments_services', $service['service_id']);
-            $serviceAll = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsServices',$serviceAll, $service['service_id'], $relatedAccounts);
+            $serviceAll = ForwardsInNewsModel::handleObjectWithForwards(News::NEWS_TYPE_FORWARD_SERVICE,$serviceAll, $service['service_id'], $relatedAccounts);
 
             unset($serviceAll['likes']);
 

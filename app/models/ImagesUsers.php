@@ -172,9 +172,20 @@ class ImagesUsers extends ImagesModel
         }
 
         $handledImage['stats']['comments'] = CommentsModel::getCountOfComments('comments_imagesusers', $image['image_id']);
-        $handledImage = ForwardsInNewsModel::handleObjectWithForwards('App\Models\ForwardsImagesUsers',$handledImage, $image['image_id'], $relatedAccounts);
+        $handledImage = ForwardsInNewsModel::handleObjectWithForwards(News::NEWS_TYPE_FORWARD_IMAGE_USER,$handledImage, $image['image_id'], $relatedAccounts);
 
         $handledImage = LikeModel::handleObjectWithLikes($handledImage,$image,$accountId);
+
+        $handledImage['image_text'] = $image['image_text'];
+
+        return $handledImage;
+    }
+
+    public static function handleImageForNews($image)
+    {
+        $handledImage = [
+            'image_id' => $image['image_id'],
+            'image_path' => $image['image_path']];
 
         $handledImage['image_text'] = $image['image_text'];
 
@@ -197,4 +208,6 @@ class ImagesUsers extends ImagesModel
         }
         return $handledImages;
     }
+
+
 }

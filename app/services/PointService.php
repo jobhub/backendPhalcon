@@ -146,9 +146,7 @@ class PointService extends AbstractService
         if (!empty(trim($data['latitude'])))
             $point->setLatitude($data['latitude']);*/
 
-        $data['longitude'] = filter_var($data['longitude'],FILTER_VALIDATE_FLOAT);
-        $data['latitude'] = filter_var($data['latitude'],FILTER_VALIDATE_FLOAT);
-        if(isset($data['longitude']) && isset($data['latitude'])){
+        if(SupportClass::checkDouble($data['longitude']) && SupportClass::checkDouble($data['latitude'])){
             $marker = $this->markerService->createMarkerWithCity($data['longitude'],$data['latitude']);
             $point->setMarkerId($marker->getMarkerId());
         }

@@ -22,8 +22,8 @@ class ImagesNews extends ImagesModel
                 [
                     "message" => "Такая новость не существует",
                     "callback" => function ($image) {
-                        $new = News::findFirstByNewsId($image->getObjectId());
-                        if ($new)
+                        $news_info = NewsInfo::findById($image->getObjectId());
+                        if ($news_info)
                             return true;
                         return false;
                     }
@@ -42,7 +42,7 @@ class ImagesNews extends ImagesModel
     {
         $this->setSchema("public");
         $this->setSource("images_news");
-        $this->belongsTo('object_id', 'App\Models\News', 'news_id', ['alias' => 'News']);
+        $this->belongsTo('object_id', 'App\Models\NewsInfo', 'news_id', ['alias' => 'News']);
     }
 
     /**

@@ -1959,17 +1959,82 @@ $routes = [
             /**
              * Добавляет заказ
              *
+             * @access private
              * @method POST
+             * @input Form data
              *
-             * @params (обязательные) category_id, name, price, date_end.
-             * @params (необязательные) account_id, description, deadline, polygon, region_id, longitude, latitude.
+             * (обязательные параметры)
+             * @params category_id
+             * @params name
+             * @params price
+             * @params date_start
+             *
+             * (необязательные)
+             * @params account_id
+             * @params description
+             * @params deadline
+             * @params address
+             * @params longitude
+             * @params latitude.
              *
              * @return string - json array  формате Status
              */
             [
                 'type' => 'post',
                 'path' => '/add',
-                'action' => 'addTaskAction'
+                'action' => 'addTaskAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Удаление заказа
+             *
+             * @method DELETE
+             * @access private
+             *
+             * @param $task_id
+             *
+             * @return array
+             */
+            [
+                'type' => 'delete',
+                'path' => '/delete/{task_id}',
+                'action' => 'deleteTaskAction',
+                'access'=>'private'
+            ],
+
+            /**
+             * Возвращает публичную информацию о товаре.
+             * @access public.
+             *
+             * @method GET
+             *
+             * @param $task_id
+             * @params account_id
+             *
+             * @return array
+             */
+            [
+                'type' => 'get',
+                'path' => '/get/info/{task_id}',
+                'action' => 'getTaskInfoAction',
+                'access'=>'public'
+            ],
+
+            /**
+             * Редактирование задания
+             *
+             * @method PUT
+             * @access private
+             * @params (обязательные) task_id.
+             * @params (необязательные)  description, deadline, longitude, latitude,
+             *                           category_id, name, price, date_start.
+             * @return string - json array в формате Status
+             */
+            [
+                'type' => 'put',
+                'path' => '/edit',
+                'action' => 'editTaskAction'
             ],
 
             /**
@@ -2012,35 +2077,6 @@ $routes = [
                 'type' => 'get',
                 'path' => '/get/for-subject/{id}/{is_company}',
                 'action' => 'getTasksForSubjectAction'
-            ],
-
-            /**
-             * Удаление заказа
-             *
-             * @method DELETE
-             * @param $task_id
-             * @return string - json array в формате Status
-             */
-            [
-                'type' => 'delete',
-                'path' => '/delete/{task_id}',
-                'action' => 'deleteTaskAction'
-            ],
-
-            /**
-             * Редактирование задания
-             *
-             * @method PUT
-             * @params (обязательные) task_id.
-             * @params (необязательные)  description, deadline, polygon,
-             *                           region_id, longitude, latitude,
-             *                           category_id, name, price, date_end.
-             * @return string - json array в формате Status
-             */
-            [
-                'type' => 'put',
-                'path' => '/edit',
-                'action' => 'editTaskAction'
             ],
 
             /**

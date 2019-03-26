@@ -7,6 +7,7 @@ use App\Models\ImagesTemp;
 use App\Services\CommonService;
 use Phalcon\Http\Client\Exception;
 use Phalcon\Mvc\Controller;
+use Phalcon\Mvc\Model\Behavior\NestedSet;
 use Phalcon\Mvc\Model\Criteria;
 use Phalcon\Http\Response;
 use Phalcon\Paginator\Adapter\Model as Paginator;
@@ -166,11 +167,15 @@ class NewsAPIController extends AbstractController
         $data['title'] = $inputData->title;
         $data['account_id'] = $inputData->account_id;
         $data['news_type'] = $inputData->news_type;
+        $data['related_id'] = $inputData->related_id;
 
         $data['temp_images'] = $inputData->temp_images;
 
         if (!is_null($inputData->publish_date))
             $data['publish_date'] = date('Y-m-d H:i:sO', strtotime($inputData->publish_date));
+
+        if($data['news_type']==null)
+            $data['news_type'] =0;
 
         $this->db->begin();
         try {
@@ -178,7 +183,10 @@ class NewsAPIController extends AbstractController
 
             //проверки
             if (empty(trim($data['account_id']))) {
-                $data['account_id'] = $this->accountService->getForUserDefaultAccount($userId)->getId();
+                $account = $this->accountService->getForUserDefaultAccount($userId);
+                $data['account_id'] = $account->getId();
+            } else{
+                $account = $this->accountService->getAccountById($data['account_id']);
             }
 
             if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'addNews')) {
@@ -202,40 +210,44 @@ class NewsAPIController extends AbstractController
             $news = $this->newsService->createNews($data);
             $news = $this->newsService->getNewsById($news->getNewsId());
 
-            if ($this->request->hasFiles()) {
-                $files = $this->request->getUploadedFiles();
-                $ids = $this->imageService->createImagesToNews($files, $news);
-                $this->imageService->saveImagesToNews($files, $news, $ids);
-            }
-
-            $new_news_text = $news->getNewsText();
-            $tempImages = [];
-            $filenames = [];
-            if ($data['temp_images'] != null) {
-                foreach ($data['temp_images'] as $temp_image_id) {
-                    $tempImage = ImagesTemp::findFirstByImageId($temp_image_id);
-
-                    if ($tempImage->getObjectId() != $news->getAccountId())
-                        throw new Http403Exception('Permission error');
-
-                    $oldPath = $tempImage->getImagePath();
-
-                    $newPath = $this->imageService->transferTempImageToNewsObject($tempImage, $news->getNewsId());
-
-                    $filenames[] = $newPath;
-                    $new_news_text = str_replace($oldPath, $newPath, $new_news_text);
-                    $tempImages[] = $tempImage;
+            if($data['news_type'] < 10) {
+                if ($this->request->hasFiles()) {
+                    $files = $this->request->getUploadedFiles();
+                    $ids = $this->imageService->createImagesToNews($files, $news);
+                    $this->imageService->saveImagesToNews($files, $news, $ids);
                 }
 
-                $new_data['news_text'] = $new_news_text;
-                $this->newsService->changeNews($news, $new_data);
+                $new_news_text = $news->getNewsText();
+                $tempImages = [];
+                $filenames = [];
+                if ($data['temp_images'] != null) {
+                    foreach ($data['temp_images'] as $temp_image_id) {
+                        $tempImage = ImagesTemp::findFirstByImageId($temp_image_id);
 
-                $i = 0;
-                foreach ($tempImages as $tempImage) {
-                    $newPath = $this->imageService->transferTempImageToNewsFile($tempImage, $news->getNewsId(), $filenames[$i]);
-                    $i++;
+                        if ($tempImage->getObjectId() != $news->getAccountId())
+                            throw new Http403Exception('Permission error');
+
+                        $oldPath = $tempImage->getImagePath();
+
+                        $newPath = $this->imageService->transferTempImageToNewsObject($tempImage, $news->getNewsId());
+
+                        $filenames[] = $newPath;
+                        $new_news_text = str_replace($oldPath, $newPath, $new_news_text);
+                        $tempImages[] = $tempImage;
+                    }
+
+                    $new_data['news_text'] = $new_news_text;
+                    $this->newsService->changeNews($news, $new_data);
+
+                    $i = 0;
+                    foreach ($tempImages as $tempImage) {
+                        $newPath = $this->imageService->transferTempImageToNewsFile($tempImage, $news->getNewsId(), $filenames[$i]);
+                        $i++;
+                    }
                 }
             }
+
+            $handledNews = News::handleNewsObjectFromArray($news->toArray(),$account->getRelatedAccounts());
 
         } catch (ServiceExtendedException $e) {
             $this->db->rollback();
@@ -265,7 +277,7 @@ class NewsAPIController extends AbstractController
         $this->db->commit();
 
         return self::successResponse('News was successfully created', [
-            'news' => News::handleNewsFromArray([$news->toArray()], $data['account_id'])[0]]);
+            'news' => $handledNews]);
     }
 
     /**

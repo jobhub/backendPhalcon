@@ -25,7 +25,7 @@ class SupportClass
     public static function checkDouble($var)
     {
         $result = filter_var($var,FILTER_VALIDATE_FLOAT);
-        return $result==$var;
+        return is_double($result);
     }
 
     public static function convertBooleanToString($var)
@@ -351,7 +351,7 @@ class SupportClass
             $params_2 = [];
             if ($params != null)
                 foreach ($params as $key => $data) {
-                    $params_2[strtolower($key)] = $data;
+                    $params_2[$key] = $data;
                 }
 
             $params_2['limit'] = $page_size;

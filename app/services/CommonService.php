@@ -27,6 +27,7 @@ class CommonService extends AbstractService
 {
     const ADDED_CODE_NUMBER = 35000;
 
+
     const ERROR_UNABLE_SEND_ACTIVATION_CODE_TO_SOCIAL = 1 + self::ADDED_CODE_NUMBER;
 
     public function getIdFromObject($type, $some_object)
@@ -55,6 +56,9 @@ class CommonService extends AbstractService
                 break;
             case self::TYPE_EVENT:
                 $id = $some_object->getEventId();
+                break;
+            case self::TYPE_TASK:
+                $id = $some_object->getTaskId();
                 break;
             default:
                 throw new ServiceException('Invalid type of object', self::ERROR_INVALID_OBJECT_TYPE);
@@ -88,6 +92,9 @@ class CommonService extends AbstractService
                 break;
             case self::TYPE_COMPANY:
                 $model = 'Companies';
+                break;
+            case self::TYPE_TASK:
+                $model = 'Tasks';
                 break;
             default:
                 throw new ServiceException('Invalid type of object', self::ERROR_INVALID_OBJECT_TYPE);

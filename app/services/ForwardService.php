@@ -8,6 +8,7 @@ use App\Models\ForwardsNews;
 use App\Models\ForwardsProducts;
 use App\Models\ForwardsServices;
 use App\Models\CompanyRole;
+use App\Models\News;
 use Phalcon\DI\FactoryDefault as DI;
 
 use App\Models\Companies;
@@ -84,7 +85,12 @@ class ForwardService extends AbstractService
 
     public function createForward(array $forwardData, $type)
     {
-        $forward = $this->createNewObjectByType($type);
+        //$forward = $this->createNewObjectByType($type);
+        $forward = new News();
+
+        $newsData = [];
+        $newsData['news_text'] = $forwardData['forward_text'];
+        $newsData['publish_date'] = $forwardData['forward_date'];
 
         $this->fillForward($forward, $forwardData, $type);
 
@@ -118,16 +124,16 @@ class ForwardService extends AbstractService
         return $forward;
     }
 
-    private function fillForward(ForwardsInNewsModel $forward, array $data, $type)
+    private function fillForward(News $forward, array $data, $type)
     {
         if (!empty(trim($data['account_id'])))
             $forward->setAccountId($data['account_id']);
-        if (!empty(trim($data['object_id'])))
+        /*if (!empty(trim($data['object_id'])))
             $forward->setObjectId($data['object_id']);
         if (!empty(trim($data['forward_text'])))
             $forward->setForwardText($data['forward_text']);
         if (!empty(trim($data['forward_date'])))
-            $forward->setForwardDate(date('Y-m-d H:i:sO', strtotime($data['forward_date'])));
+            $forward->setForwardDate(date('Y-m-d H:i:sO', strtotime($data['forward_date'])));*/
     }
 
     public function getForwardByIds($accountId, $objectId, $type)

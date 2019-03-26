@@ -442,11 +442,10 @@ class Products extends AccountWithNotDeletedWithCascade
         $productAll['description'] = $product['description'];
         $productAll['product_id'] = $product['product_id'];
         $productAll['price'] = $product['price'];
-        $productAll['account_id'] = $product['account_id'];
 
         if ($product['show_company_place']) {
 
-            $account = Accounts::findAccountById($productAll['account_id']);
+            $account = Accounts::findAccountById($product['account_id']);
 
             if ($account->getCompanyId() != null) {
                 //$company = Companies::findCompanyById($account->getCompanyId());

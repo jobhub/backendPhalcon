@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\DI\FactoryDefault as DI;
 
 use Phalcon\Validation;
@@ -107,6 +108,37 @@ class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
         return $result;
     }
 
+    /*private static function get*/
+
+    private static function findByTemplateWithPagination(array $columns, string $model, string $result_condition, array $result_bind,
+                                                            $order = null, $page = 1, $page_size = SupportClass::COMMON_PAGE_SIZE)
+    {
+        $modelsManager = DI::getDefault()->get('modelsManager');
+        if ($columns != null) {
+            $query = $modelsManager->createBuilder()
+                ->columns($columns)
+                ->from(["m" => $model])
+                ->join('App\Models\Accounts', 'm.account_id = a.id', 'a')
+                ->where($result_condition, $result_bind)
+                ->orderBy($order);
+                /*->getQuery()
+                ->execute();*/
+
+            $result = SupportClass::executeWithPagination($query,$result_bind,$page,$page_size);
+        } else {
+            $query = $modelsManager->createBuilder()
+                ->from(["m" => $model])
+                ->join('App\Models\Accounts', 'm.account_id = a.id', 'a')
+                ->where($result_condition, $result_bind)
+                ->order($order);
+                /*->getQuery()
+                ->execute();*/
+            $result = SupportClass::executeWithPagination($query,$result_bind,$page,$page_size);
+        }
+
+        return $result;
+    }
+
     public static function findByUser($userId, string $model, array $columns = null,
                                       array $conditions = null, array $binds = null)
     {
@@ -147,6 +179,50 @@ class AccountWithNotDeletedWithCascade extends NotDeletedModelWithCascade
         }
 
         return self::findByTemplate($columns,$model,$result_condition,$result_bind);
+    }
+
+    public static function findByCompanyWithPagination($companyId, string $model, array $columns = null,
+                                         array $conditions = null, array $binds = null,$order = null,
+                                                       $page= 1, $page_size = SupportClass::COMMON_PAGE_SIZE)
+    {
+        $result_condition = "a.company_id = :companyId: and m.deleted = false";
+        if ($conditions != null) {
+            foreach ($conditions as $condition) {
+                $result_condition .= ' and ' . $condition;
+            }
+        }
+
+        $result_bind = ['companyId' => $companyId];
+
+        if ($binds != null) {
+            foreach ($binds as $key => $bind) {
+                $result_bind[$key] = $bind;
+            }
+        }
+
+        return self::findByTemplateWithPagination($columns,$model,$result_condition,$result_bind,$order,$page,$page_size);
+    }
+
+    public static function findByUserWithPagination($userId, string $model, array $columns = null,
+                                      array $conditions = null, array $binds = null,$order = null,
+                                      $page= 1, $page_size = SupportClass::COMMON_PAGE_SIZE)
+    {
+        $result_condition = "a.company_id is null and a.user_id = :userId: and m.deleted = false";
+        if ($conditions != null) {
+            foreach ($conditions as $condition) {
+                $result_condition .= ' and ' . $condition;
+            }
+        }
+
+        $result_bind = ['userId' => $userId];
+
+        if ($binds != null) {
+            foreach ($binds as $key => $bind) {
+                $result_bind[$key] = $bind;
+            }
+        }
+
+        return self::findByTemplateWithPagination($columns,$model,$result_condition,$result_bind,$order,$page,$page_size);
     }
 
     /**

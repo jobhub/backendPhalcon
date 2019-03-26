@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libs\SupportClass;
 use App\Models\Tasks;
 use App\Services\OfferService;
 use App\Services\TaskService;
@@ -40,28 +41,42 @@ class TasksAPIController extends AbstractController
     /**
      * Добавляет заказ
      *
+     * @access private
      * @method POST
+     * @input Form data
      *
-     * @params (обязательные) category_id, name, price, date_end.
-     * @params (необязательные) account_id, description, deadline, polygon, region_id, longitude, latitude.
+     * (обязательные параметры)
+     * @params category_id
+     * @params name
+     * @params price
+     * @params date_start
+     *
+     * (необязательные)
+     * @params account_id
+     * @params description
+     * @params deadline
+     * @params address
+     * @params longitude
+     * @params latitude.
      *
      * @return string - json array  формате Status
      */
     public function addTaskAction()
     {
-        $inputData = $this->request->getJsonRawBody();
+        $inputData = json_decode(json_encode($this->request->getPost()), false);
         $data['category_id'] = $inputData->category_id;
         $data['name'] = $inputData->name;
         $data['price'] = $inputData->price;
-        $data['date_end'] = $inputData->date_end;
+        $data['date_start'] = $inputData->date_start;
         $data['account_id'] = $inputData->account_id;
         $data['description'] = $inputData->description;
         $data['deadline'] = $inputData->deadline;
-        $data['polygon'] = $inputData->polygon;
-        $data['region_id'] = $inputData->region_id;
+        $data['address'] = $inputData->address;
         $data['longitude'] = $inputData->longitude;
         $data['latitude'] = $inputData->latitude;
+        $data['images'] = $this->request->getUploadedFiles();
 
+        $this->db->begin();
         try {
             $userId = self::getUserId();
 
@@ -75,19 +90,26 @@ class TasksAPIController extends AbstractController
             }
 
             $data['status'] = STATUS_ACCEPTING;
-            $data['date_start'] = date('Y-m-d H:i:s');
 
             $task = $this->taskService->createTask($data);
+            $task = $this->taskService->getTaskById($task->getTaskId());
+
+            $handledTask = Tasks::handleTaskFromArray($task->toArray());
 
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case TaskService::ERROR_UNABLE_CREATE_TASK:
+                case ImageService::ERROR_UNABLE_CHANGE_IMAGE:
+                case ImageService::ERROR_UNABLE_CREATE_IMAGE:
+                case ImageService::ERROR_UNABLE_SAVE_IMAGE:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
                     throw $exception->addErrorDetails($e->getData());
                 default:
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case AccountService::ERROR_ACCOUNT_NOT_FOUND:
                     $exception = new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -97,7 +119,8 @@ class TasksAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Task was successfully created', ['task' => $task->toArray()]);
+        $this->db->commit();
+        return self::successResponse('Task was successfully created', ['task' => $handledTask]);
     }
 
     /**
@@ -105,24 +128,47 @@ class TasksAPIController extends AbstractController
      *
      * @method GET
      *
-     * @param $company_id
+     * @params $page
+     * @params $page_size
+     * @params $account_id
      *
      * @return string - массив заданий (Tasks) и Status
      *
      */
-    public function getTasksForCurrentUserAction($company_id = null)
+    public function getTasksForCurrentUserAction()
     {
         $userId = self::getUserId();
 
-        if ($company_id != null) {
-            if (!Accounts::checkUserHavePermissionToCompany($userId, $company_id, 'getTask')) {
+        $inputData = $this->request->getQuery();
+        $data['account_id'] = $inputData['account_id'];
+        $data['page'] = $inputData['page'];
+        $data['page_size'] = $inputData['page_size'];
+
+        $data['page'] = filter_var($data['page'], FILTER_VALIDATE_INT);
+        $data['page'] = (!$data['page']) ? 1 : $data['page'];
+
+        $data['page_size'] = filter_var($data['page_size'], FILTER_VALIDATE_INT);
+        $data['page_size'] = (!$data['page_size']) ? Tasks::DEFAULT_PAGE_SIZE : $data['page_size'];
+
+
+        if ($data['account_id'] != null && SupportClass::checkInteger($data['account_id'])) {
+            if (!Accounts::checkUserHavePermission($userId, $data['account_id'], 'getTasks')) {
                 throw new Http403Exception('Permission error');
             }
 
-            return Tasks::findTasksByCompany($company_id);
+            $account = Accounts::findAccountById($data['account_id']);
+
+        } else {
+            $account = Accounts::findForUserDefaultAccount($userId);
+            $data['account_id'] = $account->getId();
         }
-        else
-            return Tasks::findTasksByUser($userId);
+
+        if ($account->getCompanyId() != null) {
+            $tasks = Tasks::findTasksByCompanyWithPagination($account->getCompanyId(),$data['page'],$data['page_size']);
+        } else
+            $tasks = Tasks::findTasksByUserWithPagination($userId,$data['page'],$data['page_size']);
+
+        return self::successPaginationResponse('',$tasks['data'],$tasks['pagination']);
     }
 
     /**
@@ -144,11 +190,53 @@ class TasksAPIController extends AbstractController
     }
 
     /**
+     * Возвращает публичную информацию о товаре.
+     * @access public.
+     *
+     * @method GET
+     *
+     * @param $task_id
+     * @params account_id
+     *
+     * @return array
+     */
+    public function getTaskInfoAction($task_id)
+    {
+        try {
+            $inputData = $this->request->getQuery();
+            $account_id = $inputData['account_id'];
+            $task = $this->taskService->getTaskById($task_id);
+
+            if(self::isAuthorized()) {
+                $userId = self::getUserId();
+
+                $account = $this->accountService->checkPermissionOrGetDefaultAccount($userId, $account_id);
+
+                self::setAccountId($account->getId());
+            }
+
+            return self::successResponse('',Tasks::handleTaskFromArray($task->toArray()));
+
+        }catch (ServiceException $e) {
+            switch ($e->getCode()) {
+                case TaskService::ERROR_TASK_NOT_FOUND:
+                case AccountService::ERROR_ACCOUNT_NOT_FOUND:
+                    throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
+                default:
+                    throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
+            }
+        }
+    }
+
+    /**
      * Удаление заказа
      *
      * @method DELETE
+     * @access private
+     *
      * @param $task_id
-     * @return string - json array в формате Status
+     *
+     * @return array
      */
     public function deleteTaskAction($task_id)
     {
@@ -187,10 +275,10 @@ class TasksAPIController extends AbstractController
      * Редактирование задания
      *
      * @method PUT
+     * @access private
      * @params (обязательные) task_id.
-     * @params (необязательные)  description, deadline, polygon,
-     *                           region_id, longitude, latitude,
-     *                           category_id, name, price, date_end.
+     * @params (необязательные)  description, deadline, longitude, latitude,
+     *                           category_id, name, price, date_start.
      * @return string - json array в формате Status
      */
     public function editTaskAction()
@@ -199,15 +287,15 @@ class TasksAPIController extends AbstractController
         $data['task_id'] = $inputData->task_id;
         $data['description'] = $inputData->description;
         $data['deadline'] = $inputData->deadline;
-        $data['polygon'] = $inputData->polygon;
-        $data['region_id'] = $inputData->region_id;
         $data['longitude'] = $inputData->longitude;
         $data['latitude'] = $inputData->latitude;
         $data['category_id'] = $inputData->category_id;
         $data['name'] = $inputData->name;
         $data['price'] = $inputData->price;
-        $data['date_end'] = $inputData->date_end;
+        $data['address'] = $inputData->address;
+        $data['date_start'] = $inputData->date_start;
 
+        $this->db->begin();
         try {
             //validation
             if (empty(trim($data['task_id']))) {
@@ -230,9 +318,12 @@ class TasksAPIController extends AbstractController
 
             unset($data['task_id']);
 
-            $this->taskService->changeTask($task, $data);
+            $task = $this->taskService->changeTask($task, $data);
+
+            $handledTask = Tasks::handleTaskFromArray($task->toArray());
 
         } catch (ServiceExtendedException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case TaskService::ERROR_UNABLE_CHANGE_TASK:
                     $exception = new Http422Exception($e->getMessage(), $e->getCode(), $e);
@@ -241,6 +332,7 @@ class TasksAPIController extends AbstractController
                     throw new Http500Exception(_('Internal Server Error'), $e->getCode(), $e);
             }
         } catch (ServiceException $e) {
+            $this->db->rollback();
             switch ($e->getCode()) {
                 case TaskService::ERROR_TASK_NOT_FOUND:
                     throw new Http400Exception($e->getMessage(), $e->getCode(), $e);
@@ -249,7 +341,8 @@ class TasksAPIController extends AbstractController
             }
         }
 
-        return self::successResponse('Task was successfully changed');
+        $this->db->commit();
+        return self::successResponse('Task was successfully changed',['task'=>$handledTask]);
     }
 
     /**

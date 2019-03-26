@@ -21,6 +21,7 @@ abstract class AbstractService extends \Phalcon\DI\Injectable
     const TYPE_RASTRENIYA = 'rastreniya';
     const TYPE_PRODUCT = 'product';
     const TYPE_EVENT = 'event';
+    const TYPE_TASK = 'task';
 
     /**
      * Invalid parameters anywhere

@@ -143,8 +143,8 @@ class Markers extends \Phalcon\Mvc\Model
                 "message" => "Не указана широта или указана неверно",
                 'callback' => function ($task) {
                     if (GeoPosition::checkLatitude($task->getLatitude()))
-                        return false;
-                    return true;
+                        return true;
+                    return false;
                 }
             ])
         );
@@ -155,8 +155,8 @@ class Markers extends \Phalcon\Mvc\Model
                 "message" => "Не указана долгота или указана неверно",
                 'callback' => function ($task) {
                     if (GeoPosition::checkLongitude($task->getLongitude()))
-                        return false;
-                    return true;
+                        return true;
+                    return false;
                 }
             ])
         );

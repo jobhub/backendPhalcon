@@ -15,12 +15,14 @@ use App\Models\ImagesModel;
 use App\Models\ImagesNews;
 use App\Models\ImagesProducts;
 use App\Models\ImagesRastreniya;
+use App\Models\ImagesTasks;
 use App\Models\ImagesTemp;
 use App\Models\ImagesUsers;
 use App\Models\ImagesReviews;
 use App\Models\ImagesServices;
 use App\Models\Products;
 use App\Models\Rastreniya;
+use App\Models\Tasks;
 use App\Models\Users;
 use App\Models\News;
 use App\Models\Services;
@@ -48,6 +50,7 @@ class ImageService extends AbstractService
     const TYPE_RASTRENIYA = 'rastreniya';
     const TYPE_PRODUCT = 'product';
     const TYPE_EVENT = 'event';
+    const TYPE_TASK = 'task';
 
     const ADDED_CODE_NUMBER = 7000;
 
@@ -122,6 +125,9 @@ class ImageService extends AbstractService
             case self::TYPE_EVENT:
                 $image = new ImagesEvents();
                 break;
+            case self::TYPE_TASK:
+                $image = new ImagesTasks();
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -155,6 +161,9 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_EVENT:
                 $model = 'App\Models\ImagesEvents';
+                break;
+            case self::TYPE_TASK:
+                $model = 'App\Models\ImagesTasks';
                 break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
@@ -193,6 +202,9 @@ class ImageService extends AbstractService
             case self::TYPE_EVENT:
                 $subpath = 'events';
                 break;
+            case self::TYPE_TASK:
+                $subpath = 'tasks';
+                break;
             default:
                 throw new ServiceException('Invalid type of image', self::ERROR_INVALID_IMAGE_TYPE);
         }
@@ -219,6 +231,14 @@ class ImageService extends AbstractService
     {
         $model = $this->getModelByType($type);
         $images = ImagesModel::findImages($model, $objectId, $page, $page_size);
+
+        return $images;
+    }
+
+    public function getAllImages($objectId, $type)
+    {
+        $model = $this->getModelByType($type);
+        $images = ImagesModel::findAllImages($model, $objectId);
 
         return $images;
     }
@@ -287,6 +307,13 @@ class ImageService extends AbstractService
                 break;
             case self::TYPE_EVENT:
                 $object = Events::findById($objectId);
+                if (!$object)
+                    return false;
+
+                $result = Accounts::checkUserHavePermission($userId, $object->getAccountId(), $right);
+                break;
+            case self::TYPE_TASK:
+                $object = Tasks::findById($objectId);
                 if (!$object)
                     return false;
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libs\SupportClass;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Callback;
 
@@ -202,16 +203,40 @@ class ForwardsInNewsModel extends \Phalcon\Mvc\Model
      * @param string|null $accountIds - related accounts in a postgres array format
      * @return array
      */
-    public static function handleObjectWithForwards($model, array $handledObject, $objectId, string $accountIds = null)
+    public static function handleObjectWithForwards($type, array $handledObject, $objectId, string $accountIds = null)
     {
-        $handledObject['stats']['forwards'] = self::getCount($model,$objectId);
         if($accountIds!=null){
-            $handledObject['forwarded'] = boolval($model::findFirst(['object_id = :objectId: and account_id = ANY(:ids:)',
-                'bind'=>[
-                    'objectId'=>$objectId,
-                    'ids'=>$accountIds
-                ]]));
+
+            switch ($type) {
+                case News::NEWS_TYPE_FORWARD_SERVICE: {
+                    $handledObject['stats']['forwards'] = SupportClass::getCountForObjectByQuery(
+                        'news','related_id = :service_id and news_type = :news_type',
+                        ['service_id'=>$objectId,'news_type'=>News::NEWS_TYPE_FORWARD_SERVICE]
+                    );
+                    break;
+                }
+
+                case News::NEWS_TYPE_FORWARD_NEWS: {
+                    $handledObject['stats']['forwards'] = $handledObject['forwards_count'];
+                    break;
+                }
+
+                case News::NEWS_TYPE_FORWARD_IMAGE_USER: {
+                    $handledObject['stats']['forwards'] = SupportClass::getCountForObjectByQuery(
+                        'news','related_id = :id and news_type = :news_type',
+                        ['id'=>$objectId,'news_type'=>News::NEWS_TYPE_FORWARD_IMAGE_USER]);
+                    break;
+                }
+
+                case News::NEWS_TYPE_FORWARD_PRODUCT: {
+                    $handledObject['stats']['forwards'] = SupportClass::getCountForObjectByQuery(
+                        'news','related_id = :id and news_type = :news_type',
+                        ['id'=>$objectId,'news_type'=>News::NEWS_TYPE_FORWARD_PRODUCT]);
+                    break;
+                }
+            }
         }
+
         return $handledObject;
     }
 
